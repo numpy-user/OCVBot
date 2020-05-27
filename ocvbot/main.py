@@ -75,6 +75,15 @@ def mining_varrock_east():
             log.info('Reorienting client')
             vis.orient(DISPLAY_WIDTH, DISPLAY_HEIGHT)
 
+# TODO: Add basic firemaking script that starts at a bank booth and
+#   creates 27 fires, all in a straight line, then returns to the booth.
+
+# TODO: Add oak woodcutting script that waits by an oak tree, clicks on
+#   it when it appears, and empties inventory when full -- super simple.
+
+# TODO: Possible location for starting a fishing script where the
+#  "fishing tiles" don't change much is fly fishing at barbarian village.
+
 
 vis.init_vision()
 
@@ -114,7 +123,8 @@ def cannonball_smelter():
 
     #   Wait for the items to appear in the player's inventory.
     steel_bars_in_inventory = vis.Vision(needle='./steel_bar_in_inv')\
-        .wait_for_image(xmin=inv_xmin, xmax=inv_xmax, ymin=inv_ymin, ymax=inv_ymax)
+        .wait_for_image(xmin=inv_xmin, xmax=inv_xmax, ymin=inv_ymin, 
+        ymax=inv_ymax)
     if steel_bars_in_inventory == 1:
         print('timed out waiting for steel bars to show up in inv')
 
@@ -148,7 +158,8 @@ look for steel bar -- mlocate(needle=steel_bar, haystack=bank_window)
 right click steel bar -- click(button=right)
      click 'withdrawal all' -- mlocate(needle=withdrawal_all), click
      check for warnings -- mlocate(needle=warnings)
- wait for steel bar to appear in inventory -- mlocate(needle=steel_bar, haystack=inventory)
+ wait for steel bar to appear in inventory -- mlocate(needle=steel_bar, 
+ haystack=inventory)
  click on minimap objective -- mlocate(needle=minimap_furance_from_bank, 
  haystack=minimap)
  wait for palyer to reach objective -- mlocate(needle=minimap_at_furnace, 
@@ -275,7 +286,8 @@ right click steel bar -- click(button=right)
 # pc_bs = tkinter.Checkbutton(text='pc bs check', variable=pc_bs_gui)
 # pc_bs.grid(column=0, row=9, columnspan=1, sticky='W')
 
-# pc_rookie = tkinter.Checkbutton(text='pc rookie check', variable=pc_rookie_gui)
+# pc_rookie = tkinter.Checkbutton(text='pc rookie check',
+# variable=pc_rookie_gui)
 # pc_rookie.grid(column=1, row=9, columnspan=1, sticky='W')
 
 # pc_pod = tkinter.Checkbutton(text='pc pod check', variable=pc_pod_gui)
