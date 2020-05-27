@@ -44,5 +44,8 @@ log.basicConfig(format='%(asctime)s %(filename)s.%(funcName)s - %(message)s'
 # Clean up left over screenshots from failed runs.
 #sub.Popen(["rm", "./.screenshot2*"])
 
-# TODO: Fix whatever issue that requires this.
-os.chdir('/home/austin/OSRS-AHKScripts/ocvbot')
+# Make sure the program's working directory is the directory that this
+#   file is located in.
+absolute_path = os.path.abspath(__file__)
+dir_name = os.path.dirname(absolute_path)
+os.chdir(dir_name)
