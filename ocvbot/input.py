@@ -28,7 +28,10 @@ def click_coord(left, top, width, height, button='left'):
         Always returns 0.
     """
 
-    move_to(left, top, xmin=0, xmax=width, ymin=0, ymax=height)
+    move_to(x=left, y=top,
+            xmin=0, xmax=width,
+            ymin=0, ymax=height)
+
     click(button=button)
     return 0
 
@@ -85,6 +88,9 @@ def move_away(direction=rand.choice(['left', 'right'])):
     Returns:
         Always returns 0.
     """
+    # TODO: Make this function more intelligent by moving to a random
+    #   area on the display, but NOT into any of the display's corners,
+    #   since this will trigger PyAutoGUI's fail-safe and terminate.
 
     log.debug('Moving mouse away towards ' + str(direction) +
               ' side of client.')
@@ -125,9 +131,12 @@ def moverel(xmin, xmax, ymin, ymax, durmin=50, durmax=1000):
         Always returns 0.
     """
 
-    x = rand.randint(xmin, xmax)
-    y = rand.randint(ymin, ymax)
-    pag.moveRel(x, y, move_duration(durmin, durmax), move_path())
+    x = rand.randint(xmin=xmin, xmax=xmax)
+    y = rand.randint(ymin=ymin, ymax=ymax)
+
+    pag.moveRel(x, y,
+                move_duration(durmin=durmin, durmax=durmax),
+                move_path())
     return 0
 
 
@@ -187,7 +196,7 @@ def click(button='left',
         Always returns 0.
     """
 
-    misc.sleep_rand(sleep_befmin, sleep_befmax)
+    misc.sleep_rand(rmin=sleep_befmin, rmax=sleep_befmax)
 
     duration = misc.rand_seconds(rmin=click_durmin, rmax=click_durmax)
 
@@ -195,7 +204,7 @@ def click(button='left',
               ' seconds.')
 
     pag.click(button=button, duration=duration)
-    misc.sleep_rand(sleep_afmin, sleep_afmax)
+    misc.sleep_rand(rmin=sleep_afmin, rmax=sleep_afmax)
     return 0
 
 
@@ -216,7 +225,7 @@ def move_duration(durmin=50, durmax=1500):
         Returns a float.
     """
 
-    move_duration_var = misc.rand_seconds(durmin, durmax)
+    move_duration_var = misc.rand_seconds(rmin=durmin, rmax=durmax)
     return move_duration_var
 
 
@@ -248,11 +257,11 @@ def keypress(key,
     """
 
     log.debug('Pressing key: ' + str(key) + '.')
-    misc.sleep_rand(sleep_befmin, sleep_befmax)
+    misc.sleep_rand(rmin=sleep_befmin, rmax=sleep_befmax)
     pag.keyDown(key)
-    misc.sleep_rand(durmin, durmax)
+    misc.sleep_rand(rmin=durmin, rmax=durmax)
     pag.keyUp(key)
-    misc.sleep_rand(sleep_afmin, sleep_afmax)
+    misc.sleep_rand(rmin=sleep_afmin, rmax=sleep_afmax)
     return 0
 
 
@@ -280,15 +289,15 @@ def double_hotkey_press(key1, key2,
     """
 
     log.debug('Pressing hotkeys: ' + str(key1) + ' + ' + str(key2))
-    misc.sleep_rand(sleep_befmin, sleep_befmax)
+    misc.sleep_rand(rmin=sleep_befmin, rmax=sleep_befmax)
     pag.keyDown(key1)
-    misc.sleep_rand(durmin, durmax)
+    misc.sleep_rand(rmin=durmin, rmax=durmax)
     pag.keyDown(key2)
-    misc.sleep_rand(durmin, durmax)
+    misc.sleep_rand(rmin=durmin, rmax=durmax)
     pag.keyUp(key1)
-    misc.sleep_rand(durmin, durmax)
+    misc.sleep_rand(rmin=durmin, rmax=durmax)
     pag.keyUp(key2)
-    misc.sleep_rand(sleep_afmin, sleep_afmax)
+    misc.sleep_rand(rmin=sleep_afmin, rmax=sleep_afmax)
     return 0
 
 
