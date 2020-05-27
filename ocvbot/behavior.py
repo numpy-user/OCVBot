@@ -28,27 +28,6 @@ def move_camera_rand(chance=3,down_min=200,down_max=2000)
  
 def check_experience(skill)
 
-def open_menu_rand()
-
-def open_menu(ocvbot-menu)
-if ocvbot-menu == 'prayers'
-    menu_open = vsion.click_image(needle='./prayers')
-    if menu_open == 0:
-        menu_open = vision.wait_for_image(needle='prayer_x')
-        if menu_open == 0:
-            return 0
-        else:
-            return 1
-else:
-    return 1
-elif ocvbot-menu == 'inventory'
-elif ocvbot-menu == 'magic'
-elif ocvbot-menu == 'equipment'
-elif ocvbot-menu == 'logout'
-
-def logout()
-    open_menu(logout)
-
 def switch_worlds()
 """
 
@@ -226,6 +205,8 @@ def logout(hotkey):
         Returns 0 if the client has logged out.
         Returns 1 if the client is already logged out.
     """
+    # TODO: Check if the world-switcher is open in the login menu.
+
     from ocvbot.vision import vclient
     # First, make sure the client is logged in.
     orient = vision.orient(display_height=DISPLAY_HEIGHT,
@@ -290,7 +271,7 @@ def logout_rand(chance, wait_min=5, wait_max=120):
     logout_roll = rand.randint(1, chance)
     if logout_roll == chance:
         log.info('Random logout called.')
-        logout()
+        #logout()
 
         sleeptime = misc.rand_seconds(wait_min, wait_max)
         # Convert to minutes for logging
@@ -316,6 +297,9 @@ def drop_item(item, wait_chance=120, wait_min=5000, wait_max=20000):
        wait_max (int): Maximum number of miliseconds to wait if
                        a wait is triggered, default is 20000.
     """
+    # TODO: create four objects, one for each quadrant of the inventory
+    #   and rotate dropping items randomly among each quadrant to make
+    #   item-dropping more randomized.
 
     from ocvbot.vision import vinv, vinv_right_half, vinv_left_half, vclient
 
