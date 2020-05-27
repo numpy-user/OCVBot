@@ -4,3 +4,7 @@ drop_emerald: True
 drop_ruby: True
 drop_diamond: True
 drop_clue_geode: True
+
+script: '2'
+# 1: Lumbridge swamp drop mining copper
+# 2: Varrock east drop mining iron

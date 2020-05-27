@@ -410,4 +410,8 @@ endrunbutton.config(width='13', height='1')
 #gui.mainloop()
 
 vis.init_vision()
-mining_varrock_east()
+
+if config_file['script'] == '1':
+    mining_lumbridge_swamp()
+elif config_file['script'] == '2':
+    mining_varrock_east()
