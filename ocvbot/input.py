@@ -131,8 +131,8 @@ def moverel(xmin, xmax, ymin, ymax, durmin=50, durmax=1000):
         Always returns 0.
     """
 
-    x = rand.randint(xmin=xmin, xmax=xmax)
-    y = rand.randint(ymin=ymin, ymax=ymax)
+    x = rand.randint(xmin, xmax)
+    y = rand.randint(ymin, ymax)
 
     pag.moveRel(x, y,
                 move_duration(durmin=durmin, durmax=durmax),
