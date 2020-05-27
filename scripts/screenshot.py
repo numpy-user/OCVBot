@@ -37,31 +37,31 @@ def main(debug=False):
     from ocvbot.vision import vclient_left, vclient_top, \
         CLIENT_HEIGHT, CLIENT_WIDTH, client_status
 
+    pag.screenshot('/tmp/screenshot.tmp.png', region=(vclient_left,
+                                                      vclient_top,
+                                                      CLIENT_WIDTH,
+                                                      CLIENT_HEIGHT))
+
     if debug is False:
-        pag.screenshot('screenshot.tmp.png', region=(vclient_left,
-                                                     vclient_top,
-                                                     CLIENT_WIDTH,
-                                                     CLIENT_HEIGHT))
         log.info('Processing screenshot')
         if client_status == 'logged_in':
             # If the client is logged in, censor the player's username
             #   by drawing a black box over it with ImageMagick.
-            os.system('pngcrush -s '
-                      'screenshot.tmp.png screenshot.tmp2.png '
-                      '&>/dev/null '
-                      '&& convert screenshot.tmp2.png '
+            import time
+            time.sleep(1)
+            os.system('ls /tmp && pngcrush -s '
+                      '"/tmp/screenshot.tmp.png" '
+                      '"/tmp/screenshot.tmp2.png" '
+                      '2>/dev/null '
+                      '&& convert /tmp/screenshot.tmp2.png '
                       '-fill black '
                       '-draw "rectangle 7 458 190 473" '
-                      'haystack_$(date +%Y-%m-%d_%H:%M:%S).png'
-                      '&& rm screenshot.tmp*.png'
-                      '&& notify-send -u low "Screenshot taken"')
+                      '"$(pwd)/haystack_$(date +%Y-%m-%d_%H:%M:%S).png"')
         elif client_status == 'logged_out':
             os.system('pngcrush -s '
-                      '.screenshot.tmp.png '
-                      'haystack_$(date +%Y-%m-%d_%H:%M:%S).png '
-                      '&>/dev/null '
-                      '&& rm .screenshot.tmp*.png'
-                      '&& notify-send -u low "Screenshot taken"')
+                      '/tmp/screenshot.tmp.png" '
+                      '"$(pwd)/haystack_$(date +%Y-%m-%d_%H:%M:%S).png" '
+                      '2>/dev/null')
         else:
             raise RuntimeError("Could not interpret client_status var!")
 
