@@ -34,8 +34,8 @@ def switch_worlds()
 
 def login(username_file='username.txt', password_file='password.txt',
           cred_sleep_min=800, cred_sleep_max=5000,
-          login_sleep_min=5000, login_sleep_max=15000,
-          postlogin_sleep_min=5000, postlogin_sleep_max=10000):
+          login_sleep_min=500, login_sleep_max=5000,
+          postlogin_sleep_min=500, postlogin_sleep_max=5000):
     """
     Logs in in using credentials specified in two files.
 
@@ -77,11 +77,29 @@ def login(username_file='username.txt', password_file='password.txt',
     """
 
     from ocvbot.vision import vdisplay
+
+    # Check to make extra sure the client is logged out.
     logged_out = vdisplay.click_image(needle='./needles/login-menu/'
-                                             'orient-logged-out.png')
+                                             'orient-logged-out.png',
+                                      loop_num=1)
     if logged_out == 1:
         raise RuntimeError("Cannot find client!")
-    else:
+
+    log.info('Logging in.')
+
+    # Click the "Ok" button if it's present at the login screen.
+    vdisplay.click_image(needle='./needles/login-menu/'
+                                'ok-button.png',
+                                loop_num=1)
+
+    misc.sleep_rand(cred_sleep_min, cred_sleep_max)
+
+    # Make sure the "Existing user" button is present.
+    existing_user = vdisplay.wait_for_image(needle='./needles/login-menu/'
+                                            'existing-user-button.png',
+                                            loop_num=1)
+    if existing_user != 1:
+
         # Enter credentials.
         misc.sleep_rand(cred_sleep_min, cred_sleep_max)
         input.keypress('enter')
@@ -99,7 +117,7 @@ def login(username_file='username.txt', password_file='password.txt',
                                          conf=0.8,
                                          loop_num=50,
                                          loop_sleep_min=1000,
-                                         loop_sleep_max=2000)
+                                         loop_sleep_max=3000)
         if postlogin != 1:
             misc.sleep_rand(postlogin_sleep_min, postlogin_sleep_max)
             # Wait for the orient.png to appear in the client window.
@@ -107,7 +125,7 @@ def login(username_file='username.txt', password_file='password.txt',
                                                 'orient.png',
                                                 loop_num=50,
                                                 loop_sleep_min=1000,
-                                                loop_sleep_max=2000)
+                                                loop_sleep_max=3000)
             if logged_in != 1:
                 # Make sure client camera is oriented correctly after
                 #   logging in.
@@ -120,6 +138,9 @@ def login(username_file='username.txt', password_file='password.txt',
 
         else:
             raise RuntimeError("Cannot find postlogin screen!")
+
+    elif existing_user == 1:
+        raise RuntimeError("Cannot find existing user button!")
 
 
 def wait_rand(chance, second_chance=10,
