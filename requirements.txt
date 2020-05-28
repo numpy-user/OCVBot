@@ -21,3 +21,5 @@ pytz~=2020.1
 recommonmark~=0.6.0
 requests~=2.23.0
 snowballstemmer~=2.0.0
+keyboard~=0.13.5
+setuptools~=46.1.3
