@@ -44,6 +44,7 @@ def mining_lumbridge_swamp():
                    './needles/game-screen/lumbridge-mine/'
                    'south-empty.png'),
             ore='./needles/items/copper-ore.png',
+            ore_type='copper',
             drop_sapphire=config_file['drop_sapphire'],
             drop_emerald=config_file['drop_emerald'],
             drop_ruby=config_file['drop_ruby'],
@@ -84,6 +85,7 @@ def mining_varrock_east():
                        './needles/game-screen/varrock-east-mine/'
                        'west-empty.png'),
                 ore='./needles/items/iron-ore.png',
+                ore_type='iron',
                 drop_sapphire=config_file['drop_sapphire'],
                 drop_emerald=config_file['drop_emerald'],
                 drop_ruby=config_file['drop_ruby'],

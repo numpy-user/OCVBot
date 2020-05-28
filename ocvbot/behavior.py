@@ -302,7 +302,8 @@ def logout_rand(chance, wait_min=5, wait_max=120):
     return 0
 
 
-def drop_item(item, wait_chance=120, wait_min=5000, wait_max=20000):
+def drop_item(item, track=True,
+              wait_chance=120, wait_min=5000, wait_max=20000):
     """
     Drops all instances of the provided item from the inventory.
     Shift+Click to drop item MUST be enabled.
@@ -310,6 +311,8 @@ def drop_item(item, wait_chance=120, wait_min=5000, wait_max=20000):
     Args:
        item (file): Filepath to an image of the item to drop, as it
                     appears in the player's inventory.
+       track (bool): Keep track of the number of items dropped in a
+                     global variable, default is True.
        wait_chance (int): Chance to wait randomly while dropping item,
                           see wait_rand()'s docstring for more info,
                           default is 50.
@@ -323,6 +326,7 @@ def drop_item(item, wait_chance=120, wait_min=5000, wait_max=20000):
     #   item-dropping more randomized.
 
     from ocvbot.vision import vinv, vinv_right_half, vinv_left_half, vclient
+    from ocvbot import items
 
     # Make sure the inventory tab is selected in the main menu.
     log.info('Making sure inventory is selected')
@@ -347,22 +351,26 @@ def drop_item(item, wait_chance=120, wait_min=5000, wait_max=20000):
         # Alternate between searching for the item in left half and the
         #   right half of the player's inventory. This helps reduce the
         #   chances the bot will click on the same item twice.
-        vinv_right_half.click_image(loop_num=1,
-                                    click_sleep_befmin=10,
-                                    click_sleep_befmax=50,
-                                    click_sleep_afmin=50,
-                                    click_sleep_afmax=300,
-                                    move_durmin=50,
-                                    move_durmax=800,
-                                    needle=item)
-        vinv_left_half.click_image(loop_num=1,
-                                   click_sleep_befmin=10,
-                                   click_sleep_befmax=50,
-                                   click_sleep_afmin=50,
-                                   click_sleep_afmax=300,
-                                   move_durmin=50,
-                                   move_durmax=800,
-                                   needle=item)
+        item_on_right = vinv_right_half.click_image(loop_num=1,
+                                                    click_sleep_befmin=10,
+                                                    click_sleep_befmax=50,
+                                                    click_sleep_afmin=50,
+                                                    click_sleep_afmax=300,
+                                                    move_durmin=50,
+                                                    move_durmax=800,
+                                                    needle=item)
+        if item_on_right != 1 and track is True:
+            items += 1
+        item_on_left = vinv_left_half.click_image(loop_num=1,
+                                                  click_sleep_befmin=10,
+                                                  click_sleep_befmax=50,
+                                                  click_sleep_afmin=50,
+                                                  click_sleep_afmax=300,
+                                                  move_durmin=50,
+                                                  move_durmax=800,
+                                                  needle=item)
+        if item_on_left != 1 and track is True:
+            items += 1
 
         # Search the entire inventory to check if the item is still
         #   there.

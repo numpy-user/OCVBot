@@ -7,7 +7,7 @@ with open('./config.yaml') as config:
     config_file = yaml.safe_load(config)
 
 
-def miner_double_drop(rock1, rock2, ore,
+def miner_double_drop(rock1, rock2, ore, ore_type,
                       drop_sapphire=True,
                       drop_emerald=True,
                       drop_ruby=True,
@@ -32,6 +32,8 @@ def miner_double_drop(rock1, rock2, ore,
         ore (file): Filepath to a needle of the item icon of the ore
                     being mined, as it appears in the player's
                     inventory.
+        ore_type (str): The type of ore being mined, used for generating
+                        stats. Available options are: "copper", "iron"
         drop_sapphire (bool): Drop mined uncut sapphires, default is
                               True.
         drop_emerald (bool): Drop mined uncut emearalds, default is
@@ -54,12 +56,13 @@ def miner_double_drop(rock1, rock2, ore,
     #   init_vision() function has to run before the objects get valid
     #   values.
     from ocvbot.vision import vchat_menu, vchat_menu_recent, vgame_screen
+    from ocvbot import inventory, ore_exp_dict
 
-    log.info('drop_sapphire= ' + str(drop_sapphire) +
-             ' drop_emerald= ' + str(drop_emerald) +
-             ' drop_ruby= ' + str(drop_ruby) +
-             ' drop_diamond= ' + str(drop_diamond) +
-             ' drop_clue_geode= ' + str(drop_clue_geode))
+    log.debug('drop_sapphire= ' + str(drop_sapphire) +
+              ' drop_emerald= ' + str(drop_emerald) +
+              ' drop_ruby= ' + str(drop_ruby) +
+              ' drop_diamond= ' + str(drop_diamond) +
+              ' drop_clue_geode= ' + str(drop_clue_geode))
 
     for attempts in range(1, 100):
 
@@ -68,7 +71,7 @@ def miner_double_drop(rock1, rock2, ore,
             #   "empty" versions of each needle.
             (rock_full_needle, rock_empty_needle) = rock_needle
 
-            log.info('Searching for ore ' + str(attempts) + '...')
+            log.debug('Searching for ore ' + str(attempts) + '...')
 
             # If current rock is full, begin mining it.
             rock_full = vgame_screen.click_image(needle=rock_full_needle,
@@ -122,19 +125,26 @@ def miner_double_drop(rock1, rock2, ore,
                             raise RuntimeError("Could not find ore to drop!")
                         if drop_sapphire is True:
                             behavior.drop_item(item='./needles/items/'
-                                                    'uncut-sapphire.png')
+                                                    'uncut-sapphire.png',
+                                               track=False)
                         if drop_emerald is True:
                             behavior.drop_item(item='./needles/items/'
-                                                    'uncut-emerald.png')
+                                                    'uncut-emerald.png',
+                                               track=False)
                         if drop_ruby is True:
                             behavior.drop_item(item='./needles/items/'
-                                                    'uncut-ruby.png')
+                                                    'uncut-ruby.png',
+                                               track=False)
                         if drop_diamond is True:
                             behavior.drop_item(item='./needles/items/'
-                                                    'uncut-diamond.png')
+                                                    'uncut-diamond.png',
+                                               track=False)
                         if drop_clue_geode is True:
                             behavior.drop_item(item='./needles/items/'
-                                                    'clue-geode.png')
+                                                    'clue-geode.png',
+                                               track=False)
+                        print_stats(ore_exp_dict[ore_type], 'ore')
+                        inventory += 1
                         return 0
                     elif inv_full == 1:
                         return 0
@@ -155,4 +165,38 @@ def miner_double_drop(rock1, rock2, ore,
                     log.debug(str(rock_needle) + ' empty.')
                 elif rock_empty == 1:
                     log.info('Timed out waiting for mining to finish.')
+    return 0
+
+
+def print_stats(experience_per_item, item_type):
+    """
+    Prints a few basic stats about skilling experience.
+
+    Args:
+        experience_per_item (int): The amount of experience gained per
+                                   item gathered.
+        item_type (str): The "type" of item, used to make logs pretty.
+                         Available item types are: "ore"
+
+    Returns:
+        Always returns 0
+    """
+
+    from ocvbot import inventory, items, experience_per_hour
+
+    if item_type == 'ore':
+        item_type = 'ores'
+
+    experience_gained = experience_per_item * items
+    # TODO: exp per hour
+    experience_per_hour = 0
+
+    print(
+        "############################################################### \n"
+        "Completed inventory #",  inventory, "\n"
+        "Gathered ", items, " ", item_type, "\n"
+        "Gained ", experience_gained, " EXP (", experience_per_hour, ") \n"
+        "###############################################################"
+    )
+
     return 0

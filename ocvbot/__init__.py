@@ -10,8 +10,10 @@ Sets global constants and defines logging.
 
 sys.setrecursionlimit(9999)
 
-# These are constants.
-# See ./tests/haystacks/client_anatomy.png for more info.
+
+# Constants ------------------------------------------------------------
+
+# See ./docs/client_anatomy.png for more info.
 # Width and height of the entire game client.
 CLIENT_WIDTH = 765
 CLIENT_HEIGHT = 503
@@ -36,6 +38,26 @@ CHAT_MENU_RECENT_HEIGHT = 17
 # Get the display size in pixels.
 DISPLAY_WIDTH = pag.size().width
 DISPLAY_HEIGHT = pag.size().height
+
+# Stats ----------------------------------------------------------------
+
+# The number of inventories a script has gone through.
+inventory = 0
+# The number of items gathered, approximately.
+items = 0
+# The amount of experience gained since the script started, approximately.
+experience = 0
+experience_per_hour = 0
+# TODO:
+# The amount of experience gained since installing this package
+experience_lifetime = 0
+
+ore_exp_dict = {
+    'copper': 16.5,
+    'iron': 35.5
+}
+
+# Initialization -------------------------------------------------------
 
 log.basicConfig(format='%(asctime)s %(filename)s.%(funcName)s - %(message)s'
                 , level='INFO')
