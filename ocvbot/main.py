@@ -8,7 +8,7 @@ import yaml
 # import yaml
 
 from ocvbot import DISPLAY_WIDTH, DISPLAY_HEIGHT, \
-    skilling, vision as vis
+    skilling, behavior, vision as vis
 
 with open('./config.yaml') as config:
     config_file = yaml.safe_load(config)
@@ -19,13 +19,21 @@ with open('./config.yaml') as config:
 #   from current time to get total seconds function has been running.
 def mining_lumbridge_swamp():
     """
-    Script for mining copper in the Lumbridge mine in Lumbridge swamp.
+    Script for mining copper in the mine in Lumbridge swamp.
 
-    See "./needles/game-screen/lumbridge-mine/configuration/" for the
-    required client configuration settings.
+    See "/docs/client-configuration/" for the required client
+    configuration settings.
     """
 
     while True:
+        # Ensure the client is logged in.
+        client_status = vis.orient(DISPLAY_WIDTH, DISPLAY_HEIGHT)
+        (client_status, unused_var) = client_status
+        if client_status == 'logged_out':
+            behavior.login(username_file=config_file['username_file'],
+                           password_file=config_file['password_file'])
+
+        # Begin script.
         miner = skilling.miner_double_drop(
             rock1=('./needles/game-screen/lumbridge-mine/'
                    'east-full.png',
@@ -41,39 +49,51 @@ def mining_lumbridge_swamp():
             drop_ruby=config_file['drop_ruby'],
             drop_diamond=config_file['drop_diamond'],
             drop_clue_geode=config_file['drop_clue_geode'])
+
+        # If script returns, loop back around and make sure client is
+        #   logged in again.
         if miner == 0:
             log.info('Reorienting client')
-            vis.orient(DISPLAY_WIDTH, DISPLAY_HEIGHT)
 
 
 def mining_varrock_east():
     """
     Script for mining iron in the eastern Varrock mine.
 
-    See "./needles/game-screen/varrock-east-mine/configuration/" for the
-    required client configuration settings.
+    See "/docs/client-configuration/" for the required client
+    configuration settings.
     """
-    log.info('Began mining_varrock_east()')
 
     while True:
+
+        # Ensure the client is logged in.
+        client_status = vis.orient(DISPLAY_WIDTH, DISPLAY_HEIGHT)
+        (client_status, unused_var) = client_status
+        if client_status == 'logged_out':
+            behavior.login(username_file=config_file['username_file'],
+                           password_file=config_file['password_file'])
+
+        # Begin script.
         miner = skilling.miner_double_drop(
-            rock1=('./needles/game-screen/varrock-east-mine/'
-                   'north-full2.png',
-                   './needles/game-screen/varrock-east-mine/'
-                   'north-empty.png'),
-            rock2=('./needles/game-screen/varrock-east-mine/'
-                   'west-full.png',
-                   './needles/game-screen/varrock-east-mine/'
-                   'west-empty.png'),
-            ore='./needles/items/iron-ore.png',
-            drop_sapphire=config_file['drop_sapphire'],
-            drop_emerald=config_file['drop_emerald'],
-            drop_ruby=config_file['drop_ruby'],
-            drop_diamond=config_file['drop_diamond'],
-            drop_clue_geode=config_file['drop_clue_geode'])
+                rock1=('./needles/game-screen/varrock-east-mine/'
+                       'north-full2.png',
+                       './needles/game-screen/varrock-east-mine/'
+                       'north-empty.png'),
+                rock2=('./needles/game-screen/varrock-east-mine/'
+                       'west-full.png',
+                       './needles/game-screen/varrock-east-mine/'
+                       'west-empty.png'),
+                ore='./needles/items/iron-ore.png',
+                drop_sapphire=config_file['drop_sapphire'],
+                drop_emerald=config_file['drop_emerald'],
+                drop_ruby=config_file['drop_ruby'],
+                drop_diamond=config_file['drop_diamond'],
+                drop_clue_geode=config_file['drop_clue_geode'])
+
+        # If script returns, loop back around and make sure client is
+        #   logged in again.
         if miner == 0:
             log.info('Reorienting client')
-            vis.orient(DISPLAY_WIDTH, DISPLAY_HEIGHT)
 
 # TODO: Add basic firemaking script that starts at a bank booth and
 #   creates 27 fires, all in a straight line, then returns to the booth.
