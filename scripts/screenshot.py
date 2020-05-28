@@ -49,7 +49,7 @@ def main(debug=False):
             #   by drawing a black box over it with ImageMagick.
             import time
             time.sleep(1)
-            os.system('ls /tmp && pngcrush -s '
+            os.system('pngcrush -s '
                       '"/tmp/screenshot.tmp.png" '
                       '"/tmp/screenshot.tmp2.png" '
                       '2>/dev/null '
