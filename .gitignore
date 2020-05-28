@@ -17,7 +17,7 @@ Project.xml
 
 # Test and debugging files
 /tests/haystacks/
-**/haystack*
+/haystacks/
 **/tmp/
 
 # User files
