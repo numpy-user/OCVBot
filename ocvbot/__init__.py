@@ -2,6 +2,7 @@ import logging as log
 import os
 import sys
 
+import keyboard
 import pyautogui as pag
 
 """
@@ -61,6 +62,10 @@ ore_exp_dict = {
 
 log.basicConfig(format='%(asctime)s %(filename)s.%(funcName)s - %(message)s'
                 , level='INFO')
+
+# This hotkey is used to manually kill the script without needing to use
+#   the mouse.
+keyboard.add_hotkey('ctrl+shift+k', quit)
 
 # TODO: Find a better way to do this.
 # Clean up left over screenshots from failed runs.
