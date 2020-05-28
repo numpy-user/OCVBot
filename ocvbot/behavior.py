@@ -3,9 +3,9 @@ import random as rand
 import time
 
 import pyautogui as pag
+import yaml
 
-from ocvbot import input, misc, vision
-from ocvbot import DISPLAY_HEIGHT, DISPLAY_WIDTH
+from ocvbot import input, misc, vision, DISPLAY_HEIGHT, DISPLAY_WIDTH
 
 # TODO
 
@@ -186,6 +186,22 @@ def wait_rand(chance, second_chance=10,
 
 
 def open_side_stone(side_stone_open, hotkey):
+    """
+    Open the specific side stone menu.
+
+    Args:
+        side_stone_open (file): Filepath to an image of the desired side
+                                stone in its "open" state (i.e. with a
+                                red background).
+        hotkey (str): The key used to open the desired side stone. This
+                      is not set by default in the native client and
+                      must be enabled.
+
+    Returns:
+        Returns 0 if desired side stone was opened or is already open.
+        Returns 1 in any other situation.
+    """
+
     from ocvbot.vision import vclient, vgame_screen
     stone_open = vclient.wait_for_image(needle=side_stone_open, loop_num=1)
     if stone_open != 1:
@@ -217,6 +233,11 @@ def logout(hotkey):
     """
     If the client is logged in, logs out. Side stone hotkeys MUST be
     enabled.
+
+    Args:
+        hotkey (str): The hotkey used to open the "Logout" side stone.
+                      Opening side stones with hotkeys is not default
+                      behavior and must be enabled.
 
     Raises:
         Raises a runtime error if the logout side stone is opened but
@@ -292,7 +313,11 @@ def logout_rand(chance, wait_min=5, wait_max=120):
     logout_roll = rand.randint(1, chance)
     if logout_roll == chance:
         log.info('Random logout called.')
-        #logout()
+
+        with open('./config.yaml') as config:
+            config_file = yaml.safe_load(config)
+
+        logout(config_file['side_stone_logout'])
 
         sleeptime = misc.rand_seconds(wait_min, wait_max)
         # Convert to minutes for logging

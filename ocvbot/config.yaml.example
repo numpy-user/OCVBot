@@ -8,3 +8,10 @@ drop_clue_geode: True
 script: '2'
 # 1: Lumbridge swamp drop mining copper
 # 2: Varrock east drop mining iron
+
+# Side stone hotkeys
+side_stone_logout: 'F12'
+
+# Credentials
+username_file: '/home/austin/ocvbot/ocvbot/credentials/username.txt'
+password_file: '/home/austin/ocvbot/ocvbot/credentials/password.txt'

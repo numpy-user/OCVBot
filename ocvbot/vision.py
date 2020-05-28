@@ -49,7 +49,8 @@ vchat_menu_recent_left = ''
 vchat_menu_recent_top = ''
 
 # TODO: Add vision object that covers the "stone tab" buttons, this would
-# make the object's coordinate space slightly larger than the inventory.
+#   make the object's coordinate space slightly larger than the inventory.
+
 
 def init_vision():
     """
@@ -214,7 +215,19 @@ def orient(display_width, display_height):
             raise RuntimeError('Could not find anchor!')
 
 
-def haystack_locate(needle, haystack, grayscale=False, conf=0.96):
+def haystack_locate(needle, haystack, grayscale=False, conf=0.95):
+    """
+    Finds the coordinates of a needle image within a haystack image.
+
+    Args:
+        needle (file): Filepath to the needle image.
+        haystack (file): Filepath to the haystack image.
+        grayscale (bool): Whether to use grayscale matching to increase
+                          speed, default is false.
+        conf (float): Similarity required to match needle to haystack,
+                      expressed as a decimal <= 1, default is 0.95.
+
+    """
 
     target_image = pag.locate(needle, haystack,
                               confidence=conf,
@@ -230,10 +243,6 @@ def haystack_locate(needle, haystack, grayscale=False, conf=0.96):
         return 1
 
 
-
-# TODO: Remove self.haystack functionality as smaller coordinate spaces
-#  are used instead. Also, referring to both images and coordinate spaces
-#  as "haystacks" is confusing.
 class Vision:
     """
     The primary object method for locating images on the display. All
