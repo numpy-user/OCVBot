@@ -2,15 +2,15 @@ import logging as log
 
 import pyautogui as pag
 
+from ocvbot import CLIENT_WIDTH, CLIENT_HEIGHT, \
+    GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT, \
+    INV_WIDTH, INV_HEIGHT, \
+    INV_HALF_WIDTH, INV_HALF_HEIGHT, \
+    CHAT_MENU_WIDTH, CHAT_MENU_HEIGHT, \
+    CHAT_MENU_RECENT_WIDTH, CHAT_MENU_RECENT_HEIGHT, \
+    DISPLAY_WIDTH, DISPLAY_HEIGHT
 from ocvbot import input
 from ocvbot import misc
-from ocvbot import CLIENT_WIDTH, CLIENT_HEIGHT,\
-                   GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT, \
-                   INV_WIDTH, INV_HEIGHT, \
-                   INV_HALF_WIDTH, INV_HALF_HEIGHT, \
-                   CHAT_MENU_WIDTH, CHAT_MENU_HEIGHT, \
-                   CHAT_MENU_RECENT_WIDTH, CHAT_MENU_RECENT_HEIGHT, \
-                   DISPLAY_WIDTH, DISPLAY_HEIGHT
 
 client_status = ''
 
@@ -214,6 +214,23 @@ def orient(display_width, display_height):
             raise RuntimeError('Could not find anchor!')
 
 
+def haystack_locate(needle, haystack, grayscale=False, conf=0.96):
+
+    target_image = pag.locate(needle, haystack,
+                              confidence=conf,
+                              grayscale=grayscale)
+    if target_image is not None:
+        log.debug('Found center of ' + str(needle) + ', ' +
+                  str(target_image))
+        return target_image
+
+    elif target_image is None:
+        log.debug('Cannot find center of ' + str(needle) +
+                  ', conf=' + str(conf))
+        return 1
+
+
+
 # TODO: Remove self.haystack functionality as smaller coordinate spaces
 #  are used instead. Also, referring to both images and coordinate spaces
 #  as "haystacks" is confusing.
@@ -297,7 +314,7 @@ class Vision:
                           ' conf=' + str(conf))
                 return 1
 
-        if loctype == 'center':
+        elif loctype == 'center':
             target_image = pag.locateCenterOnScreen(needle,
                                                     confidence=conf,
                                                     grayscale=self.grayscale,
