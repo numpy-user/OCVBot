@@ -1,7 +1,9 @@
 - Polish and test current code for a 0.1 release.
 - Add GIFs and images to README.
-- Add a "terminology.md" file to the docs/ dir to describe terms like "needle" and "haystack."
-- Remove self.haystack from mlocate and redefine "coordinate space" as "haystack."
-- Create unit tests for basic low-level functions, such as those in input.py.
-- add keyboard shortcut to kill script while it's running.
+- Add a "terminology.md" file to the docs/ dir to describe terms like
+  "needle" and "haystack."
+- Create unit tests for basic low-level functions, such as those in
+  input.py.
+    - make tests playform-independent by removing dependence on Feh for
+      image viewing.
 - GUI with PySimpleGUI.
