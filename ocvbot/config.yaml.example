@@ -1,17 +1,43 @@
-# miner_double_drop() function
-drop_sapphire: True
-drop_emerald: True
-drop_ruby: True
-drop_diamond: True
-drop_clue_geode: True
+# Rename this file to 'config.yaml' before doing anything else!!!
 
+
+# The 'script' field determines which script to run. The value for this
+#   field MUST be a number within single-quotes. Below is a list
+#   describing which numbers correspond to which scripts. In parenthesis
+#   is the path to the configuration directory for that script.
+
+# Make sure your client has already been configured with all the settings
+#   shown in client-configuration/common before you do anything else!
 script: '2'
-# 1: Lumbridge swamp drop mining copper
-# 2: Varrock east drop mining iron
+# 1: Lumbridge Swamp drop mining copper ore. (client-configuration/mining-lumbridge-swamp)
+# 2: Varrock East drop mining iron ore. (client-configuration/mining-varrock-east)
 
-# Side stone hotkeys
+# This is the path to the user's credential files. This can be a relative
+#   path (starting from ocvbot/ocvbot/) or an absolute path.
+# If you are on Linux, comment out the two fields below "WINDOWS PATHS"
+#   and remove the comments from the two fields below "LINUX PATHS".
+# WINDOWS PATHS
+username_file: 'credentials\username.txt'
+password_file: 'credentials\password.txt'
+# LINUX PATHS
+#username_file: 'credentials/username.txt'
+#password_file: 'credentials/password.txt'
+
+# These settings control whether the mining script should drop precious
+#   gems and other items that have been obtained randomly through mining.
+#   These settings are ignored if the mining script is configured for
+#   banking (not yet implemented).
+drop_sapphire: False
+drop_emerald: False
+drop_ruby: False
+drop_diamond: False
+# Clue geodes contain clue scrolls. Mining iron ore provides only "easy"
+#   clue scrolls.
+drop_clue_geode: False
+
+# This is the hotkey that's used to open the "Logout" tab in the side
+#   stone menu. Hotkeys are NOT SET BY DEFAULT, so make sure you turn
+#   them on, as shown by the images in client-configuration/common/.
 side_stone_logout: 'F12'
-
-# Credentials
-username_file: '/home/austin/ocvbot/ocvbot/credentials/username.txt'
-password_file: '/home/austin/ocvbot/ocvbot/credentials/password.txt'
+# It is assumed that the "Inventory" side stone tab has been bound to
+#   ESC.
