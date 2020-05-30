@@ -384,7 +384,7 @@ def drop_item(item, track=True,
                                                         move_durmax=800,
                                                         needle=item)
         if item_on_right != 1 and track is True:
-            start.items += 1
+            start.items_gathered += 1
         item_on_left = vis.vinv_left_half.click_image(loop_num=1,
                                                       click_sleep_befmin=10,
                                                       click_sleep_befmax=50,
@@ -394,7 +394,7 @@ def drop_item(item, track=True,
                                                       move_durmax=800,
                                                       needle=item)
         if item_on_left != 1 and track is True:
-            start.items += 1
+            start.items_gathered += 1
 
         # Search the entire inventory to check if the item is still
         #   there.
