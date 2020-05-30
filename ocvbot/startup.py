@@ -1,3 +1,5 @@
+import time
+
 import pyautogui as pag
 
 # Constants ------------------------------------------------------------
@@ -29,6 +31,9 @@ DISPLAY_WIDTH = pag.size().width
 DISPLAY_HEIGHT = pag.size().height
 
 # Stats ----------------------------------------------------------------
+
+# Used for tracking how long the script has been running.
+start_time = time.time()
 
 # The number of inventories a script has gone through.
 inventory = 0

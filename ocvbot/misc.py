@@ -1,6 +1,8 @@
 import random as rand
 import time
 
+from ocvbot import startup as start
+
 
 def rand_seconds(rmin=0, rmax=100):
     """
@@ -41,3 +43,18 @@ def sleep_rand(rmin=0, rmax=100):
     # log.debug('Sleeping for ' + str(sleeptime) + ' seconds.')
     time.sleep(sleeptime)
     return 0
+
+
+def bot_duration():
+    """
+    Determines how many seconds the bot has been running for. This timer
+    will be reset after every logout break.
+
+    Returns:
+          Returns an int containing the number of seconds the bot has
+          been running since its last logon.
+    """
+    current_time = time.time()
+    elapsed_time = start.start_time - current_time
+    elapsed_time = round(elapsed_time)
+    return elapsed_time

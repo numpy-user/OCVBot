@@ -125,6 +125,11 @@ def login(username_file='username.txt', password_file='password.txt',
                                                     loop_sleep_min=1000,
                                                     loop_sleep_max=3000)
             if logged_in != 1:
+                # Reset the timer that's used to count the number of
+                #   seconds the bot has been running for.
+                start.start_time = time.time()
+                log.info('Login: Script has been running for' + str(misc.bot_duration())
+                         + 'seconds')
                 # Make sure client camera is oriented correctly after
                 #   logging in.
                 pag.keyDown('Up')
