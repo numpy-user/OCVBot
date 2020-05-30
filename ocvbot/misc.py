@@ -1,3 +1,4 @@
+import datetime
 import logging as log
 import random as rand
 import time
@@ -46,19 +47,31 @@ def sleep_rand(rmin=0, rmax=100):
     return 0
 
 
-def bot_duration():
+def run_duration(human_readable=False):
     """
-    Determines how many seconds the bot has been running for. This timer
-    will be reset after every logout break.
+    Determines how many seconds the current "run" has been running. This
+    timer is reset when the bot logs in, or when the bot restarts.
+
+    Args:
+        human_readable (bool): Whether to return the number of seconds
+                               the bot has been running, or the amount
+                               of time in a HH:MM:SS format, default is
+                               false.
 
     Returns:
           Returns an int containing the number of seconds the bot has
           been running since its last logon.
     """
     current_time = time.time()
-    elapsed_time = start.start_time - current_time
-    elapsed_time = round(elapsed_time)
-    return elapsed_time
+    elapsed_time_seconds = round(current_time - start.start_time)
+
+    if human_readable is False:
+        return elapsed_time_seconds
+
+    elif human_readable is True:
+        elapsed_time_human_readable = datetime.timedelta(
+                                      seconds=elapsed_time_seconds)
+        return elapsed_time_human_readable
 
 
 def wait_rand(chance, second_chance=10,
