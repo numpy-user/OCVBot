@@ -94,7 +94,7 @@ def login(username_file='username.txt', password_file='password.txt',
 
     # Make sure the "Existing user" button is present.
     existing_user = vis.vdisplay.wait_for_image(needle='./needles/login-menu/'
-                                                'existing-user-button.png',
+                                                       'existing-user-button.png',
                                                 loop_num=1)
     if existing_user != 1 or ok_button != 1:
 
@@ -111,7 +111,7 @@ def login(username_file='username.txt', password_file='password.txt',
 
         # Click the 'click here to play' button in the postlogin menu.
         postlogin = vis.vdisplay.click_image(needle='./needles/'
-                                             'login-menu/orient-postlogin.png',
+                                                    'login-menu/orient-postlogin.png',
                                              conf=0.8,
                                              loop_num=50,
                                              loop_sleep_min=1000,
@@ -146,14 +146,14 @@ def login(username_file='username.txt', password_file='password.txt',
         raise RuntimeError("Cannot find existing user button!")
 
 
-def open_side_stone(side_stone_open, hotkey):
+def open_side_stone(side_stone, hotkey):
     """
     Open the specific side stone menu.
 
     Args:
-        side_stone_open (file): Filepath to an image of the desired side
-                                stone in its "open" state (i.e. with a
-                                red background).
+        side_stone (file): Filepath to an image of the desired side
+                           stone in its "closed" state (i.e. with a
+                           standard grey background).
         hotkey (str): The key used to open the desired side stone. This
                       is not set by default in the native client and
                       must be enabled.
@@ -163,23 +163,26 @@ def open_side_stone(side_stone_open, hotkey):
         Returns 1 in any other situation.
     """
 
-    stone_open = vis.vclient.wait_for_image(needle=side_stone_open, loop_num=1)
-    if stone_open != 1:
-        log.debug('Side stone already open')
+    stone_closed = vis.vside_stones.wait_for_image(needle=side_stone,
+                                                   loop_num=1)
+    if stone_closed == 1:
+        log.info('Side stone already open')
         return 0
+    elif stone_closed != 1:
+        input.keypress(hotkey)
+        misc.sleep_rand(300, 1000)
 
     # Try a total of 5 times to open the desired side stone menu using
     #   the hotkey.
     for tries in range(1, 5):
-        input.keypress(hotkey)
-        stone_open = vis.vclient.wait_for_image(needle=side_stone_open,
-                                                loop_num=10,
-                                                loop_sleep_min=1000,
-                                                loop_sleep_max=3000)
-        if stone_open != 1:
+        stone_closed = vis.vside_stones.wait_for_image(needle=side_stone,
+                                                       loop_num=2,
+                                                       loop_sleep_min=1000,
+                                                       loop_sleep_max=2000)
+        if stone_closed == 1:
             log.info('Opened side stone')
             return 0
-        elif stone_open == 1:
+        elif stone_closed != 1:
             # Make sure the bank window isn't open, which would block
             #   access to the side stones.
             vis.vgame_screen.click_image(
@@ -214,7 +217,7 @@ def logout(hotkey):
                         display_width=start.DISPLAY_WIDTH)
     (client_status, unused_var) = orient
     if client_status == 'logged_in':
-        open_side_stone('./needles/side-stones/logout', hotkey=hotkey)
+        open_side_stone('./needles/side-stones/logout.png', hotkey=hotkey)
         logout_button = vclient.click_image(needle='./needles/buttons/'
                                                    'logout.png')
         if logout_button != 1:
@@ -230,8 +233,8 @@ def logout(hotkey):
                 vclient.click_image(needle='./needles/buttons/'
                                            'logout.png')
                 logged_out = vclient.wait_for_image(needle='./needles/'
-                                                    'login-menu/'
-                                                    'orient-logged-out.png',
+                                                           'login-menu/'
+                                                           'orient-logged-out.png',
                                                     loop_num=30,
                                                     loop_sleep_min=1000,
                                                     loop_sleep_max=1500)
@@ -286,6 +289,38 @@ def logout_rand(chance, wait_min=5, wait_max=120):
     return 0
 
 
+def check_skills():
+    """
+    Used to mimic human-like behavior. Checks the stats of a random
+    skill.
+    """
+    with open('./config.yaml') as config:
+        config_file = yaml.safe_load(config)
+
+    open_side_stone('./needles/side-stones/skills.png',
+                    config_file['side_stone_skills'])
+    input.move_to(vis.vinv_left, vis.vinv_top,
+                  xmin=0, xmax=start.INV_WIDTH,
+                  ymin=0, ymax=start.INV_HEIGHT)
+    misc.sleep_rand(500, 3000)
+    return 0
+
+
+def human_behavior_rand(chance):
+    roll = rand.randint(1, chance)
+    log.info('Human behavior rolled ' + str(roll))
+    if roll == chance:
+        log.info('Attempting to act human.')
+        roll = rand.randint(1, 1)
+        if roll == 1:
+            check_skills()
+        else:
+            return 0
+    elif roll != chance:
+        return 0
+    return 0
+
+
 def drop_item(item, track=True,
               wait_chance=120, wait_min=5000, wait_max=20000):
     """
@@ -311,7 +346,7 @@ def drop_item(item, track=True,
 
     # Make sure the inventory tab is selected in the main menu.
     log.debug('Making sure inventory is selected')
-    open_side_stone('./needles/side-stones/inventory-selected.png', 'Escape')
+    open_side_stone('./needles/side-stones/inventory.png', 'Escape')
 
     item_remains = vis.vinv.wait_for_image(loop_num=1, needle=item)
 

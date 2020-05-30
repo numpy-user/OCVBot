@@ -15,6 +15,9 @@ INV_HEIGHT = 262
 INV_HALF_WIDTH = round((INV_WIDTH / 2) + 5)
 INV_HALF_HEIGHT = round(INV_HEIGHT / 2)
 
+SIDE_STONES_WIDTH = 248
+SIDE_STONES_HEIGHT = 366
+
 # Width and height of just the game screen in the game client.
 GAME_SCREEN_WIDTH = 512
 GAME_SCREEN_HEIGHT = 334

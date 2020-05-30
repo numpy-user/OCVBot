@@ -369,6 +369,14 @@ vgame_screen = Vision(left=vgame_screen_left, top=vgame_screen_top,
                       width=start.GAME_SCREEN_WIDTH,
                       height=start.GAME_SCREEN_HEIGHT)
 
+# The player's inventory, plus the "side stone" tabs that open all the
+#   different menus.
+vside_stones_left = vclient_left + 521
+vside_stones_top = vclient_top + 169
+vside_stones = Vision(left=vside_stones_left, top=vside_stones_top,
+                      width=start.SIDE_STONES_WIDTH,
+                      height=start.SIDE_STONES_HEIGHT)
+
 # Chat menu.
 vchat_menu_left = vclient_left + 7
 vchat_menu_top = vclient_top + 345
