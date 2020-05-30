@@ -87,7 +87,7 @@ def login(username_file='username.txt', password_file='password.txt',
 
     # Click the "Ok" button if it's present at the login screen.
     ok_button = vis.vdisplay.click_image(needle='./needles/login-menu/'
-                                         'ok-button.png',
+                                                'ok-button.png',
                                          loop_num=1)
 
     misc.sleep_rand(cred_sleep_min, cred_sleep_max)
@@ -128,8 +128,8 @@ def login(username_file='username.txt', password_file='password.txt',
                 # Reset the timer that's used to count the number of
                 #   seconds the bot has been running for.
                 start.start_time = time.time()
-                log.info('Login: Script has been running for' + str(misc.bot_duration())
-                         + 'seconds')
+                log.info('Login: Script has been running for' +
+                         str(misc.bot_duration()) + 'seconds')
                 # Make sure client camera is oriented correctly after
                 #   logging in.
                 pag.keyDown('Up')
@@ -168,12 +168,6 @@ def open_side_stone(side_stone_open, hotkey):
         log.debug('Side stone already open')
         return 0
 
-    # If side stone is not already open, check to make sure the bank
-    #   window is not blocking it.
-    vis.vgame_screen.click_image(needle='./needles/buttons/bank-close.png',
-                                 loop_num=2,
-                                 loop_sleep_min=500, loop_sleep_max=1000)
-
     # Try a total of 5 times to open the desired side stone menu using
     #   the hotkey.
     for tries in range(1, 5):
@@ -185,8 +179,13 @@ def open_side_stone(side_stone_open, hotkey):
         if stone_open != 1:
             log.info('Opened side stone')
             return 0
-    log.error('Could not open side stone! Is the hotkey correct?')
-    return 1
+        elif stone_open == 1:
+            # Make sure the bank window isn't open, which would block
+            #   access to the side stones.
+            vis.vgame_screen.click_image(
+                needle='./needles/buttons/bank-window-close.png', loop_num=1)
+
+    raise RuntimeError('Could not open side stone! Is the hotkey correct?')
 
 
 def logout(hotkey):
@@ -312,10 +311,7 @@ def drop_item(item, track=True,
 
     # Make sure the inventory tab is selected in the main menu.
     log.debug('Making sure inventory is selected')
-    inv_selected = vis.vclient.wait_for_image(needle='./needles/side-stones/'
-                                                     'inventory-selected.png')
-    if inv_selected == 1:
-        input.keypress('Escape')
+    open_side_stone('./needles/side-stones/inventory-selected.png', 'Escape')
 
     item_remains = vis.vinv.wait_for_image(loop_num=1, needle=item)
 
