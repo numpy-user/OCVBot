@@ -1,3 +1,4 @@
+import logging as log
 import random as rand
 import time
 
@@ -58,3 +59,45 @@ def bot_duration():
     elapsed_time = start.start_time - current_time
     elapsed_time = round(elapsed_time)
     return elapsed_time
+
+
+def wait_rand(chance, second_chance=10,
+              wait_min=10000, wait_max=60000):
+    """
+    Roll for a chance to do nothing for the specified period of time.
+
+    Args:
+        chance (int): The number that must be rolled for the wait to be
+                      called. For example, if change is 25, then there
+                      is a 1 in 25 chance for the roll to pass.
+        second_chance (int): The number that must be rolled for an
+                             additional wait to be called if the first
+                             roll passes, default is 10. By default,
+                             this means that 10% of waits that pass the
+                             first roll wait for an additional period of
+                             time.
+        wait_min (int): The minimum number of miliseconds to wait if the
+                        roll passes, default is 10000.
+        wait_max (int): The maximum number of miliseconds to wait if the
+                        roll passes, default is 60000.
+
+    Returns:
+        Always returns 0.
+    """
+
+    wait_roll = rand.randint(1, chance)
+    if wait_roll == chance:
+        log.info('Random wait called.')
+        sleeptime = misc.rand_seconds(wait_min, wait_max)
+        log.info('Sleeping for ' + str(round(sleeptime)) + ' seconds.')
+        time.sleep(sleeptime)
+
+        # Perform an additional wait roll so that (1/second_chance)
+        #   waits are extra long.
+        wait_roll = rand.randint(1, second_chance)
+        if wait_roll == 10:
+            log.info('Additional random wait called.')
+            sleeptime = misc.rand_seconds(wait_min, wait_max)
+            log.info('Sleeping for ' + str(round(sleeptime)) + ' seconds.')
+            time.sleep(sleeptime)
+    return 0

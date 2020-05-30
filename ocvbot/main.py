@@ -3,7 +3,7 @@ import sys
 
 import yaml
 
-from ocvbot import skilling, behavior, vision as vis, startup as start
+from ocvbot import skilling, behavior, misc, vision as vis, startup as start
 
 # from PIL import ImageOps
 # import tkinter
@@ -14,9 +14,6 @@ with open('./config.yaml') as config:
     config_file = yaml.safe_load(config)
 
 
-# TODO: Check the time after every while loop to ensure the function
-#   doesn't run for too long. Get epoch time and subtract start time
-#   from current time to get total seconds function has been running.
 def mining_lumbridge_swamp():
     """
     Script for mining copper in the mine in Lumbridge swamp.
@@ -26,14 +23,13 @@ def mining_lumbridge_swamp():
     """
 
     while True:
-        # Ensure the client is logged in.
+        # Ensure the client is logged in before starting.
         client_status = vis.orient(start.DISPLAY_WIDTH, start.DISPLAY_HEIGHT)
         (client_status, unused_var) = client_status
         if client_status == 'logged_out':
             behavior.login(username_file=config_file['username_file'],
                            password_file=config_file['password_file'])
 
-        # Begin script.
         miner = skilling.miner_double_drop(
             rock1=('./needles/game-screen/lumbridge-mine/'
                    'east-full.png',
@@ -55,6 +51,8 @@ def mining_lumbridge_swamp():
         #   logged in again.
         if miner == 0:
             log.info('Reorienting client')
+            log.info('Script has been running for' + str(misc.bot_duration())
+                     + 'seconds')
 
 
 def mining_varrock_east():
@@ -66,7 +64,6 @@ def mining_varrock_east():
     """
 
     while True:
-
         # Ensure the client is logged in.
         client_status = vis.orient(start.DISPLAY_WIDTH, start.DISPLAY_HEIGHT)
         (client_status, unused_var) = client_status
@@ -74,7 +71,6 @@ def mining_varrock_east():
             behavior.login(username_file=config_file['username_file'],
                            password_file=config_file['password_file'])
 
-        # Begin script.
         miner = skilling.miner_double_drop(
                 rock1=('./needles/game-screen/varrock-east-mine/'
                        'north-full2.png',

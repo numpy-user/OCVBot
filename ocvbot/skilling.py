@@ -2,7 +2,7 @@ import logging as log
 
 import yaml
 
-from ocvbot import behavior, input, vision as vis
+from ocvbot import behavior, input, vision as vis, misc
 
 with open('./config.yaml') as config:
     config_file = yaml.safe_load(config)
@@ -90,7 +90,7 @@ def miner_double_drop(rock1, rock2, ore, ore_type,
                 log.info('Waiting for mining to start.')
 
                 # Small chance to do nothing for a short while.
-                behavior.wait_rand(chance=100, wait_min=10000, wait_max=60000)
+                misc.wait_rand(chance=100, wait_min=10000, wait_max=60000)
 
                 # Once the rock has been clicked on, wait for mining to
                 #   start by monitoring chat.

@@ -6,8 +6,8 @@ import pyautogui as pag
 import yaml
 
 from ocvbot import input, misc, vision as vis, startup as start
-
 # TODO
+from ocvbot.misc import wait_rand
 
 """
 def chat(context)
@@ -144,48 +144,6 @@ def login(username_file='username.txt', password_file='password.txt',
 
     elif existing_user == 1:
         raise RuntimeError("Cannot find existing user button!")
-
-
-def wait_rand(chance, second_chance=10,
-              wait_min=10000, wait_max=60000):
-    """
-    Roll for a chance to do nothing for the specified period of time.
-
-    Args:
-        chance (int): The number that must be rolled for the wait to be
-                      called. For example, if change is 25, then there
-                      is a 1 in 25 chance for the roll to pass.
-        second_chance (int): The number that must be rolled for an
-                             additional wait to be called if the first
-                             roll passes, default is 10. By default,
-                             this means that 10% of waits that pass the
-                             first roll wait for an additional period of
-                             time.
-        wait_min (int): The minimum number of miliseconds to wait if the
-                        roll passes, default is 10000.
-        wait_max (int): The maximum number of miliseconds to wait if the
-                        roll passes, default is 60000.
-
-    Returns:
-        Always returns 0.
-    """
-
-    wait_roll = rand.randint(1, chance)
-    if wait_roll == chance:
-        log.info('Random wait called.')
-        sleeptime = misc.rand_seconds(wait_min, wait_max)
-        log.info('Sleeping for ' + str(round(sleeptime)) + ' seconds.')
-        time.sleep(sleeptime)
-
-        # Perform an additional wait roll so that (1/second_chance)
-        #   waits are extra long.
-        wait_roll = rand.randint(1, second_chance)
-        if wait_roll == 10:
-            log.info('Additional random wait called.')
-            sleeptime = misc.rand_seconds(wait_min, wait_max)
-            log.info('Sleeping for ' + str(round(sleeptime)) + ' seconds.')
-            time.sleep(sleeptime)
-    return 0
 
 
 def open_side_stone(side_stone_open, hotkey):
@@ -353,7 +311,7 @@ def drop_item(item, track=True,
     #   item-dropping more randomized.
 
     # Make sure the inventory tab is selected in the main menu.
-    log.info('Making sure inventory is selected')
+    log.debug('Making sure inventory is selected')
     inv_selected = vis.vclient.wait_for_image(needle='./needles/side-stones/'
                                                      'inventory-selected.png')
     if inv_selected == 1:
