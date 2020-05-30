@@ -88,7 +88,7 @@ def wait_rand(chance, second_chance=10,
     wait_roll = rand.randint(1, chance)
     if wait_roll == chance:
         log.info('Random wait called.')
-        sleeptime = misc.rand_seconds(wait_min, wait_max)
+        sleeptime = rand_seconds(wait_min, wait_max)
         log.info('Sleeping for ' + str(round(sleeptime)) + ' seconds.')
         time.sleep(sleeptime)
 
@@ -97,7 +97,7 @@ def wait_rand(chance, second_chance=10,
         wait_roll = rand.randint(1, second_chance)
         if wait_roll == 10:
             log.info('Additional random wait called.')
-            sleeptime = misc.rand_seconds(wait_min, wait_max)
+            sleeptime = rand_seconds(wait_min, wait_max)
             log.info('Sleeping for ' + str(round(sleeptime)) + ' seconds.')
             time.sleep(sleeptime)
     return 0
