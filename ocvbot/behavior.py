@@ -86,9 +86,9 @@ def login(username_file='username.txt', password_file='password.txt',
     log.info('Logging in.')
 
     # Click the "Ok" button if it's present at the login screen.
-    vis.vdisplay.click_image(needle='./needles/login-menu/'
-                                    'ok-button.png',
-                             loop_num=1)
+    ok_button = vis.vdisplay.click_image(needle='./needles/login-menu/'
+                                         'ok-button.png',
+                                         loop_num=1)
 
     misc.sleep_rand(cred_sleep_min, cred_sleep_max)
 
@@ -96,7 +96,7 @@ def login(username_file='username.txt', password_file='password.txt',
     existing_user = vis.vdisplay.wait_for_image(needle='./needles/login-menu/'
                                                 'existing-user-button.png',
                                                 loop_num=1)
-    if existing_user != 1:
+    if existing_user != 1 or ok_button != 1:
 
         # Enter credentials.
         misc.sleep_rand(cred_sleep_min, cred_sleep_max)
