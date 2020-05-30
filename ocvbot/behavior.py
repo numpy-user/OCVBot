@@ -5,7 +5,7 @@ import time
 import pyautogui as pag
 import yaml
 
-from ocvbot import input, misc, vision, DISPLAY_HEIGHT, DISPLAY_WIDTH
+from ocvbot import input, misc, vision as vis
 
 # TODO
 
@@ -76,28 +76,26 @@ def login(username_file='username.txt', password_file='password.txt',
         Always returns 0.
     """
 
-    from ocvbot.vision import vdisplay
-
     # Check to make extra sure the client is logged out.
-    logged_out = vdisplay.click_image(needle='./needles/login-menu/'
-                                             'orient-logged-out.png',
-                                      loop_num=1)
+    logged_out = vis.vdisplay.click_image(needle='./needles/login-menu/'
+                                                 'orient-logged-out.png',
+                                          loop_num=1)
     if logged_out == 1:
         raise RuntimeError("Cannot find client!")
 
     log.info('Logging in.')
 
     # Click the "Ok" button if it's present at the login screen.
-    vdisplay.click_image(needle='./needles/login-menu/'
-                                'ok-button.png',
-                                loop_num=1)
+    vis.vdisplay.click_image(needle='./needles/login-menu/'
+                                    'ok-button.png',
+                             loop_num=1)
 
     misc.sleep_rand(cred_sleep_min, cred_sleep_max)
 
     # Make sure the "Existing user" button is present.
-    existing_user = vdisplay.wait_for_image(needle='./needles/login-menu/'
-                                            'existing-user-button.png',
-                                            loop_num=1)
+    existing_user = vis.vdisplay.wait_for_image(needle='./needles/login-menu/'
+                                                'existing-user-button.png',
+                                                loop_num=1)
     if existing_user != 1:
 
         # Enter credentials.
@@ -112,20 +110,20 @@ def login(username_file='username.txt', password_file='password.txt',
         misc.sleep_rand(login_sleep_min, login_sleep_max)
 
         # Click the 'click here to play' button in the postlogin menu.
-        postlogin = vdisplay.click_image(needle='./needles/'
-                                         'login-menu/orient-postlogin.png',
-                                         conf=0.8,
-                                         loop_num=50,
-                                         loop_sleep_min=1000,
-                                         loop_sleep_max=3000)
+        postlogin = vis.vdisplay.click_image(needle='./needles/'
+                                             'login-menu/orient-postlogin.png',
+                                             conf=0.8,
+                                             loop_num=50,
+                                             loop_sleep_min=1000,
+                                             loop_sleep_max=3000)
         if postlogin != 1:
             misc.sleep_rand(postlogin_sleep_min, postlogin_sleep_max)
             # Wait for the orient.png to appear in the client window.
-            logged_in = vdisplay.wait_for_image(needle='./needles/minimap/'
-                                                'orient.png',
-                                                loop_num=50,
-                                                loop_sleep_min=1000,
-                                                loop_sleep_max=3000)
+            logged_in = vis.vdisplay.wait_for_image(needle='./needles/minimap/'
+                                                           'orient.png',
+                                                    loop_num=50,
+                                                    loop_sleep_min=1000,
+                                                    loop_sleep_max=3000)
             if logged_in != 1:
                 # Make sure client camera is oriented correctly after
                 #   logging in.
@@ -202,26 +200,25 @@ def open_side_stone(side_stone_open, hotkey):
         Returns 1 in any other situation.
     """
 
-    from ocvbot.vision import vclient, vgame_screen
-    stone_open = vclient.wait_for_image(needle=side_stone_open, loop_num=1)
+    stone_open = vis.vclient.wait_for_image(needle=side_stone_open, loop_num=1)
     if stone_open != 1:
         log.debug('Side stone already open')
         return 0
 
     # If side stone is not already open, check to make sure the bank
     #   window is not blocking it.
-    vgame_screen.click_image(needle='./needles/buttons/bank-close.png',
-                             loop_num=2,
-                             loop_sleep_min=500, loop_sleep_max=1000)
+    vis.vgame_screen.click_image(needle='./needles/buttons/bank-close.png',
+                                 loop_num=2,
+                                 loop_sleep_min=500, loop_sleep_max=1000)
 
     # Try a total of 5 times to open the desired side stone menu using
     #   the hotkey.
     for tries in range(1, 5):
         input.keypress(hotkey)
-        stone_open = vclient.wait_for_image(needle=side_stone_open,
-                                            loop_num=10,
-                                            loop_sleep_min=1000,
-                                            loop_sleep_max=3000)
+        stone_open = vis.vclient.wait_for_image(needle=side_stone_open,
+                                                loop_num=10,
+                                                loop_sleep_min=1000,
+                                                loop_sleep_max=3000)
         if stone_open != 1:
             log.info('Opened side stone')
             return 0
@@ -251,8 +248,8 @@ def logout(hotkey):
 
     from ocvbot.vision import vclient
     # First, make sure the client is logged in.
-    orient = vision.orient(display_height=DISPLAY_HEIGHT,
-                           display_width=DISPLAY_WIDTH)
+    orient = vis.orient(display_height=vis.DISPLAY_HEIGHT,
+                        display_width=vis.DISPLAY_WIDTH)
     (client_status, unused_var) = orient
     if client_status == 'logged_in':
         open_side_stone('./needles/side-stones/logout', hotkey=hotkey)
@@ -260,7 +257,7 @@ def logout(hotkey):
                                                    'logout.png')
         if logout_button != 1:
             logged_out = vclient.wait_for_image(needle='./needles/login-menu/'
-                                                'orient-logged-out.png',
+                                                       'orient-logged-out.png',
                                                 loop_num=50,
                                                 loop_sleep_min=1000,
                                                 loop_sleep_max=3000)
@@ -350,17 +347,14 @@ def drop_item(item, track=True,
     #   and rotate dropping items randomly among each quadrant to make
     #   item-dropping more randomized.
 
-    from ocvbot.vision import vinv, vinv_right_half, vinv_left_half, vclient
-    from ocvbot import items
-
     # Make sure the inventory tab is selected in the main menu.
     log.info('Making sure inventory is selected')
-    inv_selected = vclient.wait_for_image(needle='./needles/side-stones/'
-                                                 'inventory-selected.png')
+    inv_selected = vis.vclient.wait_for_image(needle='./needles/side-stones/'
+                                                     'inventory-selected.png')
     if inv_selected == 1:
         input.keypress('Escape')
 
-    item_remains = vinv.wait_for_image(loop_num=1, needle=item)
+    item_remains = vis.vinv.wait_for_image(loop_num=1, needle=item)
 
     if item_remains != 1:
         log.info('Dropping ' + str(item) + '.')
@@ -376,30 +370,30 @@ def drop_item(item, track=True,
         # Alternate between searching for the item in left half and the
         #   right half of the player's inventory. This helps reduce the
         #   chances the bot will click on the same item twice.
-        item_on_right = vinv_right_half.click_image(loop_num=1,
-                                                    click_sleep_befmin=10,
-                                                    click_sleep_befmax=50,
-                                                    click_sleep_afmin=50,
-                                                    click_sleep_afmax=300,
-                                                    move_durmin=50,
-                                                    move_durmax=800,
-                                                    needle=item)
+        item_on_right = vis.vinv_right_half.click_image(loop_num=1,
+                                                        click_sleep_befmin=10,
+                                                        click_sleep_befmax=50,
+                                                        click_sleep_afmin=50,
+                                                        click_sleep_afmax=300,
+                                                        move_durmin=50,
+                                                        move_durmax=800,
+                                                        needle=item)
         if item_on_right != 1 and track is True:
-            items += 1
-        item_on_left = vinv_left_half.click_image(loop_num=1,
-                                                  click_sleep_befmin=10,
-                                                  click_sleep_befmax=50,
-                                                  click_sleep_afmin=50,
-                                                  click_sleep_afmax=300,
-                                                  move_durmin=50,
-                                                  move_durmax=800,
-                                                  needle=item)
+            vis.items += 1
+        item_on_left = vis.vinv_left_half.click_image(loop_num=1,
+                                                      click_sleep_befmin=10,
+                                                      click_sleep_befmax=50,
+                                                      click_sleep_afmin=50,
+                                                      click_sleep_afmax=300,
+                                                      move_durmin=50,
+                                                      move_durmax=800,
+                                                      needle=item)
         if item_on_left != 1 and track is True:
-            items += 1
+            vis.items += 1
 
         # Search the entire inventory to check if the item is still
         #   there.
-        item_remains = vinv.wait_for_image(loop_num=1, needle=item)
+        item_remains = vis.vinv.wait_for_image(loop_num=1, needle=item)
 
         # Chance to briefly wait while dropping items.
         wait_rand(chance=wait_chance, wait_min=wait_min, wait_max=wait_max)

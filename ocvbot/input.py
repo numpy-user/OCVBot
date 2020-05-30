@@ -3,7 +3,6 @@ import random as rand
 
 import pyautogui as pag
 
-from ocvbot import CLIENT_WIDTH, CLIENT_HEIGHT
 from ocvbot import misc
 
 
@@ -71,47 +70,6 @@ def move_to(x, y,
                (y + yrand),
                move_duration(durmin=durmin, durmax=durmax),
                move_path())
-    return 0
-
-
-def move_away(direction=rand.choice(['left', 'right'])):
-    """
-    Moves the mouse to a random spot on right half or the left half
-    of the client window, away from wherever it clicked, to prevent
-    tooltips from interfering with the script.
-
-    Args:
-        direction: Which side of the screen to move the mouse, by
-                   default this function randomly selects between left
-                   and right.
-
-    Returns:
-        Always returns 0.
-    """
-    # TODO: Make this function more intelligent by moving to a random
-    #   area on the display, but NOT into any of the display's corners,
-    #   since this will trigger PyAutoGUI's fail-safe and terminate.
-
-    log.debug('Moving mouse away towards ' + str(direction) +
-              ' side of client.')
-    misc.sleep_rand(0, 500)
-
-    if direction == 'right':
-        # TODO: Refactor this to input.move_to.
-        pag.moveTo(
-            (rand.randint((CLIENT_WIDTH / 2),
-                          CLIENT_WIDTH)),
-            (rand.randint(0, CLIENT_HEIGHT)),
-            move_duration(), move_path())
-        misc.sleep_rand(0, 500)
-
-    elif direction == 'left':
-        pag.moveTo(
-            (rand.randint(0, (CLIENT_WIDTH / 2))),
-            (rand.randint(0, CLIENT_HEIGHT)),
-            move_duration(), move_path())
-        misc.sleep_rand(0, 500)
-
     return 0
 
 

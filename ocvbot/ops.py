@@ -1,27 +1,22 @@
 # The OSRS Positioning System
 
 import logging as log
-import yaml
+import os
 
 import pyautogui
-from ocvbot import behavior, input
-from ocvbot import DISPLAY_WIDTH, DISPLAY_HEIGHT, \
-    skilling, behavior, vision
-vision.init_vision()
 
-import os
+from ocvbot import input
+
 
 def main():
     os.chdir('/home/austin/ocvbot/ocvbot')
     # Find chunk within world
-    #chunk = pyautogui.locate('./world3-6.png',
-                             #'./world.png', confidence=0.9)
+    # chunk = pyautogui.locate('./world3-6.png',
+    # './world.png', confidence=0.9)
     # Break up chunk tuple
-    #(chunk_left, chunk_top, chunk_width, chunk_height) = chunk
+    # (chunk_left, chunk_top, chunk_width, chunk_height) = chunk
     chunk_left = 4608
     chunk_top = 2304
-    chunk_width = 768
-    chunk_height = 768
 
     # Find needle within chunk
     needle = pyautogui.locate('./minimap-slice.png',
@@ -34,13 +29,18 @@ def main():
     needle_world_top = needle_chunk_top + chunk_top
 
     # Get center of needle within world
-    needle_world_center_x = int((needle_world_left + needle_width) - (needle_width / 2))
-    needle_world_center_y = int((needle_world_top + needle_height) - (needle_height / 2))
+    needle_world_center_x = int(
+        (needle_world_left + needle_width) - (needle_width / 2))
+    needle_world_center_y = int(
+        (needle_world_top + needle_height) - (needle_height / 2))
 
     # Get center of needle within client window
     from ocvbot.vision import vclient
     print("vclient is", vclient)
-    needle_client_center = vclient.wait_for_image(loctype='center', needle='/home/austin/ocvbot/ocvbot/minimap-slice.png', loop_num=1)
+    needle_client_center = vclient.wait_for_image(loctype='center',
+                                                  needle='/home/austin/ocvbot/'
+                                                  'ocvbot/minimap-slice.png',
+                                                  loop_num=1)
     (needle_client_center_x, needle_client_center_y) = needle_client_center
 
     # Get destination
@@ -72,7 +72,8 @@ def main():
         click_pos_y = needle_client_center_y + dest_distance_y
 
     # Now, make the click
-    input.click_coord(click_pos_x, click_pos_y)
+    input.click_coord(click_pos_x, click_pos_y, width=0, height=0)
+
 
 if __name__ == '__main__':
     main()

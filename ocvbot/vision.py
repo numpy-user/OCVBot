@@ -2,166 +2,38 @@ import logging as log
 
 import pyautogui as pag
 
-from ocvbot import CLIENT_WIDTH, CLIENT_HEIGHT, \
-    GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT, \
-    INV_WIDTH, INV_HEIGHT, \
-    INV_HALF_WIDTH, INV_HALF_HEIGHT, \
-    CHAT_MENU_WIDTH, CHAT_MENU_HEIGHT, \
-    CHAT_MENU_RECENT_WIDTH, CHAT_MENU_RECENT_HEIGHT, \
-    DISPLAY_WIDTH, DISPLAY_HEIGHT
-from ocvbot import input
-from ocvbot import misc
+from ocvbot import input, misc
 
-client_status = ''
+# Constants ------------------------------------------------------------
 
-vdisplay = ''
+# See ./docs/client_anatomy.png for more info.
+# Width and height of the entire game client.
+CLIENT_WIDTH = 765
+CLIENT_HEIGHT = 503
 
-vclient = ''
-vclient_left = ''
-vclient_top = ''
+# Width and height of the inventory screen, in pixels.
+INV_WIDTH = 186
+INV_HEIGHT = 262
+INV_HALF_WIDTH = round((INV_WIDTH / 2) + 5)
+INV_HALF_HEIGHT = round(INV_HEIGHT / 2)
 
-vinv = ''
-vinv_left = ''
-vinv_top = ''
+# Width and height of just the game screen in the game client.
+GAME_SCREEN_WIDTH = 512
+GAME_SCREEN_HEIGHT = 334
 
-vinv_bottom = ''
-vinv_bottom_left = ''
-vinv_bottom_top = ''
+CHAT_MENU_WIDTH = 506
+CHAT_MENU_HEIGHT = 129
 
-vinv_right_half = ''
-vinv_right_half_left = ''
-vinv_right_half_top = ''
+# Dimensions of the most recent "line" in the chat history.
+CHAT_MENU_RECENT_WIDTH = 490
+CHAT_MENU_RECENT_HEIGHT = 17
 
-vinv_left_half = ''
-vinv_left_half_left = ''
-vinv_left_half_top = ''
-
-vgame_screen = ''
-vgame_screen_left = ''
-vgame_screen_top = ''
-
-vchat_menu = ''
-vchat_menu_left = ''
-vchat_menu_top = ''
-
-vchat_menu_recent = ''
-vchat_menu_recent_left = ''
-vchat_menu_recent_top = ''
+# Get the display size in pixels.
+DISPLAY_WIDTH = pag.size().width
+DISPLAY_HEIGHT = pag.size().height
 
 # TODO: Add vision object that covers the "stone tab" buttons, this would
 #   make the object's coordinate space slightly larger than the inventory.
-
-
-def init_vision():
-    """
-    Initializes the core objects for the Vision class.
-    """
-    global client_status
-
-    global vdisplay
-
-    global vclient
-    global vclient_left
-    global vclient_top
-
-    global vinv
-    global vinv_left
-    global vinv_top
-
-    global vinv_bottom
-    global vinv_bottom_left
-    global vinv_bottom_top
-
-    global vinv_right_half
-    global vinv_right_half_left
-    global vinv_right_half_top
-
-    global vinv_left_half
-    global vinv_left_half_left
-    global vinv_left_half_top
-
-    global vgame_screen
-    global vgame_screen_left
-    global vgame_screen_top
-
-    global vchat_menu
-    global vchat_menu_left
-    global vchat_menu_top
-
-    global vchat_menu_recent
-    global vchat_menu_recent_left
-    global vchat_menu_recent_top
-
-    (client_status, anchor) = orient(display_width=DISPLAY_WIDTH,
-                                     display_height=DISPLAY_HEIGHT)
-    (vclient_left, vclient_top) = anchor
-
-    if client_status == 'logged_in':
-        vclient_left -= 735
-        vclient_top -= 21
-    elif client_status == 'logged_out':
-        vclient_left -= 183
-        vclient_top -= 59
-
-    # Now we can create an object with the game client's X and Y
-    #   coordinates. This will allow other functions to search for
-    #   needles within the "client" object's coordinates, rather than
-    #   within the entire display's coordinates, which is much faster.
-    vclient = Vision(left=vclient_left, width=CLIENT_WIDTH,
-                     top=vclient_top, height=CLIENT_HEIGHT)
-
-    # The player's inventory.
-    vinv_left = vclient_left + 548
-    vinv_top = vclient_top + 205
-    vinv = Vision(left=vinv_left, top=vinv_top,
-                  width=INV_WIDTH, height=INV_HEIGHT)
-
-    # Bottom half of the player's inventory.
-    vinv_bottom_left = vinv_left
-    vinv_bottom_top = vinv_top + INV_HALF_HEIGHT
-    vinv_bottom = Vision(left=vinv_bottom_left, top=vinv_bottom_top,
-                         width=INV_WIDTH, height=INV_HALF_HEIGHT)
-
-    # Right half of the player's inventory.
-    vinv_right_half_left = (vinv_left + INV_HALF_WIDTH) - 5
-    vinv_right_half_top = vinv_top
-    vinv_right_half = Vision(left=vinv_right_half_left,
-                             top=vinv_right_half_top,
-                             width=INV_HALF_WIDTH,
-                             height=INV_HEIGHT)
-
-    # Left half of the player's inventory.
-    vinv_left_half_left = vinv_left
-    vinv_left_half_top = vinv_top
-    vinv_left_half = Vision(left=vinv_left_half_left,
-                            top=vinv_left_half_top,
-                            width=INV_HALF_WIDTH,
-                            height=INV_HEIGHT)
-
-    # Gameplay screen.
-    vgame_screen_left = vclient_left + 4
-    vgame_screen_top = vclient_top + 4
-    vgame_screen = Vision(left=vgame_screen_left, top=vgame_screen_top,
-                          width=GAME_SCREEN_WIDTH, height=GAME_SCREEN_HEIGHT)
-
-    # Chat menu.
-    vchat_menu_left = vclient_left + 7
-    vchat_menu_top = vclient_top + 345
-    vchat_menu = Vision(left=vchat_menu_left, top=vchat_menu_top,
-                        width=CHAT_MENU_WIDTH, height=CHAT_MENU_HEIGHT)
-
-    # The most recent chat message.
-    vchat_menu_recent_left = vchat_menu_left - 3
-    vchat_menu_recent_top = vchat_menu_top + 98
-    vchat_menu_recent = Vision(left=vchat_menu_recent_left,
-                               top=vchat_menu_recent_top,
-                               width=CHAT_MENU_RECENT_WIDTH,
-                               height=CHAT_MENU_RECENT_HEIGHT)
-
-    # The entire display.
-    vdisplay = Vision(left=0, width=DISPLAY_WIDTH,
-                      top=0, height=DISPLAY_HEIGHT)
-    return 0
 
 
 def orient(display_width, display_height):
@@ -465,3 +337,97 @@ class Vision:
                         sleep_afmin=click_sleep_afmin,
                         sleep_afmax=click_sleep_afmax)
             return 0
+
+
+"""
+Initializes the core objects for the Vision class.
+"""
+
+(client_status, anchor) = orient(display_width=DISPLAY_WIDTH,
+                                 display_height=DISPLAY_HEIGHT)
+(vclient_left, vclient_top) = anchor
+
+if client_status == 'logged_in':
+    vclient_left -= 735
+    vclient_top -= 21
+elif client_status == 'logged_out':
+    vclient_left -= 183
+    vclient_top -= 59
+
+# Now we can create an object with the game client's X and Y
+#   coordinates. This will allow other functions to search for
+#   needles within the "client" object's coordinates, rather than
+#   within the entire display's coordinates, which is much faster.
+vclient = Vision(left=vclient_left, width=CLIENT_WIDTH,
+                 top=vclient_top, height=CLIENT_HEIGHT)
+
+# The player's inventory.
+vinv_left = vclient_left + 548
+vinv_top = vclient_top + 205
+vinv = Vision(left=vinv_left, top=vinv_top,
+              width=INV_WIDTH, height=INV_HEIGHT)
+
+# Bottom half of the player's inventory.
+vinv_bottom_left = vinv_left
+vinv_bottom_top = vinv_top + INV_HALF_HEIGHT
+vinv_bottom = Vision(left=vinv_bottom_left, top=vinv_bottom_top,
+                     width=INV_WIDTH, height=INV_HALF_HEIGHT)
+
+# Right half of the player's inventory.
+vinv_right_half_left = (vinv_left + INV_HALF_WIDTH) - 5
+vinv_right_half_top = vinv_top
+vinv_right_half = Vision(left=vinv_right_half_left,
+                         top=vinv_right_half_top,
+                         width=INV_HALF_WIDTH,
+                         height=INV_HEIGHT)
+
+# Left half of the player's inventory.
+vinv_left_half_left = vinv_left
+vinv_left_half_top = vinv_top
+vinv_left_half = Vision(left=vinv_left_half_left,
+                        top=vinv_left_half_top,
+                        width=INV_HALF_WIDTH,
+                        height=INV_HEIGHT)
+
+# Gameplay screen.
+vgame_screen_left = vclient_left + 4
+vgame_screen_top = vclient_top + 4
+vgame_screen = Vision(left=vgame_screen_left, top=vgame_screen_top,
+                      width=GAME_SCREEN_WIDTH, height=GAME_SCREEN_HEIGHT)
+
+# Chat menu.
+vchat_menu_left = vclient_left + 7
+vchat_menu_top = vclient_top + 345
+vchat_menu = Vision(left=vchat_menu_left, top=vchat_menu_top,
+                    width=CHAT_MENU_WIDTH, height=CHAT_MENU_HEIGHT)
+
+# The most recent chat message.
+vchat_menu_recent_left = vchat_menu_left - 3
+vchat_menu_recent_top = vchat_menu_top + 98
+vchat_menu_recent = Vision(left=vchat_menu_recent_left,
+                           top=vchat_menu_recent_top,
+                           width=CHAT_MENU_RECENT_WIDTH,
+                           height=CHAT_MENU_RECENT_HEIGHT)
+
+# The entire display.
+vdisplay = Vision(left=0, width=DISPLAY_WIDTH,
+                  top=0, height=DISPLAY_HEIGHT)
+
+# Stats ----------------------------------------------------------------
+
+# The number of inventories a script has gone through.
+inventory = 0
+# The number of items gathered, approximately.
+items = 0
+# The amount of experience gained since the script started, approximately.
+experience = 0
+# TODO:
+# The amount of experience gained since installing this package
+experience_per_hour = 0
+
+experience_lifetime = 0
+
+ore_exp_dict = {
+    'copper': 16.5,
+    'iron': 35.5
+}

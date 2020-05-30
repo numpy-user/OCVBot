@@ -1,14 +1,14 @@
-import sys
 import logging as log
+import sys
+
 import yaml
+
+from ocvbot import skilling, behavior, vision as vis
 
 # from PIL import ImageOps
 # import tkinter
 # from tkinter import ttk
 # import yaml
-
-from ocvbot import DISPLAY_WIDTH, DISPLAY_HEIGHT, \
-    skilling, behavior, vision as vis
 
 with open('./config.yaml') as config:
     config_file = yaml.safe_load(config)
@@ -27,7 +27,7 @@ def mining_lumbridge_swamp():
 
     while True:
         # Ensure the client is logged in.
-        client_status = vis.orient(DISPLAY_WIDTH, DISPLAY_HEIGHT)
+        client_status = vis.orient(vis.DISPLAY_WIDTH, vis.DISPLAY_HEIGHT)
         (client_status, unused_var) = client_status
         if client_status == 'logged_out':
             behavior.login(username_file=config_file['username_file'],
@@ -68,7 +68,7 @@ def mining_varrock_east():
     while True:
 
         # Ensure the client is logged in.
-        client_status = vis.orient(DISPLAY_WIDTH, DISPLAY_HEIGHT)
+        client_status = vis.orient(vis.DISPLAY_WIDTH, vis.DISPLAY_HEIGHT)
         (client_status, unused_var) = client_status
         if client_status == 'logged_out':
             behavior.login(username_file=config_file['username_file'],
@@ -106,8 +106,6 @@ def mining_varrock_east():
 # TODO: Possible location for starting a fishing script where the
 #  "fishing tiles" don't change much is fly fishing at barbarian village.
 
-
-vis.init_vision()
 
 if config_file['script'] == '1':
     mining_lumbridge_swamp()
