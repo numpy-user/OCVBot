@@ -26,8 +26,6 @@ def move_camera_rand(chance=3,down_min=200,down_max=2000)
     left
     right arrow roll
  
-def check_experience(skill)
-
 def switch_worlds()
 """
 
@@ -94,7 +92,7 @@ def login(username_file='username.txt', password_file='password.txt',
 
     # Make sure the "Existing user" button is present.
     existing_user = vis.vdisplay.wait_for_image(needle='./needles/login-menu/'
-                                                       'existing-user-button.png',
+                                                'existing-user-button.png',
                                                 loop_num=1)
     if existing_user != 1 or ok_button != 1:
 
@@ -111,7 +109,7 @@ def login(username_file='username.txt', password_file='password.txt',
 
         # Click the 'click here to play' button in the postlogin menu.
         postlogin = vis.vdisplay.click_image(needle='./needles/'
-                                                    'login-menu/orient-postlogin.png',
+                                             'login-menu/orient-postlogin.png',
                                              conf=0.8,
                                              loop_num=50,
                                              loop_sleep_min=1000,
@@ -129,7 +127,7 @@ def login(username_file='username.txt', password_file='password.txt',
                 #   seconds the bot has been running for.
                 start.start_time = time.time()
                 log.info('Login: Script has been running for' +
-                         str(misc.bot_duration()) + 'seconds')
+                         str(misc.run_duration()) + 'seconds')
                 # Make sure client camera is oriented correctly after
                 #   logging in.
                 pag.keyDown('Up')
@@ -233,8 +231,8 @@ def logout(hotkey):
                 vclient.click_image(needle='./needles/buttons/'
                                            'logout.png')
                 logged_out = vclient.wait_for_image(needle='./needles/'
-                                                           'login-menu/'
-                                                           'orient-logged-out.png',
+                                                    'login-menu/'
+                                                    'orient-logged-out.png',
                                                     loop_num=30,
                                                     loop_sleep_min=1000,
                                                     loop_sleep_max=1500)
@@ -302,11 +300,24 @@ def check_skills():
     input.move_to(vis.vinv_left, vis.vinv_top,
                   xmin=0, xmax=start.INV_WIDTH,
                   ymin=0, ymax=start.INV_HEIGHT)
-    misc.sleep_rand(500, 3000)
+    misc.sleep_rand(500, 5000)
     return 0
 
 
 def human_behavior_rand(chance):
+    """
+    Randomly chooses from a list of human behaviors if the roll passes.
+    This is done to make the bot appear more human.
+
+    Args:
+        chance (int): The number that must be rolled for a random
+                      behavior to be triggered. For example, if this
+                      parameter is 25, then there is a 1 in 25 chance
+                      for the roll to pass.
+    Returns:
+        Always returns 0.
+    """
+
     roll = rand.randint(1, chance)
     log.info('Human behavior rolled ' + str(roll))
     if roll == chance:
