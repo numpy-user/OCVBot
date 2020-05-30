@@ -5,7 +5,7 @@ import time
 import pyautogui as pag
 import yaml
 
-from ocvbot import input, misc, vision as vis
+from ocvbot import input, misc, vision as vis, startup as start
 
 # TODO
 
@@ -248,8 +248,8 @@ def logout(hotkey):
 
     from ocvbot.vision import vclient
     # First, make sure the client is logged in.
-    orient = vis.orient(display_height=vis.DISPLAY_HEIGHT,
-                        display_width=vis.DISPLAY_WIDTH)
+    orient = vis.orient(display_height=start.DISPLAY_HEIGHT,
+                        display_width=start.DISPLAY_WIDTH)
     (client_status, unused_var) = orient
     if client_status == 'logged_in':
         open_side_stone('./needles/side-stones/logout', hotkey=hotkey)
@@ -379,7 +379,7 @@ def drop_item(item, track=True,
                                                         move_durmax=800,
                                                         needle=item)
         if item_on_right != 1 and track is True:
-            vis.items += 1
+            start.items += 1
         item_on_left = vis.vinv_left_half.click_image(loop_num=1,
                                                       click_sleep_befmin=10,
                                                       click_sleep_befmax=50,
@@ -389,7 +389,7 @@ def drop_item(item, track=True,
                                                       move_durmax=800,
                                                       needle=item)
         if item_on_left != 1 and track is True:
-            vis.items += 1
+            start.items += 1
 
         # Search the entire inventory to check if the item is still
         #   there.

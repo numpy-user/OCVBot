@@ -7,7 +7,7 @@ from ocvbot import behavior, input
 with open('./config.yaml') as config:
     config_file = yaml.safe_load(config)
 
-from ocvbot import vision as vis
+from ocvbot import vision as vis, startup as start
 
 
 def miner_double_drop(rock1, rock2, ore, ore_type,
@@ -144,8 +144,7 @@ def miner_double_drop(rock1, rock2, ore, ore_type,
                             behavior.drop_item(item='./needles/items/'
                                                     'clue-geode.png',
                                                track=False)
-                        vis.inventory += 1
-                        print_stats(vis.ore_exp_dict[ore_type], 'ore')
+                        print_stats(start.ore_exp_dict[ore_type], 'ore')
                         return 0
                     elif inv_full == 1:
                         return 0
@@ -186,14 +185,16 @@ def print_stats(experience_per_item, item_type):
     if item_type == 'ore':
         item_type = 'ores'
 
-    experience_gained = experience_per_item * vis.items
+    experience_gained = experience_per_item * start.items
     # TODO: exp per hour
     experience_per_hour = 0
 
+    vis.inventory = round(start.items / start.inven)
+
     print(
         "############################################################### \n"
-        "Completed inventory #", vis.inventory, "\n"
-        "Gathered ", vis.items, " ", item_type, "\n"
+        "Completed inventory #", start.inventory, "\n"
+        "Gathered ", start.items, " ", item_type, "\n"
         "Gained ", experience_gained, " EXP (", experience_per_hour, ") \n"
         "###############################################################"
     )

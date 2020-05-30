@@ -3,7 +3,7 @@ import sys
 
 import yaml
 
-from ocvbot import skilling, behavior, vision as vis
+from ocvbot import skilling, behavior, vision as vis, startup as start
 
 # from PIL import ImageOps
 # import tkinter
@@ -27,7 +27,7 @@ def mining_lumbridge_swamp():
 
     while True:
         # Ensure the client is logged in.
-        client_status = vis.orient(vis.DISPLAY_WIDTH, vis.DISPLAY_HEIGHT)
+        client_status = vis.orient(start.DISPLAY_WIDTH, start.DISPLAY_HEIGHT)
         (client_status, unused_var) = client_status
         if client_status == 'logged_out':
             behavior.login(username_file=config_file['username_file'],
@@ -68,7 +68,7 @@ def mining_varrock_east():
     while True:
 
         # Ensure the client is logged in.
-        client_status = vis.orient(vis.DISPLAY_WIDTH, vis.DISPLAY_HEIGHT)
+        client_status = vis.orient(start.DISPLAY_WIDTH, start.DISPLAY_HEIGHT)
         (client_status, unused_var) = client_status
         if client_status == 'logged_out':
             behavior.login(username_file=config_file['username_file'],
