@@ -1,5 +1,12 @@
+IN PROGRESS:
+- Finish documentation, test installation from scratch on both Windows and Linux.
+
+PLANNED:
+- Integrate with Travis-CI to test version and OS compatibility.
 - Polish and test current code for a 0.1 release.
 - Add GIFs and images to README.
+- Create three basic functions to test speed of template matching methods: pyautogui, opencv (test all 6 methods), and sickig-image
+  - produce output like "pyautogui completed in XX miliseconds, opencv method 1 completed in XX miliseconds ..."
 - Add a "terminology.md" file to the docs/ dir to describe terms like
   "needle" and "haystack."
 - Create unit tests for basic low-level functions, such as those in
