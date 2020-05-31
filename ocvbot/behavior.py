@@ -3,7 +3,6 @@ import random as rand
 import time
 
 import pyautogui as pag
-import yaml
 
 from ocvbot import input, misc, vision as vis, startup as start
 # TODO
@@ -243,9 +242,53 @@ def logout():
         return 1
 
 
+def logout_rand_range():
+    elapsed_time_seconds = misc.run_duration()
+    elapsed_time_minutes = elapsed_time_seconds / 60
+
+    # create a set of "checkpoints" along the time between the user's desired minimum run
+    #   duration and their desired maximum run duration.
+    # A logout roll will be made at each checkpoint.
+    logout_rand_checkpoint = ((max_run_duration - min_run_duration) / 3)
+    lrc1 = start.start_time() + logout_rand_checkpoint
+    lrc2 = start.start_time() + (logout_rand_checkpoint * 2)
+    lrc3 = start.start_time() + (logout_rand_checkpoint * 3)
+
+    lrc1_checked = False
+
+    # if a checkpoint has recently passed, roll for a logout
+    # the "lr#_checked" variable is used to prevent multiple rolls for the same checkpoint
+    if time.time() >= lrc1 and lrc1_checked is False:
+        logout_rand(3)
+        # make these variables global
+        lrc1_checked = True
+    elif time.time() >= lrc2 and lrc2_checked is False:
+        logout_rand(3)
+        lrc2_checked = True
+    # The last checkpoint's time will be the same as max_run_duration, so force
+    #   a logout and reset all the checkpoints
+    elif time.time() >= lrc3:
+        lrc1_checked = False
+        lrc2_checked = False
+        logout_rand(1)
+
+    # TODO: Allow the user to specify a "termination point" after a random
+    #  number of logout breaks in which the script will stop completely.
+    #
+    # config:
+    # min_run_duration:  <-- in minutes
+    # max_run_duration:
+    #
+    # min_number_of_runs:
+    # max_number_of_runs:
+    #
+    # Might be better to use the term "sessions" instead of "runs" so as to not
+    #   cause confusion with bank runs
+
+
 def logout_rand(chance, wait_min=5, wait_max=120):
     """
-    Random chance to logout of the client and wait. Units are in minutes.
+    Rolls for a chance to logout of the client and wait.
 
     Args:
         chance (int): See wait_rand()'s docstring.
@@ -258,24 +301,29 @@ def logout_rand(chance, wait_min=5, wait_max=120):
         Always returns 0.
     """
 
-    # Convert to miliseconds.
-    wait_min *= 60000
-    wait_max *= 60000
-
     logout_roll = rand.randint(1, chance)
     if logout_roll == chance:
         log.info('Random logout called.')
+        logout()
 
-        with open('./config.yaml') as config:
-            config_file = yaml.safe_load(config)
+        # Convert from minutes to miliseconds.
+        wait_min *= 60000
+        wait_max *= 60000
+        wait_time_seconds = misc.rand_seconds(wait_min, wait_max)
 
-        logout(config_file['side_stone_logout'])
+        # Convert back to human-readable format for logging.
+        wait_time_minutes = wait_time_seconds / 600
+        current_time = time.time()
+        # Determine the time the break will be done.
+        stop_time = current_time + (current_time + wait_time_seconds)
+        # Convert from Epoch seconds to tuple with human-readable format.
+        stop_time = time.localtime(stop_time)
+        (yr, mon, day, hour, minute, second, wkday, yrday, dls) = stop_time
+        log.info('Sleeping for ' + str(wait_time_minutes) + ' minutes.' +
+                 ' Break will be over at ' + str(hour) + ':' + str(minute)
+                 + ':' + str(second))
 
-        sleeptime = misc.rand_seconds(wait_min, wait_max)
-        # Convert to minutes for logging
-        sleeptime_minutes = sleeptime / 60000
-        log.info('Sleeping for ' + str(sleeptime_minutes) + 'minutes.')
-        time.sleep(sleeptime)
+        time.sleep(wait_time_seconds)
     return 0
 
 
