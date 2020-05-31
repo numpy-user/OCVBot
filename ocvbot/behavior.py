@@ -187,19 +187,16 @@ def open_side_stone(side_stone, hotkey):
     raise RuntimeError('Could not open side stone! Is the hotkey correct?')
 
 
-def logout(hotkey):
+def logout():
     """
     If the client is logged in, logs out. Side stone hotkeys MUST be
     enabled.
 
-    Args:
-        hotkey (str): The hotkey used to open the "Logout" side stone.
-                      Opening side stones with hotkeys is not default
-                      behavior and must be enabled.
-
     Raises:
         Raises a runtime error if the logout side stone is opened but
         the logout button cannot be found.
+        Raises a runtime error if the logout button was clicked but the
+        logout could not be confirmed.
 
     Returns:
         Returns 0 if the client has logged out.
@@ -207,38 +204,35 @@ def logout(hotkey):
     """
     # TODO: Check if the world-switcher is open in the login menu.
 
-    from ocvbot.vision import vclient
     # First, make sure the client is logged in.
     orient = vis.orient(display_height=start.DISPLAY_HEIGHT,
                         display_width=start.DISPLAY_WIDTH)
     (client_status, unused_var) = orient
+
     if client_status == 'logged_in':
-        open_side_stone('./needles/side-stones/logout.png', hotkey=hotkey)
-        logout_button = vclient.click_image(needle='./needles/buttons/'
-                                                   'logout.png')
+        open_side_stone('./needles/side-stones/logout.png',
+                        hotkey=start.config_file['side_stone_logout'])
+
+        logout_button = vis.vclient.click_image(needle='./needles/buttons/'
+                                                       'logout.png')
         if logout_button != 1:
-            logged_out = vclient.wait_for_image(needle='./needles/login-menu/'
-                                                       'orient-logged-out.png',
-                                                loop_num=50,
-                                                loop_sleep_min=1000,
-                                                loop_sleep_max=3000)
-            if logged_out != 1:
-                log.info('Logged out')
-                return 0
             for tries in range(1, 10):
-                vclient.click_image(needle='./needles/buttons/'
-                                           'logout.png')
-                logged_out = vclient.wait_for_image(needle='./needles/'
-                                                    'login-menu/'
-                                                    'orient-logged-out.png',
-                                                    loop_num=30,
-                                                    loop_sleep_min=1000,
-                                                    loop_sleep_max=1500)
+                logged_out = vis.vclient.wait_for_image(
+                    needle='./needles/login-menu/orient-logged-out.png',
+                    loop_num=30,
+                    loop_sleep_min=1000,
+                    loop_sleep_max=1500)
                 if logged_out != 1:
                     log.info('Logged out after trying' + str(tries) +
                              'time(s)')
                     return 0
-                raise RuntimeError("Could not logout!")
+                elif logged_out == 1:
+                    log.info('Unable to log out after trying' + str(tries) +
+                             'time(s)')
+                    vis.vclient.click_image(needle='./needles/buttons/'
+                                                   'logout.png')
+            raise RuntimeError("Could not logout!")
+
         elif logout_button == 1:
             raise RuntimeError("Could not find logout button!")
 
@@ -246,7 +240,7 @@ def logout(hotkey):
         log.warning("Client already logged out!")
         return 1
     else:
-        return 0
+        return 1
 
 
 def logout_rand(chance, wait_min=5, wait_max=120):
