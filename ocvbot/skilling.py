@@ -1,11 +1,6 @@
 import logging as log
 
-import yaml
-
-from ocvbot import behavior, input, vision as vis, misc
-
-with open('./config.yaml') as config:
-    config_file = yaml.safe_load(config)
+from ocvbot import behavior, input, vision as vis, misc, startup as start
 
 
 def miner_double_drop(rock1, rock2, ore, ore_type,
@@ -117,7 +112,8 @@ def miner_double_drop(rock1, rock2, ore, ore_type,
                         log.info('Inventory is full.')
                         ore_drop = behavior.drop_item(item=ore)
                         if ore_drop == 1:
-                            behavior.logout(config_file['side_stone_logout'])
+                            behavior.logout(start.
+                                            config_file['side_stone_logout'])
                             # This runtime error will occur if the
                             #   player's inventory is full, but they
                             #   don't have any ore to drop.
@@ -142,6 +138,9 @@ def miner_double_drop(rock1, rock2, ore, ore_type,
                             behavior.drop_item(item='./needles/items/'
                                                     'clue-geode.png',
                                                track=False)
+                        elapsed_time = misc.run_duration(human_readable=True)
+                        log.info('Script has been running for  ' + str(elapsed_time)
+                                 + ' (HH:MM:SS)')
                         return 0
                     elif inv_full == 1:
                         return 0

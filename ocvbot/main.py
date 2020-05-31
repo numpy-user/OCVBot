@@ -1,17 +1,13 @@
 import logging as log
 import sys
 
-import yaml
+from ocvbot import skilling, behavior, vision as vis, startup as start
 
-from ocvbot import skilling, behavior, misc, vision as vis, startup as start
 
 # from PIL import ImageOps
 # import tkinter
 # from tkinter import ttk
 # import yaml
-
-with open('./config.yaml') as config:
-    config_file = yaml.safe_load(config)
 
 
 def mining_lumbridge_swamp():
@@ -27,8 +23,8 @@ def mining_lumbridge_swamp():
         client_status = vis.orient(start.DISPLAY_WIDTH, start.DISPLAY_HEIGHT)
         (client_status, unused_var) = client_status
         if client_status == 'logged_out':
-            behavior.login(username_file=config_file['username_file'],
-                           password_file=config_file['password_file'])
+            behavior.login(username_file=start.config_file['username_file'],
+                           password_file=start.config_file['password_file'])
 
         miner = skilling.miner_double_drop(
             rock1=('./needles/game-screen/lumbridge-mine/'
@@ -41,18 +37,16 @@ def mining_lumbridge_swamp():
                    'south-empty.png'),
             ore='./needles/items/copper-ore.png',
             ore_type='copper',
-            drop_sapphire=config_file['drop_sapphire'],
-            drop_emerald=config_file['drop_emerald'],
-            drop_ruby=config_file['drop_ruby'],
-            drop_diamond=config_file['drop_diamond'],
-            drop_clue_geode=config_file['drop_clue_geode'])
+            drop_sapphire=start.config_file['drop_sapphire'],
+            drop_emerald=start.config_file['drop_emerald'],
+            drop_ruby=start.config_file['drop_ruby'],
+            drop_diamond=start.config_file['drop_diamond'],
+            drop_clue_geode=start.config_file['drop_clue_geode'])
 
         # If script returns, loop back around and make sure client is
         #   logged in again.
         if miner == 0:
             log.info('Reorienting client')
-            log.info('Script has been running for' + str(misc.bot_duration())
-                     + 'seconds')
 
 
 def mining_varrock_east():
@@ -68,8 +62,8 @@ def mining_varrock_east():
         client_status = vis.orient(start.DISPLAY_WIDTH, start.DISPLAY_HEIGHT)
         (client_status, unused_var) = client_status
         if client_status == 'logged_out':
-            behavior.login(username_file=config_file['username_file'],
-                           password_file=config_file['password_file'])
+            behavior.login(username_file=start.config_file['username_file'],
+                           password_file=start.config_file['password_file'])
 
         miner = skilling.miner_double_drop(
                 rock1=('./needles/game-screen/varrock-east-mine/'
@@ -82,16 +76,17 @@ def mining_varrock_east():
                        'west-empty.png'),
                 ore='./needles/items/iron-ore.png',
                 ore_type='iron',
-                drop_sapphire=config_file['drop_sapphire'],
-                drop_emerald=config_file['drop_emerald'],
-                drop_ruby=config_file['drop_ruby'],
-                drop_diamond=config_file['drop_diamond'],
-                drop_clue_geode=config_file['drop_clue_geode'])
+                drop_sapphire=start.config_file['drop_sapphire'],
+                drop_emerald=start.config_file['drop_emerald'],
+                drop_ruby=start.config_file['drop_ruby'],
+                drop_diamond=start.config_file['drop_diamond'],
+                drop_clue_geode=start.config_file['drop_clue_geode'])
 
         # If script returns, loop back around and make sure client is
         #   logged in again.
         if miner == 0:
-            log.info('Reorienting client')
+            behavior.human_behavior_rand(chance=100)
+
 
 # TODO: Add basic firemaking script that starts at a bank booth and
 #   creates 27 fires, all in a straight line, then returns to the booth.
@@ -103,10 +98,10 @@ def mining_varrock_east():
 #  "fishing tiles" don't change much is fly fishing at barbarian village.
 
 
-if config_file['script'] == '1':
+if start.config_file['script'] == '1':
     mining_lumbridge_swamp()
     sys.exit(0)
-elif config_file['script'] == '2':
+elif start.config_file['script'] == '2':
     mining_varrock_east()
     sys.exit(0)
 

@@ -1,6 +1,7 @@
 import time
 
 import pyautogui as pag
+import yaml
 
 # Constants ------------------------------------------------------------
 
@@ -32,6 +33,9 @@ CHAT_MENU_RECENT_HEIGHT = 17
 # Get the display size in pixels.
 DISPLAY_WIDTH = pag.size().width
 DISPLAY_HEIGHT = pag.size().height
+
+with open('./config.yaml') as config:
+    config_file = yaml.safe_load(config)
 
 # Stats ----------------------------------------------------------------
 
