@@ -126,8 +126,6 @@ def login(username_file='username.txt', password_file='password.txt',
                 # Reset the timer that's used to count the number of
                 #   seconds the bot has been running for.
                 start.start_time = time.time()
-                log.info('Login: Script has been running for' +
-                         str(misc.run_duration()) + 'seconds')
                 # Make sure client camera is oriented correctly after
                 #   logging in.
                 pag.keyDown('Up')
@@ -164,19 +162,19 @@ def open_side_stone(side_stone, hotkey):
     stone_closed = vis.vside_stones.wait_for_image(needle=side_stone,
                                                    loop_num=1)
     if stone_closed == 1:
-        log.info('Side stone already open')
+        log.debug('Side stone already open.')
         return 0
     elif stone_closed != 1:
+        log.debug('Opening side stone.')
         input.keypress(hotkey)
-        misc.sleep_rand(300, 1000)
 
     # Try a total of 5 times to open the desired side stone menu using
     #   the hotkey.
     for tries in range(1, 5):
         stone_closed = vis.vside_stones.wait_for_image(needle=side_stone,
-                                                       loop_num=2,
-                                                       loop_sleep_min=1000,
-                                                       loop_sleep_max=2000)
+                                                       loop_num=5,
+                                                       loop_sleep_min=100,
+                                                       loop_sleep_max=500)
         if stone_closed == 1:
             log.info('Opened side stone')
             return 0
