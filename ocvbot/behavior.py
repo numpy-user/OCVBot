@@ -292,11 +292,9 @@ def check_skills():
     Used to mimic human-like behavior. Checks the stats of a random
     skill.
     """
-    with open('./config.yaml') as config:
-        config_file = yaml.safe_load(config)
 
     open_side_stone('./needles/side-stones/skills.png',
-                    config_file['side_stone_skills'])
+                    start.config_file['side_stone_skills'])
     input.move_to(vis.vinv_left, vis.vinv_top,
                   xmin=0, xmax=start.INV_WIDTH,
                   ymin=0, ymax=start.INV_HEIGHT)
@@ -322,9 +320,35 @@ def human_behavior_rand(chance):
     log.info('Human behavior rolled ' + str(roll))
     if roll == chance:
         log.info('Attempting to act human.')
-        roll = rand.randint(1, 1)
+        roll = rand.randint(1, 2)
         if roll == 1:
             check_skills()
+        elif roll == 2:
+            roll = rand.randint(1, 8)
+            if roll == 1:
+                open_side_stone('./needles/side-stones/attacks.png',
+                                start.config_file['side_stone_attacks'])
+            elif roll == 2:
+                open_side_stone('./needles/side-stones/quests.png',
+                                start.config_file['side_stone_quests'])
+            elif roll == 3:
+                open_side_stone('./needles/side-stones/equipment.png',
+                                start.config_file['side_stone_equipment'])
+            elif roll == 4:
+                open_side_stone('./needles/side-stones/prayers.png',
+                                start.config_file['side_stone_prayers'])
+            elif roll == 5:
+                open_side_stone('./needles/side-stones/spellbooks.png',
+                                start.config_file['side_stone_spellbook'])
+            elif roll == 6:
+                open_side_stone('./needles/side-stones/music.png',
+                                start.config_file['side_stone_music'])
+            elif roll == 7:
+                open_side_stone('./needles/side-stones/friends.png',
+                                start.config_file['side_stone_friends'])
+            elif roll == 8:
+                open_side_stone('./needles/side-stones/settings.png',
+                                start.config_file['side_stone_settings'])
         else:
             return 0
     elif roll != chance:
