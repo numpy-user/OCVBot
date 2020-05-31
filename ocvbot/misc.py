@@ -81,7 +81,7 @@ def wait_rand(chance, second_chance=10,
 
     Args:
         chance (int): The number that must be rolled for the wait to be
-                      called. For example, if change is 25, then there
+                      called. For example, if chance is 25, then there
                       is a 1 in 25 chance for the roll to pass.
         second_chance (int): The number that must be rolled for an
                              additional wait to be called if the first
