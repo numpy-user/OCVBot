@@ -73,6 +73,7 @@ def login(username_file='username.txt', password_file='password.txt',
     Returns:
         Always returns 0.
     """
+    # TODO: fix issue is "password" field is displayed first
 
     # Check to make extra sure the client is logged out.
     logged_out = vis.vdisplay.click_image(needle='./needles/login-menu/'
@@ -94,11 +95,12 @@ def login(username_file='username.txt', password_file='password.txt',
     existing_user = vis.vdisplay.wait_for_image(needle='./needles/login-menu/'
                                                 'existing-user-button.png',
                                                 loop_num=1)
-    if existing_user != 1 or ok_button != 1:
-
-        # Enter credentials.
+    if existing_user != 1:
         misc.sleep_rand(cred_sleep_min, cred_sleep_max)
         input.keypress('enter')
+
+    if existing_user != 1 or ok_button != 1:
+        # Enter credentials.
         misc.sleep_rand(cred_sleep_min, cred_sleep_max)
         pag.typewrite(open(username_file, 'r').read())
         misc.sleep_rand(cred_sleep_min, cred_sleep_max)
@@ -107,6 +109,20 @@ def login(username_file='username.txt', password_file='password.txt',
         input.keypress('enter')
         misc.sleep_rand(login_sleep_min, login_sleep_max)
 
+        #try_again = vis.vdisplay.click_image(needle='./needles/'
+                                             #'login-menu/try-again-button.png',
+                                             #conf=0.9,
+                                             #loop_num=30,
+                                             #loop_sleep_max=1000)
+        #if try_again != 1:
+            #pag.keyDown('backspace')
+            #misc.sleep_rand(2000, 4000)
+            #pag.keyUp('backspace')
+            #input.keypress('tab')
+            ##pag.keyDown('backspace')
+            #misc.sleep_rand(2000, 4000)
+            #pag.keyUp('backspace')
+#
         # Click the 'click here to play' button in the postlogin menu.
         postlogin = vis.vdisplay.click_image(needle='./needles/'
                                              'login-menu/orient-postlogin.png',
@@ -217,9 +233,12 @@ def logout():
         open_side_stone('./needles/side-stones/logout.png',
                         hotkey=start.config_file['side_stone_logout'])
 
-        logout_button = vis.vclient.click_image(needle='./needles/buttons/'
-                                                       'logout.png')
-        if logout_button != 1:
+        logout_button = vis.vclient.click_image(
+            needle='./needles/buttons/logout.png', conf=0.9, loop_num=10)
+        logout_button_highlighted = vis.vclient.click_image(
+            needle='./needles/buttons/logout.png', conf=0.9, loop_num=10)
+
+        if logout_button == 0 or logout_button_highlighted == 0:
             for tries in range(1, 10):
                 logged_out = vis.vclient.wait_for_image(
                     needle='./needles/login-menu/orient-logged-out.png',
@@ -227,17 +246,17 @@ def logout():
                     loop_sleep_min=1000,
                     loop_sleep_max=1500)
                 if logged_out != 1:
-                    log.info('Logged out after trying' + str(tries) +
-                             'time(s)')
+                    log.info('Logged out after trying ' + str(tries) +
+                             ' time(s).')
                     return 0
                 elif logged_out == 1:
-                    log.info('Unable to log out after trying' + str(tries) +
-                             'time(s)')
+                    log.info('Unable to log out after trying ' + str(tries) +
+                             ' time(s).')
                     vis.vclient.click_image(needle='./needles/buttons/'
                                                    'logout.png')
             raise RuntimeError("Could not logout!")
 
-        elif logout_button == 1:
+        elif logout_button == 1 and logout_button_highlighted == 1:
             raise RuntimeError("Could not find logout button!")
 
     elif client_status == 'logged_out':
@@ -265,29 +284,30 @@ def logout_rand_range():
     Returns:
         Always returns 0
     """
+    current_time = round(time.time())
 
     # If a checkpoint's timestamp has passed, roll for a logout, then set
     #   a global variable so another roll doesn't occur between that
     #   checkpoint and the next checkpoint.
-    if time.time() >= start.checkpoint_1 and \
+    if current_time >= start.checkpoint_1 and \
             start.checkpoint_1_checked is False:
         log.info('Rolling checkpoint 1')
         start.checkpoint_1_checked = True
         logout_rand(5)
 
-    elif time.time() >= start.checkpoint_2 and \
+    elif current_time >= start.checkpoint_2 and \
             start.checkpoint_2_checked is False:
         log.info('Rolling checkpoint 2')
         start.checkpoint_2_checked = True
         logout_rand(5)
 
-    elif time.time() >= start.checkpoint_3 and \
+    elif current_time >= start.checkpoint_3 and \
             start.checkpoint_3_checked is False:
         log.info('Rolling checkpoint 3')
         start.checkpoint_3_checked = True
         logout_rand(5)
 
-    elif time.time() >= start.checkpoint_4 and \
+    elif current_time >= start.checkpoint_4 and \
             start.checkpoint_4_checked is False:
         log.info('Rolling checkpoint 4')
         start.checkpoint_4_checked = True
@@ -295,7 +315,7 @@ def logout_rand_range():
 
     # The last checkpoint's time is the start time plus max_run_duration,
     #   so force a logout and reset all the other checkpoints.
-    elif time.time() >= start.checkpoint_5:
+    elif current_time >= start.checkpoint_5:
         start.checkpoint_1_checked = False
         start.checkpoint_2_checked = False
         start.checkpoint_3_checked = False
@@ -303,6 +323,12 @@ def logout_rand_range():
         logout_rand(1)
 
     else:
+        log.info('time is ' + str(current_time))
+        log.info('Checkpoint 1 is at ' + str(start.checkpoint_1))
+        log.info('Checkpoint 2 is at ' + str(start.checkpoint_2))
+        log.info('Checkpoint 3 is at ' + str(start.checkpoint_3))
+        log.info('Checkpoint 4 is at ' + str(start.checkpoint_4))
+        log.info('Checkpoint 5 is at ' + str(start.checkpoint_5))
         log.info('Not time for a logout roll')
         return 0
     return 0
