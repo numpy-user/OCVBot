@@ -40,6 +40,11 @@ drop_clue_geode: False
 min_session_duration: '120'
 max_session_duration: '180'
 
+# The amount of time to wait during a logout break. Units are in
+#   minutes.
+min_break_duration: '5'
+max_break_duration: '120'
+
 # The minimum and maximum number of logout breaks that will occur before
 #   the bot stops for good.
 min_sessions: '1'

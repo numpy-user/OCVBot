@@ -301,6 +301,10 @@ def logout_rand_range():
         start.checkpoint_3_checked = False
         start.checkpoint_4_checked = False
         logout_rand(1)
+
+    else:
+        log.info('Not time for a logout roll')
+        return 0
     return 0
 
     # TODO: Allow the user to specify a "termination point" after a random
@@ -317,16 +321,18 @@ def logout_rand_range():
     #   cause confusion with bank runs
 
 
-def logout_rand(chance, wait_min=5, wait_max=120):
+def logout_rand(chance,
+                wait_min=int(start.config_file['min_break_duration']),
+                wait_max=int(start.config_file['max_break_duration'])):
     """
     Rolls for a chance to logout of the client and wait.
 
     Args:
         chance (int): See wait_rand()'s docstring.
         wait_min (int): The minimum number of minutes to wait if the
-                        roll passes, default is 5.
+                        roll passes, by default reads a config file.
         wait_max (int): The maximum number of minutes to wait if the
-                        roll passes, default is 120.
+                        roll passes, by default reads a config file.
 
     Returns:
         Always returns 0.
