@@ -5,6 +5,7 @@ import psutil
 
 from ocvbot import input
 
+
 # This file is a full regression test of the bot that intends to test every
 #   "ocvbot" behavior in sequence, as if the actual bot is being run.
 # Images are presented in sequence to simulate the game client.
@@ -43,7 +44,7 @@ def test_cannonball_smelter():
     bank_booth = vgame_screen.click_image(needle='./ocvbot/needles/game-screen/'
                                          'edgeville-bank-booth-03.png',
                                          conf=0.995)
-    if bank_booth == 1:
+    if bank_booth == 'pass':
         raise RuntimeError('Could not find bank booth!')
 
     # -------------------------------------------------------------------------
@@ -70,7 +71,7 @@ def test_cannonball_smelter():
     right_click_steel = vgame_screen.click_image(button='left', conf=0.9995,
                                                 needle='./ocvbot/needles/'
                                                 'items/steel-bar.png')
-    if right_click_steel == 1:
+    if right_click_steel == 'pass':
         raise RuntimeError('Could not right click steel bars!')
 
     # -------------------------------------------------------------------------
@@ -86,7 +87,7 @@ def test_cannonball_smelter():
     withdraw_steel_bars = vgame_screen.click_image(needle='./ocvbot/needles/'
                                                   'buttons/right-click-'
                                                   'withdraw-all.png')
-    if withdraw_steel_bars == 1:
+    if withdraw_steel_bars == 'pass':
         raise RuntimeError('Could not click "Withdraw All" for steel bars!')
 
     # -------------------------------------------------------------------------

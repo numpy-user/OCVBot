@@ -75,11 +75,14 @@ def login(username_file='username.txt', password_file='password.txt',
     """
     # TODO: fix issue is "password" field is displayed first
 
-    # Check to make extra sure the client is logged out.
+    # Check to make extra sure the client is logged out. Click the
+    #   needle to focus the window.
+    # TODO: click within a wider range of the login window, not just
+    #   the needle
     logged_out = vis.vdisplay.click_image(needle='./needles/login-menu/'
                                                  'orient-logged-out.png',
                                           loop_num=1)
-    if logged_out == 1:
+    if logged_out == 'fail':
         raise RuntimeError("Cannot find client!")
 
     log.info('Logging in.')
@@ -130,7 +133,7 @@ def login(username_file='username.txt', password_file='password.txt',
                                              loop_num=50,
                                              loop_sleep_min=1000,
                                              loop_sleep_max=3000)
-        if postlogin != 1:
+        if postlogin == 'pass':
             misc.sleep_rand(postlogin_sleep_min, postlogin_sleep_max)
             # Wait for the orient.png to appear in the client window.
             logged_in = vis.vdisplay.wait_for_image(needle='./needles/minimap/'
@@ -238,7 +241,7 @@ def logout():
         logout_button_highlighted = vis.vclient.click_image(
             needle='./needles/buttons/logout.png', conf=0.9, loop_num=10)
 
-        if logout_button == 0 or logout_button_highlighted == 0:
+        if logout_button == 'pass' or logout_button_highlighted == 'pass':
             for tries in range(1, 10):
                 logged_out = vis.vclient.wait_for_image(
                     needle='./needles/login-menu/orient-logged-out.png',
@@ -256,7 +259,7 @@ def logout():
                                                    'logout.png')
             raise RuntimeError("Could not logout!")
 
-        elif logout_button == 1 and logout_button_highlighted == 1:
+        elif logout_button == 'fail' and logout_button_highlighted == 'fail':
             raise RuntimeError("Could not find logout button!")
 
     elif client_status == 'logged_out':
@@ -524,7 +527,7 @@ def drop_item(item, track=True,
                                                         move_durmin=50,
                                                         move_durmax=800,
                                                         needle=item)
-        if item_on_right != 1 and track is True:
+        if item_on_right == 'pass' and track is True:
             start.items_gathered += 1
         item_on_left = vis.vinv_left_half.click_image(loop_num=1,
                                                       click_sleep_befmin=10,
@@ -534,7 +537,7 @@ def drop_item(item, track=True,
                                                       move_durmin=50,
                                                       move_durmax=800,
                                                       needle=item)
-        if item_on_left != 1 and track is True:
+        if item_on_left == 'pass' and track is True:
             start.items_gathered += 1
 
         # Search the entire inventory to check if the item is still

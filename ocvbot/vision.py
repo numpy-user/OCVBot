@@ -291,7 +291,7 @@ class Vision:
                                            needle=needle,
                                            conf=conf)
         if target_image == 1:
-            return 1
+            return 'fail'
         else:
             (left, top, width, height) = target_image
             # Randomize the location the pointer will move to using the
@@ -309,7 +309,7 @@ class Vision:
                         sleep_befmax=click_sleep_befmax,
                         sleep_afmin=click_sleep_afmin,
                         sleep_afmax=click_sleep_afmax)
-            return 0
+            return 'pass'
 
 
 """

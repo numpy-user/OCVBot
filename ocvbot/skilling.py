@@ -78,7 +78,7 @@ def miner_double_drop(rock1, rock2, ore, ore_type,
                                                      click_sleep_afmax=1,
                                                      loop_sleep_max=100,
                                                      loop_num=1)
-            if rock_full != 1:
+            if rock_full == 'pass':
                 # Move the mouse away from the rock so it doesn't
                 #   interfere with matching the needle.
                 input.moverel(xmin=15, xmax=100, ymin=15, ymax=100)
