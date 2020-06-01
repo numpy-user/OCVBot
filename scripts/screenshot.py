@@ -56,7 +56,7 @@ def main(debug=False):
                       '"$(pwd)/haystack_$(date +%Y-%m-%d_%H:%M:%S).png"')
         elif vis.client_status == 'logged_out':
             os.system('pngcrush -s '
-                      '/tmp/screenshot.tmp.png" '
+                      '"/tmp/screenshot.tmp.png" '
                       '"$(pwd)/haystack_$(date +%Y-%m-%d_%H:%M:%S).png" '
                       '2>/dev/null')
         else:
