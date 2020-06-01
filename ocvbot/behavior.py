@@ -183,6 +183,9 @@ def open_side_stone(side_stone, hotkey):
             vis.vgame_screen.click_image(
                 needle='./needles/buttons/bank-window-close.png', loop_num=1)
 
+    # TODO: Click on the side stone with the mouse if it won't open with
+    #   the hotkey.
+
     raise RuntimeError('Could not open side stone! Is the hotkey correct?')
 
 
@@ -201,7 +204,8 @@ def logout():
         Returns 0 if the client has logged out.
         Returns 1 if the client is already logged out.
     """
-    # TODO: Check if the world-switcher is open in the login menu.
+    # TODO: Check if the world-switcher is open in the logout menu
+    #  and close it.
 
     # First, make sure the client is logged in.
     orient = vis.orient(display_height=start.DISPLAY_HEIGHT,
@@ -243,34 +247,60 @@ def logout():
 
 
 def logout_rand_range():
-    elapsed_time_seconds = misc.run_duration()
-    elapsed_time_minutes = elapsed_time_seconds / 60
+    """
+    Triggers a random logout within a specific range of timestamps, set
+    by the user in the main config file. Additional configuration for
+    this function is set by variables in startup.py
 
-    # create a set of "checkpoints" along the time between the user's desired minimum run
-    #   duration and their desired maximum run duration.
-    # A logout roll will be made at each checkpoint.
-    logout_rand_checkpoint = ((max_run_duration - min_run_duration) / 3)
-    lrc1 = start.start_time() + logout_rand_checkpoint
-    lrc2 = start.start_time() + (logout_rand_checkpoint * 2)
-    lrc3 = start.start_time() + (logout_rand_checkpoint * 3)
+    Create five evenly-spaced timestamps at which to roll for a logout
+    (each roll has a 1/5 chance to pass), based on the desired minimum
+    session duration and the desired maximum session duration.
+    Everything is reset if a logout roll passes.
 
-    lrc1_checked = False
+    When called, this function checks if it's time to roll for a logout
+    and performs the roll if true. If not, it simply does nothing and
+    returns.
 
-    # if a checkpoint has recently passed, roll for a logout
-    # the "lr#_checked" variable is used to prevent multiple rolls for the same checkpoint
-    if time.time() >= lrc1 and lrc1_checked is False:
-        logout_rand(3)
-        # make these variables global
-        lrc1_checked = True
-    elif time.time() >= lrc2 and lrc2_checked is False:
-        logout_rand(3)
-        lrc2_checked = True
-    # The last checkpoint's time will be the same as max_run_duration, so force
-    #   a logout and reset all the checkpoints
-    elif time.time() >= lrc3:
-        lrc1_checked = False
-        lrc2_checked = False
+    Returns:
+        Always returns 0
+    """
+
+    # If a checkpoint's timestamp has passed, roll for a logout, then set
+    #   a global variable so another roll doesn't occur between that
+    #   checkpoint and the next checkpoint.
+    if time.time() >= start.checkpoint_1 and \
+            start.checkpoint_1_checked is False:
+        log.info('Rolling checkpoint 1')
+        start.checkpoint_1_checked = True
+        logout_rand(5)
+
+    elif time.time() >= start.checkpoint_2 and \
+            start.checkpoint_2_checked is False:
+        log.info('Rolling checkpoint 2')
+        start.checkpoint_2_checked = True
+        logout_rand(5)
+
+    elif time.time() >= start.checkpoint_3 and \
+            start.checkpoint_3_checked is False:
+        log.info('Rolling checkpoint 3')
+        start.checkpoint_3_checked = True
+        logout_rand(5)
+
+    elif time.time() >= start.checkpoint_4 and \
+            start.checkpoint_4_checked is False:
+        log.info('Rolling checkpoint 4')
+        start.checkpoint_4_checked = True
+        logout_rand(5)
+
+    # The last checkpoint's time is the start time plus max_run_duration,
+    #   so force a logout and reset all the other checkpoints.
+    elif time.time() >= start.checkpoint_5:
+        start.checkpoint_1_checked = False
+        start.checkpoint_2_checked = False
+        start.checkpoint_3_checked = False
+        start.checkpoint_4_checked = False
         logout_rand(1)
+    return 0
 
     # TODO: Allow the user to specify a "termination point" after a random
     #  number of logout breaks in which the script will stop completely.
@@ -302,6 +332,7 @@ def logout_rand(chance, wait_min=5, wait_max=120):
     """
 
     logout_roll = rand.randint(1, chance)
+    log.info('Logout roll was ' + str(logout_roll))
     if logout_roll == chance:
         log.info('Random logout called.')
         logout()
@@ -316,7 +347,8 @@ def logout_rand(chance, wait_min=5, wait_max=120):
         current_time = time.time()
         # Determine the time the break will be done.
         stop_time = current_time + (current_time + wait_time_seconds)
-        # Convert from Epoch seconds to tuple with human-readable format.
+        # Convert from Epoch seconds to tuple for a human-readable
+        #   format.
         stop_time = time.localtime(stop_time)
         (yr, mon, day, hour, minute, second, wkday, yrday, dls) = stop_time
         log.info('Sleeping for ' + str(wait_time_minutes) + ' minutes.' +

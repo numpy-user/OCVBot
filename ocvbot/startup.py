@@ -1,3 +1,4 @@
+import logging as log
 import time
 
 import pyautogui as pag
@@ -40,7 +41,7 @@ with open('./config.yaml') as config:
 # Stats ----------------------------------------------------------------
 
 # Used for tracking how long the script has been running.
-start_time = time.time()
+start_time = round(time.time())
 
 # The number of inventories a script has gone through.
 inventories = 0
@@ -56,3 +57,51 @@ ore_xp_dict = {
     'copper': 16.5,
     'iron': 35.5
 }
+
+# Randomize logouts ----------------------------------------------------
+
+# See behavior.logout_rand_range() for more info on this ---------------
+
+# Reset initial checkpoint_checked values.
+checkpoint_1_checked = False
+checkpoint_2_checked = False
+checkpoint_3_checked = False
+checkpoint_4_checked = False
+
+# Convert run duration from minutes to seconds.
+min_session_duration_sec = \
+    (int(config_file['min_session_duration'])) * 60
+max_session_duration_sec = \
+    (int(config_file['max_session_duration'])) * 60
+
+# Break the amount of time between the minimum desired duration and the
+#   maximum desired duration into a set of evenly-sized chunks of time
+#   that will be used to create "checkpoints". Checkpoints are
+#   timestamps at which we will roll for a logout.
+checkpoint_interval = ((max_session_duration_sec -
+                        min_session_duration_sec) / 4)
+
+# Space each checkpoint evenly between the min duration and the max
+#   duration.
+checkpoint_1 = round(start_time + min_session_duration_sec)
+checkpoint_2 = round(start_time + min_session_duration_sec +
+                     checkpoint_interval)
+checkpoint_3 = round(start_time + min_session_duration_sec +
+                     (checkpoint_interval * 2))
+checkpoint_4 = round(start_time + min_session_duration_sec +
+                     (checkpoint_interval * 3))
+checkpoint_5 = round(start_time + max_session_duration_sec)
+
+log.info('Checkpoint 1 is at ' + time.ctime(checkpoint_1))
+log.info('Checkpoint 2 is at ' + time.ctime(checkpoint_2))
+log.info('Checkpoint 3 is at ' + time.ctime(checkpoint_3))
+log.info('Checkpoint 4 is at ' + time.ctime(checkpoint_4))
+log.info('Checkpoint 5 is at ' + time.ctime(checkpoint_5))
+# log.info('Time between checkpoint 1 and 2 is ' +
+# str(checkpoint_2 - checkpoint_1))
+# log.info('Time between checkpoint 3 and 2 is ' +
+# str(checkpoint_3 - checkpoint_2))
+# log.info('Time between checkpoint 4 and 3 is ' +
+# str(checkpoint_4 - checkpoint_3))
+# log.info('Time between checkpoint 5 and 4 is ' +
+# str(checkpoint_5 - checkpoint_4))

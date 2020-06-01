@@ -35,6 +35,11 @@ drop_diamond: False
 #   clue scrolls.
 drop_clue_geode: False
 
+# A random logout break will occur once between these two times. Units
+#   are in minutes.
+min_session_duration: '120'
+max_session_duration: '180'
+
 # This is the hotkey that's used to open the "Logout" tab in the side
 #   stone menu. Hotkeys are NOT SET BY DEFAULT, so make sure you turn
 #   them on, as shown by the images in client-configuration/common/.
