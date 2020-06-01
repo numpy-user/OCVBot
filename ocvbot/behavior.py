@@ -1,5 +1,6 @@
 import logging as log
 import random as rand
+import sys
 import time
 
 import pyautogui as pag
@@ -337,25 +338,37 @@ def logout_rand(chance, wait_min=5, wait_max=120):
         log.info('Random logout called.')
         logout()
 
-        # Convert from minutes to miliseconds.
-        wait_min *= 60000
-        wait_max *= 60000
-        wait_time_seconds = misc.rand_seconds(wait_min, wait_max)
+        # Track the number of play sessions that have occurred so far.
+        start.session_num += 1
+        log.info('Completed session ' + str(start.session_num) + '/'
+                 + str(start.session_total))
+        # If the maximum has been reached, kill the bot.
+        if start.session_num >= start.session_total:
+            log.info('Final session completed! Script done.')
+            sys.exit(0)
 
-        # Convert back to human-readable format for logging.
-        wait_time_minutes = wait_time_seconds / 600
-        current_time = time.time()
-        # Determine the time the break will be done.
-        stop_time = current_time + (current_time + wait_time_seconds)
-        # Convert from Epoch seconds to tuple for a human-readable
-        #   format.
-        stop_time = time.localtime(stop_time)
-        (yr, mon, day, hour, minute, second, wkday, yrday, dls) = stop_time
-        log.info('Sleeping for ' + str(wait_time_minutes) + ' minutes.' +
-                 ' Break will be over at ' + str(hour) + ':' + str(minute)
-                 + ':' + str(second))
+        elif start.session_num < start.session_total:
+            # Convert from minutes to miliseconds.
+            wait_min *= 60000
+            wait_max *= 60000
+            wait_time_seconds = misc.rand_seconds(wait_min, wait_max)
 
-        time.sleep(wait_time_seconds)
+            # Convert back to human-readable format for logging.
+            wait_time_minutes = wait_time_seconds / 600
+            current_time = time.time()
+            # Determine the time the break will be done.
+            stop_time = current_time + (current_time + wait_time_seconds)
+            # Convert from Epoch seconds to tuple for a human-readable
+            #   format.
+            stop_time = time.localtime(stop_time)
+            (yr, mon, day, hour, minute, second, wkday, yrday, dls) = stop_time
+            log.info('Sleeping for ' + str(wait_time_minutes) + ' minutes.' +
+                     ' Break will be over at ' + str(hour) + ':' + str(minute)
+                     + ':' + str(second))
+
+            time.sleep(wait_time_seconds)
+        else:
+            raise RuntimeError('Error with session numbers!')
     return 0
 
 

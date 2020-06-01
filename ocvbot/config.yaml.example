@@ -40,6 +40,11 @@ drop_clue_geode: False
 min_session_duration: '120'
 max_session_duration: '180'
 
+# The minimum and maximum number of logout breaks that will occur before
+#   the bot stops for good.
+min_sessions: '1'
+max_sessions: '3'
+
 # This is the hotkey that's used to open the "Logout" tab in the side
 #   stone menu. Hotkeys are NOT SET BY DEFAULT, so make sure you turn
 #   them on, as shown by the images in client-configuration/common/.

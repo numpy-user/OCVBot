@@ -1,4 +1,5 @@
 import logging as log
+import random as rand
 import time
 
 import pyautogui as pag
@@ -105,3 +106,12 @@ log.info('Checkpoint 5 is at ' + time.ctime(checkpoint_5))
 # str(checkpoint_4 - checkpoint_3))
 # log.info('Time between checkpoint 5 and 4 is ' +
 # str(checkpoint_5 - checkpoint_4))
+
+# Determine how many sessions the bot will run for before quitting.
+min_sessions = int(config_file['min_sessions'])
+max_sessions = int(config_file['max_sessions'])
+session_total = rand.randint(min_sessions, max_sessions)
+log.info('session_total is ' + str(session_total))
+
+# The current number of sessions that have been completed.
+session_num = 0
