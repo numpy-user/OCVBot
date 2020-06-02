@@ -240,9 +240,9 @@ def logout():
                         hotkey=start.config_file['side_stone_logout'])
 
         logout_button = vis.vclient.click_image(
-            needle='./needles/buttons/logout.png', conf=0.9, loop_num=10)
+            needle='./needles/buttons/logout.png', conf=0.9, loop_num=3)
         logout_button_highlighted = vis.vclient.click_image(
-            needle='./needles/buttons/logout.png', conf=0.9, loop_num=10)
+            needle='./needles/buttons/logout.png', conf=0.9, loop_num=3)
 
         if logout_button is True or logout_button_highlighted is True:
             for tries in range(1, 10):
@@ -270,19 +270,25 @@ def logout():
 
 def logout_rand_range():
     """
-    Triggers a random logout within a specific range of timestamps, set
+    Triggers a random logout within a specific range of time, set
     by the user in the main config file. Additional configuration for
-    this function is set by variables in startup.py
+    this function is set by variables in startup.py.
 
-    Create five evenly-spaced timestamps at which to roll for a logout
-    (each roll has a 1/5 chance to pass), based on the desired minimum
-    session duration and the desired maximum session duration.
-    Everything is reset if a logout roll passes.
+    To determine when a logout roll should occur, this function creates
+    five evenly-spaced timestamps at which to roll for a logout.
+    Each roll has a 1/5 chance to pass. The first and last timestamps
+    are based on the desired minimum and maximum session duration, set
+    by the user. The function forces a logout on the fifth and final
+    timestamp (aka "checkpoint"). All variables are reset if a logout
+    roll passes.
 
-    When called, this function checks if it's time to roll for a logout
-    and performs the roll if true. If not, it simply does nothing and
-    returns.
+    When called, this function checks if an checkpoint has occurred that
+    hasn't yet been rolled. If true, it rolls for that checkpoint and
+    marks it (so it's not rolled again). If the roll passes, a logout is
+    called and all checkpoints are reset. If it's not time to roll for a
+    checkpoint, the function does nothing and returns.
     """
+
     current_time = round(time.time())
 
     # If a checkpoint's timestamp has passed, roll for a logout, then set
@@ -312,8 +318,9 @@ def logout_rand_range():
         start.checkpoint_4_checked = True
         logout_rand(5)
 
-    # The last checkpoint's time is the start time plus max_run_duration,
-    #   so force a logout and reset all the other checkpoints.
+    # The last checkpoint's timestamp is the start time of the session
+    #   plus the maximum session duration, so force a logout and
+    #   reset all the other checkpoints.
     elif current_time >= start.checkpoint_5:
         start.checkpoint_1_checked = False
         start.checkpoint_2_checked = False
@@ -351,13 +358,21 @@ def logout_rand(chance,
     log.info('Logout roll was ' + str(logout_roll))
     if logout_roll == chance:
         log.info('Random logout called.')
+
+        # Reset all the logout checkpoints for the next session.
+        start.checkpoint_1_checked = False
+        start.checkpoint_2_checked = False
+        start.checkpoint_3_checked = False
+        start.checkpoint_4_checked = False
+
         logout()
 
         # Track the number of play sessions that have occurred so far.
         start.session_num += 1
         log.info('Completed session ' + str(start.session_num) + '/'
                  + str(start.session_total))
-        # If the maximum has been reached, kill the bot.
+        # If the maximum number of sessions has been reached, kill the
+        #   bot.
         if start.session_num >= start.session_total:
             log.info('Final session completed! Script done.')
             sys.exit(0)
@@ -384,7 +399,8 @@ def logout_rand(chance,
             time.sleep(wait_time_seconds)
         else:
             raise RuntimeError('Error with session numbers!')
-    return
+    else:
+        return
 
 
 def check_skills():

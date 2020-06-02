@@ -64,9 +64,10 @@ ore_xp_dict = {
     'iron': 35.5
 }
 
-# Randomize logouts ----------------------------------------------------
 
-# See behavior.logout_rand_range() for more info on this ---------------
+# ----------------------------------------------------------------------
+# These variables are used to setup behavior.logout_rand_range(). ------
+# ----------------------------------------------------------------------
 
 # Reset initial checkpoint_checked values.
 checkpoint_1_checked = False
@@ -74,16 +75,16 @@ checkpoint_2_checked = False
 checkpoint_3_checked = False
 checkpoint_4_checked = False
 
-# Convert run duration from minutes to seconds.
+# Convert run duration within config file from minutes to seconds.
 min_session_duration_sec = \
     (int(config_file['min_session_duration'])) * 60
 max_session_duration_sec = \
     (int(config_file['max_session_duration'])) * 60
 
-# Break the amount of time between the minimum desired duration and the
-#   maximum desired duration into a set of evenly-sized chunks of time
-#   that will be used to create "checkpoints". Checkpoints are
-#   timestamps at which we will roll for a logout.
+# Break the duration of time between the minimum and maximum duration
+#   into a set of evenly-sized durations of time. These chunks of time
+#   are consecutively added to the start time to create "checkpoints".
+#   Checkpoints are timestamps at which a logout roll will occur.
 checkpoint_interval = ((max_session_duration_sec -
                         min_session_duration_sec) / 4)
 
