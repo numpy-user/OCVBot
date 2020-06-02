@@ -36,15 +36,12 @@ def sleep_rand(rmin=0, rmax=100):
                     is 0.
         rmax (int): The maximum number of miliseconds to wait, default
                     is 100.
-
-    Returns:
-        Always returns 0.
     """
 
     sleeptime = rand_seconds(rmin=rmin, rmax=rmax)
     # log.debug('Sleeping for ' + str(sleeptime) + ' seconds.')
     time.sleep(sleeptime)
-    return 0
+    return
 
 
 def run_duration(human_readable=False):
@@ -68,7 +65,7 @@ def run_duration(human_readable=False):
     if human_readable is False:
         return elapsed_time_seconds
 
-    elif human_readable is True:
+    else:
         elapsed_time_human_readable = datetime.timedelta(
                                       seconds=elapsed_time_seconds)
         return elapsed_time_human_readable
@@ -93,9 +90,6 @@ def wait_rand(chance, second_chance=10,
                         roll passes, default is 10000.
         wait_max (int): The maximum number of miliseconds to wait if the
                         roll passes, default is 60000.
-
-    Returns:
-        Always returns 0.
     """
 
     wait_roll = rand.randint(1, chance)
@@ -113,4 +107,4 @@ def wait_rand(chance, second_chance=10,
             sleeptime = rand_seconds(wait_min, wait_max)
             log.info('Sleeping for ' + str(round(sleeptime)) + ' seconds.')
             time.sleep(sleeptime)
-    return 0
+    return

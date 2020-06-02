@@ -1,6 +1,6 @@
 import logging as log
 
-from ocvbot import behavior, input, vision as vis, misc, startup as start
+from ocvbot import behavior, input, vision as vis, misc
 
 
 def miner_double_drop(rock1, rock2, ore, ore_type,
@@ -43,9 +43,6 @@ def miner_double_drop(rock1, rock2, ore, ore_type,
         Raises a runtime error if the player's inventory is full, but
         the function can't find any ore in the player's inventory to
         drop.
-
-    Reutrns:
-        Always returns 0.
     """
 
     # Vision objects have to be imported within functions because the
@@ -99,7 +96,7 @@ def miner_double_drop(rock1, rock2, ore, ore_type,
 
                 # If mining hasn't started after looping has finished,
                 #   check to see if the inventory is full.
-                if mining_started == 1:
+                if mining_started is False:
                     log.debug('Timed out waiting for mining to start.')
 
                     inv_full = vis.vchat_menu. \
@@ -108,12 +105,11 @@ def miner_double_drop(rock1, rock2, ore, ore_type,
                                        loop_num=1)
                     # If the inventory is full, empty the ore and
                     #   return.
-                    if inv_full != 1:
+                    if inv_full is True:
                         log.info('Inventory is full.')
                         ore_drop = behavior.drop_item(item=ore)
-                        if ore_drop == 1:
-                            behavior.logout(start.
-                                            config_file['side_stone_logout'])
+                        if ore_drop is False:
+                            behavior.logout()
                             # This runtime error will occur if the
                             #   player's inventory is full, but they
                             #   don't have any ore to drop.
@@ -139,11 +135,12 @@ def miner_double_drop(rock1, rock2, ore, ore_type,
                                                     'clue-geode.png',
                                                track=False)
                         elapsed_time = misc.run_duration(human_readable=True)
-                        log.info('Script has been running for  ' + str(elapsed_time)
-                                 + ' (HH:MM:SS)')
-                        return 0
-                    elif inv_full == 1:
-                        return 0
+                        log.info(
+                            'Script has been running for  ' + str(elapsed_time)
+                            + ' (HH:MM:SS)')
+                        return
+                    elif inv_full is False:
+                        return
 
                 log.info('Mining started.')
 
@@ -156,10 +153,9 @@ def miner_double_drop(rock1, rock2, ore, ore_type,
                     loop_sleep_min=100,
                     loop_sleep_max=200)
 
-                if rock_empty != 1:
+                if rock_empty is True:
                     log.info('Rock is empty.')
                     log.debug(str(rock_needle) + ' empty.')
-                elif rock_empty == 1:
+                elif rock_empty is False:
                     log.info('Timed out waiting for mining to finish.')
-    return 0
-
+    return

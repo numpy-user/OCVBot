@@ -61,7 +61,7 @@ def test_cannonball_smelter():
     # Wait for the bank window to appear.
     bank_window = vgame_screen.wait_for_image('./ocvbot/needles/buttons/'
                                              'bank-window-close.png')
-    if bank_window == 1:
+    if bank_window is False:
         raise RuntimeError('Timed out waiting for bank window to open!')
 
     # Right click icon of steel bars.
@@ -113,7 +113,7 @@ def test_cannonball_smelter():
                      #width=INV_WIDTH, height=INV_HEIGHT)
     #steel_bars_in_inventory = inv.wait_for_image(needle='./ocvbot/needles/'
                                                         #'items/steel-bar.png')
-    #if steel_bars_in_inventory == 1:
+    #if steel_bars_in_inventory is False:
         #raise RuntimeError('Timed out waiting for steel bars to show up'
                            #'in inventory!')
 
@@ -145,7 +145,7 @@ def test_cannonball_smelter():
     # Press spacebar to begin smelting the cannonballs.
     begin_smelting = vchat_menu.wait_for_image(needle='./ocvbot/needles/chat-menu/'
                                               'smelting.png')
-    if begin_smelting == 1:
+    if begin_smelting is False:
         raise RuntimeError('Could not find smelting.png chat menu!')
 
     input.keypress('space')
@@ -170,7 +170,7 @@ def test_cannonball_smelter():
                                        'lower-half.png')
 
     # Even if wait_for_image times out, return to the bank.
-    if done_smelting == 1 or done_smelting != 1:
+    if done_smelting == 1 or done_smelting is True:
         bank = vgame_screen.click_image(needle='./ocvbot/needles/game-screen'
                                        '/edgeville-bank-from-furnace-01.png')
 

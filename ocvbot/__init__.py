@@ -2,7 +2,6 @@ import logging as log
 import os
 import sys
 
-import keyboard
 
 sys.setrecursionlimit(9999)
 
@@ -21,11 +20,12 @@ os.chdir(dir_name)
 os.system('rm .screenshot2*.png >/dev/null 2>&1')
 
 
-def killer():
-    """
-    Manually kill script.
-    """
-    sys.exit(0)
+#import keyboard
+#def killer():
+    #"""
+    #Manually kill script.
+    #"""
+    #sys.exit(0)
 
 
-keyboard.add_hotkey('k', killer)
+#keyboard.add_hotkey('k', killer)

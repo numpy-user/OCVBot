@@ -69,71 +69,81 @@ def login(username_file='username.txt', password_file='password.txt',
         Raises a runtime error if the login menu cannot be found, the
         postlogin screen cannot be found, or the logged-in client cannot
         be found.
-
-    Returns:
-        Always returns 0.
     """
-    # TODO: fix issue is "password" field is displayed first
 
-    # Check to make extra sure the client is logged out. Click the
-    #   needle to focus the window.
-    # TODO: click within a wider range of the login window, not just
-    #   the needle
-    logged_out = vis.vdisplay.click_image(needle='./needles/login-menu/'
-                                                 'orient-logged-out.png',
-                                          loop_num=1)
-    if logged_out == 'fail':
-        raise RuntimeError("Cannot find client!")
+    # Make sure the client is logged out.
+    logged_out = vis.vdisplay.wait_for_image(needle='./needles/login-menu/'
+                                                    'orient-logged-out.png',
+                                             loop_num=1)
+    if logged_out is False:
+        raise RuntimeError("Cannot find client or client is not logged out!")
 
-    log.info('Logging in.')
+    elif logged_out is True:
+        log.info('Logging in.')
+        # Randomly click somewhere on the login menu to focus the window.
+        # Roll to determine whether to click on the top half or bottom
+        #   half of the client window.
+        roll = rand.randint(1, 2)
+        if roll == 1:
+            input.click_coord(left=vis.vclient_left + 3,
+                              top=vis.vclient_top + 3,
+                              width=start.CLIENT_WIDTH - 3,
+                              height=262)
+        else:
+            input.click_coord(left=vis.vclient_left + 126,
+                              top=vis.vclient_top + 341,
+                              width=650,
+                              height=183)
 
     # Click the "Ok" button if it's present at the login screen.
+    # This button appears if the user was disconnected due to idle
+    #   activity.
     ok_button = vis.vdisplay.click_image(needle='./needles/login-menu/'
                                                 'ok-button.png',
                                          loop_num=1)
+    # If the "Ok" button isn't found, look for the "Existing user"
+    #   button.
+    existing_user_button = vis.vdisplay.wait_for_image(
+        needle='./needles/login-menu/'
+               'existing-user-button.png',
+        loop_num=1)
 
-    misc.sleep_rand(cred_sleep_min, cred_sleep_max)
-
-    # Make sure the "Existing user" button is present.
-    existing_user = vis.vdisplay.wait_for_image(needle='./needles/login-menu/'
-                                                'existing-user-button.png',
-                                                loop_num=1)
-    if existing_user != 1:
+    if existing_user_button is True:
         misc.sleep_rand(cred_sleep_min, cred_sleep_max)
         input.keypress('enter')
 
-    if existing_user != 1 or ok_button != 1:
-        # Enter credentials.
+    if existing_user_button is True or ok_button is True:
+        # Click to make sure the "Login" field is active.
+        input.click_coord(left=vis.vlogin_field_left,
+                          top=vis.vlogin_field_top,
+                          width=start.LOGIN_FIELD_WIDTH,
+                          height=start.LOGIN_FIELD_HEIGHT)
+        # Enter login field credentials.
         misc.sleep_rand(cred_sleep_min, cred_sleep_max)
-        pag.typewrite(open(username_file, 'r').read())
+        pag.typewrite(open(username_file, 'r').read(), interval=0.1)
         misc.sleep_rand(cred_sleep_min, cred_sleep_max)
-        pag.typewrite(open(password_file, 'r').read())
+
+        # Click to make sure the "Password" field is active.
+        input.click_coord(left=vis.vpass_field_left,
+                          top=vis.vpass_field_top,
+                          width=start.LOGIN_FIELD_WIDTH,
+                          height=start.LOGIN_FIELD_HEIGHT)
+        # Enter password field credentials and login.
+        pag.typewrite(open(password_file, 'r').read(), interval=0.1)
         misc.sleep_rand(cred_sleep_min, cred_sleep_max)
+
         input.keypress('enter')
         misc.sleep_rand(login_sleep_min, login_sleep_max)
 
-        #try_again = vis.vdisplay.click_image(needle='./needles/'
-                                             #'login-menu/try-again-button.png',
-                                             #conf=0.9,
-                                             #loop_num=30,
-                                             #loop_sleep_max=1000)
-        #if try_again != 1:
-            #pag.keyDown('backspace')
-            #misc.sleep_rand(2000, 4000)
-            #pag.keyUp('backspace')
-            #input.keypress('tab')
-            ##pag.keyDown('backspace')
-            #misc.sleep_rand(2000, 4000)
-            #pag.keyUp('backspace')
-#
         # Click the 'click here to play' button in the postlogin menu.
-        postlogin = vis.vdisplay.click_image(needle='./needles/'
-                                             'login-menu/orient-postlogin.png',
-                                             conf=0.8,
-                                             loop_num=50,
-                                             loop_sleep_min=1000,
-                                             loop_sleep_max=3000)
-        if postlogin == 'pass':
+        postlogin_screen_button = vis.vdisplay. \
+            click_image(needle='./needles/login-menu/orient-postlogin.png',
+                        conf=0.8,
+                        loop_num=50,
+                        loop_sleep_min=1000,
+                        loop_sleep_max=2000)
+
+        if postlogin_screen_button is True:
             misc.sleep_rand(postlogin_sleep_min, postlogin_sleep_max)
             # Wait for the orient.png to appear in the client window.
             logged_in = vis.vdisplay.wait_for_image(needle='./needles/minimap/'
@@ -141,7 +151,7 @@ def login(username_file='username.txt', password_file='password.txt',
                                                     loop_num=50,
                                                     loop_sleep_min=1000,
                                                     loop_sleep_max=3000)
-            if logged_in != 1:
+            if logged_in is True:
                 # Reset the timer that's used to count the number of
                 #   seconds the bot has been running for.
                 start.start_time = time.time()
@@ -150,15 +160,13 @@ def login(username_file='username.txt', password_file='password.txt',
                 pag.keyDown('Up')
                 misc.sleep_rand(3000, 7000)
                 pag.keyUp('Up')
-                return 0
+                return
             else:
-                raise RuntimeError("Cannot login!")
-
+                raise RuntimeError("Did not detect login after postlogin!")
         else:
             raise RuntimeError("Cannot find postlogin screen!")
-
-    elif existing_user == 1:
-        raise RuntimeError("Cannot find existing user button!")
+    else:
+        raise RuntimeError("Cannot find existing user or OK button!")
 
 
 def open_side_stone(side_stone, hotkey):
@@ -180,10 +188,10 @@ def open_side_stone(side_stone, hotkey):
 
     stone_closed = vis.vside_stones.wait_for_image(needle=side_stone,
                                                    loop_num=1)
-    if stone_closed == 1:
+    if stone_closed is True:
         log.debug('Side stone already open.')
-        return 0
-    elif stone_closed != 1:
+        return True
+    elif stone_closed is False:
         log.debug('Opening side stone.')
         input.keypress(hotkey)
 
@@ -194,19 +202,18 @@ def open_side_stone(side_stone, hotkey):
                                                        loop_num=5,
                                                        loop_sleep_min=100,
                                                        loop_sleep_max=500)
-        if stone_closed == 1:
+        if stone_closed is True:
             log.info('Opened side stone')
-            return 0
-        elif stone_closed != 1:
+            return True
+        elif stone_closed is False:
             # Make sure the bank window isn't open, which would block
             #   access to the side stones.
             vis.vgame_screen.click_image(
                 needle='./needles/buttons/bank-window-close.png', loop_num=1)
+    raise RuntimeError('Could not open side stone! Is the hotkey correct?')
 
     # TODO: Click on the side stone with the mouse if it won't open with
     #   the hotkey.
-
-    raise RuntimeError('Could not open side stone! Is the hotkey correct?')
 
 
 def logout():
@@ -219,10 +226,6 @@ def logout():
         the logout button cannot be found.
         Raises a runtime error if the logout button was clicked but the
         logout could not be confirmed.
-
-    Returns:
-        Returns 0 if the client has logged out.
-        Returns 1 if the client is already logged out.
     """
     # TODO: Check if the world-switcher is open in the logout menu
     #  and close it.
@@ -241,32 +244,28 @@ def logout():
         logout_button_highlighted = vis.vclient.click_image(
             needle='./needles/buttons/logout.png', conf=0.9, loop_num=10)
 
-        if logout_button == 'pass' or logout_button_highlighted == 'pass':
+        if logout_button is True or logout_button_highlighted is True:
             for tries in range(1, 10):
                 logged_out = vis.vclient.wait_for_image(
                     needle='./needles/login-menu/orient-logged-out.png',
                     loop_num=30,
                     loop_sleep_min=1000,
                     loop_sleep_max=1500)
-                if logged_out != 1:
+                if logged_out is True:
                     log.info('Logged out after trying ' + str(tries) +
                              ' time(s).')
-                    return 0
-                elif logged_out == 1:
+                    return
+                else:
                     log.info('Unable to log out after trying ' + str(tries) +
                              ' time(s).')
                     vis.vclient.click_image(needle='./needles/buttons/'
                                                    'logout.png')
             raise RuntimeError("Could not logout!")
-
-        elif logout_button == 'fail' and logout_button_highlighted == 'fail':
+        else:
             raise RuntimeError("Could not find logout button!")
-
-    elif client_status == 'logged_out':
-        log.warning("Client already logged out!")
-        return 1
     else:
-        return 1
+        log.warning("Client already logged out!")
+        return
 
 
 def logout_rand_range():
@@ -283,9 +282,6 @@ def logout_rand_range():
     When called, this function checks if it's time to roll for a logout
     and performs the roll if true. If not, it simply does nothing and
     returns.
-
-    Returns:
-        Always returns 0
     """
     current_time = round(time.time())
 
@@ -333,21 +329,8 @@ def logout_rand_range():
         log.info('Checkpoint 4 is at ' + str(start.checkpoint_4))
         log.info('Checkpoint 5 is at ' + str(start.checkpoint_5))
         log.info('Not time for a logout roll')
-        return 0
-    return 0
-
-    # TODO: Allow the user to specify a "termination point" after a random
-    #  number of logout breaks in which the script will stop completely.
-    #
-    # config:
-    # min_run_duration:  <-- in minutes
-    # max_run_duration:
-    #
-    # min_number_of_runs:
-    # max_number_of_runs:
-    #
-    # Might be better to use the term "sessions" instead of "runs" so as to not
-    #   cause confusion with bank runs
+        return
+    return
 
 
 def logout_rand(chance,
@@ -362,9 +345,6 @@ def logout_rand(chance,
                         roll passes, by default reads a config file.
         wait_max (int): The maximum number of minutes to wait if the
                         roll passes, by default reads a config file.
-
-    Returns:
-        Always returns 0.
     """
 
     logout_roll = rand.randint(1, chance)
@@ -404,7 +384,7 @@ def logout_rand(chance,
             time.sleep(wait_time_seconds)
         else:
             raise RuntimeError('Error with session numbers!')
-    return 0
+    return
 
 
 def check_skills():
@@ -419,7 +399,7 @@ def check_skills():
                   xmin=0, xmax=start.INV_WIDTH,
                   ymin=0, ymax=start.INV_HEIGHT)
     misc.sleep_rand(500, 5000)
-    return 0
+    return
 
 
 def human_behavior_rand(chance):
@@ -432,8 +412,6 @@ def human_behavior_rand(chance):
                       behavior to be triggered. For example, if this
                       parameter is 25, then there is a 1 in 25 chance
                       for the roll to pass.
-    Returns:
-        Always returns 0.
     """
 
     roll = rand.randint(1, chance)
@@ -470,10 +448,9 @@ def human_behavior_rand(chance):
                 open_side_stone('./needles/side-stones/settings.png',
                                 start.config_file['side_stone_settings'])
         else:
-            return 0
-    elif roll != chance:
-        return 0
-    return 0
+            return
+    else:
+        return
 
 
 def drop_item(item, track=True,
@@ -505,14 +482,14 @@ def drop_item(item, track=True,
 
     item_remains = vis.vinv.wait_for_image(loop_num=1, needle=item)
 
-    if item_remains != 1:
+    if item_remains is True:
         log.info('Dropping ' + str(item) + '.')
-    elif item_remains == 1:
+    elif item_remains is False:
         log.info('Could not find ' + str(item) + '.')
-        return 1
+        return False
 
     tries = 0
-    while item_remains != 1 and tries <= 40:
+    while item_remains is True and tries <= 40:
 
         tries += 1
         pag.keyDown('shift')
@@ -527,7 +504,7 @@ def drop_item(item, track=True,
                                                         move_durmin=50,
                                                         move_durmax=800,
                                                         needle=item)
-        if item_on_right == 'pass' and track is True:
+        if item_on_right is True and track is True:
             start.items_gathered += 1
         item_on_left = vis.vinv_left_half.click_image(loop_num=1,
                                                       click_sleep_befmin=10,
@@ -537,7 +514,7 @@ def drop_item(item, track=True,
                                                       move_durmin=50,
                                                       move_durmax=800,
                                                       needle=item)
-        if item_on_left == 'pass' and track is True:
+        if item_on_left is True and track is True:
             start.items_gathered += 1
 
         # Search the entire inventory to check if the item is still
@@ -548,11 +525,11 @@ def drop_item(item, track=True,
         wait_rand(chance=wait_chance, wait_min=wait_min, wait_max=wait_max)
 
         pag.keyUp('shift')
-        if item_remains == 1:
-            return 0
+        if item_remains is False:
+            return True
 
     if tries > 40:
         log.error('Tried dropping item too many times!')
-        return 1
+        return False
     else:
-        return 0
+        return True

@@ -1,4 +1,3 @@
-import logging as log
 import sys
 
 from ocvbot import skilling, behavior, vision as vis, startup as start
@@ -26,7 +25,7 @@ def mining_lumbridge_swamp():
             behavior.login(username_file=start.config_file['username_file'],
                            password_file=start.config_file['password_file'])
 
-        miner = skilling.miner_double_drop(
+        skilling.miner_double_drop(
             rock1=('./needles/game-screen/lumbridge-mine/'
                    'east-full.png',
                    './needles/game-screen/lumbridge-mine/'
@@ -43,10 +42,9 @@ def mining_lumbridge_swamp():
             drop_diamond=start.config_file['drop_diamond'],
             drop_clue_geode=start.config_file['drop_clue_geode'])
 
-        # If script returns, loop back around and make sure client is
-        #   logged in again.
-        if miner == 0:
-            log.info('Reorienting client')
+        # Roll for randomized actions when the script returns.
+        behavior.human_behavior_rand(chance=100)
+        behavior.logout_rand_range()
 
 
 def mining_varrock_east():
@@ -65,27 +63,26 @@ def mining_varrock_east():
             behavior.login(username_file=start.config_file['username_file'],
                            password_file=start.config_file['password_file'])
 
-        miner = skilling.miner_double_drop(
-                rock1=('./needles/game-screen/varrock-east-mine/'
-                       'north-full2.png',
-                       './needles/game-screen/varrock-east-mine/'
-                       'north-empty.png'),
-                rock2=('./needles/game-screen/varrock-east-mine/'
-                       'west-full.png',
-                       './needles/game-screen/varrock-east-mine/'
-                       'west-empty.png'),
-                ore='./needles/items/iron-ore.png',
-                ore_type='iron',
-                drop_sapphire=start.config_file['drop_sapphire'],
-                drop_emerald=start.config_file['drop_emerald'],
-                drop_ruby=start.config_file['drop_ruby'],
-                drop_diamond=start.config_file['drop_diamond'],
-                drop_clue_geode=start.config_file['drop_clue_geode'])
+        skilling.miner_double_drop(
+            rock1=('./needles/game-screen/varrock-east-mine/'
+                   'north-full2.png',
+                   './needles/game-screen/varrock-east-mine/'
+                   'north-empty.png'),
+            rock2=('./needles/game-screen/varrock-east-mine/'
+                   'west-full.png',
+                   './needles/game-screen/varrock-east-mine/'
+                   'west-empty.png'),
+            ore='./needles/items/iron-ore.png',
+            ore_type='iron',
+            drop_sapphire=start.config_file['drop_sapphire'],
+            drop_emerald=start.config_file['drop_emerald'],
+            drop_ruby=start.config_file['drop_ruby'],
+            drop_diamond=start.config_file['drop_diamond'],
+            drop_clue_geode=start.config_file['drop_clue_geode'])
 
-        # If script returns, loop back around and make sure client is
-        #   logged in again.
-        if miner == 0:
-            behavior.human_behavior_rand(chance=100)
+        # Roll for randomized actions when the script returns.
+        behavior.human_behavior_rand(chance=100)
+        behavior.logout_rand_range()
 
 
 # TODO: Add basic firemaking script that starts at a bank booth and
@@ -110,13 +107,13 @@ def cannonball_smelter():
 
     # Click on the bank booth.
     bank_booth = vis.Vision(needle='./bank_booth').click_image()
-    if bank_booth == 1:
+    if bank_booth is True:
         #logout()
         raise RuntimeError('couldnt find bank booth')
 
     # Wait for the bank window to appear.
     bank_window = vis.Vision(needle='./bank_window').wait_for_image()
-    if bank_window == 1:
+    if bank_window is True:
         #logout()
         raise RuntimeError ('timed out waiting for bank booth to open')
 
@@ -124,19 +121,19 @@ def cannonball_smelter():
     #   Right click icon of steel bars.
     right_click_steel = vis.Vision(needle='./steel_bar_in_bank').\
                                      click_image(button='right')
-    if right_click_steel == 1:
+    if right_click_steel is True:
         sys.exit(1)
 
     #   Select withdrawl option in right-click ocvbot-menu.
     withdrawl_steel = vis.Vision(needle='./windrawl_all').click_image()
-    if withdrawl_steel == 1:
+    if withdrawl_steel is True:
         sys.exit(1)
 
     #   Wait for the items to appear in the player's inventory.
     steel_bars_in_inventory = vis.Vision(needle='./steel_bar_in_inv')\
         .wait_for_image(xmin=inv_xmin, xmax=inv_xmax, ymin=inv_ymin, 
         ymax=inv_ymax)
-    if steel_bars_in_inventory == 1:
+    if steel_bars_in_inventory is True:
         print('timed out waiting for steel bars to show up in inv')
 
     # Move to the furnace room from the bank.

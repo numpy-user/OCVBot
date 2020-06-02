@@ -46,19 +46,23 @@ def main(debug=False):
             #   by drawing a black box over it with ImageMagick.
             import time
             time.sleep(1)
-            os.system('pngcrush -s '
+            os.system('rm -f /tmp/screenshot.tmp* '
+                      '&& pngcrush -s '
                       '"/tmp/screenshot.tmp.png" '
                       '"/tmp/screenshot.tmp2.png" '
                       '2>/dev/null '
                       '&& convert /tmp/screenshot.tmp2.png '
                       '-fill black '
                       '-draw "rectangle 7 458 190 473" '
-                      '"$(pwd)/haystack_$(date +%Y-%m-%d_%H:%M:%S).png"')
+                      '"$(pwd)/haystack_$(date +%Y-%m-%d_%H:%M:%S).png" '
+                      '&& rm -f /tmp/screenshot.tmp*')
         elif vis.client_status == 'logged_out':
-            os.system('pngcrush -s '
+            os.system('rm -f /tmp/screenshot.ymp* '
+                      '&& pngcrush -s '
                       '"/tmp/screenshot.tmp.png" '
                       '"$(pwd)/haystack_$(date +%Y-%m-%d_%H:%M:%S).png" '
-                      '2>/dev/null')
+                      '2>/dev/null '
+                      '&& rm -f /tmp/screenshot.tmp*')
         else:
             raise RuntimeError("Could not interpret client_status var!")
 

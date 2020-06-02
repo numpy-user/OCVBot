@@ -40,22 +40,22 @@ def orient(display_width, display_height):
                        width=display_width,
                        height=display_height) \
         .wait_for_image(needle='needles/minimap/orient.png',
-                        loctype='center', loop_num=2, conf=0.8)
-    if logged_in != 1:
+                        loctype='center', loop_num=2, conf=0.8, get_tuple=True)
+    if isinstance(logged_in, tuple) is True:
         return 'logged_in', logged_in
 
-    if logged_in == 1:
+    elif logged_in is False:
 
         # If the client is not logged in, check if it's logged out.
         logged_out = Vision(left=0, top=0,
                             width=display_width,
                             height=display_height) \
             .wait_for_image(needle='needles/login-menu/orient-logged-out.png',
-                            loctype='center', loop_num=2)
-        if logged_out != 1:
+                            loctype='center', loop_num=2, get_tuple=True)
+        if isinstance(logged_out, tuple) is True:
             return 'logged_out', logged_out
 
-        elif logged_out == 1:
+        elif logged_out is False:
             log.critical('Could not find anchor!')
             raise RuntimeError('Could not find anchor!')
 
@@ -85,7 +85,7 @@ def haystack_locate(needle, haystack, grayscale=False, conf=0.95):
     elif target_image is None:
         log.debug('Cannot find center of ' + str(needle) +
                   ', conf=' + str(conf))
-        return 1
+        return False
 
 
 class Vision:
@@ -147,7 +147,7 @@ class Vision:
             needle's left/top/width/height parameters as a tuple. If the
             needle is found and loctype is center, returns coordinates
             of the needle's center as a tuple. If the needle is not
-            found, returns 1.
+            found, returns False.
         """
 
         if loctype == 'regular':
@@ -166,7 +166,7 @@ class Vision:
             elif target_image is None:
                 log.debug('Cannot find regular image ' + str(needle) +
                           ' conf=' + str(conf))
-                return 1
+                return False
 
         elif loctype == 'center':
             target_image = pag.locateCenterOnScreen(needle,
@@ -184,13 +184,14 @@ class Vision:
             elif target_image is None:
                 log.debug('Cannot find center of ' + str(needle) +
                           ', conf=' + str(conf))
-                return 1
+                return False
 
         else:
             raise RuntimeError('Incorrect mlocate function parameters!')
 
     def wait_for_image(self, needle, loctype='regular', conf=0.95,
-                       loop_num=10, loop_sleep_min=10, loop_sleep_max=1000):
+                       loop_num=10, loop_sleep_min=10, loop_sleep_max=1000,
+                       get_tuple=False):
         """
         Repeatedly searches within the haystack or coordinate space
         for the needle.
@@ -198,7 +199,8 @@ class Vision:
         Args:
             needle: See mlocate()'s docstring.
             loctype (str): see mlocate()'s docstring, default is
-                           regular.
+                           regular. This parameter is ignored if
+                           tuple is False.
             conf (float): See mlocate()'s docstring, default is 0.95
             loop_num (int): The number of times to search for
                             the needle before giving up, default is 10.
@@ -208,9 +210,17 @@ class Vision:
             loop_sleep_max (int): The maximum number of miliseconds to
                                   wait after wach search attempt,
                                   default is 1000.
+            get_tuple (bool): Whether to return a tuple containing the
+                              needle's coordinates.
 
         Returns:
-            See mlocate()'s docstring.
+            If tuple is false, returns True if needle was found and
+            False if needle was not found.
+
+            If tuple is true and loctype is 'regular', returns a tuple
+            containing (left, top, width, height) of the needle. If
+            loctype is 'center', returns a tuple containing (x, y) of
+            the needle.
         """
 
         # log.debug('Looking for ' + str(needle))
@@ -224,7 +234,7 @@ class Vision:
                                           needle=needle,
                                           loctype=loctype)
 
-            if target_image == 1:
+            if target_image is False:
                 log.debug('Cannot find ' + str(needle) + ', tried '
                           + str(tries) + ' times.')
                 misc.sleep_rand(loop_sleep_min, loop_sleep_max)
@@ -232,10 +242,13 @@ class Vision:
             else:
                 log.debug('Found ' + str(needle) + ' after trying '
                           + str(tries) + ' times.')
-                return target_image
+                if get_tuple is True:
+                    return target_image
+                else:
+                    return True
 
         log.debug('Timed out looking for ' + str(needle) + '.')
-        return 1
+        return False
 
     def click_image(self, needle, button='left', conf=0.95,
                     loop_num=25, loop_sleep_min=10, loop_sleep_max=1000,
@@ -289,10 +302,11 @@ class Vision:
                                            loop_sleep_max=loop_sleep_max,
                                            loctype='regular',
                                            needle=needle,
-                                           conf=conf)
-        if target_image == 1:
-            return 'fail'
-        else:
+                                           conf=conf,
+                                           get_tuple=True)
+        if target_image is False:
+            return False
+        elif isinstance(target_image, tuple) is True:
             (left, top, width, height) = target_image
             # Randomize the location the pointer will move to using the
             #   dimensions of needle image.
@@ -309,8 +323,13 @@ class Vision:
                         sleep_befmax=click_sleep_befmax,
                         sleep_afmin=click_sleep_afmin,
                         sleep_afmax=click_sleep_afmax)
-            return 'pass'
+            return True
+        else:
+            raise RuntimeError("Error with target_image return value!")
 
+
+# ----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 
 """
 Initializes the core objects for the Vision class.
@@ -394,3 +413,18 @@ vchat_menu_recent = Vision(left=vchat_menu_recent_left,
 # The entire display.
 vdisplay = Vision(left=0, width=start.DISPLAY_WIDTH,
                   top=0, height=start.DISPLAY_HEIGHT)
+
+# The text input fields on the login menu.
+vlogin_field_left = vclient_left + 273
+vlogin_field_top = vclient_top + 242
+vlogin_field = Vision(left=vlogin_field_left,
+                      top=vlogin_field_top,
+                      width=start.LOGIN_FIELD_WIDTH,
+                      height=start.LOGIN_FIELD_HEIGHT)
+
+vpass_field_left = vclient_left + 275
+vpass_field_top = vclient_top + 258
+vpass_field = Vision(left=vpass_field_left,
+                     top=vpass_field_top,
+                     width=start.LOGIN_FIELD_WIDTH,
+                     height=start.LOGIN_FIELD_HEIGHT)

@@ -36,6 +36,11 @@ CHAT_MENU_RECENT_HEIGHT = 17
 DISPLAY_WIDTH = pag.size().width
 DISPLAY_HEIGHT = pag.size().height
 
+# Dimensions of the "Login" and "Password" fields on the main login
+#   screen.
+LOGIN_FIELD_WIDTH = 258
+LOGIN_FIELD_HEIGHT = 15
+
 with open('./config.yaml') as config:
     config_file = yaml.safe_load(config)
 

@@ -22,9 +22,6 @@ def click_coord(left, top, width, height, button='left'):
         height (int): The y height of the coordinate space to randomize
                       the click within.
         button (str): The mouse button to click with, default is left.
-
-    Returns:
-        Always returns 0.
     """
 
     move_to(x=left, y=top,
@@ -32,7 +29,7 @@ def click_coord(left, top, width, height, button='left'):
             ymin=0, ymax=height)
 
     click(button=button)
-    return 0
+    return
 
 
 def move_to(x, y,
@@ -58,9 +55,6 @@ def move_to(x, y,
         durmax (int): The maximum number of miliseconds to take to move
                        the mouse cursor to its destination, default is
                        1500.
-
-    Returns:
-        Always returns 0.
     """
 
     xrand = rand.randint(xmin, xmax)
@@ -70,7 +64,7 @@ def move_to(x, y,
                (y + yrand),
                move_duration(durmin=durmin, durmax=durmax),
                move_path())
-    return 0
+    return
 
 
 def moverel(xmin, xmax, ymin, ymax, durmin=50, durmax=1000):
@@ -84,9 +78,6 @@ def moverel(xmin, xmax, ymin, ymax, durmin=50, durmax=1000):
         ymax (int): The maximum Y distance to move the mouse.
         durmin (int): See move_duration()'s docstring.
         durmax (int): See move_duration()'s docstring.
-
-    Returns:
-        Always returns 0.
     """
 
     x = rand.randint(xmin, xmax)
@@ -95,7 +86,7 @@ def moverel(xmin, xmax, ymin, ymax, durmin=50, durmax=1000):
     pag.moveRel(x, y,
                 move_duration(durmin=durmin, durmax=durmax),
                 move_path())
-    return 0
+    return
 
 
 def move_to_neutral(x, y,
@@ -117,15 +108,12 @@ def move_to_neutral(x, y,
                     is 300.
         ymax (int): The maximum X-distance away from y to move, default
                     is 500.
-
-    Returns:
-        Always returns 0.
     """
 
     log.debug('Moving mouse towards neutral area.')
 
     move_to(x=x, y=y, xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax)
-    return 0
+    return
 
 
 def click(button='left',
@@ -150,8 +138,6 @@ def click(button='left',
                             the mouse button, default is 0.
         click_durmax (int): Maximum number of miliseconds to hold down
                             the mouse button, default is 100.
-    Returns:
-        Always returns 0.
     """
 
     misc.sleep_rand(rmin=sleep_befmin, rmax=sleep_befmax)
@@ -163,7 +149,7 @@ def click(button='left',
 
     pag.click(button=button, duration=duration)
     misc.sleep_rand(rmin=sleep_afmin, rmax=sleep_afmax)
-    return 0
+    return
 
 
 def move_duration(durmin=50, durmax=1500):
@@ -210,8 +196,6 @@ def keypress(key,
                            key, default is 50.
         sleep_afmax (int): The longest time to wait after releasing the
                            key, default is 1000.
-    Returns:
-        Always returns 0.
     """
 
     log.debug('Pressing key: ' + str(key) + '.')
@@ -220,7 +204,7 @@ def keypress(key,
     misc.sleep_rand(rmin=durmin, rmax=durmax)
     pag.keyUp(key)
     misc.sleep_rand(rmin=sleep_afmin, rmax=sleep_afmax)
-    return 0
+    return
 
 
 def double_hotkey_press(key1, key2,
@@ -241,9 +225,6 @@ def double_hotkey_press(key1, key2,
         sleep_befmax (int): See keypress()'s docstring, default is 1000.
         sleep_afmin (int): See keypress()'s docstring, default is 500.
         sleep_afmax (int): See keypress()'s docstring, default is 1000.
-
-    Returns:
-        Always returns 0.
     """
 
     log.debug('Pressing hotkeys: ' + str(key1) + ' + ' + str(key2))
@@ -256,7 +237,7 @@ def double_hotkey_press(key1, key2,
     misc.sleep_rand(rmin=durmin, rmax=durmax)
     pag.keyUp(key2)
     misc.sleep_rand(rmin=sleep_afmin, rmax=sleep_afmax)
-    return 0
+    return
 
 
 def move_path():
@@ -347,4 +328,4 @@ def move_path():
         log.debug('Generated rand_path easeInOutExpo.')
         return pag.easeInOutExpo
     else:
-        return 1
+        return False
