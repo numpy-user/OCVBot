@@ -3,12 +3,7 @@ import logging as log
 from ocvbot import behavior, input, vision as vis, misc
 
 
-def miner_double_drop(rock1, rock2, ore, ore_type,
-                      drop_sapphire=True,
-                      drop_emerald=True,
-                      drop_ruby=True,
-                      drop_diamond=True,
-                      drop_clue_geode=True):
+def miner_double_drop(rock1, rock2, ore, ore_type):
     """
     A 2-rock drop mining script.
 
@@ -30,14 +25,6 @@ def miner_double_drop(rock1, rock2, ore, ore_type,
                     inventory.
         ore_type (str): The type of ore being mined, used for generating
                         stats. Available options are: "copper", "iron"
-        drop_sapphire (bool): Drop mined uncut sapphires, default is
-                              True.
-        drop_emerald (bool): Drop mined uncut emearalds, default is
-                             True.
-        drop_ruby (bool): Drop mined uncut rubies, default is True.
-        drop_diamond (bool): Drop mined uncut diamonds, default is True.
-        drop_clue_geode (bool): Drop mined uncut clue geodes, default is
-                                True.
 
     Raises:
         Raises a runtime error if the player's inventory is full, but
@@ -54,6 +41,13 @@ def miner_double_drop(rock1, rock2, ore, ore_type,
               ' drop_ruby= ' + str(drop_ruby) +
               ' drop_diamond= ' + str(drop_diamond) +
               ' drop_clue_geode= ' + str(drop_clue_geode))
+    
+    # Create tuples of whether or not to drop the item and the item's path.
+    drop_sapphire = (config_file['drop_sapphire'], './needles/items/uncit-sapphire.png')
+    drop_emerald = (config_file['drop_emerald'], './needles/items/uncit-emerald.png')
+    drop_ruby = (config_file['drop_ruby'], './needles/items/uncit-ruby.png')
+    drop_diamond = (config_file['drop_diamond'], './needles/items/uncit-diamond.png')
+    drop_clue_geode = (config_file['drop_clue_geode'], './needles/items/clue-geode.png')
 
     for attempts in range(1, 100):
 
@@ -75,7 +69,7 @@ def miner_double_drop(rock1, rock2, ore, ore_type,
                                                      click_sleep_afmax=1,
                                                      loop_sleep_max=100,
                                                      loop_num=1)
-            if rock_full == 'pass':
+            if rock_full is True:
                 # Move the mouse away from the rock so it doesn't
                 #   interfere with matching the needle.
                 input.moverel(xmin=15, xmax=100, ymin=15, ymax=100)
@@ -107,39 +101,30 @@ def miner_double_drop(rock1, rock2, ore, ore_type,
                     #   return.
                     if inv_full is True:
                         log.info('Inventory is full.')
-                        ore_drop = behavior.drop_item(item=ore)
-                        if ore_drop is False:
+                        ore_dropped = behavior.drop_item(item=ore)
+                        if ore_dropped is False:
                             behavior.logout()
                             # This runtime error will occur if the
                             #   player's inventory is full, but they
                             #   don't have any ore to drop.
                             raise RuntimeError("Could not find ore to drop!")
-                        if drop_sapphire is True:
-                            behavior.drop_item(item='./needles/items/'
-                                                    'uncut-sapphire.png',
-                                               track=False)
-                        if drop_emerald is True:
-                            behavior.drop_item(item='./needles/items/'
-                                                    'uncut-emerald.png',
-                                               track=False)
-                        if drop_ruby is True:
-                            behavior.drop_item(item='./needles/items/'
-                                                    'uncut-ruby.png',
-                                               track=False)
-                        if drop_diamond is True:
-                            behavior.drop_item(item='./needles/items/'
-                                                    'uncut-diamond.png',
-                                               track=False)
-                        if drop_clue_geode is True:
-                            behavior.drop_item(item='./needles/items/'
-                                                    'clue-geode.png',
-                                               track=False)
+                        
+                        # Iterate through the other items that could
+                        #   be dropped. If any of them is true, drop that item.
+                        # The for loop is iterating over a tuple of tuples.
+                        for item in (drop_sapphire, drop_emerald, drop_ruby,
+                                     drop_diamond, drop_clue_geode):
+                            # Unpack the tuple
+                            (drop_item, path) = item
+                            if drop_item is True:
+                                behavior.drop_item(item=str(path), track=False)
+                                
                         elapsed_time = misc.run_duration(human_readable=True)
                         log.info(
                             'Script has been running for  ' + str(elapsed_time)
                             + ' (HH:MM:SS)')
                         return
-                    elif inv_full is False:
+                    else:
                         return
 
                 log.info('Mining started.')
@@ -156,6 +141,6 @@ def miner_double_drop(rock1, rock2, ore, ore_type,
                 if rock_empty is True:
                     log.info('Rock is empty.')
                     log.debug(str(rock_needle) + ' empty.')
-                elif rock_empty is False:
+                else:
                     log.info('Timed out waiting for mining to finish.')
     return
