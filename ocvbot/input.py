@@ -10,219 +10,200 @@ from ocvbot import misc
 hc = pyc.HumanClicker()
 
 
-def click_coord(left, top, width, height, button='left',
-                sleep_befmin=0, sleep_befmax=500,
-                sleep_afmin=0, sleep_afmax=500,
-                click_durmin=0, click_durmax=100):
+class Mouse:
     """
-    Clicks within the provided coordinates. If width and height are both
-    0, then this function will click in the exact same location every
-    time.
-
-    Args:
-        sleep_befmin (int): Minimum number of miliseconds to wait before
-                            clicking, default is 0.
-        sleep_befmax (int): Maximum number of miliseconds to wait before
-                            clicking, default is 500.
-        sleep_afmin (int): Minimum number of miliseconds to wait after
-                           clicking, default is 0.
-        sleep_afmax (int): Maximum number of miliseconds to wait after
-                           clicking, default is 500.
-        click_durmin (int): Minimum number of miliseconds to hold down
-                            the mouse button, default is 0.
-        click_durmax (int): Maximum number of miliseconds to hold down
-                            the mouse button, default is 100.
-        left (int): The left edge (x) of the coordinate space to click
-                    within.
-        top (int): The top edge (y) of the coordinate space to click
-                   within.
-        width (int): The x width of the coordinate space to randomize
-                     the click within.
-        height (int): The y height of the coordinate space to randomize
-                      the click within.
-        button (str): The mouse button to click with, default is left.
-    """
-
-    move_to(x=left, y=top, xmin=0, xmax=width, ymin=0, ymax=height)
-    click(button, sleep_befmin, sleep_befmax, sleep_afmin, sleep_afmax,
-          click_durmin, click_durmax)
-    return
-
-
-def move_to(x, y,
-            xmax, ymax,
-            xmin=0, ymin=0,
-            durmin=50, durmax=1500):
-    """
-    Moves the mouse pointer to the specified coordinates. Coordinates
-    are relative to the display's dimensions. Units are in pixels. Uses
-    Bezier curves to make mouse movement appear more human-like.
-
-    Args:
-        x (int): The X coordinate to move the mouse to.
-        y (int): The Y coordinate to move the mouse to.
-        xmax (int): The maximum random pixel offset from x.
-        ymax (int): The maximum random pixel offset from y.
-        xmin  (int): The minimum random pixel offset from x, default is
-                     0.
-        ymin (int): The minimum random pixel offset from y, default is
-                     0.
-        durmin (int): The minumum number of miliseconds to take to move
-                      the mouse cursor to its destination, default is
-                      50.
-        durmax (int): The maximum number of miliseconds to take to move
+    left (int): X coordinate of the left edge to move the mouse cursor
+                to.
+    top (int): Y coordinte of the The top edge to move the mouse cursor
+               to.
+    width (int): The width of the coordinate space to randomize the
+                 mouse cursor within.
+    height (int): The height of the coordinate space to randomize the
+                  mouse cursor within.
+    sleep_befmin (int): Minimum number of miliseconds to wait before
+                        performing action, default is 0.
+    sleep_befmax (int): Maximum number of miliseconds to wait before
+                        performing action, default is 500.
+    sleep_afmin (int): Minimum number of miliseconds to wait after
+                       performing action, default is 0.
+    sleep_afmax (int): Maximum number of miliseconds to wait after
+                       performing action, default is 500.
+    click_durmin (int): Minimum number of miliseconds to hold down
+                        the mouse button, default is 0.
+    click_durmax (int): Maximum number of miliseconds to hold down
+                        the mouse button, default is 100.
+    move_durmin (int): The minumum number of miliseconds to take to move
+                       the mouse cursor to its destination, default is
+                       50.
+    move_durmax (int): The maximum number of miliseconds to take to move
                        the mouse cursor to its destination, default is
                        1500.
+    button (str): The mouse button to click with, default is left.
+
     """
+    def __init__(self,
+                 left, top, width, height,
+                 sleep_befmin=0, sleep_befmax=500,
+                 sleep_afmin=0, sleep_afmax=500,
+                 move_durmin=50, move_durmax=1500,
+                 durmin=1, durmax=100,
+                 button='left'):
 
-    xrand = rand.randint(xmin, xmax)
-    yrand = rand.randint(ymin, ymax)
+        self.left = left
+        self.top = top
+        self.width = width
+        self.height = height
+        self.sleep_befmin = sleep_befmin
+        self.sleep_befmax = sleep_befmax
+        self.sleep_afmin = sleep_afmin
+        self.sleep_afmax = sleep_afmax
+        self.move_durmin = move_durmin
+        self.move_durmax = move_durmax
+        self.durmin = durmin
+        self.durmax = durmax
+        self.button = button
 
-    hc.move((x + xrand, y + yrand), move_duration(durmin, durmax))
-    return
+    def click_coord(self):
+        """
+        Clicks within the provided coordinates. If width and height are
+        both 0, then this function will click in the exact same location
+        every time.
+
+        """
+        self.move_to()
+        self.click()
+        return
+
+    def move_to(self):
+        """
+        Moves the mouse pointer to the specified coordinates. Coordinates
+        are based on the display's dimensions. Units are in pixels. Uses
+        Bezier curves to make mouse movement appear more human-like.
+
+        """
+        x = rand.randint(self.left, self.width)
+        y = rand.randint(self.top, self.height)
+
+        hc.move((x, y), self.move_duration())
+        return
+
+    def moverel(self):
+        """
+        Moves the mouse relative to its current position.
+
+        self.left is minimum X distance to move the mouse.
+        self.width is maximum X distance to move the mouse.
+        self.top is the minimum Y distance to move the mouse.
+        self.height is the maximum Y distance to move the mouse.
+
+        """
+        (x_position, y_position) = pag.position()
+
+        x_dist = rand.randint(self.left, self.width)
+        y_dist = rand.randint(self.top, self.height)
+
+        x_destination = x_position + x_dist
+        y_destination = y_position + y_dist
+
+        hc.move(x_destination, y_destination, self.move_duration())
+        return
+
+    def move_duration(self):
+        """
+        Randomizes the amount of time the mouse cursor takes to move to
+        a new location.
+
+        Returns:
+            Returns a float containing a number in seconds.
+
+        """
+        move_duration_var = misc.rand_seconds(rmin=self.move_durmin,
+                                              rmax=self.move_durmax)
+        return move_duration_var
+
+    def click(self):
+        """
+        Clicks the left or right mouse button, waiting both before and
+        after for a randomized period of time.
+
+        """
+        misc.sleep_rand(rmin=self.sleep_befmin,
+                        rmax=self.sleep_befmax)
+
+        duration = misc.rand_seconds(rmin=self.durmin,
+                                     rmax=self.durmax)
+        pag.click(button=self.button,
+                  duration=duration)
+
+        misc.sleep_rand(rmin=self.sleep_afmin,
+                        rmax=self.sleep_afmax)
+        return
 
 
-def moverel(xmin, xmax, ymin, ymax, durmin=50, durmax=1000):
+class Keyboard:
     """
-    Moves the mouse relative to its current position.
+    sleep_befmin (int): The minimum number of miliseconds to wait before
+                        performing action, default is 50.
+    sleep_befmax (int): The maximum number of miliseconds to wait before
+                        performing action default is 1000.
+    sleep_afmin (int): The minimum number of miliseconds to wait after
+                        performing action, default is 50.
+    sleep_afmax (int): The minimum number of miliseconds to wait after
+                        performing action, default is 1000.
+    durmin (int): The minimum number of miliseconds to hold the key down,
+                  default is 1.
+    durmax (int): The maximum number of miliseconds to hold the key down,
+                  default is 180.
 
-    Args;
-        xmin (int): The mininum X distance to move the mouse.
-        xmax (int): The maximum X distance to move the mouse.
-        ymin (int): The mininum Y distance to move the mouse.
-        ymax (int): The maximum Y distance to move the mouse.
-        durmin (int): See move_duration()'s docstring.
-        durmax (int): See move_duration()'s docstring.
     """
-    # Current position.
-    (x_pos, y_pos) = pag.position()
+    def __init__(self,
+                 sleep_befmin=0, sleep_befmax=500,
+                 sleep_afmin=0, sleep_afmax=500,
+                 durmin=1, durmax=100):
 
-    # Distance to move.
-    x_dist = rand.randint(xmin, xmax)
-    y_dist = rand.randint(ymin, ymax)
+        self.sleep_befmin = sleep_befmin
+        self.sleep_befmax = sleep_befmax
+        self.sleep_afmin = sleep_afmin
+        self.sleep_afmax = sleep_afmax
+        self.durmin = durmin
+        self.durmax = durmax
 
-    # Destination positions.
-    x_dest = x_pos + x_dist
-    y_dest = y_pos + y_dist
+    def keypress(self, key):
+        """
+        Presses the specified key.
 
-    hc.move(x_dest, y_dest, move_duration(durmin, durmax))
-    return
+        Args:
+            key (str): The key on the keyboard to press, according to
+                       PyAutoGUI.
 
+        """
+        log.debug('Pressing key: ' + str(key) + '.')
+        misc.sleep_rand(rmin=self.sleep_befmin, rmax=self.sleep_befmax)
+        pag.keyDown(key)
+        misc.sleep_rand(rmin=self.durmin, rmax=self.durmax)
+        pag.keyUp(key)
+        misc.sleep_rand(rmin=self.sleep_afmin, rmax=self.sleep_afmax)
+        return
 
-def move_duration(durmin=50, durmax=1500):
-    """
-    Randomizes the amount of time the mouse cursor takes to move to a
-    new location. Input arguments are in miliseconds but return value is
-    in seconds.
+    def double_hotkey_press(self, key1, key2):
+        """
+        Performs a two-key hotkey shortcut, such as Ctrl-c for copying
+        text.
 
-    Args:
-        durmin (int): Minimum number of miliseconds the mouse
-                      pointer will take to move to its destination,
-                      default is 50.
-        durmax (int): Maximum number of miliseconds the mouse pointer
-                      will take to move to its destination, default is
-                      1500.
-    Returns:
-        Returns a float.
-    """
+        Args:
+            key1 (str): The first hotkey used in the two-hotkey shortcut,
+                        sometimes also called the modifier key.
+            key2 (str): The second hotkey used in the two-hotkey shortcut.
 
-    move_duration_var = misc.rand_seconds(rmin=durmin, rmax=durmax)
-    return move_duration_var
-
-
-def click(button='left',
-          sleep_befmin=0, sleep_befmax=500,
-          sleep_afmin=0, sleep_afmax=500,
-          click_durmin=0, click_durmax=100):
-    """
-    Clicks the left or right mouse button, waiting both before and after
-    for a randomized period of time.
-
-    Args:
-        button (str): Which mouse button to click, default is left.
-        sleep_befmin (int): Minimum number of miliseconds to wait before
-                            clicking, default is 0.
-        sleep_befmax (int): Maximum number of miliseconds to wait before
-                            clicking, default is 500.
-        sleep_afmin (int): Minimum number of miliseconds to wait after
-                           clicking, default is 0.
-        sleep_afmax (int): Maximum number of miliseconds to wait after
-                           clicking, default is 500.
-        click_durmin (int): Minimum number of miliseconds to hold down
-                            the mouse button, default is 0.
-        click_durmax (int): Maximum number of miliseconds to hold down
-                            the mouse button, default is 100.
-    """
-
-    misc.sleep_rand(rmin=sleep_befmin, rmax=sleep_befmax)
-    duration = misc.rand_seconds(rmin=click_durmin, rmax=click_durmax)
-    pag.click(button=button, duration=duration)
-    misc.sleep_rand(rmin=sleep_afmin, rmax=sleep_afmax)
-    return
-
-
-def keypress(key,
-             durmin=1, durmax=180,
-             sleep_befmin=50, sleep_befmax=1000,
-             sleep_afmin=50, sleep_afmax=1000):
-    """
-    Holds down the specified key for a random period of time. All
-    values are in miliseconds.
-
-    Args:
-        key (str): The key on the keyboard to press, according to
-                   PyAutoGUI.
-        durmin (int): The shortest time the key can be down, default is
-                      1.
-        durmax (int): The longest time the key can be down, default is
-                      180.
-        sleep_befmin (int): The shortest time to wait before pressing
-                            the key down, default is 50.
-        sleep_befmax (int): The longest time to wait before pressing the
-                            key down, default is 1000.
-        sleep_afmin (int): The shortest time to wait after releasing the
-                           key, default is 50.
-        sleep_afmax (int): The longest time to wait after releasing the
-                           key, default is 1000.
-    """
-
-    log.debug('Pressing key: ' + str(key) + '.')
-    misc.sleep_rand(rmin=sleep_befmin, rmax=sleep_befmax)
-    pag.keyDown(key)
-    misc.sleep_rand(rmin=durmin, rmax=durmax)
-    pag.keyUp(key)
-    misc.sleep_rand(rmin=sleep_afmin, rmax=sleep_afmax)
-    return
-
-
-def double_hotkey_press(key1, key2,
-                        durmin=5, durmax=190,
-                        sleep_befmin=500, sleep_befmax=1000,
-                        sleep_afmin=500, sleep_afmax=1000):
-    """
-    Performs a two-key hotkey shortcut, such as Ctrl-c for copying
-    text.
-
-    Args:
-        key1 (str): The first hotkey used in the two-hotkey shortcut,
-                    sometimes also called the modifier key.
-        key2 (str): The second hotkey used in the two-hotkey shortcut.
-        durmin (int): See keypress()'s docstring, default is 5.
-        durmax (int): See keypress()'s docstring, default is 190.
-        sleep_befmin (int): See keypress()'s docstring, default is 500.
-        sleep_befmax (int): See keypress()'s docstring, default is 1000.
-        sleep_afmin (int): See keypress()'s docstring, default is 500.
-        sleep_afmax (int): See keypress()'s docstring, default is 1000.
-    """
-
-    log.debug('Pressing hotkeys: ' + str(key1) + ' + ' + str(key2))
-    misc.sleep_rand(rmin=sleep_befmin, rmax=sleep_befmax)
-    pag.keyDown(key1)
-    misc.sleep_rand(rmin=durmin, rmax=durmax)
-    pag.keyDown(key2)
-    misc.sleep_rand(rmin=durmin, rmax=durmax)
-    pag.keyUp(key1)
-    misc.sleep_rand(rmin=durmin, rmax=durmax)
-    pag.keyUp(key2)
-    misc.sleep_rand(rmin=sleep_afmin, rmax=sleep_afmax)
-    return
+        """
+        log.debug('Pressing hotkeys: ' + str(key1) + ' + ' + str(key2))
+        misc.sleep_rand(rmin=self.sleep_befmin, rmax=self.sleep_befmax)
+        pag.keyDown(key1)
+        misc.sleep_rand(rmin=self.durmin, rmax=self.durmax)
+        pag.keyDown(key2)
+        misc.sleep_rand(rmin=self.durmin, rmax=self.durmax)
+        pag.keyUp(key1)
+        misc.sleep_rand(rmin=self.durmin, rmax=self.durmax)
+        pag.keyUp(key2)
+        misc.sleep_rand(rmin=self.sleep_afmin, rmax=self.sleep_afmax)
+        return

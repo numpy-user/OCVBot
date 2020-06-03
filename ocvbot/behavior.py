@@ -6,46 +6,27 @@ import time
 import pyautogui as pag
 
 from ocvbot import input, misc, vision as vis, startup as start
-# TODO
-from ocvbot.misc import wait_rand
-
-"""
-def chat(context)
-  if context == 'smelting'
-    type 'option 1'
-    type 'option 2'
-  
-  elif context == 'blablabla'
-  
-def move_camera_rand(chance=3,down_min=200,down_max=2000)
-    down_arrow_roll = rand.randint(1, chance)
-    if down_arrow_roll == chance:
-       input.keyDown('Down')
-       time.sleep(float(rand.randint(down_min, down_max)))
-       input.keyUp('Down')
-    left
-    right arrow roll
- 
-def switch_worlds()
-"""
 
 
-def login(username_file='username.txt', password_file='password.txt',
-          cred_sleep_min=800, cred_sleep_max=5000,
+def switch_worlds_logged_in(members=False, free_to_play=True, safe=True):
+    # TODO
+    if members is False and free_to_play is False:
+        raise Exception("A world type must be selected!")
+    pass
+
+
+def switch_worlds_logged_out():
+    # TODO
+    pass
+
+
+def login(cred_sleep_min=800, cred_sleep_max=5000,
           login_sleep_min=500, login_sleep_max=5000,
           postlogin_sleep_min=500, postlogin_sleep_max=5000):
     """
-    Logs in in using credentials specified in two files.
+    Logs in in using the credentials specified the main config file.
 
     Args:
-        username_file (file): The filepath of the file containing the
-                              user's username. Filepath is relative to
-                              the directory this file is in, default is
-                              a file simply called "username".
-        password_file (file): The filepath of the file containing the
-                              user's password. Filepath is relative to
-                              the directory this file is in, default is
-                              a file simply called "password".
         cred_sleep_min (int): The minimum number of miliseconds to wait
                               between actions while entering account
                               credentials, default is 800.
@@ -74,26 +55,13 @@ def login(username_file='username.txt', password_file='password.txt',
     # Make sure the client is logged out.
     logged_out = vis.vdisplay.wait_for_image(needle='./needles/login-menu/'
                                                     'orient-logged-out.png',
-                                             loop_num=1)
+                                             loop_num=3,
+                                             loop_sleep_min=1000,
+                                             loop_sleep_max=2000)
     if logged_out is False:
         raise RuntimeError("Cannot find client or client is not logged out!")
-
-    elif logged_out is True:
+    else:
         log.info('Logging in.')
-        # Randomly click somewhere on the login menu to focus the window.
-        # Roll to determine whether to click on the top half or bottom
-        #   half of the client window.
-        roll = rand.randint(1, 2)
-        if roll == 1:
-            input.click_coord(left=vis.vclient_left + 3,
-                              top=vis.vclient_top + 3,
-                              width=start.CLIENT_WIDTH - 3,
-                              height=262)
-        else:
-            input.click_coord(left=vis.vclient_left + 126,
-                              top=vis.vclient_top + 341,
-                              width=650,
-                              height=183)
 
     # Click the "Ok" button if it's present at the login screen.
     # This button appears if the user was disconnected due to idle
@@ -103,39 +71,36 @@ def login(username_file='username.txt', password_file='password.txt',
                                          loop_num=1)
     # If the "Ok" button isn't found, look for the "Existing user"
     #   button.
-    existing_user_button = vis.vdisplay.wait_for_image(
+    existing_user_button = vis.vdisplay.click_image(
         needle='./needles/login-menu/'
                'existing-user-button.png',
         loop_num=1)
 
-    if existing_user_button is True:
-        misc.sleep_rand(cred_sleep_min, cred_sleep_max)
-        input.keypress('enter')
-
     if existing_user_button is True or ok_button is True:
         # Click to make sure the "Login" field is active.
-        input.click_coord(left=vis.vlogin_field_left,
-                          top=vis.vlogin_field_top,
-                          width=start.LOGIN_FIELD_WIDTH,
-                          height=start.LOGIN_FIELD_HEIGHT)
+        input.Mouse(left=vis.vlogin_field_left,
+                    top=vis.vlogin_field_top,
+                    width=start.LOGIN_FIELD_WIDTH,
+                    height=start.LOGIN_FIELD_HEIGHT).click_coord()
         # Enter login field credentials.
         misc.sleep_rand(cred_sleep_min, cred_sleep_max)
+        username_file = start.config_file['username_file']
         pag.typewrite(open(username_file, 'r').read(), interval=0.1)
         misc.sleep_rand(cred_sleep_min, cred_sleep_max)
 
         # Click to make sure the "Password" field is active.
-        input.click_coord(left=vis.vpass_field_left,
-                          top=vis.vpass_field_top,
-                          width=start.LOGIN_FIELD_WIDTH,
-                          height=start.LOGIN_FIELD_HEIGHT)
+        input.Mouse(left=vis.vpass_field_left,
+                    top=vis.vpass_field_top,
+                    width=start.LOGIN_FIELD_WIDTH,
+                    height=start.LOGIN_FIELD_HEIGHT).click_coord()
         # Enter password field credentials and login.
+        password_file = start.config_file['password_file']
         pag.typewrite(open(password_file, 'r').read(), interval=0.1)
         misc.sleep_rand(cred_sleep_min, cred_sleep_max)
 
-        input.keypress('enter')
+        input.Keyboard().keypress(key='enter')
         misc.sleep_rand(login_sleep_min, login_sleep_max)
 
-        # Click the 'click here to play' button in the postlogin menu.
         postlogin_screen_button = vis.vdisplay. \
             click_image(needle='./needles/login-menu/orient-postlogin.png',
                         conf=0.8,
@@ -193,7 +158,7 @@ def open_side_stone(side_stone, hotkey):
         return True
     elif stone_closed is False:
         log.debug('Opening side stone.')
-        input.keypress(hotkey)
+        input.Keyboard().keypress(key=hotkey)
 
     # Try a total of 5 times to open the desired side stone menu using
     #   the hotkey.
@@ -411,9 +376,8 @@ def check_skills():
 
     open_side_stone('./needles/side-stones/skills.png',
                     start.config_file['side_stone_skills'])
-    input.move_to(vis.vinv_left, vis.vinv_top,
-                  xmin=0, xmax=start.INV_WIDTH,
-                  ymin=0, ymax=start.INV_HEIGHT)
+    input.Mouse(vis.vinv_left, vis.vinv_top,
+                start.INV_WIDTH, start.INV_HEIGHT).move_to()
     misc.sleep_rand(500, 5000)
     return
 
@@ -513,20 +477,20 @@ def drop_item(item, track=True,
         #   right half of the player's inventory. This helps reduce the
         #   chances the bot will click on the same item twice.
         item_on_right = vis.vinv_right_half.click_image(loop_num=1,
-                                                        click_sleep_befmin=10,
-                                                        click_sleep_befmax=50,
-                                                        click_sleep_afmin=50,
-                                                        click_sleep_afmax=300,
+                                                        sleep_befmin=10,
+                                                        sleep_befmax=50,
+                                                        sleep_afmin=50,
+                                                        sleep_afmax=300,
                                                         move_durmin=50,
                                                         move_durmax=800,
                                                         needle=item)
         if item_on_right is True and track is True:
             start.items_gathered += 1
         item_on_left = vis.vinv_left_half.click_image(loop_num=1,
-                                                      click_sleep_befmin=10,
-                                                      click_sleep_befmax=50,
-                                                      click_sleep_afmin=50,
-                                                      click_sleep_afmax=300,
+                                                      sleep_befmin=10,
+                                                      sleep_befmax=50,
+                                                      sleep_afmin=50,
+                                                      sleep_afmax=300,
                                                       move_durmin=50,
                                                       move_durmax=800,
                                                       needle=item)
@@ -538,7 +502,7 @@ def drop_item(item, track=True,
         item_remains = vis.vinv.wait_for_image(loop_num=1, needle=item)
 
         # Chance to briefly wait while dropping items.
-        wait_rand(chance=wait_chance, wait_min=wait_min, wait_max=wait_max)
+        misc.wait_rand(wait_chance, wait_min, wait_max)
 
         pag.keyUp('shift')
         if item_remains is False:

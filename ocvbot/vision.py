@@ -252,8 +252,8 @@ class Vision:
 
     def click_image(self, needle, button='left', conf=0.95,
                     loop_num=25, loop_sleep_min=10, loop_sleep_max=1000,
-                    click_sleep_befmin=0, click_sleep_befmax=500,
-                    click_sleep_afmin=0, click_sleep_afmax=500,
+                    sleep_befmin=0, sleep_befmax=500,
+                    sleep_afmin=0, sleep_afmax=500,
                     move_durmin=50, move_durmax=1500):
         """
         Moves the mouse to the provided needle image and clicks on
@@ -272,16 +272,16 @@ class Vision:
                                   default is 10.
             loop_sleep_max (int): See wait_for_image()'s docstring,
                                   default is 1000.
-            click_sleep_befmin (int): The minimum number of miliseconds
+            sleep_befmin (int): The minimum number of miliseconds
                                       to wait before clicking the
                                       needle, default is 0.
-            click_sleep_befmax (int): The maximum number of miliseconds
+            sleep_befmax (int): The maximum number of miliseconds
                                       to wait before clicking the
                                       needle, default is 500.
-            click_sleep_afmin (int): The minimum number of miliseconds
+            sleep_afmin (int): The minimum number of miliseconds
                                      to wait after clicking the
                                      needle, default is 0.
-            click_sleep_afmax (int): The maximum number of miliseconds
+            sleep_afmax (int): The maximum number of miliseconds
                                      to wait after clicking the
                                      needle, default is 0.
             move_durmin (int): The minumum number of miliseconds to take
@@ -310,19 +310,14 @@ class Vision:
             (left, top, width, height) = target_image
             # Randomize the location the pointer will move to using the
             #   dimensions of needle image.
-            input.move_to(left, top,
-                          xmin=0, xmax=width,
-                          ymin=0, ymax=height,
-                          durmin=move_durmin,
-                          durmax=move_durmax)
+            input.Mouse(left, top, width, height,
+                        sleep_befmin, sleep_befmax,
+                        sleep_afmin, sleep_afmax,
+                        move_durmin, move_durmax,
+                        button=button).click_coord()
 
             log.debug('Clicking on ' + str(needle) + '.')
 
-            input.click(button=button,
-                        sleep_befmin=click_sleep_befmin,
-                        sleep_befmax=click_sleep_befmax,
-                        sleep_afmin=click_sleep_afmin,
-                        sleep_afmax=click_sleep_afmax)
             return True
         else:
             raise RuntimeError("Error with target_image return value!")

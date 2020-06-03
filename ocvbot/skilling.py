@@ -1,6 +1,6 @@
 import logging as log
 
-from ocvbot import behavior, input, vision as vis, misc
+from ocvbot import behavior, input, vision as vis, misc, startup as start
 
 
 def miner_double_drop(rock1, rock2, ore, ore_type):
@@ -36,43 +36,43 @@ def miner_double_drop(rock1, rock2, ore, ore_type):
     #   init_vision() function has to run before the objects get valid
     #   values.
 
-    log.debug('drop_sapphire= ' + str(drop_sapphire) +
-              ' drop_emerald= ' + str(drop_emerald) +
-              ' drop_ruby= ' + str(drop_ruby) +
-              ' drop_diamond= ' + str(drop_diamond) +
-              ' drop_clue_geode= ' + str(drop_clue_geode))
-    
     # Create tuples of whether or not to drop the item and the item's path.
-    drop_sapphire = (config_file['drop_sapphire'], './needles/items/uncit-sapphire.png')
-    drop_emerald = (config_file['drop_emerald'], './needles/items/uncit-emerald.png')
-    drop_ruby = (config_file['drop_ruby'], './needles/items/uncit-ruby.png')
-    drop_diamond = (config_file['drop_diamond'], './needles/items/uncit-diamond.png')
-    drop_clue_geode = (config_file['drop_clue_geode'], './needles/items/clue-geode.png')
+    drop_sapphire = (start.config_file['drop_sapphire'],
+                     './needles/items/uncit-sapphire.png')
+    drop_emerald = (start.config_file['drop_emerald'],
+                    './needles/items/uncit-emerald.png')
+    drop_ruby = (start.config_file['drop_ruby'],
+                 './needles/items/uncit-ruby.png')
+    drop_diamond = (start.config_file['drop_diamond'],
+                    './needles/items/uncit-diamond.png')
+    drop_clue_geode = (start.config_file['drop_clue_geode'],
+                       './needles/items/clue-geode.png')
 
     for attempts in range(1, 100):
 
+        # TODO: allow rotating through an arbitrary number of rocks
         for rock_needle in (rock1, rock2):
             # Unpack the "rock_needle" tuple to obtain "full" and
             #   "empty" versions of each needle.
-            (rock_full_needle, rock_empty_needle) = rock_needle
+            (full_rock_needle, empty_rock_needle) = rock_needle
 
             log.debug('Searching for ore ' + str(attempts) + '...')
 
             # If current rock is full, begin mining it.
-            rock_full = vis.vgame_screen.click_image(needle=rock_full_needle,
+            rock_full = vis.vgame_screen.click_image(needle=full_rock_needle,
                                                      conf=0.8,
                                                      move_durmin=5,
                                                      move_durmax=500,
-                                                     click_sleep_befmin=0,
-                                                     click_sleep_befmax=100,
-                                                     click_sleep_afmin=0,
-                                                     click_sleep_afmax=1,
+                                                     sleep_befmin=0,
+                                                     sleep_befmax=100,
+                                                     sleep_afmin=0,
+                                                     sleep_afmax=1,
                                                      loop_sleep_max=100,
                                                      loop_num=1)
             if rock_full is True:
                 # Move the mouse away from the rock so it doesn't
                 #   interfere with matching the needle.
-                input.moverel(xmin=15, xmax=100, ymin=15, ymax=100)
+                input.Mouse(15, 100, 15, 100).moverel()
                 log.info('Waiting for mining to start.')
 
                 # Small chance to do nothing for a short while.
@@ -132,7 +132,7 @@ def miner_double_drop(rock1, rock2, ore, ore_type):
                 # Wait until the rock is empty by waiting for the
                 #   "empty" version of the rock_needle tuple.
                 rock_empty = vis.vgame_screen.wait_for_image(
-                    needle=rock_empty_needle,
+                    needle=empty_rock_needle,
                     conf=0.85,
                     loop_num=100,
                     loop_sleep_min=100,
