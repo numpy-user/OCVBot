@@ -2,8 +2,12 @@ import logging as log
 import random as rand
 
 import pyautogui as pag
+import pyclick as pyc
 
 from ocvbot import misc
+
+# initialize HumanClicker object
+hc = pyc.HumanClicker()
 
 
 def click_coord(left, top, width, height, button='left'):
@@ -60,10 +64,8 @@ def move_to(x, y,
     xrand = rand.randint(xmin, xmax)
     yrand = rand.randint(ymin, ymax)
 
-    pag.moveTo((x + xrand),
-               (y + yrand),
-               move_duration(durmin=durmin, durmax=durmax),
-               move_path())
+    hc.move((x + xrand), (y + yrand),
+            move_duration(durmin=durmin, durmax=durmax))
     return
 
 
@@ -79,13 +81,18 @@ def moverel(xmin, xmax, ymin, ymax, durmin=50, durmax=1000):
         durmin (int): See move_duration()'s docstring.
         durmax (int): See move_duration()'s docstring.
     """
+    # Current position.
+    (x_pos, y_pos) = pag.position()
 
-    x = rand.randint(xmin, xmax)
-    y = rand.randint(ymin, ymax)
+    # Distance to move.
+    x_dist = rand.randint(xmin, xmax)
+    y_dist = rand.randint(ymin, ymax)
 
-    pag.moveRel(x, y,
-                move_duration(durmin=durmin, durmax=durmax),
-                move_path())
+    # Destination positions.
+    x_dest = x_pos + x_dist
+    y_dest = y_pos + y_dist
+
+    hc.move(x_dest, y_dest, move_duration(durmin=durmin, durmax=durmax))
     return
 
 
@@ -144,8 +151,8 @@ def click(button='left',
 
     duration = misc.rand_seconds(rmin=click_durmin, rmax=click_durmax)
 
-    log.debug('Holding down ' + button + ' mouse button for ' + str(duration) +
-              ' seconds.')
+    #log.debug('Holding down ' + button + ' mouse button for ' + str(duration) +
+              #' seconds.')
 
     pag.click(button=button, duration=duration)
     misc.sleep_rand(rmin=sleep_afmin, rmax=sleep_afmax)
@@ -238,94 +245,3 @@ def double_hotkey_press(key1, key2,
     pag.keyUp(key2)
     misc.sleep_rand(rmin=sleep_afmin, rmax=sleep_afmax)
     return
-
-
-def move_path():
-    """
-    Randomizes the movement behavior of the mouse cursor as it moves
-    to a new location. One of 22 different movement patters is chosen at
-    random.
-
-    Returns:
-        Returns a random PyAutoGUI function for different mouse
-        movement.
-    """
-
-    # to do: implement bezier-curve mouse behavior
-    # https://stackoverflow.com/questions/44467329/pyautogui-mouse-movement-with-bezier-curve
-    rand_path = rand.randint(1, 22)
-    if rand_path == 1:
-        log.debug('Generated rand_path easeInQuad.')
-        return pag.easeInQuad
-    elif rand_path == 2:
-        log.debug('Generated rand_path easeOutQuad.')
-        return pag.easeOutQuad
-    elif rand_path == 3:
-        log.debug('Generated rand_path easeInOutQuad.')
-        return pag.easeInOutQuad
-
-    elif rand_path == 4:
-        log.debug('Generated rand_path easeInQuart.')
-        return pag.easeInQuart
-    elif rand_path == 5:
-        log.debug('Generated rand_path easeOutQuart.')
-        return pag.easeOutQuart
-    elif rand_path == 6:
-        log.debug('Generated rand_path easeinOutQuart.')
-        return pag.easeInOutQuart
-
-    elif rand_path == 7:
-        log.debug('Generated rand_path easeInQuint.')
-        return pag.easeInQuint
-    elif rand_path == 8:
-        log.debug('Generated rand_path easeOutQuint.')
-        return pag.easeOutQuint
-    elif rand_path == 9:
-        log.debug('Generated rand_path easeInOutQuint.')
-        return pag.easeInOutQuint
-
-    elif rand_path == 10:
-        log.debug('Generated rand_path easeInBack.')
-        return pag.easeInBack
-    elif rand_path == 11:
-        log.debug('Generated rand_path easeOutBack.')
-        return pag.easeOutBack
-    elif rand_path == 12:
-        log.debug('Generated rand_path easeInOutBack.')
-        return pag.easeInOutBack
-
-    elif rand_path == 13:
-        log.debug('Generated rand_path easeInCirc.')
-        return pag.easeInCirc
-    elif rand_path == 14:
-        log.debug('Generated rand_path easeOutCirc.')
-        return pag.easeOutCirc
-    elif rand_path == 15:
-        log.debug('Generated rand_path easeInOutCirc.')
-        return pag.easeInOutCirc
-
-    elif rand_path == 16:
-        log.debug('Generated rand_path easeInSine.')
-        return pag.easeInSine
-    elif rand_path == 17:
-        log.debug('Generated rand_path easeOutSine.')
-        return pag.easeOutSine
-    elif rand_path == 18:
-        log.debug('Generated rand_path easeInOutSine.')
-        return pag.easeInOutSine
-
-    elif rand_path == 19:
-        log.debug('Generated rand_path linear.')
-        return pag.linear
-
-    elif rand_path == 20:
-        log.debug('Generated rand_path easeInExpo.')
-        return pag.easeInExpo
-    elif rand_path == 21:
-        log.debug('Generated rand_path easeOutExpo.')
-        return pag.easeOutExpo
-    elif rand_path == 22:
-        log.debug('Generated rand_path easeInOutExpo.')
-        return pag.easeInOutExpo
-    else:
-        return False
