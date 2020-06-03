@@ -10,13 +10,28 @@ from ocvbot import misc
 hc = pyc.HumanClicker()
 
 
-def click_coord(left, top, width, height, button='left'):
+def click_coord(left, top, width, height, button='left',
+                sleep_befmin=0, sleep_befmax=500,
+                sleep_afmin=0, sleep_afmax=500,
+                click_durmin=0, click_durmax=100):
     """
     Clicks within the provided coordinates. If width and height are both
     0, then this function will click in the exact same location every
     time.
 
     Args:
+        sleep_befmin (int): Minimum number of miliseconds to wait before
+                            clicking, default is 0.
+        sleep_befmax (int): Maximum number of miliseconds to wait before
+                            clicking, default is 500.
+        sleep_afmin (int): Minimum number of miliseconds to wait after
+                           clicking, default is 0.
+        sleep_afmax (int): Maximum number of miliseconds to wait after
+                           clicking, default is 500.
+        click_durmin (int): Minimum number of miliseconds to hold down
+                            the mouse button, default is 0.
+        click_durmax (int): Maximum number of miliseconds to hold down
+                            the mouse button, default is 100.
         left (int): The left edge (x) of the coordinate space to click
                     within.
         top (int): The top edge (y) of the coordinate space to click
@@ -28,11 +43,9 @@ def click_coord(left, top, width, height, button='left'):
         button (str): The mouse button to click with, default is left.
     """
 
-    move_to(x=left, y=top,
-            xmin=0, xmax=width,
-            ymin=0, ymax=height)
-
-    click(button=button)
+    move_to(x=left, y=top, xmin=0, xmax=width, ymin=0, ymax=height)
+    click(button, sleep_befmin, sleep_befmax, sleep_afmin, sleep_afmax,
+          click_durmin, click_durmax)
     return
 
 
@@ -42,7 +55,8 @@ def move_to(x, y,
             durmin=50, durmax=1500):
     """
     Moves the mouse pointer to the specified coordinates. Coordinates
-    are relative to the display's dimensions. Units are in pixels.
+    are relative to the display's dimensions. Units are in pixels. Uses
+    Bezier curves to make mouse movement appear more human-like.
 
     Args:
         x (int): The X coordinate to move the mouse to.
@@ -64,8 +78,7 @@ def move_to(x, y,
     xrand = rand.randint(xmin, xmax)
     yrand = rand.randint(ymin, ymax)
 
-    hc.move((x + xrand), (y + yrand),
-            move_duration(durmin=durmin, durmax=durmax))
+    hc.move((x + xrand, y + yrand), move_duration(durmin, durmax))
     return
 
 
@@ -92,70 +105,7 @@ def moverel(xmin, xmax, ymin, ymax, durmin=50, durmax=1000):
     x_dest = x_pos + x_dist
     y_dest = y_pos + y_dist
 
-    hc.move(x_dest, y_dest, move_duration(durmin=durmin, durmax=durmax))
-    return
-
-
-def move_to_neutral(x, y,
-                    xmin=50, xmax=300,
-                    ymin=300, ymax=500):
-    """
-    Moves the mouse to a 'neutral zone', away from any buttons or
-    tooltop icons that could get in the way of the script. Units are in
-    pixels.
-
-    Args:
-        x (int): The x coordinate to move to.
-        y (int): The y coordinate to move to.
-        xmin (int): The minimum X-distance away from x to move, default
-                    is 50.
-        xmax (int): The maximum X-distance away from x to move, default
-                    is 300.
-        ymin (int): The minimum Y-distance away from y to move, default
-                    is 300.
-        ymax (int): The maximum X-distance away from y to move, default
-                    is 500.
-    """
-
-    log.debug('Moving mouse towards neutral area.')
-
-    move_to(x=x, y=y, xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax)
-    return
-
-
-def click(button='left',
-          sleep_befmin=0, sleep_befmax=500,
-          sleep_afmin=0, sleep_afmax=500,
-          click_durmin=0, click_durmax=100):
-    """
-    Clicks the left or right mouse button, waiting before and after
-    for a randomized period of time.
-
-    Args:
-        button (str): Which mouse button to click, default is left.
-        sleep_befmin (int): Minimum number of miliseconds to wait before
-                            clicking, default is 0.
-        sleep_befmax (int): Maximum number of miliseconds to wait before
-                            clicking, default is 500.
-        sleep_afmin (int): Minimum number of miliseconds to wait after
-                           clicking, default is 0.
-        sleep_afmax (int): Maximum number of miliseconds to wait after
-                           clicking, default is 500.
-        click_durmin (int): Minimum number of miliseconds to hold down
-                            the mouse button, default is 0.
-        click_durmax (int): Maximum number of miliseconds to hold down
-                            the mouse button, default is 100.
-    """
-
-    misc.sleep_rand(rmin=sleep_befmin, rmax=sleep_befmax)
-
-    duration = misc.rand_seconds(rmin=click_durmin, rmax=click_durmax)
-
-    #log.debug('Holding down ' + button + ' mouse button for ' + str(duration) +
-              #' seconds.')
-
-    pag.click(button=button, duration=duration)
-    misc.sleep_rand(rmin=sleep_afmin, rmax=sleep_afmax)
+    hc.move(x_dest, y_dest, move_duration(durmin, durmax))
     return
 
 
@@ -178,6 +128,37 @@ def move_duration(durmin=50, durmax=1500):
 
     move_duration_var = misc.rand_seconds(rmin=durmin, rmax=durmax)
     return move_duration_var
+
+
+def click(button='left',
+          sleep_befmin=0, sleep_befmax=500,
+          sleep_afmin=0, sleep_afmax=500,
+          click_durmin=0, click_durmax=100):
+    """
+    Clicks the left or right mouse button, waiting both before and after
+    for a randomized period of time.
+
+    Args:
+        button (str): Which mouse button to click, default is left.
+        sleep_befmin (int): Minimum number of miliseconds to wait before
+                            clicking, default is 0.
+        sleep_befmax (int): Maximum number of miliseconds to wait before
+                            clicking, default is 500.
+        sleep_afmin (int): Minimum number of miliseconds to wait after
+                           clicking, default is 0.
+        sleep_afmax (int): Maximum number of miliseconds to wait after
+                           clicking, default is 500.
+        click_durmin (int): Minimum number of miliseconds to hold down
+                            the mouse button, default is 0.
+        click_durmax (int): Maximum number of miliseconds to hold down
+                            the mouse button, default is 100.
+    """
+
+    misc.sleep_rand(rmin=sleep_befmin, rmax=sleep_befmax)
+    duration = misc.rand_seconds(rmin=click_durmin, rmax=click_durmax)
+    pag.click(button=button, duration=duration)
+    misc.sleep_rand(rmin=sleep_afmin, rmax=sleep_afmax)
+    return
 
 
 def keypress(key,
