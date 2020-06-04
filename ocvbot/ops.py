@@ -35,12 +35,12 @@ def main():
         (needle_world_top + needle_height) - (needle_height / 2))
 
     # Get center of needle within client window
-    from ocvbot.vision import vclient
-    print("vclient is", vclient)
-    needle_client_center = vclient.wait_for_image(loctype='center',
-                                                  needle='/home/austin/ocvbot/'
+    from ocvbot.vision import client
+    print("vclient is", client)
+    needle_client_center = client.wait_for_image(loctype='center',
+                                                 needle='/home/austin/ocvbot/'
                                                   'ocvbot/minimap-slice.png',
-                                                  loop_num=1)
+                                                 loop_num=1)
     (needle_client_center_x, needle_client_center_y) = needle_client_center
 
     # Get destination

@@ -27,7 +27,7 @@ def test_cannonball_smelter():
     screenshots.
     """
 
-    from ocvbot.vision import vgame_screen, vchat_menu, vinv
+    from ocvbot.vision import game_screen, chat_menu, inv
     interval = 0.05
 
     # -------------------------------------------------------------------------
@@ -41,7 +41,7 @@ def test_cannonball_smelter():
     # -------------------------------------------------------------------------
 
     # Click on the bank booth.
-    bank_booth = vgame_screen.click_image(needle='./ocvbot/needles/game-screen/'
+    bank_booth = game_screen.click_image(needle='./ocvbot/needles/game-screen/'
                                          'edgeville-bank-booth-03.png',
                                          conf=0.995)
     if bank_booth == 'pass':
@@ -59,7 +59,7 @@ def test_cannonball_smelter():
     # -------------------------------------------------------------------------
 
     # Wait for the bank window to appear.
-    bank_window = vgame_screen.wait_for_image('./ocvbot/needles/buttons/'
+    bank_window = game_screen.wait_for_image('./ocvbot/needles/buttons/'
                                              'bank-window-close.png')
     if bank_window is False:
         raise RuntimeError('Timed out waiting for bank window to open!')
@@ -68,7 +68,7 @@ def test_cannonball_smelter():
     # Confidence must be high so bot can distinguish "full" items and
     #   "depleted" item slots within the bank.
     # Can't use the right mouse button during simulations.
-    right_click_steel = vgame_screen.click_image(button='left', conf=0.9995,
+    right_click_steel = game_screen.click_image(button='left', conf=0.9995,
                                                 needle='./ocvbot/needles/'
                                                 'items/steel-bar.png')
     if right_click_steel == 'pass':
@@ -84,7 +84,7 @@ def test_cannonball_smelter():
     # -------------------------------------------------------------------------
 
     # Select the withdraw option in right-click ocvbot-menu.
-    withdraw_steel_bars = vgame_screen.click_image(needle='./ocvbot/needles/'
+    withdraw_steel_bars = game_screen.click_image(needle='./ocvbot/needles/'
                                                   'buttons/right-click-'
                                                   'withdraw-all.png')
     if withdraw_steel_bars == 'pass':
@@ -118,7 +118,7 @@ def test_cannonball_smelter():
                            #'in inventory!')
 
     # Close the bank window
-    bank_window_close = vgame_screen.click_image(needle='./ocvbot/needles/'
+    bank_window_close = game_screen.click_image(needle='./ocvbot/needles/'
                                                 'buttons/bank-window-'
                                                 'close.png')
     # -------------------------------------------------------------------------
@@ -130,7 +130,7 @@ def test_cannonball_smelter():
     time.sleep(interval)
     # -------------------------------------------------------------------------
 
-    furnace = vgame_screen.click_image(needle='./ocvbot/needles/game-screen/'
+    furnace = game_screen.click_image(needle='./ocvbot/needles/game-screen/'
                                       'edgeville-furnace-from-bank.png')
 
     # -------------------------------------------------------------------------
@@ -143,7 +143,7 @@ def test_cannonball_smelter():
     # -------------------------------------------------------------------------
 
     # Press spacebar to begin smelting the cannonballs.
-    begin_smelting = vchat_menu.wait_for_image(needle='./ocvbot/needles/chat-menu/'
+    begin_smelting = chat_menu.wait_for_image(needle='./ocvbot/needles/chat-menu/'
                                               'smelting.png')
     if begin_smelting is False:
         raise RuntimeError('Could not find smelting.png chat menu!')
@@ -161,7 +161,7 @@ def test_cannonball_smelter():
 
     # Smelting has completed when the bottom half of the inventory is empty.
     # Continually check for this, waiting at least 10 minutes.
-    done_smelting = vinv.wait_for_image(loop_num=600,
+    done_smelting = inv.wait_for_image(loop_num=600,
                                        loop_sleep_min=1000,
                                        loop_sleep_max=5000,
                                        conf=0.98,
@@ -171,7 +171,7 @@ def test_cannonball_smelter():
 
     # Even if wait_for_image times out, return to the bank.
     if done_smelting == 1 or done_smelting is True:
-        bank = vgame_screen.click_image(needle='./ocvbot/needles/game-screen'
+        bank = game_screen.click_image(needle='./ocvbot/needles/game-screen'
                                        '/edgeville-bank-from-furnace-01.png')
 
         # ---------------------------------------------------------------------

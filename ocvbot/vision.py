@@ -332,94 +332,94 @@ Initializes the core objects for the Vision class.
 
 (client_status, anchor) = orient(display_width=start.DISPLAY_WIDTH,
                                  display_height=start.DISPLAY_HEIGHT)
-(vclient_left, vclient_top) = anchor
+(client_left, client_top) = anchor
 
 if client_status == 'logged_in':
-    vclient_left -= 735
-    vclient_top -= 21
+    client_left -= 735
+    client_top -= 21
 elif client_status == 'logged_out':
-    vclient_left -= 183
-    vclient_top -= 59
+    client_left -= 183
+    client_top -= 59
 
 # Now we can create an object with the game client's X and Y
 #   coordinates. This will allow other functions to search for
 #   needles within the "client" object's coordinates, rather than
 #   within the entire display's coordinates, which is much faster.
-vclient = Vision(left=vclient_left, width=start.CLIENT_WIDTH,
-                 top=vclient_top, height=start.CLIENT_HEIGHT)
+client = Vision(left=client_left, width=start.CLIENT_WIDTH,
+                top=client_top, height=start.CLIENT_HEIGHT)
 
 # The player's inventory.
-vinv_left = vclient_left + 548
-vinv_top = vclient_top + 205
-vinv = Vision(left=vinv_left, top=vinv_top,
-              width=start.INV_WIDTH, height=start.INV_HEIGHT)
+inv_left = client_left + 548
+inv_top = client_top + 205
+inv = Vision(left=inv_left, top=inv_top,
+             width=start.INV_WIDTH, height=start.INV_HEIGHT)
 
 # Bottom half of the player's inventory.
-vinv_bottom_left = vinv_left
-vinv_bottom_top = vinv_top + start.INV_HALF_HEIGHT
-vinv_bottom = Vision(left=vinv_bottom_left, top=vinv_bottom_top,
-                     width=start.INV_WIDTH, height=start.INV_HALF_HEIGHT)
+inv_bottom_left = inv_left
+inv_bottom_top = inv_top + start.INV_HALF_HEIGHT
+inv_bottom = Vision(left=inv_bottom_left, top=inv_bottom_top,
+                    width=start.INV_WIDTH, height=start.INV_HALF_HEIGHT)
 
 # Right half of the player's inventory.
-vinv_right_half_left = (vinv_left + start.INV_HALF_WIDTH) - 5
-vinv_right_half_top = vinv_top
-vinv_right_half = Vision(left=vinv_right_half_left,
-                         top=vinv_right_half_top,
-                         width=start.INV_HALF_WIDTH,
-                         height=start.INV_HEIGHT)
-
-# Left half of the player's inventory.
-vinv_left_half_left = vinv_left
-vinv_left_half_top = vinv_top
-vinv_left_half = Vision(left=vinv_left_half_left,
-                        top=vinv_left_half_top,
+inv_right_half_left = (inv_left + start.INV_HALF_WIDTH) - 5
+inv_right_half_top = inv_top
+inv_right_half = Vision(left=inv_right_half_left,
+                        top=inv_right_half_top,
                         width=start.INV_HALF_WIDTH,
                         height=start.INV_HEIGHT)
 
+# Left half of the player's inventory.
+inv_left_half_left = inv_left
+inv_left_half_top = inv_top
+inv_left_half = Vision(left=inv_left_half_left,
+                       top=inv_left_half_top,
+                       width=start.INV_HALF_WIDTH,
+                       height=start.INV_HEIGHT)
+
 # Gameplay screen.
-vgame_screen_left = vclient_left + 4
-vgame_screen_top = vclient_top + 4
-vgame_screen = Vision(left=vgame_screen_left, top=vgame_screen_top,
-                      width=start.GAME_SCREEN_WIDTH,
-                      height=start.GAME_SCREEN_HEIGHT)
+game_screen_left = client_left + 4
+game_screen_top = client_top + 4
+game_screen = Vision(left=game_screen_left, top=game_screen_top,
+                     width=start.GAME_SCREEN_WIDTH,
+                     height=start.GAME_SCREEN_HEIGHT)
 
 # The player's inventory, plus the "side stone" tabs that open all the
 #   different menus.
-vside_stones_left = vclient_left + 521
-vside_stones_top = vclient_top + 169
-vside_stones = Vision(left=vside_stones_left, top=vside_stones_top,
-                      width=start.SIDE_STONES_WIDTH,
-                      height=start.SIDE_STONES_HEIGHT)
+side_stones_left = client_left + 521
+side_stones_top = client_top + 169
+side_stones = Vision(left=side_stones_left, top=side_stones_top,
+                     width=start.SIDE_STONES_WIDTH,
+                     height=start.SIDE_STONES_HEIGHT)
 
 # Chat menu.
-vchat_menu_left = vclient_left + 7
-vchat_menu_top = vclient_top + 345
-vchat_menu = Vision(left=vchat_menu_left, top=vchat_menu_top,
-                    width=start.CHAT_MENU_WIDTH, height=start.CHAT_MENU_HEIGHT)
+chat_menu_left = client_left + 7
+chat_menu_top = client_top + 345
+chat_menu = Vision(left=chat_menu_left, top=chat_menu_top,
+                   width=start.CHAT_MENU_WIDTH, height=start.CHAT_MENU_HEIGHT)
 
 # The most recent chat message.
-vchat_menu_recent_left = vchat_menu_left - 3
-vchat_menu_recent_top = vchat_menu_top + 98
-vchat_menu_recent = Vision(left=vchat_menu_recent_left,
-                           top=vchat_menu_recent_top,
-                           width=start.CHAT_MENU_RECENT_WIDTH,
-                           height=start.CHAT_MENU_RECENT_HEIGHT)
+chat_menu_recent_left = chat_menu_left - 3
+chat_menu_recent_top = chat_menu_top + 98
+chat_menu_recent = Vision(left=chat_menu_recent_left,
+                          top=chat_menu_recent_top,
+                          width=start.CHAT_MENU_RECENT_WIDTH,
+                          height=start.CHAT_MENU_RECENT_HEIGHT)
 
 # The entire display.
-vdisplay = Vision(left=0, width=start.DISPLAY_WIDTH,
-                  top=0, height=start.DISPLAY_HEIGHT)
+display = Vision(left=0, width=start.DISPLAY_WIDTH,
+                 top=0, height=start.DISPLAY_HEIGHT)
 
 # The text input fields on the login menu.
-vlogin_field_left = vclient_left + 273
-vlogin_field_top = vclient_top + 242
-vlogin_field = Vision(left=vlogin_field_left,
-                      top=vlogin_field_top,
-                      width=start.LOGIN_FIELD_WIDTH,
-                      height=start.LOGIN_FIELD_HEIGHT)
-
-vpass_field_left = vclient_left + 275
-vpass_field_top = vclient_top + 258
-vpass_field = Vision(left=vpass_field_left,
-                     top=vpass_field_top,
+login_field_left = client_left + 273
+login_field_top = client_top + 242
+login_field = Vision(left=login_field_left,
+                     top=login_field_top,
                      width=start.LOGIN_FIELD_WIDTH,
                      height=start.LOGIN_FIELD_HEIGHT)
+
+pass_field_left = client_left + 275
+pass_field_top = client_top + 258
+pass_field = Vision(left=pass_field_left,
+                    top=pass_field_top,
+                    width=start.LOGIN_FIELD_WIDTH,
+                    height=start.LOGIN_FIELD_HEIGHT)

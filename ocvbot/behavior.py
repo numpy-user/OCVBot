@@ -53,11 +53,12 @@ def login(cred_sleep_min=800, cred_sleep_max=5000,
     """
 
     # Make sure the client is logged out.
-    logged_out = vis.vdisplay.wait_for_image(needle='./needles/login-menu/'
-                                                    'orient-logged-out.png',
-                                             loop_num=3,
-                                             loop_sleep_min=1000,
-                                             loop_sleep_max=2000)
+    # TODO: use orient() for this, not wait_for_image
+    logged_out = vis.display.wait_for_image(needle='./needles/login-menu/'
+                                                   'orient-logged-out.png',
+                                            loop_num=3,
+                                            loop_sleep_min=1000,
+                                            loop_sleep_max=2000)
     if logged_out is False:
         raise RuntimeError("Cannot find client or client is not logged out!")
     else:
@@ -66,20 +67,20 @@ def login(cred_sleep_min=800, cred_sleep_max=5000,
     # Click the "Ok" button if it's present at the login screen.
     # This button appears if the user was disconnected due to idle
     #   activity.
-    ok_button = vis.vdisplay.click_image(needle='./needles/login-menu/'
-                                                'ok-button.png',
-                                         loop_num=1)
+    ok_button = vis.display.click_image(needle='./needles/login-menu/'
+                                               'ok-button.png',
+                                        loop_num=1)
     # If the "Ok" button isn't found, look for the "Existing user"
     #   button.
-    existing_user_button = vis.vdisplay.click_image(
+    existing_user_button = vis.display.click_image(
         needle='./needles/login-menu/'
                'existing-user-button.png',
         loop_num=1)
 
     if existing_user_button is True or ok_button is True:
         # Click to make sure the "Login" field is active.
-        input.Mouse(left=vis.vlogin_field_left,
-                    top=vis.vlogin_field_top,
+        input.Mouse(left=vis.login_field_left,
+                    top=vis.login_field_top,
                     width=start.LOGIN_FIELD_WIDTH,
                     height=start.LOGIN_FIELD_HEIGHT).click_coord()
         # Enter login field credentials.
@@ -89,8 +90,8 @@ def login(cred_sleep_min=800, cred_sleep_max=5000,
         misc.sleep_rand(cred_sleep_min, cred_sleep_max)
 
         # Click to make sure the "Password" field is active.
-        input.Mouse(left=vis.vpass_field_left,
-                    top=vis.vpass_field_top,
+        input.Mouse(left=vis.pass_field_left,
+                    top=vis.pass_field_top,
                     width=start.LOGIN_FIELD_WIDTH,
                     height=start.LOGIN_FIELD_HEIGHT).click_coord()
         # Enter password field credentials and login.
@@ -101,7 +102,7 @@ def login(cred_sleep_min=800, cred_sleep_max=5000,
         input.Keyboard().keypress(key='enter')
         misc.sleep_rand(login_sleep_min, login_sleep_max)
 
-        postlogin_screen_button = vis.vdisplay. \
+        postlogin_screen_button = vis.display. \
             click_image(needle='./needles/login-menu/orient-postlogin.png',
                         conf=0.8,
                         loop_num=50,
@@ -111,11 +112,11 @@ def login(cred_sleep_min=800, cred_sleep_max=5000,
         if postlogin_screen_button is True:
             misc.sleep_rand(postlogin_sleep_min, postlogin_sleep_max)
             # Wait for the orient.png to appear in the client window.
-            logged_in = vis.vdisplay.wait_for_image(needle='./needles/minimap/'
-                                                           'orient.png',
-                                                    loop_num=50,
-                                                    loop_sleep_min=1000,
-                                                    loop_sleep_max=3000)
+            logged_in = vis.display.wait_for_image(needle='./needles/minimap/'
+                                                          'orient.png',
+                                                   loop_num=50,
+                                                   loop_sleep_min=1000,
+                                                   loop_sleep_max=3000)
             if logged_in is True:
                 # Reset the timer that's used to count the number of
                 #   seconds the bot has been running for.
@@ -134,51 +135,53 @@ def login(cred_sleep_min=800, cred_sleep_max=5000,
         raise RuntimeError("Cannot find existing user or OK button!")
 
 
-def open_side_stone(side_stone, hotkey):
+def open_side_stone(side_stone):
     """
     Open the specific side stone menu.
 
     Args:
         side_stone (file): Filepath to an image of the desired side
-                           stone in its "closed" state (i.e. with a
-                           standard grey background).
-        hotkey (str): The key used to open the desired side stone. This
-                      is not set by default in the native client and
-                      must be enabled.
+                           stone in its "open" state (i.e. with a
+                           red background).
 
     Returns:
         Returns 0 if desired side stone was opened or is already open.
         Returns 1 in any other situation.
     """
+    side_stone_open = ('./needles/side-stones/open/' + side_stone + '.png')
+    side_stone_closed = ('./needles/side-stones/closed/' + side_stone + '.png')
 
-    stone_closed = vis.vside_stones.wait_for_image(needle=side_stone,
-                                                   loop_num=1)
-    if stone_closed is True:
+    stone_open = vis.side_stones.wait_for_image(needle=side_stone_open,
+                                                loop_num=1)
+    if stone_open is True:
         log.debug('Side stone already open.')
         return True
-    elif stone_closed is False:
+    elif stone_open is False:
         log.debug('Opening side stone.')
-        input.Keyboard().keypress(key=hotkey)
 
     # Try a total of 5 times to open the desired side stone menu using
-    #   the hotkey.
+    #   the mouse.
     for tries in range(1, 5):
-        stone_closed = vis.vside_stones.wait_for_image(needle=side_stone,
-                                                       loop_num=5,
-                                                       loop_sleep_min=100,
-                                                       loop_sleep_max=500)
-        if stone_closed is True:
+        vis.side_stones.click_image(needle=side_stone_closed,
+                                    loop_num=5,
+                                    loop_sleep_min=100, loop_sleep_max=300,
+                                    sleep_befmax=200, sleep_afmax=200)
+        # Move mouse out of the way so the function can tell if the
+        #   stone is open.
+        input.Mouse(25, 150, 25, 150, move_durmax=500).moverel()
+        stone_open = vis.side_stones.wait_for_image(needle=side_stone_open,
+                                                    loop_num=5,
+                                                    loop_sleep_min=100,
+                                                    loop_sleep_max=300)
+        if stone_open is True:
             log.info('Opened side stone')
             return True
-        elif stone_closed is False:
+        else:
             # Make sure the bank window isn't open, which would block
             #   access to the side stones.
-            vis.vgame_screen.click_image(
+            vis.game_screen.click_image(
                 needle='./needles/buttons/bank-window-close.png', loop_num=1)
-    raise RuntimeError('Could not open side stone! Is the hotkey correct?')
-
-    # TODO: Click on the side stone with the mouse if it won't open with
-    #   the hotkey.
+    raise Exception('Could not open side stone! Is the hotkey correct?')
 
 
 def logout():
@@ -201,17 +204,16 @@ def logout():
     (client_status, unused_var) = orient
 
     if client_status == 'logged_in':
-        open_side_stone('./needles/side-stones/logout.png',
-                        hotkey=start.config_file['side_stone_logout'])
+        open_side_stone('logout')
 
-        logout_button = vis.vclient.click_image(
+        logout_button = vis.client.click_image(
             needle='./needles/buttons/logout.png', conf=0.9, loop_num=3)
-        logout_button_highlighted = vis.vclient.click_image(
+        logout_button_highlighted = vis.client.click_image(
             needle='./needles/buttons/logout.png', conf=0.9, loop_num=3)
 
         if logout_button is True or logout_button_highlighted is True:
             for tries in range(1, 10):
-                logged_out = vis.vclient.wait_for_image(
+                logged_out = vis.client.wait_for_image(
                     needle='./needles/login-menu/orient-logged-out.png',
                     loop_num=30,
                     loop_sleep_min=1000,
@@ -223,8 +225,8 @@ def logout():
                 else:
                     log.info('Unable to log out after trying ' + str(tries) +
                              ' time(s).')
-                    vis.vclient.click_image(needle='./needles/buttons/'
-                                                   'logout.png')
+                    vis.client.click_image(needle='./needles/buttons/'
+                                                  'logout.png')
             raise RuntimeError("Could not logout!")
         else:
             raise RuntimeError("Could not find logout button!")
@@ -374,9 +376,8 @@ def check_skills():
     skill.
     """
 
-    open_side_stone('./needles/side-stones/skills.png',
-                    start.config_file['side_stone_skills'])
-    input.Mouse(vis.vinv_left, vis.vinv_top,
+    open_side_stone('./needles/side-stones/skills.png')
+    input.Mouse(vis.inv_left, vis.inv_top,
                 start.INV_WIDTH, start.INV_HEIGHT).move_to()
     misc.sleep_rand(500, 5000)
     return
@@ -404,29 +405,21 @@ def human_behavior_rand(chance):
         elif roll == 2:
             roll = rand.randint(1, 8)
             if roll == 1:
-                open_side_stone('./needles/side-stones/attacks.png',
-                                start.config_file['side_stone_attacks'])
+                open_side_stone('./needles/side-stones/attacks.png')
             elif roll == 2:
-                open_side_stone('./needles/side-stones/quests.png',
-                                start.config_file['side_stone_quests'])
+                open_side_stone('./needles/side-stones/quests.png')
             elif roll == 3:
-                open_side_stone('./needles/side-stones/equipment.png',
-                                start.config_file['side_stone_equipment'])
+                open_side_stone('./needles/side-stones/equipment.png')
             elif roll == 4:
-                open_side_stone('./needles/side-stones/prayers.png',
-                                start.config_file['side_stone_prayers'])
+                open_side_stone('./needles/side-stones/prayers.png')
             elif roll == 5:
-                open_side_stone('./needles/side-stones/spellbooks.png',
-                                start.config_file['side_stone_spellbook'])
+                open_side_stone('./needles/side-stones/spellbooks.png')
             elif roll == 6:
-                open_side_stone('./needles/side-stones/music.png',
-                                start.config_file['side_stone_music'])
+                open_side_stone('./needles/side-stones/music.png')
             elif roll == 7:
-                open_side_stone('./needles/side-stones/friends.png',
-                                start.config_file['side_stone_friends'])
+                open_side_stone('./needles/side-stones/friends.png')
             elif roll == 8:
-                open_side_stone('./needles/side-stones/settings.png',
-                                start.config_file['side_stone_settings'])
+                open_side_stone('./needles/side-stones/settings.png')
         else:
             return
     else:
@@ -458,9 +451,9 @@ def drop_item(item, track=True,
 
     # Make sure the inventory tab is selected in the main menu.
     log.debug('Making sure inventory is selected')
-    open_side_stone('./needles/side-stones/inventory.png', 'Escape')
+    open_side_stone('./needles/side-stones/inventory.png')
 
-    item_remains = vis.vinv.wait_for_image(loop_num=1, needle=item)
+    item_remains = vis.inv.wait_for_image(loop_num=1, needle=item)
 
     if item_remains is True:
         log.info('Dropping ' + str(item) + '.')
@@ -476,30 +469,30 @@ def drop_item(item, track=True,
         # Alternate between searching for the item in left half and the
         #   right half of the player's inventory. This helps reduce the
         #   chances the bot will click on the same item twice.
-        item_on_right = vis.vinv_right_half.click_image(loop_num=1,
-                                                        sleep_befmin=10,
-                                                        sleep_befmax=50,
-                                                        sleep_afmin=50,
-                                                        sleep_afmax=300,
-                                                        move_durmin=50,
-                                                        move_durmax=800,
-                                                        needle=item)
+        item_on_right = vis.inv_right_half.click_image(loop_num=1,
+                                                       sleep_befmin=10,
+                                                       sleep_befmax=50,
+                                                       sleep_afmin=50,
+                                                       sleep_afmax=300,
+                                                       move_durmin=50,
+                                                       move_durmax=800,
+                                                       needle=item)
         if item_on_right is True and track is True:
             start.items_gathered += 1
-        item_on_left = vis.vinv_left_half.click_image(loop_num=1,
-                                                      sleep_befmin=10,
-                                                      sleep_befmax=50,
-                                                      sleep_afmin=50,
-                                                      sleep_afmax=300,
-                                                      move_durmin=50,
-                                                      move_durmax=800,
-                                                      needle=item)
+        item_on_left = vis.inv_left_half.click_image(loop_num=1,
+                                                     sleep_befmin=10,
+                                                     sleep_befmax=50,
+                                                     sleep_afmin=50,
+                                                     sleep_afmax=300,
+                                                     move_durmin=50,
+                                                     move_durmax=800,
+                                                     needle=item)
         if item_on_left is True and track is True:
             start.items_gathered += 1
 
         # Search the entire inventory to check if the item is still
         #   there.
-        item_remains = vis.vinv.wait_for_image(loop_num=1, needle=item)
+        item_remains = vis.inv.wait_for_image(loop_num=1, needle=item)
 
         # Chance to briefly wait while dropping items.
         misc.wait_rand(wait_chance, wait_min, wait_max)

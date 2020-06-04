@@ -34,8 +34,8 @@ def main(debug=False):
 
     log.info('Initializing')
 
-    pag.screenshot('/tmp/screenshot.tmp.png', region=(vis.vclient_left,
-                                                      vis.vclient_top,
+    pag.screenshot('/tmp/screenshot.tmp.png', region=(vis.client_left,
+                                                      vis.client_top,
                                                       start.CLIENT_WIDTH,
                                                       start.CLIENT_HEIGHT))
 
@@ -82,80 +82,80 @@ def main(debug=False):
         os.system('convert .screenshot.tmp.png '
                   '-fill red '
                   '-draw "rectangle '
-                  + str(vis.vclient_left)
-                  + ' ' + str(vis.vclient_top)
-                  + ' ' + str(vis.vclient_left + start.CLIENT_WIDTH)
-                  + ' ' + str(vis.vclient_top + start.CLIENT_HEIGHT)
+                  + str(vis.client_left)
+                  + ' ' + str(vis.client_top)
+                  + ' ' + str(vis.client_left + start.CLIENT_WIDTH)
+                  + ' ' + str(vis.client_top + start.CLIENT_HEIGHT)
                   + '" client.png')
 
         log.info('Creating inv.png')
         os.system('convert .screenshot.tmp.png '
                   '-fill red '
                   '-draw "rectangle '
-                  + str(vis.vinv_left)
-                  + ' ' + str(vis.vinv_top)
-                  + ' ' + str(vis.vinv_left + start.INV_WIDTH)
-                  + ' ' + str(vis.vinv_top + start.INV_HEIGHT)
+                  + str(vis.inv_left)
+                  + ' ' + str(vis.inv_top)
+                  + ' ' + str(vis.inv_left + start.INV_WIDTH)
+                  + ' ' + str(vis.inv_top + start.INV_HEIGHT)
                   + '" inv.png')
 
         log.info('Creating inv_bottom_half.png')
         os.system('convert .screenshot.tmp.png '
                   '-fill red '
                   '-draw "rectangle '
-                  + str(vis.vinv_bottom_left)
-                  + ' ' + str(vis.vinv_bottom_top)
-                  + ' ' + str(vis.vinv_bottom_left + start.INV_WIDTH)
-                  + ' ' + str(vis.vinv_bottom_top + start.INV_HALF_HEIGHT)
+                  + str(vis.inv_bottom_left)
+                  + ' ' + str(vis.inv_bottom_top)
+                  + ' ' + str(vis.inv_bottom_left + start.INV_WIDTH)
+                  + ' ' + str(vis.inv_bottom_top + start.INV_HALF_HEIGHT)
                   + '" inv_bottom_half.png')
 
         log.info('Creating inv_right_half.png')
         os.system('convert .screenshot.tmp.png '
                   '-fill red '
                   '-draw "rectangle '
-                  + str(vis.vinv_right_half_left)
-                  + ' ' + str(vis.vinv_right_half_top)
-                  + ' ' + str(vis.vinv_right_half_left + start.INV_HALF_WIDTH)
-                  + ' ' + str(vis.vinv_right_half_top + start.INV_HEIGHT)
+                  + str(vis.inv_right_half_left)
+                  + ' ' + str(vis.inv_right_half_top)
+                  + ' ' + str(vis.inv_right_half_left + start.INV_HALF_WIDTH)
+                  + ' ' + str(vis.inv_right_half_top + start.INV_HEIGHT)
                   + '" inv_right_half.png')
 
         log.info('Creating inv_left_half.png')
         os.system('convert .screenshot.tmp.png '
                   '-fill red '
                   '-draw "rectangle '
-                  + str(vis.vinv_left_half_left)
-                  + ' ' + str(vis.vinv_left_half_top)
-                  + ' ' + str(vis.vinv_left_half_left + start.INV_HALF_WIDTH)
-                  + ' ' + str(vis.vinv_left_half_top + start.INV_HEIGHT)
+                  + str(vis.inv_left_half_left)
+                  + ' ' + str(vis.inv_left_half_top)
+                  + ' ' + str(vis.inv_left_half_left + start.INV_HALF_WIDTH)
+                  + ' ' + str(vis.inv_left_half_top + start.INV_HEIGHT)
                   + '" inv_left_half.png')
 
         log.info('Creating game_screen.png')
         os.system('convert .screenshot.tmp.png '
                   '-fill red '
                   '-draw "rectangle '
-                  + str(vis.vgame_screen_left)
-                  + ' ' + str(vis.vgame_screen_top)
-                  + ' ' + str(vis.vgame_screen_left + start.GAME_SCREEN_WIDTH)
-                  + ' ' + str(vis.vgame_screen_top + start.GAME_SCREEN_HEIGHT)
+                  + str(vis.game_screen_left)
+                  + ' ' + str(vis.game_screen_top)
+                  + ' ' + str(vis.game_screen_left + start.GAME_SCREEN_WIDTH)
+                  + ' ' + str(vis.game_screen_top + start.GAME_SCREEN_HEIGHT)
                   + '" game_screen.png')
 
         log.info('Creating chat_menu.png')
         os.system('convert .screenshot.tmp.png '
                   '-fill red '
                   '-draw "rectangle '
-                  + str(vis.vchat_menu_left)
-                  + ' ' + str(vis.vchat_menu_top)
-                  + ' ' + str(vis.vchat_menu_left + start.CHAT_MENU_WIDTH)
-                  + ' ' + str(vis.vchat_menu_top + start.CHAT_MENU_HEIGHT)
+                  + str(vis.chat_menu_left)
+                  + ' ' + str(vis.chat_menu_top)
+                  + ' ' + str(vis.chat_menu_left + start.CHAT_MENU_WIDTH)
+                  + ' ' + str(vis.chat_menu_top + start.CHAT_MENU_HEIGHT)
                   + '" chat_menu_recent.png')
 
         log.info('Creating chat_menu_recent.png')
         os.system('convert .screenshot.tmp.png '
                   '-fill red '
                   '-draw "rectangle '
-                  + str(vis.vchat_menu_recent_left)
-                  + ' ' + str(vis.vchat_menu_recent_top)
-                  + ' ' + str(vis.vchat_menu_recent_left + start.CHAT_MENU_RECENT_WIDTH)
-                  + ' ' + str(vis.vchat_menu_recent_top + start.CHAT_MENU_RECENT_HEIGHT)
+                  + str(vis.chat_menu_recent_left)
+                  + ' ' + str(vis.chat_menu_recent_top)
+                  + ' ' + str(vis.chat_menu_recent_left + start.CHAT_MENU_RECENT_WIDTH)
+                  + ' ' + str(vis.chat_menu_recent_top + start.CHAT_MENU_RECENT_HEIGHT)
                   + '" chat_menu_recent.png')
 
         os.system('rm .screenshot.tmp*.png && '

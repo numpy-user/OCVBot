@@ -45,7 +45,7 @@ class Mouse:
                  left, top, width, height,
                  sleep_befmin=0, sleep_befmax=500,
                  sleep_afmin=0, sleep_afmax=500,
-                 move_durmin=50, move_durmax=1500,
+                 move_durmin=50, move_durmax=1000,
                  durmin=1, durmax=100,
                  button='left'):
 
@@ -81,15 +81,21 @@ class Mouse:
         Bezier curves to make mouse movement appear more human-like.
 
         """
-        x = rand.randint(self.left, self.width)
-        y = rand.randint(self.top, self.height)
+        xmin = self.left
+        xmax = self.left + self.width
+        ymin = self.top
+        ymax = self.top + self.height
+
+        x = rand.randint(xmin, xmax)
+        y = rand.randint(ymin, ymax)
 
         hc.move((x, y), self.move_duration())
         return
 
     def moverel(self):
         """
-        Moves the mouse relative to its current position.
+        Moves the mouse relative to its current position. This function
+        interprets its object parameters a little differently:
 
         self.left is minimum X distance to move the mouse.
         self.width is maximum X distance to move the mouse.
@@ -97,15 +103,20 @@ class Mouse:
         self.height is the maximum Y distance to move the mouse.
 
         """
+        if self.left < self.width or self.top < self.height:
+            raise Exception("Width and Height must be greater than or equal to"
+                            "Left andnTop when using the moverel() function!")
+
         (x_position, y_position) = pag.position()
 
-        x_dist = rand.randint(self.left, self.width)
-        y_dist = rand.randint(self.top, self.height)
+        x_distance = rand.randint(self.left, self.width)
+        y_distance = rand.randint(self.top, self.height)
 
-        x_destination = x_position + x_dist
-        y_destination = y_position + y_dist
+        x_destination = x_position + x_distance
+        y_destination = y_position + y_distance
 
-        hc.move(x_destination, y_destination, self.move_duration())
+        print("X DESTINATION AND Y DEST IS", x_destination, y_destination)
+        hc.move((x_destination, y_destination), self.move_duration())
         return
 
     def move_duration(self):

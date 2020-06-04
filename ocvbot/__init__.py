@@ -2,11 +2,14 @@ import logging as log
 import os
 import sys
 
+import pyautogui as pag
 
 sys.setrecursionlimit(9999)
 
 log.basicConfig(format='%(asctime)s %(filename)s.%(funcName)s - %(message)s'
                 , level='INFO')
+
+pag.PAUSE = 0
 
 # Make sure the program's working directory is the directory in which
 #   this file is located.
