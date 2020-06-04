@@ -49,20 +49,3 @@ max_break_duration: '120'
 #   the bot stops for good.
 min_sessions: '1'
 max_sessions: '3'
-
-# This is the hotkey that's used to open the "Logout" tab in the side
-#   stone menu. Hotkeys are NOT SET BY DEFAULT, so make sure you turn
-#   them on, as shown by the images in client-configuration/common/.
-side_stone_attacks: 'F1'
-side_stone_skills: 'F2'
-side_stone_quests: 'F3'
-side_stone_inventory: 'Escape'
-side_stone_equipment: 'F4'
-side_stone_prayers: 'F5'
-side_stone_spellbook: 'F6'
-side_stone_music: 'F7'
-side_stone_friends: 'F8'
-side_stone_settings: 'F10'
-side_stone_logout: 'F12'
-# It is assumed that the "Inventory" side stone tab has been bound to
-#   ESC.
