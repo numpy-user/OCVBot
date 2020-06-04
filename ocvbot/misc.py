@@ -41,7 +41,6 @@ def sleep_rand(rmin=0, rmax=100):
     sleeptime = rand_seconds(rmin=rmin, rmax=rmax)
     # log.debug('Sleeping for ' + str(sleeptime) + ' seconds.')
     time.sleep(sleeptime)
-    return
 
 
 def run_duration(human_readable=False):
@@ -65,10 +64,9 @@ def run_duration(human_readable=False):
     if human_readable is False:
         return elapsed_time_seconds
 
-    else:
-        elapsed_time_human_readable = datetime.timedelta(
-                                      seconds=elapsed_time_seconds)
-        return elapsed_time_human_readable
+    elapsed_time_human_readable = datetime.timedelta(
+        seconds=elapsed_time_seconds)
+    return elapsed_time_human_readable
 
 
 def wait_rand(chance, second_chance=10,
@@ -107,4 +105,3 @@ def wait_rand(chance, second_chance=10,
             sleeptime = rand_seconds(wait_min, wait_max)
             log.info('Sleeping for ' + str(round(sleeptime)) + ' seconds.')
             time.sleep(sleeptime)
-    return

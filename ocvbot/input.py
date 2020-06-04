@@ -72,7 +72,6 @@ class Mouse:
         """
         self.move_to()
         self.click()
-        return
 
     def move_to(self):
         """
@@ -86,11 +85,10 @@ class Mouse:
         ymin = self.top
         ymax = self.top + self.height
 
-        x = rand.randint(xmin, xmax)
-        y = rand.randint(ymin, ymax)
+        x_coord = rand.randint(xmin, xmax)
+        y_coord = rand.randint(ymin, ymax)
 
-        hc.move((x, y), self.move_duration())
-        return
+        hc.move((x_coord, y_coord), self.move_duration())
 
     def moverel(self):
         """
@@ -115,9 +113,7 @@ class Mouse:
         x_destination = x_position + x_distance
         y_destination = y_position + y_distance
 
-        print("X DESTINATION AND Y DEST IS", x_destination, y_destination)
         hc.move((x_destination, y_destination), self.move_duration())
-        return
 
     def move_duration(self):
         """
@@ -148,7 +144,6 @@ class Mouse:
 
         misc.sleep_rand(rmin=self.sleep_afmin,
                         rmax=self.sleep_afmax)
-        return
 
 
 class Keyboard:
@@ -194,7 +189,6 @@ class Keyboard:
         misc.sleep_rand(rmin=self.durmin, rmax=self.durmax)
         pag.keyUp(key)
         misc.sleep_rand(rmin=self.sleep_afmin, rmax=self.sleep_afmax)
-        return
 
     def double_hotkey_press(self, key1, key2):
         """
@@ -217,4 +211,3 @@ class Keyboard:
         misc.sleep_rand(rmin=self.durmin, rmax=self.durmax)
         pag.keyUp(key2)
         misc.sleep_rand(rmin=self.sleep_afmin, rmax=self.sleep_afmax)
-        return

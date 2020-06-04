@@ -1,4 +1,5 @@
 import logging as log
+import pathlib
 
 import pyautogui as pag
 
@@ -34,8 +35,8 @@ def orient(display_width, display_height):
          If client is logged out, returns a string containing the text
          "logged_out" and a tuple containing the center XY coordinates
          of the orient-logged-out needle.
-    """
 
+    """
     logged_in = Vision(left=0, top=0,
                        width=display_width,
                        height=display_height) \
@@ -44,20 +45,17 @@ def orient(display_width, display_height):
     if isinstance(logged_in, tuple) is True:
         return 'logged_in', logged_in
 
-    elif logged_in is False:
+    # If the client is not logged in, check if it's logged out.
+    logged_out = Vision(left=0, top=0,
+                        width=display_width,
+                        height=display_height) \
+        .wait_for_image(needle='needles/login-menu/orient-logged-out.png',
+                        loctype='center', loop_num=2, get_tuple=True)
+    if isinstance(logged_out, tuple) is True:
+        return 'logged_out', logged_out
 
-        # If the client is not logged in, check if it's logged out.
-        logged_out = Vision(left=0, top=0,
-                            width=display_width,
-                            height=display_height) \
-            .wait_for_image(needle='needles/login-menu/orient-logged-out.png',
-                            loctype='center', loop_num=2, get_tuple=True)
-        if isinstance(logged_out, tuple) is True:
-            return 'logged_out', logged_out
-
-        elif logged_out is False:
-            log.critical('Could not find anchor!')
-            raise RuntimeError('Could not find anchor!')
+    log.critical('Could not find anchor!')
+    raise RuntimeError('Could not find anchor!')
 
 
 def haystack_locate(needle, haystack, grayscale=False, conf=0.95):
@@ -73,6 +71,8 @@ def haystack_locate(needle, haystack, grayscale=False, conf=0.95):
                       expressed as a decimal <= 1, default is 0.95.
 
     """
+    # Make sure file path is OS-agnostic.
+    needle = str(pathlib.Path(needle))
 
     target_image = pag.locate(needle, haystack,
                               confidence=conf,
@@ -82,10 +82,9 @@ def haystack_locate(needle, haystack, grayscale=False, conf=0.95):
                   str(target_image))
         return target_image
 
-    elif target_image is None:
-        log.debug('Cannot find center of ' + str(needle) +
-                  ', conf=' + str(conf))
-        return False
+    log.debug('Cannot find center of ' + str(needle) +
+              ', conf=' + str(conf))
+    return False
 
 
 class Vision:
@@ -107,8 +106,8 @@ class Vision:
         height (int): The total y height of the coordinate space to
                       search within for the needle (going down from
                       top).
-    """
 
+    """
     def __init__(self, left, top, width, height, grayscale=False):
         self.grayscale = grayscale
         self.left = left
@@ -148,7 +147,10 @@ class Vision:
             needle is found and loctype is center, returns coordinates
             of the needle's center as a tuple. If the needle is not
             found, returns False.
+
         """
+        # Make sure file path is OS-agnostic.
+        needle = str(pathlib.Path(needle))
 
         if loctype == 'regular':
             target_image = pag.locateOnScreen(needle,
@@ -163,10 +165,9 @@ class Vision:
                           str(target_image))
                 return target_image
 
-            elif target_image is None:
-                log.debug('Cannot find regular image ' + str(needle) +
-                          ' conf=' + str(conf))
-                return False
+            log.debug('Cannot find regular image ' + str(needle) +
+                      ' conf=' + str(conf))
+            return False
 
         elif loctype == 'center':
             target_image = pag.locateCenterOnScreen(needle,
@@ -181,13 +182,11 @@ class Vision:
                           str(target_image))
                 return target_image
 
-            elif target_image is None:
-                log.debug('Cannot find center of ' + str(needle) +
-                          ', conf=' + str(conf))
-                return False
+            log.debug('Cannot find center of ' + str(needle) +
+                      ', conf=' + str(conf))
+            return False
 
-        else:
-            raise RuntimeError('Incorrect mlocate function parameters!')
+        raise RuntimeError('Incorrect mlocate function parameters!')
 
     def wait_for_image(self, needle, loctype='regular', conf=0.95,
                        loop_num=10, loop_sleep_min=10, loop_sleep_max=1000,
@@ -221,8 +220,8 @@ class Vision:
             containing (left, top, width, height) of the needle. If
             loctype is 'center', returns a tuple containing (x, y) of
             the needle.
-        """
 
+        """
         # log.debug('Looking for ' + str(needle))
 
         # Need to add 1 to loop_num because if range() starts at 0, the
@@ -244,8 +243,7 @@ class Vision:
                           + str(tries) + ' times.')
                 if get_tuple is True:
                     return target_image
-                else:
-                    return True
+                return True
 
         log.debug('Timed out looking for ' + str(needle) + '.')
         return False
@@ -293,8 +291,8 @@ class Vision:
 
         Returns:
             See mlocate()'s docstring.
-        """
 
+        """
         log.debug('Looking for ' + str(needle) + ' to click on.')
 
         target_image = self.wait_for_image(loop_num=loop_num,
@@ -304,9 +302,8 @@ class Vision:
                                            needle=needle,
                                            conf=conf,
                                            get_tuple=True)
-        if target_image is False:
-            return False
-        elif isinstance(target_image, tuple) is True:
+
+        if isinstance(target_image, tuple) is True:
             (left, top, width, height) = target_image
             # Randomize the location the pointer will move to using the
             #   dimensions of needle image.
@@ -319,16 +316,11 @@ class Vision:
             log.debug('Clicking on ' + str(needle) + '.')
 
             return True
-        else:
-            raise RuntimeError("Error with target_image return value!")
-
+        return False
 
 # ----------------------------------------------------------------------
+# Instantiate the necessary objects of the Vision class.
 # ----------------------------------------------------------------------
-
-"""
-Initializes the core objects for the Vision class.
-"""
 
 (client_status, anchor) = orient(display_width=start.DISPLAY_WIDTH,
                                  display_height=start.DISPLAY_HEIGHT)

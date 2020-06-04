@@ -108,7 +108,7 @@ def miner_double_drop(rock1, rock2, ore, ore_type):
                             #   player's inventory is full, but they
                             #   don't have any ore to drop.
                             raise RuntimeError("Could not find ore to drop!")
-                        
+
                         # Iterate through the other items that could
                         #   be dropped. If any of them is true, drop that item.
                         # The for loop is iterating over a tuple of tuples.
@@ -118,14 +118,13 @@ def miner_double_drop(rock1, rock2, ore, ore_type):
                             (drop_item, path) = item
                             if drop_item is True:
                                 behavior.drop_item(item=str(path), track=False)
-                                
+
                         elapsed_time = misc.run_duration(human_readable=True)
                         log.info(
                             'Script has been running for  ' + str(elapsed_time)
                             + ' (HH:MM:SS)')
                         return
-                    else:
-                        return
+                    return
 
                 log.info('Mining started.')
 

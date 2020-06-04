@@ -1,3 +1,6 @@
+"""
+Sets up global variables and a few other preparatory checks.
+"""
 import logging as log
 import os
 import sys
@@ -21,14 +24,3 @@ os.chdir(dir_name)
 # TODO: Add a check to only run this if the OS is Linux.
 # Clean up left over screenshots from previous runs.
 os.system('rm .screenshot2*.png >/dev/null 2>&1')
-
-
-#import keyboard
-#def killer():
-    #"""
-    #Manually kill script.
-    #"""
-    #sys.exit(0)
-
-
-#keyboard.add_hotkey('k', killer)
