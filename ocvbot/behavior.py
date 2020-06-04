@@ -137,16 +137,15 @@ def login(cred_sleep_min=800, cred_sleep_max=5000,
 
 def open_side_stone(side_stone):
     """
-    Open the specific side stone menu.
+    Opens a side stone menu.
 
     Args:
-        side_stone (file): Filepath to an image of the desired side
-                           stone in its "open" state (i.e. with a
-                           red background).
+        side_stone (str): The name of the side stone to open.
 
     Returns:
-        Returns 0 if desired side stone was opened or is already open.
-        Returns 1 in any other situation.
+        Returns True if desired side stone was opened or is already open.
+        Returns False in any other situation.
+
     """
     side_stone_open = ('./needles/side-stones/open/' + side_stone + '.png')
     side_stone_closed = ('./needles/side-stones/closed/' + side_stone + '.png')
@@ -376,7 +375,7 @@ def check_skills():
     skill.
     """
 
-    open_side_stone('./needles/side-stones/skills.png')
+    open_side_stone('skills')
     input.Mouse(vis.inv_left, vis.inv_top,
                 start.INV_WIDTH, start.INV_HEIGHT).move_to()
     misc.sleep_rand(500, 5000)
@@ -405,21 +404,21 @@ def human_behavior_rand(chance):
         elif roll == 2:
             roll = rand.randint(1, 8)
             if roll == 1:
-                open_side_stone('./needles/side-stones/attacks.png')
+                open_side_stone('attacks')
             elif roll == 2:
-                open_side_stone('./needles/side-stones/quests.png')
+                open_side_stone('quests')
             elif roll == 3:
-                open_side_stone('./needles/side-stones/equipment.png')
+                open_side_stone('equipment')
             elif roll == 4:
-                open_side_stone('./needles/side-stones/prayers.png')
+                open_side_stone('prayers')
             elif roll == 5:
-                open_side_stone('./needles/side-stones/spellbooks.png')
+                open_side_stone('spellbooks')
             elif roll == 6:
-                open_side_stone('./needles/side-stones/music.png')
+                open_side_stone('music')
             elif roll == 7:
-                open_side_stone('./needles/side-stones/friends.png')
+                open_side_stone('friends')
             elif roll == 8:
-                open_side_stone('./needles/side-stones/settings.png')
+                open_side_stone('settings')
         else:
             return
     else:
@@ -451,7 +450,7 @@ def drop_item(item, track=True,
 
     # Make sure the inventory tab is selected in the main menu.
     log.debug('Making sure inventory is selected')
-    open_side_stone('./needles/side-stones/inventory.png')
+    open_side_stone('inventory')
 
     item_remains = vis.inv.wait_for_image(loop_num=1, needle=item)
 
