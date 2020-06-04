@@ -53,11 +53,10 @@ def login(cred_sleep_min=800, cred_sleep_max=5000,
 
     # Make sure the client is logged out.
     # TODO: use orient() for this, not wait_for_image
-    logged_out = vis.display.wait_for_image(needle='./needles/login-menu/'
-                                                   'orient-logged-out.png',
-                                            loop_num=3,
-                                            loop_sleep_min=1000,
-                                            loop_sleep_max=2000)
+    logged_out = vis.Vision(ltwh=vis.display, needle='./needles/login-menu/'
+                                                     'orient-logged-out.png',
+                            loop_num=3,
+                            loop_sleep_range=(1000, 2000)).wait_for_image()
     if logged_out is False:
         raise RuntimeError("Cannot find client or client is not logged out!")
 
@@ -66,22 +65,21 @@ def login(cred_sleep_min=800, cred_sleep_max=5000,
     # Click the "Ok" button if it's present at the login screen.
     # This button appears if the user was disconnected due to idle
     #   activity.
-    ok_button = vis.display.click_image(needle='./needles/login-menu/'
-                                               'ok-button.png',
-                                        loop_num=1)
+    ok_button = vis.Vision(ltwh=vis.display, needle='./needles/login-menu/'
+                                                    'ok-button.png',
+                           loop_num=1).click_image()
     # If the "Ok" button isn't found, look for the "Existing user"
     #   button.
-    existing_user_button = vis.display.click_image(
-        needle='./needles/login-menu/'
-               'existing-user-button.png',
-        loop_num=1)
+    existing_user_button = vis.Vision(ltwh=vis.display,
+                                      needle='./needles/login-menu/'
+                                             'existing-user-button.png',
+                                      loop_num=1).click_image()
 
     if existing_user_button is True or ok_button is True:
         # Click to make sure the "Login" field is active.
-        input.Mouse(left=vis.login_field_left,
-                    top=vis.login_field_top,
-                    width=start.LOGIN_FIELD_WIDTH,
-                    height=start.LOGIN_FIELD_HEIGHT).click_coord()
+        input.Mouse(ltwh=(vis.login_field_left, vis.login_field_top,
+                          start.LOGIN_FIELD_WIDTH, start.LOGIN_FIELD_HEIGHT)). \
+            click_coord()
         # Enter login field credentials.
         misc.sleep_rand(cred_sleep_min, cred_sleep_max)
         username_file = start.config_file['username_file']
@@ -89,10 +87,9 @@ def login(cred_sleep_min=800, cred_sleep_max=5000,
         misc.sleep_rand(cred_sleep_min, cred_sleep_max)
 
         # Click to make sure the "Password" field is active.
-        input.Mouse(left=vis.pass_field_left,
-                    top=vis.pass_field_top,
-                    width=start.LOGIN_FIELD_WIDTH,
-                    height=start.LOGIN_FIELD_HEIGHT).click_coord()
+        input.Mouse(ltwh=(vis.pass_field_left, vis.pass_field_top,
+                          start.LOGIN_FIELD_WIDTH, start.LOGIN_FIELD_HEIGHT)). \
+            click_coord()
         # Enter password field credentials and login.
         password_file = start.config_file['password_file']
         pag.typewrite(open(password_file, 'r').read(), interval=0.1)
@@ -126,9 +123,12 @@ def login(cred_sleep_min=800, cred_sleep_max=5000,
                 misc.sleep_rand(3000, 7000)
                 pag.keyUp('Up')
                 return
-            raise RuntimeError("Did not detect login after postlogin!")
-        raise RuntimeError("Cannot find postlogin screen!")
-    raise RuntimeError("Cannot find existing user or OK button!")
+            else:
+                raise RuntimeError("Did not detect login after postlogin!")
+        else:
+            raise RuntimeError("Cannot find postlogin screen!")
+    else:
+        raise RuntimeError("Cannot find existing user or OK button!")
 
 
 def open_side_stone(side_stone):
@@ -136,7 +136,11 @@ def open_side_stone(side_stone):
     Opens a side stone menu.
 
     Args:
-        side_stone (str): The name of the side stone to open.
+        side_stone (str): The name of the side stone to open. Available
+                          options are 'attacks', 'skills', 'quests',
+                          'inventory', 'equipment', 'prayers', 'spellbook',
+                          'clan', 'friends', 'account', 'logout',
+                          'settings', emotes', and 'music'.
 
     Returns:
         Returns True if desired side stone was opened or is already open.
@@ -148,35 +152,39 @@ def open_side_stone(side_stone):
     side_stone_open = ('./needles/side-stones/open/' + side_stone + '.png')
     side_stone_closed = ('./needles/side-stones/closed/' + side_stone + '.png')
 
-    stone_open = vis.side_stones.wait_for_image(needle=side_stone_open,
-                                                loop_num=1)
+    # Some side stones need a higher than default confidence to determine
+    #   if they're open.
+    stone_open = vis.Vision(ltwh=vis.side_stones, needle=side_stone_open,
+                            loop_num=1, conf=0.98).wait_for_image()
     if stone_open is True:
         log.debug('Side stone already open.')
         return True
-    log.debug('Opening side stone.')
+    else:
+        log.debug('Opening side stone.')
 
     # Try a total of 5 times to open the desired side stone menu using
     #   the mouse.
-    for tries in range(1, 5):
-        vis.side_stones.click_image(needle=side_stone_closed,
-                                    loop_num=3,
-                                    loop_sleep_min=100, loop_sleep_max=300,
-                                    sleep_befmax=200, sleep_afmax=200)
-        # Move mouse out of the way so the function can tell if the
-        #   stone is open.
-        input.Mouse(25, 150, 25, 150, move_durmax=100).moverel()
-        stone_open = vis.side_stones.wait_for_image(needle=side_stone_open,
-                                                    loop_num=3,
-                                                    loop_sleep_min=100,
-                                                    loop_sleep_max=200)
+    for tries in range(1, 6):
+        # Move mouse out of the way after clicking so the function can
+        #   tell if the stone is open.
+        vis.Vision(ltwh=vis.side_stones,
+                   needle=side_stone_closed,
+                   loop_num=3, loop_sleep_range=(100, 300)). \
+            click_image(sleep_range=(0, 200, 0, 200), move_away=True)
+        stone_open = vis.Vision(ltwh=vis.side_stones,
+                                needle=side_stone_open,
+                                loop_num=3, conf=0.98,
+                                loop_sleep_range=(100, 200)).wait_for_image()
         if stone_open is True:
             log.info('Opened side stone after ' + str(tries) + ' tries.')
             return True
         # Make sure the bank window isn't open, which would block
         #   access to the side stones.
-        vis.game_screen.click_image(
-            needle='./needles/buttons/bank-window-close.png', loop_num=1)
-    raise Exception('Could not open side stone! Is the hotkey correct?')
+        vis.Vision(ltwh=vis.game_screen,
+                   needle='./needles/buttons/bank-window-close.png',
+                   loop_num=1).click_image()
+
+    raise Exception('Could not open side stone!')
 
 
 def logout():
@@ -217,14 +225,17 @@ def logout():
                     log.info('Logged out after trying ' + str(tries) +
                              ' time(s).')
                     return
-                log.info('Unable to log out after trying ' + str(tries) +
-                         ' time(s).')
-                vis.client.click_image(needle='./needles/buttons/'
-                                              'logout.png')
+                else:
+                    log.info('Unable to log out after trying ' + str(tries) +
+                             ' time(s).')
+                    vis.client.click_image(needle='./needles/buttons/'
+                                                  'logout.png')
             raise RuntimeError("Could not logout!")
-        raise RuntimeError("Could not find logout button!")
-    log.warning("Client already logged out!")
-    return
+        else:
+            raise RuntimeError("Could not find logout button!")
+    else:
+        log.warning("Client already logged out!")
+        return
 
 
 def logout_rand_range():
@@ -350,9 +361,10 @@ def logout_rand(chance,
             # Convert from Epoch seconds to tuple for a human-readable
             #   format.
             stop_time_human = time.localtime(stop_time)
-            log.info('Sleeping for ' + str(stop_time_human[4]) + ' minutes.' +
-                     ' Break will be over at ' + str(stop_time_human[3]) + ':' + str(minute)
-                     + ':' + str(second))
+
+            log.info('Sleeping for ' + str(wait_time_minutes) + ' minutes.' +
+                     ' Break will be over at ' + str(stop_time_human[3]) + ':'
+                     + str(stop_time_human[4]) + ':' + str(stop_time_human[5]))
 
             time.sleep(wait_time_seconds)
         else:
