@@ -349,10 +349,9 @@ def logout_rand(chance,
             stop_time = current_time + (current_time + wait_time_seconds)
             # Convert from Epoch seconds to tuple for a human-readable
             #   format.
-            stop_time = time.localtime(stop_time)
-            (yr, mon, day, hour, minute, second, wkday, yrday, dls) = stop_time
-            log.info('Sleeping for ' + str(wait_time_minutes) + ' minutes.' +
-                     ' Break will be over at ' + str(hour) + ':' + str(minute)
+            stop_time_human = time.localtime(stop_time)
+            log.info('Sleeping for ' + str(stop_time_human[4]) + ' minutes.' +
+                     ' Break will be over at ' + str(stop_time_human[3]) + ':' + str(minute)
                      + ':' + str(second))
 
             time.sleep(wait_time_seconds)
