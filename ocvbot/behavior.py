@@ -12,7 +12,6 @@ def switch_worlds_logged_in(members=False, free_to_play=True, safe=True):
     # TODO
     if members is False and free_to_play is False:
         raise Exception("A world type must be selected!")
-    pass
 
 
 def switch_worlds_logged_out():
@@ -61,8 +60,8 @@ def login(cred_sleep_min=800, cred_sleep_max=5000,
                                             loop_sleep_max=2000)
     if logged_out is False:
         raise RuntimeError("Cannot find client or client is not logged out!")
-    else:
-        log.info('Logging in.')
+
+    log.info('Logging in.')
 
     # Click the "Ok" button if it's present at the login screen.
     # This button appears if the user was disconnected due to idle
@@ -127,12 +126,9 @@ def login(cred_sleep_min=800, cred_sleep_max=5000,
                 misc.sleep_rand(3000, 7000)
                 pag.keyUp('Up')
                 return
-            else:
-                raise RuntimeError("Did not detect login after postlogin!")
-        else:
-            raise RuntimeError("Cannot find postlogin screen!")
-    else:
-        raise RuntimeError("Cannot find existing user or OK button!")
+            raise RuntimeError("Did not detect login after postlogin!")
+        raise RuntimeError("Cannot find postlogin screen!")
+    raise RuntimeError("Cannot find existing user or OK button!")
 
 
 def open_side_stone(side_stone):
@@ -144,7 +140,9 @@ def open_side_stone(side_stone):
 
     Returns:
         Returns True if desired side stone was opened or is already open.
-        Returns False in any other situation.
+
+    Raises:
+        Raises an exception if side stone could not be opened.
 
     """
     side_stone_open = ('./needles/side-stones/open/' + side_stone + '.png')
@@ -155,31 +153,29 @@ def open_side_stone(side_stone):
     if stone_open is True:
         log.debug('Side stone already open.')
         return True
-    elif stone_open is False:
-        log.debug('Opening side stone.')
+    log.debug('Opening side stone.')
 
     # Try a total of 5 times to open the desired side stone menu using
     #   the mouse.
     for tries in range(1, 5):
         vis.side_stones.click_image(needle=side_stone_closed,
-                                    loop_num=5,
+                                    loop_num=3,
                                     loop_sleep_min=100, loop_sleep_max=300,
                                     sleep_befmax=200, sleep_afmax=200)
         # Move mouse out of the way so the function can tell if the
         #   stone is open.
-        input.Mouse(25, 150, 25, 150, move_durmax=500).moverel()
+        input.Mouse(25, 150, 25, 150, move_durmax=100).moverel()
         stone_open = vis.side_stones.wait_for_image(needle=side_stone_open,
-                                                    loop_num=5,
+                                                    loop_num=3,
                                                     loop_sleep_min=100,
-                                                    loop_sleep_max=300)
+                                                    loop_sleep_max=200)
         if stone_open is True:
-            log.info('Opened side stone')
+            log.info('Opened side stone after ' + str(tries) + ' tries.')
             return True
-        else:
-            # Make sure the bank window isn't open, which would block
-            #   access to the side stones.
-            vis.game_screen.click_image(
-                needle='./needles/buttons/bank-window-close.png', loop_num=1)
+        # Make sure the bank window isn't open, which would block
+        #   access to the side stones.
+        vis.game_screen.click_image(
+            needle='./needles/buttons/bank-window-close.png', loop_num=1)
     raise Exception('Could not open side stone! Is the hotkey correct?')
 
 
@@ -221,17 +217,14 @@ def logout():
                     log.info('Logged out after trying ' + str(tries) +
                              ' time(s).')
                     return
-                else:
-                    log.info('Unable to log out after trying ' + str(tries) +
-                             ' time(s).')
-                    vis.client.click_image(needle='./needles/buttons/'
-                                                  'logout.png')
+                log.info('Unable to log out after trying ' + str(tries) +
+                         ' time(s).')
+                vis.client.click_image(needle='./needles/buttons/'
+                                              'logout.png')
             raise RuntimeError("Could not logout!")
-        else:
-            raise RuntimeError("Could not find logout button!")
-    else:
-        log.warning("Client already logged out!")
-        return
+        raise RuntimeError("Could not find logout button!")
+    log.warning("Client already logged out!")
+    return
 
 
 def logout_rand_range():
@@ -379,7 +372,6 @@ def check_skills():
     input.Mouse(vis.inv_left, vis.inv_top,
                 start.INV_WIDTH, start.INV_HEIGHT).move_to()
     misc.sleep_rand(500, 5000)
-    return
 
 
 def human_behavior_rand(chance):
@@ -419,10 +411,8 @@ def human_behavior_rand(chance):
                 open_side_stone('friends')
             elif roll == 8:
                 open_side_stone('settings')
-        else:
-            return
-    else:
         return
+    return
 
 
 def drop_item(item, track=True,
@@ -454,12 +444,11 @@ def drop_item(item, track=True,
 
     item_remains = vis.inv.wait_for_image(loop_num=1, needle=item)
 
-    if item_remains is True:
-        log.info('Dropping ' + str(item) + '.')
-    elif item_remains is False:
+    if item_remains is False:
         log.info('Could not find ' + str(item) + '.')
         return False
 
+    log.info('Dropping ' + str(item) + '.')
     tries = 0
     while item_remains is True and tries <= 40:
 
@@ -503,5 +492,4 @@ def drop_item(item, track=True,
     if tries > 40:
         log.error('Tried dropping item too many times!')
         return False
-    else:
-        return True
+    return True
