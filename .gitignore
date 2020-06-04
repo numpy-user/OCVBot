@@ -16,7 +16,6 @@ Project.xml
 */.screenshot*
 
 # Test and debugging files
-/tests/haystacks/
 /haystacks/
 **/tmp/
 
