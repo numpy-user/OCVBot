@@ -33,7 +33,7 @@ def main(debug=False):
     """
 
     log.info('Initializing')
-
+    os.system('rm -f /tmp/screenshot.tmp*')
     pag.screenshot('/tmp/screenshot.tmp.png', region=(vis.client_left,
                                                       vis.client_top,
                                                       start.CLIENT_WIDTH,
@@ -46,8 +46,7 @@ def main(debug=False):
             #   by drawing a black box over it with ImageMagick.
             import time
             time.sleep(1)
-            os.system('rm -f /tmp/screenshot.tmp* '
-                      '&& pngcrush -s '
+            os.system('pngcrush -s '
                       '"/tmp/screenshot.tmp.png" '
                       '"/tmp/screenshot.tmp2.png" '
                       '2>/dev/null '
@@ -57,8 +56,7 @@ def main(debug=False):
                       '"$(pwd)/haystack_$(date +%Y-%m-%d_%H:%M:%S).png" '
                       '&& rm -f /tmp/screenshot.tmp*')
         elif vis.client_status == 'logged_out':
-            os.system('rm -f /tmp/screenshot.ymp* '
-                      '&& pngcrush -s '
+            os.system('pngcrush -s '
                       '"/tmp/screenshot.tmp.png" '
                       '"$(pwd)/haystack_$(date +%Y-%m-%d_%H:%M:%S).png" '
                       '2>/dev/null '
