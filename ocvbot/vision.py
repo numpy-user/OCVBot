@@ -6,11 +6,7 @@ import pyautogui as pag
 from ocvbot import input, misc, startup as start
 
 
-# TODO: Add vision object that covers the "stone tab" buttons, this would
-#   make the object's coordinate space slightly larger than the inventory.
-
-
-def orient(display_width, display_height):
+def orient(display_width, display_height, launch_client=True):
     """
     Look for an icon to orient the client. If it's found, use its
     location within the game client to determine the coordinates of
@@ -21,6 +17,9 @@ def orient(display_width, display_height):
     Args:
         display_width (int): The total width of the display in pixels.
         display_height (int): The total height of the display in pixels.
+        launch_client (bool): Whether to attempt launching the OSRS client
+                              if it cannot be found and trying again,
+                              default is true.
 
     Raises:
        Raises a runtime error if the client cannot be found, or if the
@@ -53,9 +52,18 @@ def orient(display_width, display_height):
                         loctype='center', loop_num=2, get_tuple=True)
     if isinstance(logged_out, tuple) is True:
         return 'logged_out', logged_out
-
-    log.critical('Could not find anchor!')
-    raise RuntimeError('Could not find anchor!')
+    
+    if launch_client is True:
+        # TODO
+        start_client()
+        # Try 10 times to find the login screen after launching the client.
+        for tries in range(1, 10):
+            time.sleep(10)
+            orient(display_width, display_height, False)
+        log.critical('Could not find client!')
+        raise Exception('Could not find client!')
+        
+    return False
 
 
 def haystack_locate(needle, haystack, grayscale=False, conf=0.95):
