@@ -6,66 +6,6 @@ import pyautogui as pag
 from ocvbot import input, misc, startup as start
 
 
-def orient(display_width, display_height, launch_client=True):
-    """
-    Look for an icon to orient the client. If it's found, use its
-    location within the game client to determine the coordinates of
-    the game client relative to the display's coordinates.
-
-    This function is also used to determine if the client is logged out.
-
-    Args:
-        display_width (int): The total width of the display in pixels.
-        display_height (int): The total height of the display in pixels.
-        launch_client (bool): Whether to attempt launching the OSRS client
-                              if it cannot be found and trying again,
-                              default is true.
-
-    Raises:
-       Raises a runtime error if the client cannot be found, or if the
-       function can't determine if the client is logged in or logged
-       out.
-
-    Returns:
-         If client is logged in, returns a string containing the text
-         "logged_in" and a tuple containing the center XY coordinates of
-         the orient needle.
-
-         If client is logged out, returns a string containing the text
-         "logged_out" and a tuple containing the center XY coordinates
-         of the orient-logged-out needle.
-
-    """
-    logged_in = Vision(left=0, top=0,
-                       width=display_width,
-                       height=display_height) \
-        .wait_for_image(needle='needles/minimap/orient.png',
-                        loctype='center', loop_num=2, conf=0.8, get_tuple=True)
-    if isinstance(logged_in, tuple) is True:
-        return 'logged_in', logged_in
-
-    # If the client is not logged in, check if it's logged out.
-    logged_out = Vision(left=0, top=0,
-                        width=display_width,
-                        height=display_height) \
-        .wait_for_image(needle='needles/login-menu/orient-logged-out.png',
-                        loctype='center', loop_num=2, get_tuple=True)
-    if isinstance(logged_out, tuple) is True:
-        return 'logged_out', logged_out
-
-    if launch_client is True:
-        # TODO
-        start_client()
-        # Try 10 times to find the login screen after launching the client.
-        for tries in range(1, 10):
-            time.sleep(10)
-            orient(display_width, display_height, False)
-        log.critical('Could not find client!')
-        raise Exception('Could not find client!')
-
-    return False
-
-
 def haystack_locate(needle, haystack, grayscale=False, conf=0.95):
     """
     Finds the coordinates of a needle image within a haystack image.
@@ -322,8 +262,17 @@ def orient(display_width, display_height):
     if isinstance(logged_out, tuple) is True:
         return 'logged_out', logged_out
 
-    log.critical('Could not find anchor!')
-    raise RuntimeError('Could not find anchor!')
+    if launch_client is True:
+        # TODO
+        start_client()
+        # Try 10 times to find the login screen after launching the client.
+        for tries in range(1, 10):
+            time.sleep(10)
+            orient(display_width, display_height, False)
+        log.critical('Could not find client!')
+        raise Exception('Could not find client!')
+
+    return False
 
 
 # ----------------------------------------------------------------------
