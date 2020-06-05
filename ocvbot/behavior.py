@@ -19,31 +19,35 @@ def switch_worlds_logged_out():
     pass
 
 
-def login(cred_sleep_min=800, cred_sleep_max=5000,
-          login_sleep_min=500, login_sleep_max=5000,
-          postlogin_sleep_min=500, postlogin_sleep_max=5000):
+def login(username_file=start.config_file['username_file'],
+          password_file=start.config_file['password_file'],
+          cred_sleep_range=(800, 5000),
+          login_sleep_range=(500, 5000),
+          postlogin_sleep_range=(500, 5000)):
     """
     Logs in in using the credentials specified the main config file.
 
     Args:
-        cred_sleep_min (int): The minimum number of miliseconds to wait
-                              between actions while entering account
-                              credentials, default is 800.
-        cred_sleep_max (int): The maximum number of miliseconds to wait
-                              between actions while entering account
-                              credentials, default is 5000.
-        login_sleep_min (int): The minimum number of miliseconds to wait
-                               after hitting "Enter" to login, default
-                               is 5000.
-        login_sleep_max (int): The maximum number of miliseconds to wait
-                               after hitting "Enter" to login, default
-                               is 15000.
-        postlogin_sleep_min (int): The minimum number of miliseconds to
-                                   wait after clicking the "Click here
-                                   to play" button, default is 5000.
-        postlogin_sleep_max (int): The maximum number of miliseconds to
-                                   wait after clicking the "Click here
-                                   to play" button, default is 10000.
+        username_file (file): The path to a file containing the user's
+                              username login, by default reads the
+                              'username_file' field in the main config
+                              file.
+        password_file (file): The path to a file containing the user's
+                              password, by default reads the
+                              'password_file' field in the main config
+                              file.
+        cred_sleep_range (tuple): A 2-tuple containing the minimum and
+                                  maximum number of miliseconds to wait
+                                  between actions while entering account
+                                  credentials, default is (800, 5000).
+        login_sleep_range (tuple): A 2-tuple containing the minimum and
+                                   maximum number of miliseconds to wait
+                                   after hitting "Enter" to login, default
+                                   is (500, 5000).
+        postlogin_sleep_range (tuple): The minimum and maximum number of
+                                       miliseconds to wait after clicking
+                                       the "Click here to play" button,
+                                       default is (500, 5000).
 
     Raises:
         Raises a runtime error if the login menu cannot be found, the
@@ -78,25 +82,23 @@ def login(cred_sleep_min=800, cred_sleep_max=5000,
     if existing_user_button is True or ok_button is True:
         # Click to make sure the "Login" field is active.
         input.Mouse(ltwh=(vis.login_field_left, vis.login_field_top,
-                          start.LOGIN_FIELD_WIDTH, start.LOGIN_FIELD_HEIGHT)). \
-            click_coord()
+                          start.LOGIN_FIELD_WIDTH, start.LOGIN_FIELD_HEIGHT)) \
+            .click_coord()
         # Enter login field credentials.
-        misc.sleep_rand(cred_sleep_min, cred_sleep_max)
-        username_file = start.config_file['username_file']
+        misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
         pag.typewrite(open(username_file, 'r').read(), interval=0.1)
-        misc.sleep_rand(cred_sleep_min, cred_sleep_max)
+        misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
 
         # Click to make sure the "Password" field is active.
         input.Mouse(ltwh=(vis.pass_field_left, vis.pass_field_top,
-                          start.LOGIN_FIELD_WIDTH, start.LOGIN_FIELD_HEIGHT)). \
-            click_coord()
+                          start.LOGIN_FIELD_WIDTH, start.LOGIN_FIELD_HEIGHT)) \
+            .click_coord()
         # Enter password field credentials and login.
-        password_file = start.config_file['password_file']
         pag.typewrite(open(password_file, 'r').read(), interval=0.1)
-        misc.sleep_rand(cred_sleep_min, cred_sleep_max)
+        misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
 
         input.Keyboard().keypress(key='enter')
-        misc.sleep_rand(login_sleep_min, login_sleep_max)
+        misc.sleep_rand(login_sleep_range[0], login_sleep_range[1])
 
         postlogin_screen_button = vis.display. \
             click_image(needle='./needles/login-menu/orient-postlogin.png',
@@ -106,7 +108,7 @@ def login(cred_sleep_min=800, cred_sleep_max=5000,
                         loop_sleep_max=2000)
 
         if postlogin_screen_button is True:
-            misc.sleep_rand(postlogin_sleep_min, postlogin_sleep_max)
+            misc.sleep_rand(postlogin_sleep_range[0], postlogin_sleep_range[1])
             # Wait for the orient.png to appear in the client window.
             logged_in = vis.display.wait_for_image(needle='./needles/minimap/'
                                                           'orient.png',
