@@ -1,6 +1,6 @@
 import logging as log
 
-from ocvbot import behavior, input, vision as vis, misc, startup as start
+from ocvbot import behavior, vision as vis, misc, startup as start
 
 
 def miner_double_drop(rock1, rock2, ore, ore_type):
@@ -59,20 +59,12 @@ def miner_double_drop(rock1, rock2, ore, ore_type):
             log.debug('Searching for ore ' + str(attempts) + '...')
 
             # If current rock is full, begin mining it.
-            rock_full = vis.game_screen.click_image(needle=full_rock_needle,
-                                                    conf=0.8,
-                                                    move_durmin=5,
-                                                    move_durmax=500,
-                                                    sleep_befmin=0,
-                                                    sleep_befmax=100,
-                                                    sleep_afmin=0,
-                                                    sleep_afmax=1,
-                                                    loop_sleep_max=100,
-                                                    loop_num=1)
+            # Move the mouse away from the rock so it doesn't
+            #   interfere with matching the needle.
+            rock_full = vis.Vision(ltwh=vis.game_screen, loop_num=1,
+                                   needle=full_rock_needle, conf=0.8) \
+                .click_image(sleep_range=(0, 100, 0, 1), move_away=True)
             if rock_full is True:
-                # Move the mouse away from the rock so it doesn't
-                #   interfere with matching the needle.
-                input.Mouse(15, 100, 15, 100).moverel()
                 log.info('Waiting for mining to start.')
 
                 # Small chance to do nothing for a short while.
@@ -80,23 +72,24 @@ def miner_double_drop(rock1, rock2, ore, ore_type):
 
                 # Once the rock has been clicked on, wait for mining to
                 #   start by monitoring chat.
-                mining_started = vis.chat_menu_recent. \
-                    wait_for_image('./needles/chat-menu/'
-                                   'mining-started.png',
-                                   conf=0.9,
-                                   loop_sleep_min=100,
-                                   loop_sleep_max=200,
-                                   loop_num=5)
+                mining_started = vis.Vision(ltwh=vis.chat_menu_recent,
+                                            loop_num=5, conf=0.9,
+                                            needle='./needles/chat-menu/'
+                                                   'mining-started.png',
+                                            loop_sleep_range=(100, 200)) \
+                    .wait_for_image()
 
                 # If mining hasn't started after looping has finished,
                 #   check to see if the inventory is full.
                 if mining_started is False:
                     log.debug('Timed out waiting for mining to start.')
 
-                    inv_full = vis.chat_menu. \
-                        wait_for_image(needle='./needles/chat-menu/'
-                                              'mining-inventory-full.png',
-                                       loop_num=1)
+                    inv_full = vis.Vision(ltwh=vis.chat_menu,
+                                          loop_num=1,
+                                          needle='./needles/chat-menu/'
+                                                 'mining-inventory-full.png') \
+                        .wait_for_image()
+
                     # If the inventory is full, empty the ore and
                     #   return.
                     if inv_full is True:
@@ -130,12 +123,11 @@ def miner_double_drop(rock1, rock2, ore, ore_type):
 
                 # Wait until the rock is empty by waiting for the
                 #   "empty" version of the rock_needle tuple.
-                rock_empty = vis.game_screen.wait_for_image(
-                    needle=empty_rock_needle,
-                    conf=0.85,
-                    loop_num=100,
-                    loop_sleep_min=100,
-                    loop_sleep_max=200)
+                rock_empty = vis.Vision(ltwh=vis.chat_menu,
+                                        loop_num=100, conf=0.85,
+                                        needle=empty_rock_needle,
+                                        loop_sleep_range=(100, 200)) \
+                    .wait_for_image()
 
                 if rock_empty is True:
                     log.info('Rock is empty.')
