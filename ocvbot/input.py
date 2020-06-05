@@ -12,55 +12,43 @@ hc = pyc.HumanClicker()
 
 class Mouse:
     """
-    left (int): X coordinate of the left edge to move the mouse cursor
-                to.
-    top (int): Y coordinte of the The top edge to move the mouse cursor
-               to.
-    width (int): The width of the coordinate space to randomize the
-                 mouse cursor within.
-    height (int): The height of the coordinate space to randomize the
-                  mouse cursor within.
-    sleep_befmin (int): Minimum number of miliseconds to wait before
-                        performing action, default is 0.
-    sleep_befmax (int): Maximum number of miliseconds to wait before
-                        performing action, default is 500.
-    sleep_afmin (int): Minimum number of miliseconds to wait after
-                       performing action, default is 0.
-    sleep_afmax (int): Maximum number of miliseconds to wait after
-                       performing action, default is 500.
-    click_durmin (int): Minimum number of miliseconds to hold down
-                        the mouse button, default is 0.
-    click_durmax (int): Maximum number of miliseconds to hold down
-                        the mouse button, default is 100.
-    move_durmin (int): The minumum number of miliseconds to take to move
-                       the mouse cursor to its destination, default is
-                       50.
-    move_durmax (int): The maximum number of miliseconds to take to move
-                       the mouse cursor to its destination, default is
-                       1500.
-    button (str): The mouse button to click with, default is left.
+    Class to move and click the mouse cursor.
+
+    Args:
+        ltwh (tuple): A 4-member tuple containing the left, top, width,
+                      and height coordinates. The width and height
+                      values are used for randomizing the location of
+                      the mouse cursor.
+        sleep_range (tuple): A 4-member tuple containing the minimum
+                             and maximum number of miliseconds to wait
+                             before performing the action, and the
+                             minimum and maximum number of miliseconds
+                             to wait after performing the action,
+                             default is (0, 500, 0, 500).
+        action_duration_range (tuple): A 2-member tuple containing the
+                                       minimum and maximum number of
+                                       miliseconds during which the
+                                       action will be performed, such as
+                                       holding down the mouse button,
+                                       default is (1, 100).
+        move_duration_range (tuple): A 2-member tuple containing the
+                                     minimum and maximum number of
+                                     miliseconds to take to move the
+                                     mouse cursor to its destination,
+                                     default is (50, 1500).
+        button (str): The mouse button to click with, default is left.
 
     """
     def __init__(self,
-                 left, top, width, height,
-                 sleep_befmin=0, sleep_befmax=500,
-                 sleep_afmin=0, sleep_afmax=500,
-                 move_durmin=50, move_durmax=1000,
-                 durmin=1, durmax=100,
+                 ltwh,  # "left, top, width, height"
+                 sleep_range=(0, 500, 0, 500),
+                 move_duration_range=(50, 1500),
+                 action_duration_range=(1, 100),
                  button='left'):
-
-        self.left = left
-        self.top = top
-        self.width = width
-        self.height = height
-        self.sleep_befmin = sleep_befmin
-        self.sleep_befmax = sleep_befmax
-        self.sleep_afmin = sleep_afmin
-        self.sleep_afmax = sleep_afmax
-        self.move_durmin = move_durmin
-        self.move_durmax = move_durmax
-        self.durmin = durmin
-        self.durmax = durmax
+        self.ltwh = ltwh
+        self.sleep_range = sleep_range
+        self.move_duration_range = move_duration_range
+        self.action_duration_range = action_duration_range
         self.button = button
 
     def click_coord(self):
@@ -80,13 +68,10 @@ class Mouse:
         Bezier curves to make mouse movement appear more human-like.
 
         """
-        xmin = self.left
-        xmax = self.left + self.width
-        ymin = self.top
-        ymax = self.top + self.height
+        xmin, ymin, xmax, ymax = self.ltwh
 
-        x_coord = rand.randint(xmin, xmax)
-        y_coord = rand.randint(ymin, ymax)
+        x_coord = rand.randint(xmin, (xmin + xmax))
+        y_coord = rand.randint(ymin, (ymin + ymax))
 
         hc.move((x_coord, y_coord), self.move_duration())
 
@@ -101,14 +86,16 @@ class Mouse:
         self.height is the maximum Y distance to move the mouse.
 
         """
-        if self.left < self.width or self.top < self.height:
+        left, top, width, height = self.ltwh
+
+        if left < width or top < height:
             raise Exception("Width and Height must be greater than or equal to"
                             "Left andnTop when using the moverel() function!")
 
         (x_position, y_position) = pag.position()
 
-        x_distance = rand.randint(self.left, self.width)
-        y_distance = rand.randint(self.top, self.height)
+        x_distance = rand.randint(left, width)
+        y_distance = rand.randint(top, height)
 
         x_destination = x_position + x_distance
         y_destination = y_position + y_distance
@@ -124,8 +111,9 @@ class Mouse:
             Returns a float containing a number in seconds.
 
         """
-        move_duration_var = misc.rand_seconds(rmin=self.move_durmin,
-                                              rmax=self.move_durmax)
+        move_durmin, move_durmax = self.move_duration_range
+        move_duration_var = misc.rand_seconds(rmin=move_durmin,
+                                              rmax=move_durmax)
         return move_duration_var
 
     def click(self):
@@ -134,16 +122,20 @@ class Mouse:
         after for a randomized period of time.
 
         """
-        misc.sleep_rand(rmin=self.sleep_befmin,
-                        rmax=self.sleep_befmax)
+        sleep_before_min, sleep_before_max, sleep_after_min, sleep_after_max =\
+            self.sleep_range
+        durmin, durmax = self.action_duration_range
 
-        duration = misc.rand_seconds(rmin=self.durmin,
-                                     rmax=self.durmax)
+        misc.sleep_rand(rmin=sleep_before_min,
+                        rmax=sleep_before_max)
+
+        duration = misc.rand_seconds(rmin=durmin,
+                                     rmax=durmax)
         pag.click(button=self.button,
                   duration=duration)
 
-        misc.sleep_rand(rmin=self.sleep_afmin,
-                        rmax=self.sleep_afmax)
+        misc.sleep_rand(rmin=sleep_after_min,
+                        rmax=sleep_after_max)
 
 
 class Keyboard:
@@ -162,17 +154,12 @@ class Keyboard:
                   default is 180.
 
     """
-    def __init__(self,
-                 sleep_befmin=0, sleep_befmax=500,
-                 sleep_afmin=0, sleep_afmax=500,
-                 durmin=1, durmax=100):
 
-        self.sleep_befmin = sleep_befmin
-        self.sleep_befmax = sleep_befmax
-        self.sleep_afmin = sleep_afmin
-        self.sleep_afmax = sleep_afmax
-        self.durmin = durmin
-        self.durmax = durmax
+    def __init__(self,
+                 sleep_range=(0, 500, 0, 500),
+                 action_duration_range=(1, 100)):
+        self.sleep_range = sleep_range
+        self.action_duration_range = action_duration_range
 
     def keypress(self, key):
         """
@@ -184,11 +171,15 @@ class Keyboard:
 
         """
         log.debug('Pressing key: ' + str(key) + '.')
-        misc.sleep_rand(rmin=self.sleep_befmin, rmax=self.sleep_befmax)
+        sleep_before_min, sleep_before_max, sleep_after_min, sleep_after_max = \
+            self.sleep_range
+        action_duration_min, action_duration_max = self.action_duration_range
+
+        misc.sleep_rand(rmin=sleep_before_min, rmax=sleep_before_max)
         pag.keyDown(key)
-        misc.sleep_rand(rmin=self.durmin, rmax=self.durmax)
+        misc.sleep_rand(rmin=action_duration_min, rmax=action_duration_max)
         pag.keyUp(key)
-        misc.sleep_rand(rmin=self.sleep_afmin, rmax=self.sleep_afmax)
+        misc.sleep_rand(rmin=sleep_after_min, rmax=sleep_after_max)
 
     def double_hotkey_press(self, key1, key2):
         """
@@ -202,12 +193,16 @@ class Keyboard:
 
         """
         log.debug('Pressing hotkeys: ' + str(key1) + ' + ' + str(key2))
-        misc.sleep_rand(rmin=self.sleep_befmin, rmax=self.sleep_befmax)
+        sleep_before_min, sleep_before_max, sleep_after_min, sleep_after_max =\
+            self.sleep_range
+        action_duration_min, action_duration_max = self.action_duration_range
+
+        misc.sleep_rand(rmin=sleep_before_min, rmax=sleep_before_max)
         pag.keyDown(key1)
-        misc.sleep_rand(rmin=self.durmin, rmax=self.durmax)
+        misc.sleep_rand(rmin=action_duration_min, rmax=action_duration_max)
         pag.keyDown(key2)
-        misc.sleep_rand(rmin=self.durmin, rmax=self.durmax)
+        misc.sleep_rand(rmin=action_duration_min, rmax=action_duration_max)
         pag.keyUp(key1)
-        misc.sleep_rand(rmin=self.durmin, rmax=self.durmax)
+        misc.sleep_rand(rmin=action_duration_min, rmax=action_duration_max)
         pag.keyUp(key2)
-        misc.sleep_rand(rmin=self.sleep_afmin, rmax=self.sleep_afmax)
+        misc.sleep_rand(rmin=sleep_after_min, rmax=sleep_after_max)
