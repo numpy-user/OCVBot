@@ -18,11 +18,11 @@ def mining_lumbridge_swamp():
         if client_status == 'logged_out':
             behavior.login()
 
-        skilling.miner_double_drop(
-            rock1=('./needles/game-screen/lumbridge-mine/east-full.png',
-                   './needles/game-screen/lumbridge-mine/east-empty.png'),
-            rock2=('./needles/game-screen/lumbridge-mine/south-full.png',
-                   './needles/game-screen/lumbridge-mine/south-empty.png'),
+        skilling.drop_miner(
+            rocks=[('./needles/game-screen/lumbridge-mine/east-full.png',
+                    './needles/game-screen/lumbridge-mine/east-empty.png'),
+                   ('./needles/game-screen/lumbridge-mine/south-full.png',
+                    './needles/game-screen/lumbridge-mine/south-empty.png')],
             ore='./needles/items/copper-ore.png',
             ore_type='copper')
 
@@ -45,15 +45,11 @@ def mining_varrock_east():
         (client_status, unused_var) = client_status
         if client_status == 'logged_out':
             behavior.login()
-        skilling.miner_double_drop(
-            rock1=('./needles/game-screen/varrock-east-mine/'
-                   'north-full2.png',
-                   './needles/game-screen/varrock-east-mine/'
-                   'north-empty.png'),
-            rock2=('./needles/game-screen/varrock-east-mine/'
-                   'west-full.png',
-                   './needles/game-screen/varrock-east-mine/'
-                   'west-empty.png'),
+        skilling.drop_miner(
+            rocks=[('./needles/game-screen/varrock-east-mine/north-full2.png',
+                    './needles/game-screen/varrock-east-mine/north-empty.png'),
+                   ('./needles/game-screen/varrock-east-mine/west-full.png',
+                    './needles/game-screen/varrock-east-mine/west-empty.png')],
             ore='./needles/items/iron-ore.png',
             ore_type='iron')
 

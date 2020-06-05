@@ -3,23 +3,22 @@ import logging as log
 from ocvbot import behavior, vision as vis, misc, startup as start
 
 
-def miner_double_drop(rock1, rock2, ore, ore_type):
+def drop_miner(rocks, ore, ore_type):
     """
-    A 2-rock drop mining script.
+    A drop-mining function.
 
-    This function alternates mining between two different rocks that
-    contain the same type of ore. All mined ore, gems, and clue geodes
-    are dropped by default when the inventory becomes full.
+    This function alternates mining among the rocks that were provided
+    (it can mine one rock, two rocks, or many rocks at once).
+    All rocks must be of the same ore type. All mined ore, gems, and
+    clue geodes are dropped by default when the inventory is full.
 
     Args:
-        rock1 (tuple): Tuple containing two filepaths: The first file
-                       must be a needle showing the first rock is
-                       full. The second file must be a needle showing
-                       the first rock is empty.
-        rock2 (tuple): Tuple containing two filepaths: The first file
-                       must be a needle showing the second rock is
-                       full. The second file must be a needle showing
-                       the second rock is empty.
+        rocks (list): A list containing an arbitrary number of 2-tuples.
+                       Each tuple must contain two filepaths:
+                       The first filepath must be a needle of the
+                       rock in its "full" state. The second filepath
+                       must be a needle of the same rock in its "empty"
+                       state.
         ore (file): Filepath to a needle of the item icon of the ore
                     being mined, as it appears in the player's
                     inventory.
@@ -27,7 +26,7 @@ def miner_double_drop(rock1, rock2, ore, ore_type):
                         stats. Available options are: "copper", "iron"
 
     Raises:
-        Raises a runtime error if the player's inventory is full, but
+        Raises a runtime error if the player's inventory is full but
         the function can't find any ore in the player's inventory to
         drop.
     """
@@ -50,10 +49,9 @@ def miner_double_drop(rock1, rock2, ore, ore_type):
 
     for attempts in range(1, 100):
 
-        # TODO: allow rotating through an arbitrary number of rocks
-        for rock_needle in (rock1, rock2):
-            # Unpack the "rock_needle" tuple to obtain "full" and
-            #   "empty" versions of each needle.
+        for rock_needle in rocks:
+            # Unpack each tuple in the rocks[] list to obtain the "full"
+            #   and "empty" versions of each ore.
             (full_rock_needle, empty_rock_needle) = rock_needle
 
             log.debug('Searching for ore ' + str(attempts) + '...')
