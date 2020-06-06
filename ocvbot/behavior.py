@@ -133,62 +133,6 @@ def login(username_file=start.config_file['username_file'],
         raise RuntimeError("Cannot find existing user or OK button!")
 
 
-def open_side_stone(side_stone):
-    """
-    Opens a side stone menu.
-
-    Args:
-        side_stone (str): The name of the side stone to open. Available
-                          options are 'attacks', 'skills', 'quests',
-                          'inventory', 'equipment', 'prayers', 'spellbook',
-                          'clan', 'friends', 'account', 'logout',
-                          'settings', emotes', and 'music'.
-
-    Returns:
-        Returns True if desired side stone was opened or is already open.
-
-    Raises:
-        Raises an exception if side stone could not be opened.
-
-    """
-    side_stone_open = ('./needles/side-stones/open/' + side_stone + '.png')
-    side_stone_closed = ('./needles/side-stones/closed/' + side_stone + '.png')
-
-    # Some side stones need a higher than default confidence to determine
-    #   if they're open.
-    stone_open = vis.Vision(ltwh=vis.side_stones, needle=side_stone_open,
-                            loop_num=1, conf=0.98).wait_for_image()
-    if stone_open is True:
-        log.debug('Side stone already open.')
-        return True
-    else:
-        log.debug('Opening side stone.')
-
-    # Try a total of 5 times to open the desired side stone menu using
-    #   the mouse.
-    for tries in range(1, 6):
-        # Move mouse out of the way after clicking so the function can
-        #   tell if the stone is open.
-        vis.Vision(ltwh=vis.side_stones,
-                   needle=side_stone_closed,
-                   loop_num=3, loop_sleep_range=(100, 300)). \
-            click_image(sleep_range=(0, 200, 0, 200), move_away=True)
-        stone_open = vis.Vision(ltwh=vis.side_stones,
-                                needle=side_stone_open,
-                                loop_num=3, conf=0.98,
-                                loop_sleep_range=(100, 200)).wait_for_image()
-        if stone_open is True:
-            log.info('Opened side stone after ' + str(tries) + ' tries.')
-            return True
-        # Make sure the bank window isn't open, which would block
-        #   access to the side stones.
-        vis.Vision(ltwh=vis.game_screen,
-                   needle='./needles/buttons/bank-window-close.png',
-                   loop_num=1).click_image()
-
-    raise Exception('Could not open side stone!')
-
-
 def logout():
     """
     If the client is logged in, logs out. Side stone hotkeys MUST be
@@ -373,6 +317,62 @@ def logout_rand(chance,
             raise RuntimeError('Error with session numbers!')
     else:
         return
+
+
+def open_side_stone(side_stone):
+    """
+    Opens a side stone menu.
+
+    Args:
+        side_stone (str): The name of the side stone to open. Available
+                          options are 'attacks', 'skills', 'quests',
+                          'inventory', 'equipment', 'prayers', 'spellbook',
+                          'clan', 'friends', 'account', 'logout',
+                          'settings', emotes', and 'music'.
+
+    Returns:
+        Returns True if desired side stone was opened or is already open.
+
+    Raises:
+        Raises an exception if side stone could not be opened.
+
+    """
+    side_stone_open = ('./needles/side-stones/open/' + side_stone + '.png')
+    side_stone_closed = ('./needles/side-stones/closed/' + side_stone + '.png')
+
+    # Some side stones need a higher than default confidence to determine
+    #   if they're open.
+    stone_open = vis.Vision(ltwh=vis.side_stones, needle=side_stone_open,
+                            loop_num=1, conf=0.98).wait_for_image()
+    if stone_open is True:
+        log.debug('Side stone already open.')
+        return True
+    else:
+        log.debug('Opening side stone.')
+
+    # Try a total of 5 times to open the desired side stone menu using
+    #   the mouse.
+    for tries in range(1, 6):
+        # Move mouse out of the way after clicking so the function can
+        #   tell if the stone is open.
+        vis.Vision(ltwh=vis.side_stones,
+                   needle=side_stone_closed,
+                   loop_num=3, loop_sleep_range=(100, 300)). \
+            click_image(sleep_range=(0, 200, 0, 200), move_away=True)
+        stone_open = vis.Vision(ltwh=vis.side_stones,
+                                needle=side_stone_open,
+                                loop_num=3, conf=0.98,
+                                loop_sleep_range=(100, 200)).wait_for_image()
+        if stone_open is True:
+            log.info('Opened side stone after ' + str(tries) + ' tries.')
+            return True
+        # Make sure the bank window isn't open, which would block
+        #   access to the side stones.
+        vis.Vision(ltwh=vis.game_screen,
+                   needle='./needles/buttons/bank-window-close.png',
+                   loop_num=1).click_image()
+
+    raise Exception('Could not open side stone!')
 
 
 def check_skills():
