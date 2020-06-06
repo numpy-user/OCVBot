@@ -51,7 +51,7 @@ class Mouse:
         self.action_duration_range = action_duration_range
         self.button = button
 
-    def click_coord(self):
+    def click_coord(self, move_away=False):
         """
         Clicks within the provided coordinates. If width and height are
         both 0, then this function will click in the exact same location
@@ -60,6 +60,10 @@ class Mouse:
         """
         self.move_to()
         self.click()
+        if move_away is True:
+            self.ltwh = (25, 150, 25, 150)
+            self.move_duration_range = (5, 300)
+            self.moverel()
 
     def move_to(self):
         """
@@ -77,28 +81,31 @@ class Mouse:
 
     def moverel(self):
         """
-        Moves the mouse relative to its current position. This function
-        interprets its object parameters a little differently:
+        Moves the mouse in a random direction, relative to its current
+        position. Uses left/width to determinie the minimum and maximum
+        X distance to move and top/height to determine the minimum and
+        maximum Y distance to move.
 
-        self.left is minimum X distance to move the mouse.
-        self.width is maximum X distance to move the mouse.
-        self.top is the minimum Y distance to move the mouse.
-        self.height is the maximum Y distance to move the mouse.
+        Whichever of the two left/width values is lower will be used as
+        the minimum X distance and whichever of the two values is higher
+        will be used as the maximum X distance. Same for top/height.
+
 
         """
         left, top, width, height = self.ltwh
-
-        if left < width or top < height:
-            raise Exception("Width and Height must be greater than or equal to"
-                            "Left andnTop when using the moverel() function!")
-
         (x_position, y_position) = pag.position()
 
-        x_distance = rand.randint(left, width)
-        y_distance = rand.randint(top, height)
+        x_distance = rand.randint(min(left, width), max(left, width))
+        y_distance = rand.randint(min(top, height), max(top, height))
 
         x_destination = x_position + x_distance
         y_destination = y_position + y_distance
+
+        # Roll for a chance to reverse the direction the mouse moves in.
+        if (rand.randint(1, 2)) == 2:
+            x_destination = x_position - x_distance
+        if (rand.randint(1, 2)) == 2:
+            y_destination = y_position - y_distance
 
         hc.move((x_destination, y_destination), self.move_duration())
 
