@@ -39,6 +39,7 @@ class Mouse:
         button (str): The mouse button to click with, default is left.
 
     """
+
     def __init__(self,
                  ltwh,  # "left, top, width, height"
                  sleep_range=(0, 500, 0, 500),
@@ -64,6 +65,7 @@ class Mouse:
             self.ltwh = (25, 150, 25, 150)
             self.move_duration_range = (5, 300)
             self.moverel()
+        return True
 
     def move_to(self):
         """
@@ -78,6 +80,7 @@ class Mouse:
         y_coord = rand.randint(ymin, (ymin + ymax))
 
         hc.move((x_coord, y_coord), self.move_duration())
+        return True
 
     def moverel(self):
         """
@@ -108,6 +111,7 @@ class Mouse:
             y_destination = y_position - y_distance
 
         hc.move((x_destination, y_destination), self.move_duration())
+        return True
 
     def move_duration(self):
         """
@@ -129,7 +133,7 @@ class Mouse:
         after for a randomized period of time.
 
         """
-        sleep_before_min, sleep_before_max, sleep_after_min, sleep_after_max =\
+        sleep_before_min, sleep_before_max, sleep_after_min, sleep_after_max = \
             self.sleep_range
         durmin, durmax = self.action_duration_range
 
@@ -143,6 +147,7 @@ class Mouse:
 
         misc.sleep_rand(rmin=sleep_after_min,
                         rmax=sleep_after_max)
+        return True
 
 
 class Keyboard:
@@ -168,6 +173,21 @@ class Keyboard:
         self.sleep_range = sleep_range
         self.action_duration_range = action_duration_range
 
+    def typewriter(self, message):
+        """
+        Types out the specified message with a randomized delay between
+        key presses.
+
+        Args:
+            message (str): The message to type.
+
+        """
+        self.sleep_range = (0, 20, 0, 20)
+        self.action_duration_range = (1, 100)
+        for key in message:
+            self.keypress(key)
+        return True
+
     def keypress(self, key):
         """
         Presses the specified key.
@@ -178,15 +198,14 @@ class Keyboard:
 
         """
         log.debug('Pressing key: ' + str(key) + '.')
-        sleep_before_min, sleep_before_max, sleep_after_min, sleep_after_max = \
-            self.sleep_range
-        action_duration_min, action_duration_max = self.action_duration_range
 
-        misc.sleep_rand(rmin=sleep_before_min, rmax=sleep_before_max)
+        misc.sleep_rand(rmin=self.sleep_range[0], rmax=self.sleep_range[1])
         pag.keyDown(key)
-        misc.sleep_rand(rmin=action_duration_min, rmax=action_duration_max)
+        misc.sleep_rand(rmin=self.action_duration_range[0],
+                        rmax=self.action_duration_range[1])
         pag.keyUp(key)
-        misc.sleep_rand(rmin=sleep_after_min, rmax=sleep_after_max)
+        misc.sleep_rand(rmin=self.sleep_range[2], rmax=self.sleep_range[3])
+        return True
 
     def double_hotkey_press(self, key1, key2):
         """
@@ -200,7 +219,7 @@ class Keyboard:
 
         """
         log.debug('Pressing hotkeys: ' + str(key1) + ' + ' + str(key2))
-        sleep_before_min, sleep_before_max, sleep_after_min, sleep_after_max =\
+        sleep_before_min, sleep_before_max, sleep_after_min, sleep_after_max = \
             self.sleep_range
         action_duration_min, action_duration_max = self.action_duration_range
 
@@ -213,3 +232,4 @@ class Keyboard:
         misc.sleep_rand(rmin=action_duration_min, rmax=action_duration_max)
         pag.keyUp(key2)
         misc.sleep_rand(rmin=sleep_after_min, rmax=sleep_after_max)
+        return True
