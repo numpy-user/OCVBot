@@ -1,5 +1,6 @@
 """
 Sets up global variables and a few other preparatory checks.
+
 """
 import logging as log
 import os
@@ -9,11 +10,12 @@ import pyautogui as pag
 
 sys.setrecursionlimit(9999)
 
-log.basicConfig(format='%(asctime)s %(filename)s.%(funcName)s - %(message)s'
-                , level='INFO')
+log.basicConfig(format='%(asctime)s %(filename)s.%(funcName)s - %(message)s',
+                level='INFO')
 
 pag.PAUSE = 0
 
+# TODO: Fix this for PyInstaller.
 # Make sure the program's working directory is the directory in which
 #   this file is located.
 absolute_path = os.path.abspath(__file__)
