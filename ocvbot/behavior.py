@@ -75,74 +75,97 @@ def login(username_file=start.config_file['username_file'],
         # Click the "Ok" button if it's present at the login screen.
         # This button appears if the user was disconnected due to idle
         #   activity.
-        ok_button = vis.Vision(ltwh=vis.display, needle='./needles/login-menu/'
+        ok_button = vis.Vision(ltwh=vis.client, needle='./needles/login-menu/'
                                                         'ok-button.png',
                                loop_num=1).click_image()
         # If the "Ok" button isn't found, look for the "Existing user"
         #   button.
-        existing_user_button = vis.Vision(ltwh=vis.display,
+        existing_user_button = vis.Vision(ltwh=vis.client,
                                           needle='./needles/login-menu/'
                                                  'existing-user-button.png',
                                           loop_num=1).wait_for_image()
+        # Use "Enter" to advance to the credential screen if the
+        #   "Existing User" button is present. The "Ok" button has to be
+        #   clicked on to advance to the next screen.
         if existing_user_button is True:
             input.Keyboard().keypress(key='Enter')
 
         if existing_user_button is True or ok_button is True:
-            # Click to make sure the "Login" field is active.
-            input.Mouse(ltwh=(vis.login_field_left,
-                              vis.login_field_top,
-                              start.LOGIN_FIELD_WIDTH,
-                              start.LOGIN_FIELD_HEIGHT)).click_coord()
-            # Enter login field credentials.
-            misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
-            input.Keyboard().typewriter(username)
-            misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
+            credential_screen = vis.Vision(ltwh=vis.client,
+                                           needle='./needles/login-menu/'
+                                                  'login-cancel-buttons.png',
+                                           loop_num=5).wait_for_image()
+            # Make sure clicking "Ok" or hitting "Enter" has advanced to
+            #   the next screen so the user's credentials can be entered.
+            if credential_screen is True:
 
-            # Click to make sure the "Password" field is active.
-            input.Mouse(ltwh=(vis.pass_field_left,
-                              vis.pass_field_top,
-                              start.LOGIN_FIELD_WIDTH,
-                              start.LOGIN_FIELD_HEIGHT)).click_coord()
-            # Enter password field credentials and login.
-            input.Keyboard().typewriter(password)
-            misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
+                # Click to make sure the "Login" field is active.
+                input.Mouse(ltwh=(vis.login_field_left,
+                                  vis.login_field_top,
+                                  start.LOGIN_FIELD_WIDTH,
+                                  start.LOGIN_FIELD_HEIGHT)).click_coord()
+                # Enter login field credentials.
+                misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
+                input.Keyboard().typewriter(username)
+                misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
 
-            input.Keyboard().keypress(key='enter')
-            misc.sleep_rand(login_sleep_range[0], login_sleep_range[1])
+                # Click to make sure the "Password" field is active.
+                input.Mouse(ltwh=(vis.pass_field_left,
+                                  vis.pass_field_top,
+                                  start.LOGIN_FIELD_WIDTH,
+                                  start.LOGIN_FIELD_HEIGHT)).click_coord()
+                # Enter password field credentials and login.
+                input.Keyboard().typewriter(password)
+                misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
 
-            postlogin_screen_button = \
-                vis.Vision(ltwh=vis.display,
-                           needle='./needles/login-menu/orient-postlogin.png',
-                           conf=0.8,
-                           loop_num=50,
-                           loop_sleep_range=(1000, 2000)).click_image()
+                input.Keyboard().keypress(key='enter')
+                misc.sleep_rand(login_sleep_range[0], login_sleep_range[1])
 
-            if postlogin_screen_button is True:
-                misc.sleep_rand(postlogin_sleep_range[0],
-                                postlogin_sleep_range[1])
-                # Wait for the orient.png to appear in the client window.
-                logged_in = \
+                postlogin_screen_button = \
                     vis.Vision(ltwh=vis.display,
-                               needle='./needles/minimap/orient.png',
-                               loop_num=50,
-                               loop_sleep_range=(1000, 2000)).wait_for_image()
-                if logged_in is True:
-                    # Reset the timer that's used to count the number of
-                    #   seconds the bot has been running for.
-                    start.start_time = time.time()
-                    # Make sure client camera is oriented correctly after
-                    #   logging in.
-                    pag.keyDown('Up')
-                    misc.sleep_rand(3000, 7000)
-                    pag.keyUp('Up')
-                    return True
-                else:
-                    log.error('Did not detect login after postlogin!')
-            else:
+                               needle='./needles/login-menu/'
+                                      'orient-postlogin.png',
+                               conf=0.8,
+                               loop_num=10,
+                               loop_sleep_range=(1000, 2000)).click_image()
+
+                if postlogin_screen_button is True:
+                    misc.sleep_rand(postlogin_sleep_range[0],
+                                    postlogin_sleep_range[1])
+                    # Wait for the orient.png to appear in the client window.
+                    logged_in = \
+                        vis.Vision(ltwh=vis.display,
+                                   needle='./needles/minimap/orient.png',
+                                   loop_num=50,
+                                   loop_sleep_range=(1000, 2000))\
+                            .wait_for_image()
+                    if logged_in is True:
+                        # Reset the timer that's used to count the number of
+                        #   seconds the bot has been running for.
+                        start.start_time = time.time()
+                        # Make sure client camera is oriented correctly after
+                        #   logging in.
+                        pag.keyDown('Up')
+                        misc.sleep_rand(3000, 7000)
+                        pag.keyUp('Up')
+                        return True
+                    else:
+                        log.error('Did not detect login after postlogin!')
+
                 log.error('Cannot find postlogin screen!')
+                invalid_credentials = \
+                    vis.Vision(ltwh=vis.display,
+                               needle='./needles/login-menu/'
+                                      'invalid-credentials.png',
+                               loop_num=1).wait_for_image()
+                if invalid_credentials is True:
+                    log.critical('Invalid user credentials!')
+                    raise Exception('Invalid user credentials!')
+            else:
+                log.error('Cannot find credential screen!')
         else:
             log.error('Cannot Ok or Existing User button!')
-    raise RuntimeError("Could not login!")
+    raise Exception('Could not login!')
 
 
 def logout():
