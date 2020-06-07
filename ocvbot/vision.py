@@ -219,7 +219,8 @@ class Vision:
             return False
 
 
-def orient(display_width, display_height):
+def orient(ltwh=(0, 0, start.DISPLAY_WIDTH, start.DISPLAY_HEIGHT),
+           launch_client=False):
     """
     Look for an icon to orient the client. If it's found, use its
     location within the game client to determine the coordinates of
@@ -228,37 +229,38 @@ def orient(display_width, display_height):
     This function is also used to determine if the client is logged out.
 
     Args:
-        display_width (int): The total width of the display in pixels.
-        display_height (int): The total height of the display in pixels.
+        ltwh (tuple): A 4-tuple containing the left, top, width, and
+                      height of the coordinate space to search within,
+                      relative to the display's coordinates. By default
+                      uses the entire display.
 
     Raises:
-       Raises a runtime error if the client cannot be found, or if the
+       Raises an exception if the client cannot be found, or if the
        function can't determine if the client is logged in or logged
        out.
 
     Returns:
-         If client is logged in, returns a string containing the text
-         "logged_in" and a tuple containing the center XY coordinates of
-         the orient needle.
+         If client is logged in, returns a 2-tuple containing a string
+         with the text "logged_in" and a 2-tuple of the center (X, Y)
+         coordinates of the orient needle.
 
-         If client is logged out, returns a string containing the text
-         "logged_out" and a tuple containing the center XY coordinates
-         of the orient-logged-out needle.
+         If client is logged out, returns a 2-tuple containing a string
+         with the text "logged_out" and a 2-tuple of the center (X, Y)
+         coordinates of the orient-logged-out needle.
 
     """
-    logged_in = Vision(ltwh=(0, 0, display_width, display_height),
+    logged_in = Vision(ltwh=ltwh,
                        needle='needles/minimap/orient.png',
                        loctype='center', loop_num=2, conf=0.8) \
         .wait_for_image(get_tuple=True)
-
     if isinstance(logged_in, tuple) is True:
         return 'logged_in', logged_in
 
     # If the client is not logged in, check if it's logged out.
-    logged_out = Vision(ltwh=(0, 0, start.DISPLAY_WIDTH, start.DISPLAY_HEIGHT),
+    logged_out = Vision(ltwh=ltwh,
                         needle='needles/login-menu/orient-logged-out.png',
-                        loctype='center', loop_num=2).wait_for_image(
-        get_tuple=True)
+                        loctype='center', loop_num=2, conf=0.8) \
+        .wait_for_image(get_tuple=True)
     if isinstance(logged_out, tuple) is True:
         return 'logged_out', logged_out
 
@@ -267,21 +269,21 @@ def orient(display_width, display_height):
         start_client()
         # Try 10 times to find the login screen after launching the client.
         for tries in range(1, 10):
-            time.sleep(10)
-            orient(display_width, display_height, False)
+            misc.sleep_rand(8000, 15000)
+            orient(ltwh=ltwh, launch_client=False)
         log.critical('Could not find client!')
         raise Exception('Could not find client!')
 
-    return False
+    else:
+        raise Exception('Could not find client!')
 
 
 # ----------------------------------------------------------------------
 # Setup the necessary tuples for the Vision class and orient the client.
 # ----------------------------------------------------------------------
 
-
-(client_status, anchor) = orient(display_width=start.DISPLAY_WIDTH,
-                                 display_height=start.DISPLAY_HEIGHT)
+display = (0, 0, start.DISPLAY_WIDTH, start.DISPLAY_HEIGHT)
+(client_status, anchor) = orient(ltwh=display)
 (client_left, client_top) = anchor
 
 if client_status == 'logged_in':
@@ -348,9 +350,6 @@ chat_menu_recent_top = chat_menu_top + 98
 chat_menu_recent = (chat_menu_recent_left, chat_menu_recent_top,
                     start.CHAT_MENU_RECENT_WIDTH,
                     start.CHAT_MENU_RECENT_HEIGHT)
-
-# The entire display.
-display = (0, 0, start.DISPLAY_WIDTH, start.DISPLAY_HEIGHT)
 
 # The text input fields on the login menu.
 login_field_left = client_left + 273
