@@ -127,26 +127,31 @@ class Mouse:
                                               rmax=move_durmax)
         return move_duration_var
 
-    def click(self):
+    def click(self, hold=False):
         """
         Clicks the left or right mouse button, waiting both before and
         after for a randomized period of time.
 
+        Args:
+            hold (bool): Whether to hold down the mouse button rather
+                         than just clicking it.
+                         Uses self.action_duration_range to determine
+                         min and max duration.
+
         """
-        sleep_before_min, sleep_before_max, sleep_after_min, sleep_after_max = \
-            self.sleep_range
-        durmin, durmax = self.action_duration_range
+        misc.sleep_rand(rmin=self.sleep_range[0],
+                        rmax=self.sleep_range[1])
 
-        misc.sleep_rand(rmin=sleep_before_min,
-                        rmax=sleep_before_max)
+        if hold is True:
+            duration = misc.rand_seconds(rmin=self.action_duration_range[0],
+                                         rmax=self.action_duration_range[1])
+            pag.click(button=self.button,
+                      duration=duration)
+        else:
+            pag.click(button=self.button)
 
-        duration = misc.rand_seconds(rmin=durmin,
-                                     rmax=durmax)
-        pag.click(button=self.button,
-                  duration=duration)
-
-        misc.sleep_rand(rmin=sleep_after_min,
-                        rmax=sleep_after_max)
+        misc.sleep_rand(rmin=self.sleep_range[2],
+                        rmax=self.sleep_range[3])
         return True
 
 
