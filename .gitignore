@@ -22,5 +22,5 @@ Project.xml
 # User files
 **/credentials/*.txt
 /ocvbot/config.yaml
-/scripts/login_acct3.py
+/scripts/login_*.py
 
