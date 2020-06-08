@@ -20,10 +20,7 @@ Project.xml
 **/tmp/
 
 # User files
-**/username-ironman.txt
-**/password-ironman.txt
-**/username-standard.txt
-**/password-standard.txt
+**/credentials/*.txt
 /ocvbot/config.yaml
 /scripts/login_acct3.py
 
