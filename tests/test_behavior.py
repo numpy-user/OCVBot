@@ -34,6 +34,9 @@ def feh(test_name, test_type, test_number):
                          name of the directory immediately beneath the
                          "directory" variable at the top of this file.
                          Ignore the "test_" in the directory's name.
+        test_type (str): Whether to test for passing conditions or
+                         failing conditions. This value must be either
+                         'pass' or 'fail'.
         test_number (str): Which test to run for test_name. This is the
                            name of the directory immediately beneath
                            the "test_name" parameter. Ignore the "test"
@@ -54,7 +57,7 @@ feh('open_side_stone', 'pass', '01')
 from ocvbot import behavior
 
 # ----------------------------------------------------------------------
-# PARAMETERS
+# PARAMETERS ###########################################################
 # ----------------------------------------------------------------------
 
 # Pass in parameters as a tuple. The first item in the tuple is the side
@@ -75,9 +78,39 @@ open_side_stone_fail_params = (
     ('logout', '02'),
 )
 
+logout_pass_params = (
+    '01',  # Standard logout.
+    '02',  # Logout button doesn't work the first time.
+    '03',  # World switcher open.
+    '04',  # World switcher logout button doesn't work the first time.
+    '05',  # Logout button is highlighted already.
+    '06',  # Already logged out
+)
+
+logout_fail_params = (
+    '01',  # Unable to find the logout button.
+)
+
+login_pass_params = (
+    '01',  # Standard login.
+    '02',  # Login in which "Ok" button is missed.
+)
+
+login_fail_params = (
+   '01',  # Invalid user credentials.
+   '02',  # Client is already logged in.
+)
+
+drop_item_pass_params = (
+    ('iron_ore.png', '01'),
+)
+
 # ----------------------------------------------------------------------
-# TESTS
+# TESTS ################################################################
 # ----------------------------------------------------------------------
+
+
+# OPEN SIDE STONE ------------------------------------------------------
 
 
 @pytest.mark.parametrize('params', open_side_stone_pass_params)
@@ -88,60 +121,51 @@ def test_open_side_stone_pass(params):
     assert result is True
 
 
-#@pytest.mark.parametrize('params', open_side_stone_fail_params)
-#def test_open_side_stone_fail(params):
-    #side_stone, test_number = params
-    #feh('open_side_stone', 'fail', test_number)
-    #with pytest.raises(Exception, match='Could not open side stone!'):
-        #behavior.open_side_stone(side_stone)
-    #kill_feh()
+@pytest.mark.parametrize('params', open_side_stone_fail_params)
+def test_open_side_stone_fail(params):
+    side_stone, test_number = params
+    feh('open_side_stone', 'fail', test_number)
+    with pytest.raises(Exception, match='Could not open side stone!'):
+        behavior.open_side_stone(side_stone)
+        kill_feh()
 
 
-#def test_test():
-    #with pytest.raises(ZeroDivisionError):
-        #test()
+# LOGOUT ---------------------------------------------------------------
 
 
-# def test_login():
-# time.sleep(interval)
-# feh('login', '01')
-# time.sleep(interval)
-# result = behavior.login()
-# kill_feh()
-# assert result, True
+@pytest.mark.parametrize('params', logout_pass_params)
+def test_logout_pass(params):
+    feh('logout', 'pass', params)
+    result = behavior.logout()
+    assert result is True
 
 
-# def test_logout():
-# Function recognizes when client is already logged out.
-# time.sleep(interval)
-# feh('logout', '01')
-# time.sleep(interval)
-# result = behavior.logout()
-# kill_feh()
-# assert (result, 1)
+@pytest.mark.parametrize('params', logout_fail_params)
+def test_open_side_stone_fail(params):
+    feh('logout', 'fail', params)
+    with pytest.raises(Exception, match='.*'):
+        behavior.logout()
+        kill_feh()
 
-# def test_logout_02(self):
-# Function recognizes when client is logged in but "logout"
-#   side stone is not active.
-# time.sleep(interval)
-# kill('feh')
-# sub.Popen(["feh", "../tests/needles/"
-# "test_behavior/"
-# "image_003.png"])
-# time.sleep(interval)
-# result = behavior.logout()
-# kill('feh')
-# self.assertRaises(result, RuntimeError)
 
-# def test_logout_03():
-# Function recognizes when client is logged in and "logout"
-#   side stone is active.
-# time.sleep(interval)
-# kill('feh')
-# sub.Popen(["feh", "../tests/needles/"
-# "test_behavior/"
-# "image_004.png"])
-# time.sleep(interval)
-# result = behavior.logout()
-# kill('feh')
-# assert (result, 0)
+# LOGIN ----------------------------------------------------------------
+
+
+@pytest.mark.parametrize('params', login_pass_params)
+def test_logout_pass(params):
+    feh('login', 'pass', params)
+    import os
+    os.system('pwd')
+    result = behavior.login(
+        username_file=(directory + './test_login/sampleu.txt'),
+        password_file=(directory + './test_login/samplep.txt'))
+    assert result is True
+
+
+@pytest.mark.parametrize('params', login_fail_params)
+def test_login_fail(params):
+    feh('login', 'fail', params)
+    with pytest.raises(Exception, match='.*'):
+        behavior.login(username_file=(directory + './test_login/sampleu.txt'),
+                       password_file=(directory + './test_login/samplep.txt'))
+        kill_feh()
