@@ -19,10 +19,29 @@ def switch_worlds_logged_out():
     pass
 
 
-def login_basic():
+def login_basic(username_file=start.config_file['username_file'],
+                password_file=start.config_file['password_file'],
+                cred_sleep_range=(800, 5000)):
     """
-    Just enters the username and password and hits enter, nothing else.
-    Used by scripts for quicker logins.
+    Performs a login without checking if the login was successful.
+
+    Args;
+        username_file (file): The path to a file containing the user's
+                              username login, by default reads the
+                              'username_file' field in the main config
+                              file.
+        password_file (file): The path to a file containing the user's
+                              password, by default reads the
+                              'password_file' field in the main config
+                              file.
+        cred_sleep_range (tuple): A 2-tuple containing the minimum and
+                                  maximum number of miliseconds to wait
+                                  between actions while entering account
+                                  credentials, default is (800, 5000).
+    Returns:
+        Returns True if credentials were entered and a login was
+        initiated. Returns False otherwise.
+
     """
     # Remove line breaks from credential files to make logging in more
     #   predictable.
@@ -33,9 +52,10 @@ def login_basic():
 
     # Make sure the client is logged out.
     # TODO: use orient() for this, not wait_for_image
-    for _ in range(3)
-        logged_out = vis.Vision(ltwh=vis.display, needle='./needles/login-menu/'
-                                                         'orient-logged-out.png',
+    for _ in range(3):
+        logged_out = vis.Vision(ltwh=vis.display,
+                                needle='./needles/login-menu/'
+                                       'orient-logged-out.png',
                                 loop_num=3,
                                 loop_sleep_range=(1000, 2000)).wait_for_image()
         if logged_out is False:
@@ -46,20 +66,16 @@ def login_basic():
         # Click the "Ok" button if it's present at the login screen.
         # This button appears if the user was disconnected due to idle
         #   activity.
-        ok_button = vis.Vision(ltwh=vis.client, needle='./needles/login-menu/'
-                                                        'ok-button.png',
+        ok_button = vis.Vision(ltwh=vis.client,
+                               needle='./needles/login-menu/'
+                                      'ok-button.png',
                                loop_num=1).click_image()
         # If the "Ok" button isn't found, look for the "Existing user"
         #   button.
         existing_user_button = vis.Vision(ltwh=vis.client,
                                           needle='./needles/login-menu/'
                                                  'existing-user-button.png',
-                                          loop_num=1).wait_for_image()
-        # Use "Enter" to advance to the credential screen if the
-        #   "Existing User" button is present. The "Ok" button has to be
-        #   clicked on to advance to the next screen.
-        if existing_user_button is True:
-            input.Keyboard().keypress(key='Enter')
+                                          loop_num=1).click_image()
 
         if existing_user_button is True or ok_button is True:
             credential_screen = vis.Vision(ltwh=vis.client,
@@ -69,7 +85,6 @@ def login_basic():
             # Make sure clicking "Ok" or hitting "Enter" has advanced to
             #   the next screen so the user's credentials can be entered.
             if credential_screen is True:
-
                 # Click to make sure the "Login" field is active.
                 input.Mouse(ltwh=(vis.login_field_left,
                                   vis.login_field_top,
@@ -92,51 +107,42 @@ def login_basic():
                 return True
             log.error('Could not find credential screen!')
             return False
+        log.error('Could not find Existing User or OK button!')
+        return False
     log.error('Could perform initial login!')
     return False
-    
 
-def login(username_file=start.config_file['username_file'],
-          password_file=start.config_file['password_file'],
-          cred_sleep_range=(800, 5000),
-          login_sleep_range=(500, 5000),
-          postlogin_sleep_range=(500, 5000)):
+
+def login_full(login_sleep_range=(500, 5000),
+               postlogin_sleep_range=(500, 5000)):
     """
-    Logs in in using the credentials specified the main config file.
+    Logs into the client using the credentials specified the main config
+    file. Waits until the login is successful before returning.
 
     Args:
-        username_file (file): The path to a file containing the user's
-                              username login, by default reads the
-                              'username_file' field in the main config
-                              file.
-        password_file (file): The path to a file containing the user's
-                              password, by default reads the
-                              'password_file' field in the main config
-                              file.
-        cred_sleep_range (tuple): A 2-tuple containing the minimum and
-                                  maximum number of miliseconds to wait
-                                  between actions while entering account
-                                  credentials, default is (800, 5000).
         login_sleep_range (tuple): A 2-tuple containing the minimum and
                                    maximum number of miliseconds to wait
-                                   after hitting "Enter" to login, default
-                                   is (500, 5000).
+                                   after hitting "Enter" to login,
+                                   default is (500, 5000).
         postlogin_sleep_range (tuple): The minimum and maximum number of
                                        miliseconds to wait after clicking
                                        the "Click here to play" button,
                                        default is (500, 5000).
 
     Raises:
-        Raises a runtime error if the login menu cannot be found, the
-        postlogin screen cannot be found, or the logged-in client cannot
-        be found.
+        Raises an exception if the login was not successful for any
+        reason.
+
+    Returns:
+        Returns True if login was successful.
+        
     """
     while True:
         for _ in range(3):
             login = login_basic()
             if login is False:
-                raise Exception('Could not perform initiial login!')
-                
+                raise Exception('Could not perform initial login!')
+
             misc.sleep_rand(login_sleep_range[0], login_sleep_range[1])
 
             postlogin_screen_button = \
@@ -155,8 +161,7 @@ def login(username_file=start.config_file['username_file'],
                     vis.Vision(ltwh=vis.display,
                                needle='./needles/minimap/orient.png',
                                loop_num=50,
-                               loop_sleep_range=(1000, 2000))\
-                        .wait_for_image()
+                               loop_sleep_range=(1000, 2000)).wait_for_image()
                 if logged_in is True:
                     # Reset the timer that's used to count the number of
                     #   seconds the bot has been running for.
@@ -168,9 +173,10 @@ def login(username_file=start.config_file['username_file'],
                     pag.keyUp('Up')
                     return True
                 else:
-                    raise Exception('Could not detect login after postlogin screen!')
-                    
-            # Begin checking for the different non-successfull login messages.
+                    raise Exception(
+                        'Could not detect login after postlogin screen!')
+
+            # Begin checking for the different non-successful login messages.
             #   This includes the "invalid credentials", "you must be a member
             #   to use this world", "cannot connect to server," etc.
             log.warning('Cannot find postlogin screen!')
@@ -182,37 +188,32 @@ def login(username_file=start.config_file['username_file'],
             if invalid_credentials is True:
                 log.critical('Invalid user credentials!')
                 raise Exception('Invalid user credentials!')
-                
-            log.error('Cannot find credential screen!')
-            
+            log.error('Cannot find postlogin screen!')
         raise Exception('Unable to login!')
-    
-    
+
+
 def logout():
     """
     If the client is logged in, logs out.
 
     Raises:
-        Raises an exception if the logout side stone is opened but the
-        logout button cannot be found.
+        Raises an exception if the client could not logout for any
+        reason.
 
-        Raises an exception if the logout button was clicked but the
-        logout could not be confirmed.
+    Returns:
+        Returns True if the logout was successful.
 
     """
     # Make sure the client is logged in.
-    orient = vis.orient(display_height=start.DISPLAY_HEIGHT,
-                        display_width=start.DISPLAY_WIDTH)
-    (client_status, unused_var) = orient
-
-    if client_status == 'logged_in':
+    orient = vis.orient()
+    if orient[0] == 'logged_in':
         open_side_stone('logout')
 
         # Look for any of the three possible logout buttons.
         logout_button_world_switcher = False
         logout_button_highlighted = False
         logout_button = False
-        for tries in range(1, 5):
+        for _ in range(5):
             # The standard logout button.
             logout_button = \
                 vis.Vision(ltwh=vis.inv,
@@ -253,7 +254,7 @@ def logout():
         #   on the location of the detected logout button and try again.
         else:
             input.Mouse(ltwh=logout_button).click_coord(move_away=True)
-            for tries in range(1, 5):
+            for tries in range(5):
                 logged_out = vis.Vision(
                     ltwh=vis.client,
                     needle='./needles/login-menu/orient-logged-out.png',
@@ -441,7 +442,7 @@ def open_side_stone(side_stone):
 
     # Try a total of 5 times to open the desired side stone menu using
     #   the mouse.
-    for tries in range(1, 6):
+    for tries in range(6):
         # Move mouse out of the way after clicking so the function can
         #   tell if the stone is open.
         vis.Vision(ltwh=vis.side_stones,
