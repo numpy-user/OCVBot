@@ -16,7 +16,7 @@ def mining_lumbridge_swamp():
         client_status = vis.orient(start.DISPLAY_WIDTH, start.DISPLAY_HEIGHT)
         (client_status, unused_var) = client_status
         if client_status == 'logged_out':
-            behavior.login()
+            behavior.login_full()
 
         skilling.drop_miner(
             rocks=[('./needles/game-screen/lumbridge-mine/east-full.png',
@@ -44,7 +44,7 @@ def mining_varrock_east():
         client_status = vis.orient(start.DISPLAY_WIDTH, start.DISPLAY_HEIGHT)
         (client_status, unused_var) = client_status
         if client_status == 'logged_out':
-            behavior.login()
+            behavior.login_full()
         skilling.drop_miner(
             rocks=[('./needles/game-screen/varrock-east-mine/north-full2.png',
                     './needles/game-screen/varrock-east-mine/north-empty.png'),
