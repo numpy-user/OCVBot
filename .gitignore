@@ -21,6 +21,5 @@ Project.xml
 
 # User files
 **/credentials/*.txt
-/ocvbot/config.yaml
-/scripts/login_*.py
-
+**/ocvbot/config.yaml
+**/tools/login_*.py
