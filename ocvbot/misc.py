@@ -22,7 +22,7 @@ def rand_seconds(rmin=0, rmax=100):
 
     randval = rand.randint(rmin, rmax)
     randval = float(randval / 1000)
-    # log.debug('Got random value of ' + str(randval) + '.')
+    # log.debug('Got random value of %s.', randval)
     return randval
 
 
@@ -39,7 +39,7 @@ def sleep_rand(rmin=0, rmax=100):
     """
 
     sleeptime = rand_seconds(rmin=rmin, rmax=rmax)
-    # log.debug('Sleeping for ' + str(sleeptime) + ' seconds.')
+    # log.debug('Sleeping for %s seconds.', sleeptime)
     time.sleep(sleeptime)
 
 
@@ -94,7 +94,7 @@ def wait_rand(chance, second_chance=10,
     if wait_roll == chance:
         log.info('Random wait called.')
         sleeptime = rand_seconds(wait_min, wait_max)
-        log.info('Sleeping for ' + str(round(sleeptime)) + ' seconds.')
+        log.info('Sleeping for %s seconds.', round(sleeptime))
         time.sleep(sleeptime)
 
         # Perform an additional wait roll so that (1/second_chance)
@@ -103,5 +103,5 @@ def wait_rand(chance, second_chance=10,
         if wait_roll == 10:
             log.info('Additional random wait called.')
             sleeptime = rand_seconds(wait_min, wait_max)
-            log.info('Sleeping for ' + str(round(sleeptime)) + ' seconds.')
+            log.info('Sleeping for %s seconds.', round(sleeptime))
             time.sleep(sleeptime)

@@ -11,7 +11,7 @@ from ocvbot import input, misc, vision as vis, startup as start
 def switch_worlds_logged_in(members=False, free_to_play=True, safe=True):
     # TODO
     if members is False and free_to_play is False:
-        raise Exception("A world typewriter must be selected!")
+        raise Exception('A world type must be selected!')
 
 
 def switch_worlds_logged_out():
@@ -261,16 +261,15 @@ def logout():
                     loop_num=5,
                     loop_sleep_range=(1000, 1200)).wait_for_image()
                 if logged_out is True:
-                    log.info('Logged out after trying ' + str(tries) +
-                             ' time(s).')
+                    log.info('Logged out after trying %s times(s)', tries)
                     return True
                 else:
                     log.info('Unable to log out, trying again.')
                     input.Mouse(ltwh=logout_button).click_coord(move_away=True)
 
-            raise RuntimeError("Could not logout!")
+            raise RuntimeError('Could not logout!')
     else:
-        log.warning("Client already logged out!")
+        log.warning('Client already logged out!')
         return True
 
 
@@ -336,11 +335,11 @@ def logout_rand_range():
 
     else:
         log.info('time is ' + str(current_time))
-        log.info('Checkpoint 1 is at ' + str(start.checkpoint_1))
-        log.info('Checkpoint 2 is at ' + str(start.checkpoint_2))
-        log.info('Checkpoint 3 is at ' + str(start.checkpoint_3))
-        log.info('Checkpoint 4 is at ' + str(start.checkpoint_4))
-        log.info('Checkpoint 5 is at ' + str(start.checkpoint_5))
+        log.info('Checkpoint 1 is at %s', start.checkpoint_1)
+        log.info('Checkpoint 2 is at %s', start.checkpoint_2)
+        log.info('Checkpoint 3 is at %s', start.checkpoint_3)
+        log.info('Checkpoint 4 is at %s', start.checkpoint_4)
+        log.info('Checkpoint 5 is at %s', start.checkpoint_5)
         log.info('Not time for a logout roll')
         return
     return
@@ -361,7 +360,7 @@ def logout_rand(chance,
     """
 
     logout_roll = rand.randint(1, chance)
-    log.info('Logout roll was ' + str(logout_roll))
+    log.info('Logout roll was %s', logout_roll)
     if logout_roll == chance:
         log.info('Random logout called.')
 
@@ -454,7 +453,7 @@ def open_side_stone(side_stone):
                                 loop_num=3, conf=0.98,
                                 loop_sleep_range=(100, 200)).wait_for_image()
         if stone_open is True:
-            log.info('Opened side stone after ' + str(tries) + ' tries.')
+            log.info('Opened side stone after %s tries.', tries)
             return True
         # Make sure the bank window isn't open, which would block
         #   access to the side stones.
@@ -490,7 +489,7 @@ def human_behavior_rand(chance):
     """
 
     roll = rand.randint(1, chance)
-    log.info('Human behavior rolled ' + str(roll))
+    log.info('Human behavior rolled %s', roll)
     if roll == chance:
         log.info('Attempting to act human.')
         roll = rand.randint(1, 2)
@@ -548,10 +547,10 @@ def drop_item(item, track=True,
     item_remains = vis.inv.wait_for_image(loop_num=1, needle=item)
 
     if item_remains is False:
-        log.info('Could not find ' + str(item) + '.')
+        log.info('Could not find %s.', item)
         return False
 
-    log.info('Dropping ' + str(item) + '.')
+    log.info('Dropping %s.', item)
     tries = 0
     while item_remains is True and tries <= 40:
 

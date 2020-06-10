@@ -54,7 +54,7 @@ def drop_miner(rocks, ore, ore_type):
             #   and "empty" versions of each ore.
             (full_rock_needle, empty_rock_needle) = rock_needle
 
-            log.debug('Searching for ore ' + str(attempts) + '...')
+            log.debug('Searching for ore %s...', attempts)
 
             # If current rock is full, begin mining it.
             # Move the mouse away from the rock so it doesn't
@@ -111,9 +111,8 @@ def drop_miner(rocks, ore, ore_type):
                                 behavior.drop_item(item=str(path), track=False)
 
                         elapsed_time = misc.run_duration(human_readable=True)
-                        log.info(
-                            'Script has been running for  ' + str(elapsed_time)
-                            + ' (HH:MM:SS)')
+                        log.info('Script has been running for %s (HH:MM:SS)',
+                                 elapsed_time)
                         return
                     return
 
@@ -129,7 +128,7 @@ def drop_miner(rocks, ore, ore_type):
 
                 if rock_empty is True:
                     log.info('Rock is empty.')
-                    log.debug(str(rock_needle) + ' empty.')
+                    log.debug('%s empty.', rock_needle)
                 else:
                     log.info('Timed out waiting for mining to finish.')
     return

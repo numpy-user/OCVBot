@@ -202,7 +202,7 @@ class Keyboard:
                        PyAutoGUI.
 
         """
-        log.debug('Pressing key: ' + str(key) + '.')
+        log.debug('Pressing key: %s.', key)
 
         misc.sleep_rand(rmin=self.sleep_range[0], rmax=self.sleep_range[1])
         pag.keyDown(key)

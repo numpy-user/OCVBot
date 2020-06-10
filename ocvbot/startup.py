@@ -99,11 +99,11 @@ checkpoint_4 = round(start_time + min_session_duration_sec +
                      (checkpoint_interval * 3))
 checkpoint_5 = round(start_time + max_session_duration_sec)
 
-log.info('Checkpoint 1 is at ' + time.ctime(checkpoint_1))
-log.info('Checkpoint 2 is at ' + time.ctime(checkpoint_2))
-log.info('Checkpoint 3 is at ' + time.ctime(checkpoint_3))
-log.info('Checkpoint 4 is at ' + time.ctime(checkpoint_4))
-log.info('Checkpoint 5 is at ' + time.ctime(checkpoint_5))
+log.info('Checkpoint 1 is at %s', time.ctime(checkpoint_1))
+log.info('Checkpoint 2 is at %s', time.ctime(checkpoint_2))
+log.info('Checkpoint 3 is at %s', time.ctime(checkpoint_3))
+log.info('Checkpoint 4 is at %s', time.ctime(checkpoint_4))
+log.info('Checkpoint 5 is at %s', time.ctime(checkpoint_5))
 # log.info('Time between checkpoint 1 and 2 is ' +
 # str(checkpoint_2 - checkpoint_1))
 # log.info('Time between checkpoint 3 and 2 is ' +
@@ -117,7 +117,7 @@ log.info('Checkpoint 5 is at ' + time.ctime(checkpoint_5))
 min_sessions = int(config_file['min_sessions'])
 max_sessions = int(config_file['max_sessions'])
 session_total = rand.randint(min_sessions, max_sessions)
-log.info('session_total is ' + str(session_total))
+log.info('session_total is %s', session_total)
 
 # The current number of sessions that have been completed.
 session_num = 0
