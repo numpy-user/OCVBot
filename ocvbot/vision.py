@@ -222,11 +222,13 @@ class Vision:
 def orient(ltwh=(0, 0, start.DISPLAY_WIDTH, start.DISPLAY_HEIGHT),
            launch_client=False):
     """
-    Look for an icon to orient the client. If it's found, use its
-    location within the game client to determine the coordinates of
-    the game client relative to the display's coordinates.
+    Looks for an icon to orient the client. If it's found, use its
+    location within the game client to determine the coordinates of the
+    game client relative to the display's coordinates.
 
     This function is also used to determine if the client is logged out.
+    This is generally one of the first functions that is run upon script
+    startup.
 
     Args:
         ltwh (tuple): A 4-tuple containing the left, top, width, and
@@ -271,7 +273,7 @@ def orient(ltwh=(0, 0, start.DISPLAY_WIDTH, start.DISPLAY_HEIGHT),
         for tries in range(1, 10):
             misc.sleep_rand(8000, 15000)
             orient(ltwh=ltwh, launch_client=False)
-        log.critical('Could not find client!')
+        log.critical('Could not find client! %s', launch_client)
         raise Exception('Could not find client!')
 
     else:
@@ -361,3 +363,13 @@ pass_field_left = client_left + 275
 pass_field_top = client_top + 258
 pass_field = (pass_field_left, pass_field_top,
               start.LOGIN_FIELD_WIDTH, start.LOGIN_FIELD_HEIGHT)
+
+# The entire minimap
+minimap_left = client_left + 571
+minimap_top = client_top + 11
+minimap = (minimap_left, minimap_top, 146, 151)
+
+# The current minimap "slice" for locating the player on the world map.
+minimap_slice_left = client_left + 590
+minimap_slice_top = client_top + 51
+minimap_slice = (minimap_slice_left, minimap_slice_top, 110, 73)
