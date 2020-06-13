@@ -1,9 +1,13 @@
+# coding=UTF-8
+"""
+Unit tests for the behavior.py module.
+
+"""
 import logging as log
 import subprocess as sub
 import time
 
 import psutil
-import pytest
 
 # Used by feh to shorten its function parameters.
 directory = "../tests/test_behavior/"
@@ -54,7 +58,6 @@ def feh(test_name, test_type, test_number):
 # Provide an image for the client to orient itself. Currently any imports
 #   from ocvbot require an image to match first, or they will fail.
 feh('open_side_stone', 'pass', '01')
-from ocvbot import behavior
 
 # ----------------------------------------------------------------------
 # PARAMETERS ###########################################################
@@ -113,59 +116,59 @@ drop_item_pass_params = (
 # OPEN SIDE STONE ------------------------------------------------------
 
 
-@pytest.mark.parametrize('params', open_side_stone_pass_params)
-def test_open_side_stone_pass(params):
-    side_stone, test_number = params
-    feh('open_side_stone', 'pass', test_number)
-    result = behavior.open_side_stone(side_stone)
-    assert result is True
+#@pytest.mark.parametrize('params', open_side_stone_pass_params)
+#def test_open_side_stone_pass(params):
+#    side_stone, test_number = params
+#    feh('open_side_stone', 'pass', test_number)
+#    result = behavior.open_side_stone(side_stone)
+#    assert result is True
 
 
-@pytest.mark.parametrize('params', open_side_stone_fail_params)
-def test_open_side_stone_fail(params):
-    side_stone, test_number = params
-    feh('open_side_stone', 'fail', test_number)
-    with pytest.raises(Exception, match='Could not open side stone!'):
-        behavior.open_side_stone(side_stone)
-        kill_feh()
+#@pytest.mark.parametrize('params', open_side_stone_fail_params)
+#def test_open_side_stone_fail(params):
+#    side_stone, test_number = params
+#    feh('open_side_stone', 'fail', test_number)
+#    with pytest.raises(Exception, match='Could not open side stone!'):
+#        behavior.open_side_stone(side_stone)
+#        kill_feh()
 
 
 # LOGOUT ---------------------------------------------------------------
 
 
-@pytest.mark.parametrize('params', logout_pass_params)
-def test_logout_pass(params):
-    feh('logout', 'pass', params)
-    result = behavior.logout()
-    assert result is True
+#@pytest.mark.parametrize('params', logout_pass_params)
+#def test_logout_pass(params):
+#    feh('logout', 'pass', params)
+#    result = behavior.logout()
+#    assert result is True
 
 
-@pytest.mark.parametrize('params', logout_fail_params)
-def test_open_side_stone_fail(params):
-    feh('logout', 'fail', params)
-    with pytest.raises(Exception, match='.*'):
-        behavior.logout()
-        kill_feh()
+#@pytest.mark.parametrize('params', logout_fail_params)
+#def test_open_side_stone_fail(params):
+#    feh('logout', 'fail', params)
+#    with pytest.raises(Exception, match='.*'):
+#        behavior.logout()
+#        kill_feh()
 
 
 # LOGIN ----------------------------------------------------------------
 
 
-@pytest.mark.parametrize('params', login_pass_params)
-def test_logout_pass(params):
-    feh('login', 'pass', params)
-    import os
-    os.system('pwd')
-    result = behavior.login(
-        username_file=(directory + './test_login/sampleu.txt'),
-        password_file=(directory + './test_login/samplep.txt'))
-    assert result is True
+#@pytest.mark.parametrize('params', login_pass_params)
+#def test_logout_pass(params):
+#    feh('login', 'pass', params)
+#    import os
+#    os.system('pwd')
+#    result = behavior.login(
+#        username_file=(directory + './test_login/sampleu.txt'),
+#        password_file=(directory + './test_login/samplep.txt'))
+#    assert result is True
 
 
-@pytest.mark.parametrize('params', login_fail_params)
-def test_login_fail(params):
-    feh('login', 'fail', params)
-    with pytest.raises(Exception, match='.*'):
-        behavior.login(username_file=(directory + './test_login/sampleu.txt'),
-                       password_file=(directory + './test_login/samplep.txt'))
-        kill_feh()
+#@pytest.mark.parametrize('params', login_fail_params)
+#def test_login_fail(params):
+#    feh('login', 'fail', params)
+#    with pytest.raises(Exception, match='.*'):
+#        behavior.login(username_file=(directory + './test_login/sampleu.txt'),
+#                       password_file=(directory + './test_login/samplep.txt'))
+#        kill_feh()

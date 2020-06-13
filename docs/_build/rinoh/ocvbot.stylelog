@@ -2571,17 +2571,17 @@
                          > (0,0,1,0,2) object description
                       StaticGroupedFlowables(style='signatures')
                            > (0,0,2,0,3) object signatures
-                        Paragraph('ocvbot.skilling.miner_double_dro...', id='%ocvbot#ocvbot.skilling.miner_double_drop')   /home/austin/OSRS-AHKScripts/ocvbot/skilling.py:docstring of ocvbot.skilling.miner_double_drop:1 <desc_signature>
+                        Paragraph('ocvbot.skilling.miner_double_dro...', id='%ocvbot#ocvbot.skilling.drop_miner')   /home/austin/OSRS-AHKScripts/ocvbot/skilling.py:docstring of ocvbot.skilling.drop_miner:1 <desc_signature>
                              > (0,0,2,0,5) object signature
                                (0,0,0,0,2) body
                           MixedStyledText('ocvbot.skilling.miner_double_dro...')
-                            MixedStyledText('ocvbot.skilling.', style='additional name part')   /home/austin/OSRS-AHKScripts/ocvbot/skilling.py:docstring of ocvbot.skilling.miner_double_drop:None <desc_addname>
+                            MixedStyledText('ocvbot.skilling.', style='additional name part')   /home/austin/OSRS-AHKScripts/ocvbot/skilling.py:docstring of ocvbot.skilling.drop_miner:None <desc_addname>
                                  > (0,0,3,0,6) additional name part
                               SingleStyledText('ocvbot.skilling.')
-                            MixedStyledText('miner_double_drop', style='main object name')   /home/austin/OSRS-AHKScripts/ocvbot/skilling.py:docstring of ocvbot.skilling.miner_double_drop:None <desc_name>
+                            MixedStyledText('drop_miner', style='main object name')   /home/austin/OSRS-AHKScripts/ocvbot/skilling.py:docstring of ocvbot.skilling.drop_miner:None <desc_name>
                                  > (0,0,3,0,6) object name
-                              SingleStyledText('miner_double_drop')
-                            MixedStyledText(' ( rock1, rock2, ore ) ')   /home/austin/OSRS-AHKScripts/ocvbot/skilling.py:docstring of ocvbot.skilling.miner_double_drop:None <desc_parameterlist>
+                              SingleStyledText('drop_miner')
+                            MixedStyledText(' ( rock1, rock2, ore ) ')   /home/austin/OSRS-AHKScripts/ocvbot/skilling.py:docstring of ocvbot.skilling.drop_miner:None <desc_parameterlist>
                               MixedStyledText(' ( rock1, rock2, ore')
                                 SingleStyledText(' ( ', style='parentheses')
                                      > (0,0,3,0,6) object parentheses
@@ -2603,9 +2603,9 @@
                                       SingleStyledText('ore')
                               SingleStyledText(' ) ', style='parentheses')
                                    > (0,0,3,0,6) object parentheses
-                      StaticGroupedFlowables(style='content')   /home/austin/OSRS-AHKScripts/ocvbot/skilling.py:docstring of ocvbot.skilling.miner_double_drop:None <desc_content>
+                      StaticGroupedFlowables(style='content')   /home/austin/OSRS-AHKScripts/ocvbot/skilling.py:docstring of ocvbot.skilling.drop_miner:None <desc_content>
                            > (0,0,2,0,3) object description content
-                        Paragraph('A 2-rock drop mining script. The...')   /home/austin/OSRS-AHKScripts/ocvbot/skilling.py:docstring of ocvbot.skilling.miner_double_drop:1 <paragraph>
+                        Paragraph('A 2-rock drop mining script. The...')   /home/austin/OSRS-AHKScripts/ocvbot/skilling.py:docstring of ocvbot.skilling.drop_miner:1 <paragraph>
                              > (0,0,2,0,5) object description content paragraph
                                (0,0,0,0,2) body
                           MixedStyledText('A 2-rock drop mining script. The...')
@@ -2619,7 +2619,7 @@
                             Paragraph('Parameters', style='field name')
                                  > (0,0,2,0,6) field name
                                    (0,0,0,0,2) body
-                              MixedStyledText('Parameters')   /home/austin/OSRS-AHKScripts/ocvbot/skilling.py:docstring of ocvbot.skilling.miner_double_drop:0 <field_name>
+                              MixedStyledText('Parameters')   /home/austin/OSRS-AHKScripts/ocvbot/skilling.py:docstring of ocvbot.skilling.drop_miner:0 <field_name>
                                 SingleStyledText('Parameters')
                             StaticGroupedFlowables()   None:None <field_body>
                               List(style='bulleted')   None:None <bullet_list>
@@ -2729,20 +2729,20 @@
                                           SingleStyledText('ore')
                                         SingleStyledText(' – ')
                                         SingleStyledText('Filepath to a needle of the item...')
-                        DefinitionList()   /home/austin/OSRS-AHKScripts/ocvbot/skilling.py:docstring of ocvbot.skilling.miner_double_drop:None <definition_list>
+                        DefinitionList()   /home/austin/OSRS-AHKScripts/ocvbot/skilling.py:docstring of ocvbot.skilling.drop_miner:None <definition_list>
                              > (0,0,0,0,2) definition list
-                          LabeledFlowable()   /home/austin/OSRS-AHKScripts/ocvbot/skilling.py:docstring of ocvbot.skilling.miner_double_drop:11 <definition_list_item>
+                          LabeledFlowable()   /home/austin/OSRS-AHKScripts/ocvbot/skilling.py:docstring of ocvbot.skilling.drop_miner:11 <definition_list_item>
                                > (0,0,0,0,4) definition list item
                             StaticGroupedFlowables(style='definition term')
                                  > (0,0,1,0,5) definition term
                               Paragraph('Reutrns:')
                                    > (0,0,1,0,7) definition term paragraph
                                      (0,0,0,0,2) body
-                                MixedStyledText('Reutrns:')   /home/austin/OSRS-AHKScripts/ocvbot/skilling.py:docstring of ocvbot.skilling.miner_double_drop:11 <term>
+                                MixedStyledText('Reutrns:')   /home/austin/OSRS-AHKScripts/ocvbot/skilling.py:docstring of ocvbot.skilling.drop_miner:11 <term>
                                   SingleStyledText('Reutrns:')
                             StaticGroupedFlowables(style='definition')   None:None <definition>
                                  > (0,0,1,0,5) definition
-                              Paragraph('Returns 0 after emptying invento...')   /home/austin/OSRS-AHKScripts/ocvbot/skilling.py:docstring of ocvbot.skilling.miner_double_drop:12 <paragraph>
+                              Paragraph('Returns 0 after emptying invento...')   /home/austin/OSRS-AHKScripts/ocvbot/skilling.py:docstring of ocvbot.skilling.drop_miner:12 <paragraph>
                                    > (0,0,1,0,7) definition paragraph
                                      (0,0,0,0,2) body
                                 MixedStyledText('Returns 0 after emptying invento...')
@@ -4506,11 +4506,11 @@
              > (0,0,0,0,2) index section label
                (0,0,0,0,1) body
           SingleStyledText('M')
-        IndexEntry('miner_double_drop() (in module o...')
+        IndexEntry('drop_miner() (in module o...')
              > (0,0,0,1,2) level 1 index entry
                (0,0,0,0,1) body
-          MixedStyledText('miner_double_drop() (in module o...')
-            SingleStyledText('miner_double_drop() (in module o...')
+          MixedStyledText('drop_miner() (in module o...')
+            SingleStyledText('drop_miner() (in module o...')
             MixedStyledText('4')
               Reference('4')
                    > (0,0,0,1,1) linked reference
