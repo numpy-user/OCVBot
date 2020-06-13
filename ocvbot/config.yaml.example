@@ -49,3 +49,6 @@ max_break_duration: '120'
 #   the bot stops for good.
 min_sessions: '1'
 max_sessions: '3'
+
+# Can be set to CRITICAL, ERROR, WARNING, INFO, or DEBUG.
+log_level: 'INFO'

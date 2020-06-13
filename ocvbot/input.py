@@ -1,3 +1,8 @@
+# coding=UTF-8
+"""
+Controls the mouse and keyboard.
+
+"""
 import logging as log
 import random as rand
 
@@ -62,8 +67,8 @@ class Mouse:
         self.move_to()
         self.click()
         if move_away is True:
-            self.ltwh = (25, 150, 25, 150)
-            self.move_duration_range = (5, 300)
+            self.ltwh = (15, 100, 15, 100)
+            self.move_duration_range = (0, 500)
             self.moverel()
         return True
 
@@ -157,26 +162,32 @@ class Mouse:
 
 class Keyboard:
     """
-    sleep_befmin (int): The minimum number of miliseconds to wait before
-                        performing action, default is 50.
-    sleep_befmax (int): The maximum number of miliseconds to wait before
-                        performing action default is 1000.
-    sleep_afmin (int): The minimum number of miliseconds to wait after
-                        performing action, default is 50.
-    sleep_afmax (int): The minimum number of miliseconds to wait after
-                        performing action, default is 1000.
-    durmin (int): The minimum number of miliseconds to hold the key down,
-                  default is 1.
-    durmax (int): The maximum number of miliseconds to hold the key down,
-                  default is 180.
+    Manipulates the keyboard.
+
+    Args:
+        sleep_range (tuple): A 4-member tuple containing the minimum
+                             and maximum number of miliseconds to wait
+                             before performing the action, and the
+                             minimum and maximum number of miliseconds
+                             to wait after performing the action,
+                             default is (0, 500, 0, 500).
+        action_duration_range (tuple): A 2-member tuple containing the
+                                       minimum and maximum number of
+                                       miliseconds during which the
+                                       action will be performed, such as
+                                       holding down the mouse button,
+                                       default is (1, 100).
+        log (bool): Whether to log keystrokes at DEBUG level. This is
+                    turned off for user credentials.
 
     """
-
     def __init__(self,
                  sleep_range=(0, 500, 0, 500),
-                 action_duration_range=(1, 100)):
+                 action_duration_range=(1, 100),
+                 log=True):
         self.sleep_range = sleep_range
         self.action_duration_range = action_duration_range
+        self.log = log
 
     def typewriter(self, message):
         """
@@ -202,7 +213,8 @@ class Keyboard:
                        PyAutoGUI.
 
         """
-        log.debug('Pressing key: %s.', key)
+        if self.log is True:
+            log.debug('Pressing key: %s.', key)
 
         misc.sleep_rand(rmin=self.sleep_range[0], rmax=self.sleep_range[1])
         pag.keyDown(key)

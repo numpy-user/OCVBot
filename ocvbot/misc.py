@@ -1,3 +1,8 @@
+# coding=UTF-8
+"""
+Miscellaneous functions, mostly related to random sleeps.
+
+"""
 import datetime
 import logging as log
 import random as rand

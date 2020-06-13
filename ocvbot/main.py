@@ -1,3 +1,8 @@
+# coding=utf-8
+"""
+Invokes main bot scripts.
+
+"""
 import sys
 
 from ocvbot import skilling, behavior, vision as vis, startup as start
@@ -13,9 +18,8 @@ def mining_lumbridge_swamp():
     """
     while True:
         # Ensure the client is logged in before starting.
-        client_status = vis.orient(start.DISPLAY_WIDTH, start.DISPLAY_HEIGHT)
-        (client_status, unused_var) = client_status
-        if client_status == 'logged_out':
+        client_status = vis.orient()
+        if client_status[0] == 'logged_out':
             behavior.login_full()
 
         skilling.miner(
@@ -41,9 +45,8 @@ def mining_varrock_east():
     """
     while True:
         # Ensure the client is logged in.
-        client_status = vis.orient(vis.display)
-        (client_status, unused_var) = client_status
-        if client_status == 'logged_out':
+        client_status = vis.orient()
+        if client_status[0] == 'logged_out':
             behavior.login_full()
         skilling.miner(
             rocks=[('./needles/game-screen/varrock-east-mine/north-full2.png',

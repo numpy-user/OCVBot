@@ -1,3 +1,8 @@
+# coding=UTF-8
+"""
+Contains non-skilling player behaviors.
+
+"""
 import logging as log
 import os
 import random as rand
@@ -54,17 +59,7 @@ def login_basic(username_file=start.config_file['username_file'],
     password = open(password_file, 'r').read()
     password = str(password.replace('\n', ''))
 
-    # Make sure the client is logged out.
-    # TODO: use orient() for this, not wait_for_image
     for _ in range(3):
-        logged_out = vis.Vision(ltwh=vis.display,
-                                needle='./needles/login-menu/'
-                                       'orient-logged-out.png',
-                                loop_num=3,
-                                loop_sleep_range=(1000, 2000)).wait_for_image()
-        if logged_out is False:
-            raise Exception('Cannot find client or client is not logged out!')
-
         log.info('Logging in.')
 
         # Click the "Ok" button if it's present at the login screen.
@@ -96,7 +91,7 @@ def login_basic(username_file=start.config_file['username_file'],
                                   start.LOGIN_FIELD_HEIGHT)).click_coord()
                 # Enter login field credentials.
                 misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
-                input.Keyboard().typewriter(username)
+                input.Keyboard(log=False).typewriter(username)
                 misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
 
                 # Click to make sure the "Password" field is active.
@@ -105,7 +100,7 @@ def login_basic(username_file=start.config_file['username_file'],
                                   start.LOGIN_FIELD_WIDTH,
                                   start.LOGIN_FIELD_HEIGHT)).click_coord()
                 # Enter password field credentials and login.
-                input.Keyboard().typewriter(password)
+                input.Keyboard(log=False).typewriter(password)
                 misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
                 input.Keyboard().keypress(key='enter')
                 return True
@@ -338,12 +333,12 @@ def logout_rand_range():
         logout_rand(1)
 
     else:
-        log.info('time is ' + str(current_time))
-        log.info('Checkpoint 1 is at %s', start.checkpoint_1)
-        log.info('Checkpoint 2 is at %s', start.checkpoint_2)
-        log.info('Checkpoint 3 is at %s', start.checkpoint_3)
-        log.info('Checkpoint 4 is at %s', start.checkpoint_4)
-        log.info('Checkpoint 5 is at %s', start.checkpoint_5)
+        log.info('time is ' + str(time.ctime(current_time)))
+        log.info('Checkpoint 1 is at %s', time.ctime(start.checkpoint_1))
+        log.info('Checkpoint 2 is at %s', time.ctime(start.checkpoint_2))
+        log.info('Checkpoint 3 is at %s', time.ctime(start.checkpoint_3))
+        log.info('Checkpoint 4 is at %s', time.ctime(start.checkpoint_4))
+        log.info('Checkpoint 5 is at %s', time.ctime(start.checkpoint_5))
         log.info('Not time for a logout roll')
         return
     return
@@ -407,7 +402,7 @@ def logout_rand(chance,
 
             time.sleep(wait_time_seconds)
         else:
-            raise RuntimeError('Error with session numbers!')
+            raise Exception('Error with session numbers!')
     else:
         return
 

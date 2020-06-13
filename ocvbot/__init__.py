@@ -1,5 +1,6 @@
+# coding=UTF-8
 """
-Sets up global variables and a few other preparatory checks.
+Sets up a few global configurations before script is run.
 
 """
 import logging as log
@@ -7,22 +8,26 @@ import os
 import sys
 
 import pyautogui as pag
-
-sys.setrecursionlimit(9999)
-
-log.basicConfig(format='%(asctime)s %(filename)s.%(funcName)s - %(message)s',
-                level='INFO')
+import yaml
 
 pag.PAUSE = 0
+sys.setrecursionlimit(9999)
 
-# TODO: Fix this for PyInstaller.
 # Make sure the program's working directory is the directory in which
-#   this file is located.
-absolute_path = os.path.abspath(__file__)
-dir_name = os.path.dirname(absolute_path)
-os.chdir(dir_name)
+#   this file is located. If the script is compiled (i.e. "frozen"), a
+#   different method must be used.
+if hasattr(sys, "frozen"):
+    os.chdir(os.path.dirname(sys.executable))
+else:
+    os.chdir(os.path.dirname(__file__))
+
+with open('./config.yaml') as config:
+    config_file = yaml.safe_load(config)
+
+log.basicConfig(format='%(asctime)s %(filename)s.%(funcName)s - %(message)s',
+                level=str(config_file['log_level']))
 
 # TODO: Find a better way to do this.
-# TODO: Add a check to only run this if the OS is Linux.
 # Clean up left over screenshots from previous runs.
-os.system('rm .screenshot2*.png >/dev/null 2>&1')
+if os.name == 'posix':
+    os.system('rm .screenshot2*.png >/dev/null 2>&1')

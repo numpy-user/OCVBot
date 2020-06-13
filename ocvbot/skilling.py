@@ -1,6 +1,10 @@
+# coding=UTF-8
+"""
+Contains skilling-related functions.
+
+"""
 import logging as log
 
-import ocvbot.behavior
 from ocvbot import behavior, vision as vis, misc, startup as start
 
 
@@ -51,7 +55,9 @@ def miner(rocks, ore, ore_type, drop):
             #   interfere with matching the needle.
             rock_full = vis.Vision(ltwh=vis.game_screen, loop_num=1,
                                    needle=full_rock_needle, conf=0.8) \
-                .click_image(sleep_range=(0, 100, 0, 1), move_away=True)
+                .click_image(sleep_range=(0, 100, 0, 100,),
+                             move_duration_range=(0, 500),
+                             move_away=True)
             if rock_full is True:
                 log.info('Waiting for mining to start.')
 
@@ -107,8 +113,8 @@ def miner(rocks, ore, ore_type, drop):
 
                 # Wait until the rock is empty by waiting for the
                 #   "empty" version of the rock_needle tuple.
-                rock_empty = vis.Vision(ltwh=vis.game_screen,
-                                        loop_num=50, conf=0.85,
+                rock_empty = vis.Vision(ltwh=vis.chat_menu,
+                                        loop_num=15, conf=0.85,
                                         needle=empty_rock_needle,
                                         loop_sleep_range=(100, 200)) \
                     .wait_for_image()
