@@ -1,3 +1,8 @@
+# coding=utf-8
+"""
+Invokes main bot scripts.
+
+"""
 import sys
 
 from ocvbot import skilling, behavior, vision as vis, startup as start

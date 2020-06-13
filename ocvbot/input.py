@@ -1,4 +1,8 @@
 # coding=UTF-8
+"""
+Controls the mouse and keyboard.
+
+"""
 import logging as log
 import random as rand
 
