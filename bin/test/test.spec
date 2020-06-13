@@ -3,13 +3,13 @@
 block_cipher = None
 
 
-a = Analysis(['../ocvbot/main.py'],
-             pathex=['../ocvbot'],
+a = Analysis(['../../ocvbot/main.py'],
+             pathex=['../../ocvbot'],
              binaries=[],
              datas=[
-             ('../ocvbot/needles', './needles/'),
-             ('../ocvbot/credentials', './credentials/'),
-             ('../ocvbot/config.yaml', './')
+             ('../../ocvbot/needles', './needles/'),
+             ('../../ocvbot/credentials', './credentials/'),
+             ('../../ocvbot/config.yaml', './')
              ],
              hiddenimports=[
              'packaging.requirements',
