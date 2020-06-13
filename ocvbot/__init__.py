@@ -8,11 +8,16 @@ import os
 import sys
 
 import pyautogui as pag
+import yaml
 
 pag.PAUSE = 0
 sys.setrecursionlimit(9999)
+
+with open('./config.yaml') as config:
+    config_file = yaml.safe_load(config)
+
 log.basicConfig(format='%(asctime)s %(filename)s.%(funcName)s - %(message)s',
-                level='INFO')
+                level=str(config_file['log_level']))
 
 # Make sure the program's working directory is the directory in which
 #   this file is located. If the script is compiled (i.e. "frozen"), a
