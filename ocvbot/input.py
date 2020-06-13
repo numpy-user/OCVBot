@@ -179,9 +179,11 @@ class Keyboard:
 
     def __init__(self,
                  sleep_range=(0, 500, 0, 500),
-                 action_duration_range=(1, 100)):
+                 action_duration_range=(1, 100),
+                 log=True):
         self.sleep_range = sleep_range
         self.action_duration_range = action_duration_range
+        self.log = log
 
     def typewriter(self, message):
         """
@@ -207,7 +209,8 @@ class Keyboard:
                        PyAutoGUI.
 
         """
-        log.debug('Pressing key: %s.', key)
+        if self.log is True:
+            log.debug('Pressing key: %s.', key)
 
         misc.sleep_rand(rmin=self.sleep_range[0], rmax=self.sleep_range[1])
         pag.keyDown(key)

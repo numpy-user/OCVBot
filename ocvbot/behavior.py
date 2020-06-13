@@ -87,7 +87,7 @@ def login_basic(username_file=start.config_file['username_file'],
                                   start.LOGIN_FIELD_HEIGHT)).click_coord()
                 # Enter login field credentials.
                 misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
-                input.Keyboard().typewriter(username)
+                input.Keyboard(log=False).typewriter(username)
                 misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
 
                 # Click to make sure the "Password" field is active.
@@ -96,7 +96,7 @@ def login_basic(username_file=start.config_file['username_file'],
                                   start.LOGIN_FIELD_WIDTH,
                                   start.LOGIN_FIELD_HEIGHT)).click_coord()
                 # Enter password field credentials and login.
-                input.Keyboard().typewriter(password)
+                input.Keyboard(log=False).typewriter(password)
                 misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
                 input.Keyboard().keypress(key='enter')
                 return True
