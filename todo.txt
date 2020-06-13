@@ -1,9 +1,8 @@
 IN PROGRESS:
-- Finish documentation, test installation from scratch on both Windows and Linux.
+- 0.2: Player walking.
 
 PLANNED:
 - Integrate with Travis-CI to test version and OS compatibility.
-- Polish and test current code for a 0.1 release.
 - Add GIFs and images to README.
 - Create three basic functions to test speed of template matching methods: pyautogui, opencv (test all 6 methods), and sickig-image
   - produce output like "pyautogui completed in XX miliseconds, opencv method 1 completed in XX miliseconds ..."
