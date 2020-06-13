@@ -55,17 +55,7 @@ def login_basic(username_file=start.config_file['username_file'],
     password = open(password_file, 'r').read()
     password = str(password.replace('\n', ''))
 
-    # Make sure the client is logged out.
-    # TODO: use orient() for this, not wait_for_image
     for _ in range(3):
-        logged_out = vis.Vision(ltwh=vis.display,
-                                needle='./needles/login-menu/'
-                                       'orient-logged-out.png',
-                                loop_num=3,
-                                loop_sleep_range=(1000, 2000)).wait_for_image()
-        if logged_out is False:
-            raise Exception('Cannot find client or client is not logged out!')
-
         log.info('Logging in.')
 
         # Click the "Ok" button if it's present at the login screen.
