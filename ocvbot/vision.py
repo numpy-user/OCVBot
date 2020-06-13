@@ -258,7 +258,7 @@ def orient(ltwh=(0, 0, start.DISPLAY_WIDTH, start.DISPLAY_HEIGHT),
     """
     logged_in = Vision(ltwh=ltwh,
                        needle='needles/minimap/orient.png',
-                       loctype='center', loop_num=2, conf=0.8) \
+                       loctype='center', loop_num=1, conf=0.8) \
         .wait_for_image(get_tuple=True)
     if isinstance(logged_in, tuple) is True:
         return 'logged_in', logged_in
@@ -266,7 +266,7 @@ def orient(ltwh=(0, 0, start.DISPLAY_WIDTH, start.DISPLAY_HEIGHT),
     # If the client is not logged in, check if it's logged out.
     logged_out = Vision(ltwh=ltwh,
                         needle='needles/login-menu/orient-logged-out.png',
-                        loctype='center', loop_num=2, conf=0.8) \
+                        loctype='center', loop_num=1, conf=0.8) \
         .wait_for_image(get_tuple=True)
     if isinstance(logged_out, tuple) is True:
         return 'logged_out', logged_out
