@@ -1,3 +1,9 @@
+# coding=UTF-8
+"""
+Simple screenshot tool for quickly capturing client window.
+Linux-only. Requires pngcrush and ImageMagick.
+
+"""
 import logging as log
 import os
 
@@ -16,23 +22,21 @@ def main(debug=False):
     Automatically censors player's username.
 
     Optionally overlays the coordinates of Vision objects, which can be
-    useful for debugging. This function is designed to be run manually.
-
+    useful for debugging.
 
     Args:
         debug (bool): Whether the function will perform extra processing
                       to overlay rectanges cooresponding to Vision
                       object coordinates on the screenshot, which takes
-                      a second or two, default is False. If set to
-                      False, the function produces an image called
-                      haystack_$(date +%Y-%m-%d_%H:%M:%S).png in the
-                      current directory.
+                      a second or two, default is False.
 
-    Returns:
-        Always returns 0.
+                      If set to False, the function produces an image
+                      called haystack_$(date +%Y-%m-%d_%H:%M:%S).png in
+                      the current directory.
+
     """
-
-    log.info('Initializing')
+    log.info('Initializing...')
+    # Remove old screenshots with similar names, otherwise it will break.
     os.system('rm -f /tmp/screenshot.tmp*')
     pag.screenshot('/tmp/screenshot.tmp.png', region=(vis.client_left,
                                                       vis.client_top,
@@ -40,29 +44,30 @@ def main(debug=False):
                                                       start.CLIENT_HEIGHT))
 
     if debug is False:
-        log.info('Processing screenshot')
+        log.info('Processing screenshot...')
         if vis.client_status == 'logged_in':
             # If the client is logged in, censor the player's username
             #   by drawing a black box over it with ImageMagick.
-            import time
-            time.sleep(1)
-            os.system('pngcrush -s '
-                      '"/tmp/screenshot.tmp.png" '
-                      '"/tmp/screenshot.tmp2.png" '
-                      '2>/dev/null '
-                      '&& convert /tmp/screenshot.tmp2.png '
-                      '-fill black '
-                      '-draw "rectangle 7 458 190 473" '
-                      '"$(pwd)/haystack_$(date +%Y-%m-%d_%H:%M:%S).png" '
-                      '&& rm -f /tmp/screenshot.tmp*')
+            os.system(
+                'pngcrush -s "/tmp/screenshot.tmp.png" '
+                '"/tmp/screenshot.tmp2.png" '
+                '2>/dev/null '
+                '&& '
+                'convert /tmp/screenshot.tmp2.png '
+                '-fill black '
+                '-draw "rectangle 7 458 190 473" '
+                '"$(pwd)/haystack_$(date +%Y-%m-%d_%H:%M:%S).png" '
+                '&& '
+                'rm -f /tmp/screenshot.tmp*')
         elif vis.client_status == 'logged_out':
             os.system('pngcrush -s '
                       '"/tmp/screenshot.tmp.png" '
                       '"$(pwd)/haystack_$(date +%Y-%m-%d_%H:%M:%S).png" '
                       '2>/dev/null '
-                      '&& rm -f /tmp/screenshot.tmp*')
+                      '&& '
+                      'rm -f /tmp/screenshot.tmp*')
         else:
-            raise RuntimeError("Could not interpret client_status var!")
+            raise Exception("Could not interpret client_status var!")
 
     elif debug is True:
         # Import all the Vision objects to overlay onto the screenshot.
@@ -70,7 +75,7 @@ def main(debug=False):
         pag.screenshot('.screenshot.tmp2.png', region=(0, 0,
                                                        start.DISPLAY_WIDTH,
                                                        start.DISPLAY_HEIGHT))
-        log.info('Compressing screenshot')
+        log.info('Compressing screenshot...')
         os.system('pngcrush -s .screenshot.tmp2.png .screenshot.tmp.png'
                   '&>/dev/null')
 
@@ -152,15 +157,16 @@ def main(debug=False):
                   '-draw "rectangle '
                   + str(vis.chat_menu_recent_left)
                   + ' ' + str(vis.chat_menu_recent_top)
-                  + ' ' + str(vis.chat_menu_recent_left + start.CHAT_MENU_RECENT_WIDTH)
-                  + ' ' + str(vis.chat_menu_recent_top + start.CHAT_MENU_RECENT_HEIGHT)
+                  + ' ' + str(vis.chat_menu_recent_left +
+                              start.CHAT_MENU_RECENT_WIDTH)
+                  + ' ' + str(vis.chat_menu_recent_top +
+                              start.CHAT_MENU_RECENT_HEIGHT)
                   + '" chat_menu_recent.png')
 
         os.system('rm .screenshot.tmp*.png && '
                   'notify-send -u low "Debug screenshots taken!"')
-        return 0
-
-    return 0
+        return True
+    return True
 
 
 if __name__ == '__main__':
