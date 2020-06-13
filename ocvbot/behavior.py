@@ -329,12 +329,12 @@ def logout_rand_range():
         logout_rand(1)
 
     else:
-        log.info('time is ' + str(current_time))
-        log.info('Checkpoint 1 is at %s', start.checkpoint_1)
-        log.info('Checkpoint 2 is at %s', start.checkpoint_2)
-        log.info('Checkpoint 3 is at %s', start.checkpoint_3)
-        log.info('Checkpoint 4 is at %s', start.checkpoint_4)
-        log.info('Checkpoint 5 is at %s', start.checkpoint_5)
+        log.info('time is ' + str(time.ctime(current_time)))
+        log.info('Checkpoint 1 is at %s', time.ctime(start.checkpoint_1))
+        log.info('Checkpoint 2 is at %s', time.ctime(start.checkpoint_2))
+        log.info('Checkpoint 3 is at %s', time.ctime(start.checkpoint_3))
+        log.info('Checkpoint 4 is at %s', time.ctime(start.checkpoint_4))
+        log.info('Checkpoint 5 is at %s', time.ctime(start.checkpoint_5))
         log.info('Not time for a logout roll')
         return
     return
@@ -398,7 +398,7 @@ def logout_rand(chance,
 
             time.sleep(wait_time_seconds)
         else:
-            raise RuntimeError('Error with session numbers!')
+            raise Exception('Error with session numbers!')
     else:
         return
 
