@@ -1,6 +1,6 @@
 # coding=UTF-8
 """
-Sets up global variables and a few other preparatory checks.
+Sets up a few global configurations before script is run.
 
 """
 import logging as log

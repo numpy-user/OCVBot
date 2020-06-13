@@ -1,3 +1,4 @@
+# coding=UTF-8
 import logging as log
 
 from ocvbot import behavior, vision as vis, misc, startup as start

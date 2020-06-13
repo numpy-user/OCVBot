@@ -1,3 +1,8 @@
+# coding=UTF-8
+"""
+Contains non-skilling player behaviors.
+
+"""
 import logging as log
 import random as rand
 import sys

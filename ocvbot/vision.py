@@ -1,3 +1,8 @@
+# coding=UTF-8
+"""
+Module for "seeing" the client.
+
+"""
 import logging as log
 import pathlib
 

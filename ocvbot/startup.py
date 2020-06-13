@@ -1,3 +1,8 @@
+# coding=UTF-8
+"""
+Sets global variables and constants.
+
+"""
 import logging as log
 import random as rand
 import time

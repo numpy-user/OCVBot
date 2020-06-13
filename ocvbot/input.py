@@ -1,3 +1,4 @@
+# coding=UTF-8
 import logging as log
 import random as rand
 
