@@ -18,8 +18,10 @@ Project.xml
 # Test and debugging files
 /haystacks/
 **/tmp/
-bin-test
-bin
+bin/test/dist
+bin/test/build
+bin/main/dist
+bin/main/build
 
 # User files
 **/credentials/*.txt
