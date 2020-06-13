@@ -67,8 +67,8 @@ class Mouse:
         self.move_to()
         self.click()
         if move_away is True:
-            self.ltwh = (25, 150, 25, 150)
-            self.move_duration_range = (5, 300)
+            self.ltwh = (15, 100, 15, 100)
+            self.move_duration_range = (0, 500)
             self.moverel()
         return True
 
