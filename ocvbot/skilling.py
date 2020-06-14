@@ -136,6 +136,7 @@ def miner(rocks, ore, ore_type, drop):
                 if rock_empty is True:
                     log.info('Rock is empty.')
                     log.debug('%s empty.', rock_needle)
+                    behavior.human_behavior_rand(chance=100)
                 else:
                     log.info('Timed out waiting for mining to finish.')
     return
