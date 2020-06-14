@@ -698,7 +698,7 @@ def travel(param_list, haystack_map):
     for params in param_list:
         # Break down the parameters for that waypoint.
         waypoint, coord_tolerance, waypoint_tolerance, sleep_range = params
-        for _ in range(100):
+        for _ in range(500):
 
             # Find the minimap position within the haystack map.
             coords = ocv_find_location(haystack)
@@ -779,10 +779,10 @@ def travel(param_list, haystack_map):
             if (abs(waypoint_distance_y) <= waypoint_tolerance[0] and
                     abs(waypoint_distance_x) <= waypoint_tolerance[1]):
                 break
-        log.critical('Could not reach waypoint after 100 tries!')
         logout()
-    log.critical('Could not reach destination!')
+        raise Exception('Could not reach waypoint after 500 tries!')
     logout()
+    raise Exception('Could not reach destination!')
 
 
 def ocv_find_location(haystack):
