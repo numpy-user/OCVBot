@@ -372,8 +372,8 @@ def logout_rand(chance,
 
         # Track the number of play sessions that have occurred so far.
         start.session_num += 1
-        log.info('Completed session ' + str(start.session_num) + '/'
-                 + str(start.session_total))
+        log.info('Completed session %s/%s', start.session_num,
+                 start.session_total)
         # If the maximum number of sessions has been reached, kill the
         #   bot.
         if start.session_num >= start.session_total:
@@ -387,7 +387,7 @@ def logout_rand(chance,
             wait_time_seconds = misc.rand_seconds(wait_min, wait_max)
 
             # Convert back to human-readable format for logging.
-            wait_time_minutes = wait_time_seconds / 600
+            wait_time_minutes = wait_time_seconds / 60
             current_time = time.time()
             # Determine the time the break will be done.
             stop_time = current_time + (current_time + wait_time_seconds)
@@ -395,9 +395,9 @@ def logout_rand(chance,
             #   format.
             stop_time_human = time.localtime(stop_time)
 
-            log.info('Sleeping for ' + str(wait_time_minutes) + ' minutes.' +
-                     ' Break will be over at ' + str(stop_time_human[3]) + ':'
-                     + str(stop_time_human[4]) + ':' + str(stop_time_human[5]))
+            log.info('Sleeping for %s minutes. Break will be over at %s:%s:%s',
+                     round(wait_time_minutes), stop_time_human[3],
+                     stop_time_human[4], stop_time_human[5])
 
             time.sleep(wait_time_seconds)
         else:
