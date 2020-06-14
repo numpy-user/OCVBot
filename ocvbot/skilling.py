@@ -35,6 +35,11 @@ def miner(rocks, ore, ore_type, drop):
         the function can't find any ore in the player's inventory to
         drop.
     """
+    gems = ['./needles/items/uncut-sapphire.png',
+            './needles/items/uncut-emerald.png',
+            './needles/items/uncut-ruby.png',
+            './needles/items/uncut-diamond.png',
+            './needles/items/clue-geode.png']
 
     # Vision objects have to be imported within functions because the
     #   init_vision() function has to run before the objects get valid
@@ -97,6 +102,10 @@ def miner(rocks, ore, ore_type, drop):
                             behavior.open_bank('south')
                             vis.Vision(ltwh=vis.inv,
                                        needle=ore).click_image()
+                            for gem in gems:
+                                vis.Vision(ltwh=vis.inv,
+                                           needle=gem,
+                                           loop_num=1).click_image()
                             misc.sleep_rand(1000, 10000)
 
                             ocvbot.behavior.walk_to_waypoint([(253, 161, 25, 5),
