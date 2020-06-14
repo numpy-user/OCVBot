@@ -1,3 +1,4 @@
+# coding=UTF-8
 """
 Compares OpenCV Template Matching speed of color image vs grayscale
 image.

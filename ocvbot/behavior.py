@@ -4,7 +4,6 @@ Contains non-skilling player behaviors.
 
 """
 import logging as log
-import os
 import random as rand
 import sys
 import time
@@ -373,8 +372,8 @@ def logout_rand(chance,
 
         # Track the number of play sessions that have occurred so far.
         start.session_num += 1
-        log.info('Completed session ' + str(start.session_num) + '/'
-                 + str(start.session_total))
+        log.info('Completed session %s/%s', start.session_num,
+                 start.session_total)
         # If the maximum number of sessions has been reached, kill the
         #   bot.
         if start.session_num >= start.session_total:
@@ -388,7 +387,7 @@ def logout_rand(chance,
             wait_time_seconds = misc.rand_seconds(wait_min, wait_max)
 
             # Convert back to human-readable format for logging.
-            wait_time_minutes = wait_time_seconds / 600
+            wait_time_minutes = wait_time_seconds / 60
             current_time = time.time()
             # Determine the time the break will be done.
             stop_time = current_time + (current_time + wait_time_seconds)
@@ -396,9 +395,9 @@ def logout_rand(chance,
             #   format.
             stop_time_human = time.localtime(stop_time)
 
-            log.info('Sleeping for ' + str(wait_time_minutes) + ' minutes.' +
-                     ' Break will be over at ' + str(stop_time_human[3]) + ':'
-                     + str(stop_time_human[4]) + ':' + str(stop_time_human[5]))
+            log.info('Sleeping for %s minutes. Break will be over at %s:%s:%s',
+                     round(wait_time_minutes), stop_time_human[3],
+                     stop_time_human[4], stop_time_human[5])
 
             time.sleep(wait_time_seconds)
         else:
@@ -595,6 +594,7 @@ def drop_item(item, track=True,
         return False
     return True
 
+
 def bank_config_check(config, status):
     """
     Checks for specific bank configurations in the bank window, such
@@ -610,39 +610,37 @@ def bank_config_check(config, status):
     if config == 'quantity':
         if status == 'all':
             quantity_all_enabled = vis.Vision(ltwh=vis.game_screen,
-                                      needle='./needles/buttons/'
-                                             'bank-preset-all.png',
-                                      loop_num=2).wait_for_image()
+                                              needle='./needles/buttons/'
+                                                     'bank-preset-all.png',
+                                              loop_num=2).wait_for_image()
             if quantity_all_enabled is False:
                 quantity_all_disabled = vis.Vision(ltwh)
                 return
 
 
-
 def open_bank(direction):
-    if direction == 'south':
+    for _ in range(10):
+        one_tile = vis.Vision(ltwh=vis.game_screen,
+                              needle='./needles/game-screen/bank/'
+                                     'bank-booth-' + direction + '-1-tile.png',
+                              loop_num=1, conf=0.85).click_image()
 
-        for _ in range(3):
-            one_tile = vis.Vision(ltwh=vis.game_screen,
-                                  needle='./needles/game-screen/'
-                                         'bank-booth-south-1-tile.png',
-                                  loop_num=1).click_image()
+        two_tiles = vis.Vision(ltwh=vis.game_screen,
+                               needle='./needles/game-screen/bank/'
+                                      'bank-booth-' + direction + '-2-tiles.png',
+                               loop_num=1, conf=0.85).click_image()
 
-            two_tiles = vis.Vision(ltwh=vis.game_screen,
-                                   needle='./needles/game-screen/'
-                                          'bank-booth-south-2-tiles.png',
-                                   loop_num=1).click_image()
-            if one_tile is True or two_tiles is True:
-                bank_open = vis.Vision(ltwh=vis.game_screen,
-                                       needle='./needles/buttons/'
-                                              'close.png',
-                                       loop_num=20).wait_for_image()
-                if bank_open is True:
-                    return True
+        if one_tile is True or two_tiles is True:
+            bank_open = vis.Vision(ltwh=vis.game_screen,
+                                   needle='./needles/buttons/'
+                                          'close.png',
+                                   loop_num=50).wait_for_image()
+            if bank_open is True:
+                return True
+
+        misc.sleep_rand(1000, 3000)
 
         raise Exception('Could not find bank booth!')
-    else:
-        raise Exception('Unsupported!')
 
 
 def enable_run():
@@ -650,103 +648,148 @@ def enable_run():
     If run is turned off but energy is full, turns running on.
 
     """
+    # TODO: turn run on when over 75%
     for _ in range(5):
         run_full_off = vis.Vision(ltwh=vis.client,
-                   needle='./run-full-off.png',
-                   loop_num=1).click_image(move_away=True)
-        misc.sleep_rand(300, 1000)
-        run_full_on = vis.Vision(ltwh=vis.client,
-                                 needle='./run-full-on.png',
-                                 loop_num=1).wait_for_image()
-        if run_full_on is True:
-            return True
+                                  needle='./needles/buttons/run-full-off.png',
+                                  loop_num=1).click_image(move_away=True)
+        if run_full_off is True:
+            misc.sleep_rand(300, 1000)
+            run_full_on = vis.Vision(ltwh=vis.client,
+                                     needle='./needles/buttons/run-full-on.png',
+                                     loop_num=1).wait_for_image()
+            if run_full_on is True:
+                return True
+        else:
+            return False
     log.error('Unable to turn on running!')
 
 
-def walk_to_waypoints():
+def travel(param_list, haystack_map):
+    """
+    Clicks on the minimap until the plater has arrived at the desired
+    coordinates.
 
-    for destination in waypoint:
-        for _ in range(100):
+    Args:
+        param_list (list): A list of the coordinates to move the player
+                           to, among a few other parameters.
+                           Each item in the list containes three tuples
+                           and an integer in the following order:
+                           - A 2-tuple of the desired XY coordinates.
+                           - An integer of the coordinate tolerance for
+                             each minimap click.
+                           - A 2-tuple of the X and Y tolerance allowed
+                             for determining if the player has reached
+                             the waypoint.
+                           - A 2-tuple of the minimum and maximum number of
+                             seconds to sleep before re-checking position
+                             while going to that waypoint.
+        haystack_map (file): Filepath to the map to use to navigate.
+                             All waypoint coordinates are relative to
+                             this map.
 
-            dest_x, dest_y = destination
+    Raises:
+        Logs out if any errors occur.
 
-            # Find the current minimap position within the haystack map.
-            os.system('rm -f current-pos*.png')
-            pyautogui.screenshot('current-pos.png', region=vision.minimap_slice)
-            coords = ocv_find_location()
-            (coords_left, coords_top, coords_width, coords_height) = coords
+    """
+    haystack = cv2.imread(haystack_map, cv2.IMREAD_GRAYSCALE)
 
-            # Get center of minimap coordinates.
-            coords_map_x = int(coords_left + (coords_width / 2))
-            coords_map_y = int(coords_top + (coords_height / 2))
-            print("minimap relative to haystack map is", coords_map_x, coords_map_y)
+    # Get the first waypoint.
+    for params in param_list:
+        # Break down the parameters for that waypoint.
+        waypoint, coord_tolerance, waypoint_tolerance, sleep_range = params
+        for _ in range(500):
 
+            # Find the minimap position within the haystack map.
+            coords = ocv_find_location(haystack)
+            (coords_map_left, coords_map_top,
+             coords_map_width, coords_map_height) = coords
+
+            # Get center of minimap coordinates within haystack map.
+            coords_map_x = int(coords_map_left + (coords_map_width / 2))
+            coords_map_y = int(coords_map_top + (coords_map_height / 2))
+
+            # Get center of minimap coordinates within client.
+            # Absolute coordinates are used rather than using an image
+            #   search to speed things up.
             coords_client_x = vision.client[0] + 642
             coords_client_y = vision.client[1] + 86
 
+            # Figure out how far the waypoint is from the current location.
+            waypoint_distance_x = waypoint[0] - coords_map_x
+            waypoint_distance_y = waypoint[1] - coords_map_y
+            log.info('dest_distance x is %s.', waypoint_distance_x)
+            log.info('dest_distance y is %s.', waypoint_distance_y)
 
-            # Figure out how far the destination is from the current location
-            dest_distance_x = dest_x - coords_map_x
-            dest_distance_y = dest_y - coords_map_y
-            print('dest_distance x is', dest_distance_x)
-            print('dest_distance y is', dest_distance_y)
-
-            # If the destination distance is larger than the size of the minimap,
-            #   reduce the current click distance to the edge of the minimap
-            if dest_distance_x >= 50:
-                click_pos_x = coords_client_x + 50
-            elif abs(dest_distance_x) >= 50:
-                click_pos_x = coords_client_x - 50
-            else:
-                click_pos_x = coords_client_x + dest_distance_x
-
-            if dest_distance_y >= 50:
-                click_pos_y = coords_client_y + 50
-                # Since the minimap is circular, if the Y-distance is low
-                #   engouh, we can make the click-position for the X-coordinate
-                #   farther down the minimap to take advantage of the extra space
-                if dest_distance_y >= 10:
-                    click_pos_y = coords_client_y + 70
-
-            elif abs(dest_distance_y) >= 50:
-                click_pos_y = coords_client_y - 50
-
-                if abs(dest_distance_y) >= 10:
-                    click_pos_y = coords_client_y - 70
-            else:
-                click_pos_y = coords_client_y + dest_distance_y
-
-            if (abs(dest_distance_y) <= tolerance and abs(dest_distance_x) <= tolerance):
-                print('arrived at dest!')
+            # Check if player has reached waypoint.
+            if (abs(waypoint_distance_y) <= waypoint_tolerance[0] and
+                    abs(waypoint_distance_x) <= waypoint_tolerance[1]):
                 break
-            else:
-                print('havent arrived at dest yet')
-                pass
 
-            # Now, make the click
+            # Generate random click coordinate variation.
+            coord_rand = rand.randint(-coord_tolerance, coord_tolerance)
+            # If the waypoint's distance is larger than the size of the
+            #   minimap (about 50 pixels in either direction), reduce
+            #   the click distance to the edge of the minimap.
+            if waypoint_distance_x >= 50:
+                click_pos_x = coords_client_x + 50 + coord_rand
+                # Since the minimap is circular, if the Y-distance is low
+                #   enough, we can make the click-position for the X-coordinate
+                #   farther left/right to take advantage of the extra space.
+                if waypoint_distance_y <= 10:
+                    click_pos_x += 12
+
+            # If the waypoint's X distance is "negative", we know we
+            #   need to subtract X coordinates.
+            elif abs(waypoint_distance_x) >= 50:
+                click_pos_x = coords_client_x - 50 + coord_rand
+                if abs(waypoint_distance_y) <= 10:
+                    click_pos_x -= 12
+            else:
+                click_pos_x = coords_client_x + waypoint_distance_x \
+                              + coord_rand
+
+            log.info('coord rand is x %s', coord_rand)
+            log.info('click position x is %s', click_pos_x)
+
+            # Do the same thing, but for the Y coordinates.
+            coord_rand = rand.randint(-coord_tolerance, coord_tolerance)
+            if waypoint_distance_y >= 50:
+                click_pos_y = coords_client_y + 50 + coord_rand
+                if waypoint_distance_x <= 10:
+                    click_pos_y += 12
+            elif abs(waypoint_distance_y) >= 50:
+                click_pos_y = coords_client_y - 50 + coord_rand
+                if abs(waypoint_distance_x) <= 10:
+                    click_pos_y -= 12
+            else:
+                click_pos_y = coords_client_y + waypoint_distance_y \
+                              + coord_rand
+
+            log.info('coord rand is y %s', coord_rand)
+            log.info('click position y is %s', click_pos_y)
+
             click_pos_y = abs(click_pos_y)
             click_pos_x = abs(click_pos_x)
-            input.Mouse(ltwh=(click_pos_x, click_pos_y, 0, 0), sleep_range=(50, 100, 100, 200),
+            input.Mouse(ltwh=(click_pos_x, click_pos_y, 0, 0),
+                        sleep_range=(50, 100, 100, 200),
                         move_duration_range=(0, 300)).click_coord()
-            #print('click pos x is ', click_pos_x)
-            #print('click pos y is ', click_pos_y)
-            misc.sleep_rand(((refresh - 2) * 1000), ((refresh + 2) * 1000))
+            misc.sleep_rand((sleep_range[0] * 1000), (sleep_range[1] * 1000))
 
-            if (abs(dest_distance_y) <= tolerance and abs(dest_distance_x) <= tolerance):
-                print('arrived at dest!')
+            if (abs(waypoint_distance_y) <= waypoint_tolerance[0] and
+                    abs(waypoint_distance_x) <= waypoint_tolerance[1]):
                 break
-            else:
-                print('havent arrived at dest yet')
-                pass
+        logout()
+        raise Exception('Could not reach waypoint after 500 tries!')
+    logout()
+    raise Exception('Could not reach destination!')
 
 
-haystack = cv2.imread('varrock-east-mine.png', cv2.IMREAD_GRAYSCALE)
-def ocv_find_location():
-    global haystack
+def ocv_find_location(haystack):
     needle = pyautogui.screenshot(region=vision.minimap_slice)
     needle = cv2.cvtColor(np.array(needle), cv2.COLOR_RGB2GRAY)
     w, h = needle.shape[::-1]
     result = cv2.matchTemplate(haystack, needle, cv2.TM_CCOEFF_NORMED)
     loc = cv2.minMaxLoc(result)
-    max_x = loc[3]
-    return max_x[0], max_x[1], w, h
+    match = loc[3]
+    return match[0], match[1], w, h

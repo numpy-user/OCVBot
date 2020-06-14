@@ -67,7 +67,7 @@ class Mouse:
         self.move_to()
         self.click()
         if move_away is True:
-            self.ltwh = (15, 100, 15, 100)
+            self.ltwh = (15, 15, 100, 100)
             self.move_duration_range = (0, 500)
             self.moverel()
         return True
@@ -103,13 +103,17 @@ class Mouse:
         left, top, width, height = self.ltwh
         (x_position, y_position) = pag.position()
 
-        x_distance = rand.randint(min(left, width), max(left, width))
-        y_distance = rand.randint(min(top, height), max(top, height))
+        x_min = min(left, width)
+        x_max = max(left, width)
+        y_min = min(top, height)
+        y_max = max(top, height)
 
-        x_destination = x_position + x_distance
-        y_destination = y_position + y_distance
+        x_distance = rand.randint(x_min, x_max)
+        y_distance = rand.randint(y_min, y_max)
 
         # Roll for a chance to reverse the direction the mouse moves in.
+        y_destination = y_position + y_distance
+        x_destination = x_position + x_distance
         if (rand.randint(1, 2)) == 2:
             x_destination = x_position - x_distance
         if (rand.randint(1, 2)) == 2:

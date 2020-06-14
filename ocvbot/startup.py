@@ -44,7 +44,7 @@ DISPLAY_HEIGHT = pag.size().height
 # Dimensions of the "Login" and "Password" fields on the main login
 #   screen.
 LOGIN_FIELD_WIDTH = 258
-LOGIN_FIELD_HEIGHT = 14
+LOGIN_FIELD_HEIGHT = 12
 
 with open('./config.yaml') as config:
     config_file = yaml.safe_load(config)

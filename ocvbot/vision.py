@@ -176,7 +176,7 @@ class Vision:
         log.debug('Timed out looking for ' + str(self.needle) + '.')
         return False
 
-    def click_image(self, sleep_range=(0, 100, 0, 100),
+    def click_image(self, sleep_range=(50, 200, 50, 200),
                     move_duration_range=(50, 1500),
                     button='left', move_away=False):
         """
@@ -216,8 +216,8 @@ class Vision:
             log.debug('Clicking on ' + str(self.needle) + '.')
 
             if move_away is True:
-                input.Mouse(ltwh=(25, 150, 25, 150),
-                            move_duration_range=(5, 100)).moverel()
+                input.Mouse(ltwh=(25, 25, 100, 100),
+                            move_duration_range=(50, 200)).moverel()
 
             return True
         else:
