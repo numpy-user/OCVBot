@@ -4,13 +4,17 @@ Contains non-skilling player behaviors.
 
 """
 import logging as log
+import os
 import random as rand
 import sys
 import time
 
+import cv2
+import numpy as np
+import pyautogui
 import pyautogui as pag
 
-from ocvbot import input, misc, vision as vis, startup as start
+from ocvbot import input, vision as vis, startup as start, vision, misc
 
 
 def switch_worlds_logged_in(members=False, free_to_play=True, safe=True):
@@ -590,3 +594,159 @@ def drop_item(item, track=True,
         log.error('Tried dropping item too many times!')
         return False
     return True
+
+def bank_config_check(config, status):
+    """
+    Checks for specific bank configurations in the bank window, such
+    as the "All" button being highlighted.
+
+    Args:
+        config:
+        status:
+
+    Returns:
+
+    """
+    if config == 'quantity':
+        if status == 'all':
+            quantity_all_enabled = vis.Vision(ltwh=vis.game_screen,
+                                      needle='./needles/buttons/'
+                                             'bank-preset-all.png',
+                                      loop_num=2).wait_for_image()
+            if quantity_all_enabled is False:
+                quantity_all_disabled = vis.Vision(ltwh)
+                return
+
+
+
+def open_bank(direction):
+    if direction == 'south':
+
+        for _ in range(3):
+            one_tile = vis.Vision(ltwh=vis.game_screen,
+                                  needle='./needles/game-screen/'
+                                         'bank-booth-south-1-tile.png',
+                                  loop_num=1).click_image()
+
+            two_tiles = vis.Vision(ltwh=vis.game_screen,
+                                   needle='./needles/game-screen/'
+                                          'bank-booth-south-2-tiles.png',
+                                   loop_num=1).click_image()
+            if one_tile is True or two_tiles is True:
+                bank_open = vis.Vision(ltwh=vis.game_screen,
+                                       needle='./needles/buttons/'
+                                              'close.png',
+                                       loop_num=20).wait_for_image()
+                if bank_open is True:
+                    return True
+
+        raise Exception('Could not find bank booth!')
+    else:
+        raise Exception('Unsupported!')
+
+
+def enable_run():
+    """
+    If run is turned off but energy is full, turns running on.
+
+    """
+    for _ in range(5):
+        run_full_off = vis.Vision(ltwh=vis.client,
+                   needle='./run-full-off.png',
+                   loop_num=1).click_image(move_away=True)
+        misc.sleep_rand(300, 1000)
+        run_full_on = vis.Vision(ltwh=vis.client,
+                                 needle='./run-full-on.png',
+                                 loop_num=1).wait_for_image()
+        if run_full_on is True:
+            return True
+    log.error('Unable to turn on running!')
+
+
+def walk_to_waypoints():
+
+    for destination in waypoint:
+        for _ in range(100):
+
+            dest_x, dest_y = destination
+
+            # Find the current minimap position within the haystack map.
+            os.system('rm -f current-pos*.png')
+            pyautogui.screenshot('current-pos.png', region=vision.minimap_slice)
+            coords = ocv_find_location()
+            (coords_left, coords_top, coords_width, coords_height) = coords
+
+            # Get center of minimap coordinates.
+            coords_map_x = int(coords_left + (coords_width / 2))
+            coords_map_y = int(coords_top + (coords_height / 2))
+            print("minimap relative to haystack map is", coords_map_x, coords_map_y)
+
+            coords_client_x = vision.client[0] + 642
+            coords_client_y = vision.client[1] + 86
+
+
+            # Figure out how far the destination is from the current location
+            dest_distance_x = dest_x - coords_map_x
+            dest_distance_y = dest_y - coords_map_y
+            print('dest_distance x is', dest_distance_x)
+            print('dest_distance y is', dest_distance_y)
+
+            # If the destination distance is larger than the size of the minimap,
+            #   reduce the current click distance to the edge of the minimap
+            if dest_distance_x >= 50:
+                click_pos_x = coords_client_x + 50
+            elif abs(dest_distance_x) >= 50:
+                click_pos_x = coords_client_x - 50
+            else:
+                click_pos_x = coords_client_x + dest_distance_x
+
+            if dest_distance_y >= 50:
+                click_pos_y = coords_client_y + 50
+                # Since the minimap is circular, if the Y-distance is low
+                #   engouh, we can make the click-position for the X-coordinate
+                #   farther down the minimap to take advantage of the extra space
+                if dest_distance_y >= 10:
+                    click_pos_y = coords_client_y + 70
+
+            elif abs(dest_distance_y) >= 50:
+                click_pos_y = coords_client_y - 50
+
+                if abs(dest_distance_y) >= 10:
+                    click_pos_y = coords_client_y - 70
+            else:
+                click_pos_y = coords_client_y + dest_distance_y
+
+            if (abs(dest_distance_y) <= tolerance and abs(dest_distance_x) <= tolerance):
+                print('arrived at dest!')
+                break
+            else:
+                print('havent arrived at dest yet')
+                pass
+
+            # Now, make the click
+            click_pos_y = abs(click_pos_y)
+            click_pos_x = abs(click_pos_x)
+            input.Mouse(ltwh=(click_pos_x, click_pos_y, 0, 0), sleep_range=(50, 100, 100, 200),
+                        move_duration_range=(0, 300)).click_coord()
+            #print('click pos x is ', click_pos_x)
+            #print('click pos y is ', click_pos_y)
+            misc.sleep_rand(((refresh - 2) * 1000), ((refresh + 2) * 1000))
+
+            if (abs(dest_distance_y) <= tolerance and abs(dest_distance_x) <= tolerance):
+                print('arrived at dest!')
+                break
+            else:
+                print('havent arrived at dest yet')
+                pass
+
+
+haystack = cv2.imread('varrock-east-mine.png', cv2.IMREAD_GRAYSCALE)
+def ocv_find_location():
+    global haystack
+    needle = pyautogui.screenshot(region=vision.minimap_slice)
+    needle = cv2.cvtColor(np.array(needle), cv2.COLOR_RGB2GRAY)
+    w, h = needle.shape[::-1]
+    result = cv2.matchTemplate(haystack, needle, cv2.TM_CCOEFF_NORMED)
+    loc = cv2.minMaxLoc(result)
+    max_x = loc[3]
+    return max_x[0], max_x[1], w, h

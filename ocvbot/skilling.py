@@ -8,9 +8,9 @@ import logging as log
 from ocvbot import behavior, vision as vis, misc, startup as start
 
 
-def drop_miner(rocks, ore, ore_type):
+def miner(rocks, ore, ore_type, drop):
     """
-    A drop-mining function.
+    A mining function.
 
     This function alternates mining among the rocks that were provided
     (it can mine one rock, two rocks, or many rocks at once).
@@ -40,26 +40,15 @@ def drop_miner(rocks, ore, ore_type):
     #   init_vision() function has to run before the objects get valid
     #   values.
 
-    # Create tuples of whether or not to drop the item and the item's path.
-    drop_sapphire = (start.config_file['drop_sapphire'],
-                     './needles/items/uncit-sapphire.png')
-    drop_emerald = (start.config_file['drop_emerald'],
-                    './needles/items/uncit-emerald.png')
-    drop_ruby = (start.config_file['drop_ruby'],
-                 './needles/items/uncit-ruby.png')
-    drop_diamond = (start.config_file['drop_diamond'],
-                    './needles/items/uncit-diamond.png')
-    drop_clue_geode = (start.config_file['drop_clue_geode'],
-                       './needles/items/clue-geode.png')
 
-    for attempts in range(1, 100):
+    for tries in range(100):
 
         for rock_needle in rocks:
             # Unpack each tuple in the rocks[] list to obtain the "full"
             #   and "empty" versions of each ore.
             (full_rock_needle, empty_rock_needle) = rock_needle
 
-            log.debug('Searching for ore %s...', attempts)
+            log.debug('Searching for ore %s...', tries)
 
             # If current rock is full, begin mining it.
             # Move the mouse away from the rock so it doesn't
@@ -99,24 +88,21 @@ def drop_miner(rocks, ore, ore_type):
                     #   return.
                     if inv_full is True:
                         log.info('Inventory is full.')
-                        ore_dropped = behavior.drop_item(item=ore)
-                        if ore_dropped is False:
-                            behavior.logout()
-                            # This runtime error will occur if the
-                            #   player's inventory is full, but they
-                            #   don't have any ore to drop.
-                            raise RuntimeError("Could not find ore to drop!")
+                        if drop is True:
+                            drop_ore(ore)
+                        else:
+                            behavior.enable_run()
+                            ocvbot.behavior.walk_to_waypoint([(253, 161, 25, 5),
+                                                              (108, 155, 20, 5),
+                                                              (108, 194, 4, 3)])
+                            behavior.open_bank('south')
+                            vis.Vision(ltwh=vis.inv,
+                                       needle=ore).click_image()
+                            misc.sleep_rand(1000, 10000)
 
-                        # Iterate through the other items that could
-                        #   be dropped. If any of them is true, drop that item.
-                        # The for loop is iterating over a tuple of tuples.
-                        for item in (drop_sapphire, drop_emerald, drop_ruby,
-                                     drop_diamond, drop_clue_geode):
-                            # Unpack the tuple
-                            (drop_item, path) = item
-                            if drop_item is True:
-                                behavior.drop_item(item=str(path), track=False)
-
+                            ocvbot.behavior.walk_to_waypoint([(253, 161, 25, 5),
+                                                              (262, 365, 25, 5),
+                                                              (240, 398, 4, 5)])
                         elapsed_time = misc.run_duration(human_readable=True)
                         log.info('Script has been running for %s (HH:MM:SS)',
                                  elapsed_time)
@@ -139,3 +125,40 @@ def drop_miner(rocks, ore, ore_type):
                 else:
                     log.info('Timed out waiting for mining to finish.')
     return
+
+def drop_ore(ore):
+    """
+    Drops ore and optionally gems in inventory.
+
+    Returns:
+
+    """
+
+    # Create tuples of whether or not to drop the item and the item's path.
+    drop_sapphire = (start.config_file['drop_sapphire'],
+                     './needles/items/uncit-sapphire.png')
+    drop_emerald = (start.config_file['drop_emerald'],
+                    './needles/items/uncit-emerald.png')
+    drop_ruby = (start.config_file['drop_ruby'],
+                 './needles/items/uncit-ruby.png')
+    drop_diamond = (start.config_file['drop_diamond'],
+                    './needles/items/uncit-diamond.png')
+    drop_clue_geode = (start.config_file['drop_clue_geode'],
+                       './needles/items/clue-geode.png')
+    ore_dropped = behavior.drop_item(item=ore)
+    if ore_dropped is False:
+        behavior.logout()
+        # This runtime error will occur if the
+        #   player's inventory is full, but they
+        #   don't have any ore to drop.
+        raise RuntimeError("Could not find ore to drop!")
+
+    # Iterate through the other items that could
+    #   be dropped. If any of them is true, drop that item.
+    # The for loop is iterating over a tuple of tuples.
+    for item in (drop_sapphire, drop_emerald, drop_ruby,
+                 drop_diamond, drop_clue_geode):
+        # Unpack the tuple
+        (drop_item, path) = item
+        if drop_item is True:
+            behavior.drop_item(item=str(path), track=False)

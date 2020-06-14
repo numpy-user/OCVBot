@@ -156,7 +156,7 @@ class Vision:
 
         # Need to add 1 to loop_num because if range() starts at 0, the
         #   first loop will be the "0th" loop, which is confusing.
-        for tries in range(1, (self.loop_num + 1)):
+        for tries in range((self.loop_num + 1)):
 
             target_image = Vision.mlocate(self)
 
@@ -275,7 +275,7 @@ def orient(ltwh=(0, 0, start.DISPLAY_WIDTH, start.DISPLAY_HEIGHT),
         # TODO
         start_client()
         # Try 10 times to find the login screen after launching the client.
-        for tries in range(1, 10):
+        for _ in range(10):
             misc.sleep_rand(8000, 15000)
             orient(ltwh=ltwh, launch_client=False)
         log.critical('Could not find client! %s', launch_client)

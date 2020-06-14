@@ -22,13 +22,13 @@ def mining_lumbridge_swamp():
         if client_status[0] == 'logged_out':
             behavior.login_full()
 
-        skilling.drop_miner(
+        skilling.miner(
             rocks=[('./needles/game-screen/lumbridge-mine/east-full.png',
                     './needles/game-screen/lumbridge-mine/east-empty.png'),
                    ('./needles/game-screen/lumbridge-mine/south-full.png',
                     './needles/game-screen/lumbridge-mine/south-empty.png')],
             ore='./needles/items/copper-ore.png',
-            ore_type='copper')
+            ore_type='copper', drop=False)
 
         # Roll for randomized actions when the script returns.
         behavior.human_behavior_rand(chance=100)
@@ -48,13 +48,14 @@ def mining_varrock_east():
         client_status = vis.orient()
         if client_status[0] == 'logged_out':
             behavior.login_full()
-        skilling.drop_miner(
+        skilling.miner(
             rocks=[('./needles/game-screen/varrock-east-mine/north-full2.png',
                     './needles/game-screen/varrock-east-mine/north-empty.png'),
                    ('./needles/game-screen/varrock-east-mine/west-full.png',
                     './needles/game-screen/varrock-east-mine/west-empty.png')],
             ore='./needles/items/iron-ore.png',
-            ore_type='iron')
+            ore_type='iron',
+            drop = False)
 
         # Roll for randomized actions when the script returns.
         behavior.human_behavior_rand(chance=100)
