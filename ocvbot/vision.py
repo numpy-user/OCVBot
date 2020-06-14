@@ -340,8 +340,8 @@ game_screen = (game_screen_left, game_screen_top,
 
 # The player's inventory, plus the "side stone" tabs that open all the
 #   different menus.
-side_stones_left = client_left + 521
-side_stones_top = client_top + 169
+side_stones_left = client_left + 516
+side_stones_top = client_top + 166
 side_stones = (side_stones_left, side_stones_top,
                start.SIDE_STONES_WIDTH, start.SIDE_STONES_HEIGHT)
 
