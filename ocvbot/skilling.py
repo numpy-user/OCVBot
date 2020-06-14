@@ -96,9 +96,12 @@ def miner(rocks, ore, ore_type, drop):
                             drop_ore(ore)
                         else:
                             behavior.enable_run()
-                            ocvbot.behavior.walk_to_waypoint([(253, 161, 25, 5),
-                                                              (108, 155, 20, 5),
-                                                              (108, 194, 4, 3)])
+                            # Bank from mining spot.
+                            behavior.travel(
+                                [((253, 161), 5, (35, 35), (1, 8)),
+                                 ((108, 155), 5, (20, 20), (1, 8)),
+                                 ((108, 194), 0, (10, 4), (4, 10))],
+                                './haystacks/varrock-east-mine.png')
                             behavior.open_bank('south')
                             vis.Vision(ltwh=vis.inv,
                                        needle=ore).click_image()
@@ -107,10 +110,13 @@ def miner(rocks, ore, ore_type, drop):
                                            needle=gem,
                                            loop_num=1).click_image()
                             misc.sleep_rand(1000, 10000)
-
-                            ocvbot.behavior.walk_to_waypoint([(253, 161, 25, 5),
-                                                              (262, 365, 25, 5),
-                                                              (240, 398, 4, 5)])
+                            behavior.enable_run()
+                            # Mining spot from bank.
+                            behavior.travel(
+                                [((253, 161), 5, (35, 35), (1, 5)),
+                                 ((262, 365), 5, (25, 25), (1, 5)),
+                                 ((240, 398), 0, (4, 4), (5, 10))],
+                                './haystacks/varrock-east-mine.png')
                         elapsed_time = misc.run_duration(human_readable=True)
                         log.info('Script has been running for %s (HH:MM:SS)',
                                  elapsed_time)
