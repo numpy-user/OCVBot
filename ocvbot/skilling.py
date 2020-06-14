@@ -40,7 +40,6 @@ def miner(rocks, ore, ore_type, drop):
     #   init_vision() function has to run before the objects get valid
     #   values.
 
-
     for tries in range(100):
 
         for rock_needle in rocks:
@@ -113,8 +112,8 @@ def miner(rocks, ore, ore_type, drop):
 
                 # Wait until the rock is empty by waiting for the
                 #   "empty" version of the rock_needle tuple.
-                rock_empty = vis.Vision(ltwh=vis.chat_menu,
-                                        loop_num=15, conf=0.85,
+                rock_empty = vis.Vision(ltwh=vis.game_screen,
+                                        loop_num=35, conf=0.85,
                                         needle=empty_rock_needle,
                                         loop_sleep_range=(100, 200)) \
                     .wait_for_image()
@@ -126,6 +125,7 @@ def miner(rocks, ore, ore_type, drop):
                     log.info('Timed out waiting for mining to finish.')
     return
 
+
 def drop_ore(ore):
     """
     Drops ore and optionally gems in inventory.
@@ -136,13 +136,13 @@ def drop_ore(ore):
 
     # Create tuples of whether or not to drop the item and the item's path.
     drop_sapphire = (start.config_file['drop_sapphire'],
-                     './needles/items/uncit-sapphire.png')
+                     './needles/items/uncut-sapphire.png')
     drop_emerald = (start.config_file['drop_emerald'],
-                    './needles/items/uncit-emerald.png')
+                    './needles/items/uncut-emerald.png')
     drop_ruby = (start.config_file['drop_ruby'],
-                 './needles/items/uncit-ruby.png')
+                 './needles/items/uncut-ruby.png')
     drop_diamond = (start.config_file['drop_diamond'],
-                    './needles/items/uncit-diamond.png')
+                    './needles/items/uncut-diamond.png')
     drop_clue_geode = (start.config_file['drop_clue_geode'],
                        './needles/items/clue-geode.png')
     ore_dropped = behavior.drop_item(item=ore)
