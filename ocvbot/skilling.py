@@ -47,6 +47,15 @@ def miner(rocks, ore, ore_type, drop):
 
     for tries in range(100):
 
+        # Confirm player is in the correct mining spot. This is also
+        #   used to re-adjust the player if a mis-click moves the player
+        #   out of position.
+
+        # Applies to Varrock East mine only.
+        behavior.travel(
+            [((240, 399), 1, (4, 4), (5, 10))],
+            './haystacks/varrock-east-mine.png')
+
         for rock_needle in rocks:
             # Unpack each tuple in the rocks[] list to obtain the "full"
             #   and "empty" versions of each ore.
@@ -100,7 +109,7 @@ def miner(rocks, ore, ore_type, drop):
                             behavior.travel(
                                 [((253, 161), 5, (35, 35), (1, 8)),
                                  ((108, 155), 5, (20, 20), (1, 8)),
-                                 ((108, 194), 0, (10, 4), (4, 10))],
+                                 ((108, 194), 1, (10, 4), (5, 10))],
                                 './haystacks/varrock-east-mine.png')
                             behavior.open_bank('south')
                             vis.Vision(ltwh=vis.inv,
@@ -113,9 +122,9 @@ def miner(rocks, ore, ore_type, drop):
                             behavior.enable_run()
                             # Mining spot from bank.
                             behavior.travel(
-                                [((253, 161), 5, (35, 35), (1, 5)),
-                                 ((262, 365), 5, (25, 25), (1, 5)),
-                                 ((240, 398), 0, (4, 4), (5, 10))],
+                                [((253, 161), 5, (35, 35), (1, 8)),
+                                 ((262, 365), 5, (25, 25), (1, 8)),
+                                 ((240, 399), 1, (4, 4), (5, 10))],
                                 './haystacks/varrock-east-mine.png')
                         elapsed_time = misc.run_duration(human_readable=True)
                         log.info('Script has been running for %s (HH:MM:SS)',
