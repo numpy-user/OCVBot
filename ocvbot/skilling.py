@@ -34,6 +34,7 @@ def miner(rocks, ore, ore_type, drop):
         Raises a runtime error if the player's inventory is full but
         the function can't find any ore in the player's inventory to
         drop.
+
     """
     gems = ['./needles/items/uncut-sapphire.png',
             './needles/items/uncut-emerald.png',
@@ -45,12 +46,17 @@ def miner(rocks, ore, ore_type, drop):
     #   init_vision() function has to run before the objects get valid
     #   values.
 
+    # TODO: count the number of items in the inventory to make sure
+    #   the function never receives an "inventory is already full" message
+
+    # Make sure inventory is selected.
+    behavior.open_side_stone('inventory')
+
     for tries in range(100):
 
         # Confirm player is in the correct mining spot. This is also
         #   used to re-adjust the player if a mis-click moves the player
         #   out of position.
-
         # Applies to Varrock East mine only.
         behavior.travel(
             [((240, 399), 1, (4, 4), (5, 10))],
@@ -104,6 +110,7 @@ def miner(rocks, ore, ore_type, drop):
                         if drop is True:
                             drop_ore(ore)
                         else:
+                            behavior.open_side_stone('inventory')
                             behavior.enable_run()
                             # Bank from mining spot.
                             behavior.travel(
@@ -122,7 +129,7 @@ def miner(rocks, ore, ore_type, drop):
                             behavior.enable_run()
                             # Mining spot from bank.
                             behavior.travel(
-                                [((253, 161), 5, (35, 35), (1, 8)),
+                                [((240, 161), 5, (35, 35), (1, 8)),
                                  ((262, 365), 5, (25, 25), (1, 8)),
                                  ((240, 399), 1, (4, 4), (5, 10))],
                                 './haystacks/varrock-east-mine.png')
