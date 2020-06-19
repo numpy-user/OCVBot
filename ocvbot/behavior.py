@@ -468,8 +468,7 @@ def check_skills():
     """
 
     open_side_stone('skills')
-    input.Mouse(vis.inv_left, vis.inv_top,
-                start.INV_WIDTH, start.INV_HEIGHT).move_to()
+    input.Mouse(ltwh=vis.inv).move_to()
     misc.sleep_rand(500, 5000)
 
 
