@@ -114,9 +114,9 @@ def miner(rocks, ore, ore_type, drop):
                             behavior.enable_run()
                             # Bank from mining spot.
                             behavior.travel(
-                                [((253, 161), 5, (35, 35), (1, 8)),
-                                 ((108, 155), 5, (20, 20), (1, 8)),
-                                 ((108, 194), 1, (10, 4), (5, 10))],
+                                [((253, 171), 5, (35, 35), (1, 6)),
+                                 ((112, 158), 5, (20, 20), (1, 6)),
+                                 ((108, 194), 1, (10, 4), (3, 8))],
                                 './haystacks/varrock-east-mine.png')
                             behavior.open_bank('south')
                             vis.Vision(ltwh=vis.inv,
@@ -129,10 +129,11 @@ def miner(rocks, ore, ore_type, drop):
                             behavior.enable_run()
                             # Mining spot from bank.
                             behavior.travel(
-                                [((240, 161), 5, (35, 35), (1, 8)),
-                                 ((262, 365), 5, (25, 25), (1, 8)),
-                                 ((240, 399), 1, (4, 4), (5, 10))],
+                                [((240, 161), 5, (35, 35), (1, 6)),
+                                 ((262, 365), 5, (25, 25), (1, 6)),
+                                 ((240, 399), 1, (4, 4), (3, 8))],
                                 './haystacks/varrock-east-mine.png')
+                            misc.sleep_rand(300, 800)
                         elapsed_time = misc.run_duration(human_readable=True)
                         log.info('Script has been running for %s (HH:MM:SS)',
                                  elapsed_time)
