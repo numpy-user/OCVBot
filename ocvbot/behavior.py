@@ -458,7 +458,6 @@ def open_side_stone(side_stone):
         vis.Vision(ltwh=vis.game_screen,
                    needle='./needles/buttons/close.png',
                    loop_num=1).click_image()
-
     raise Exception('Could not open side stone!')
 
 
@@ -640,7 +639,7 @@ def open_bank(direction):
 
         misc.sleep_rand(1000, 3000)
 
-        raise Exception('Could not find bank booth!')
+    raise Exception('Could not find bank booth!')
 
 
 def enable_run():
@@ -669,6 +668,20 @@ def travel(param_list, haystack_map):
     """
     Clicks on the minimap until the plater has arrived at the desired
     coordinates.
+
+    Here's an example of what the arguments might look like for this
+    function:
+        [((240, 399), 1, (4, 4), (5, 10))], haystack.png
+        (240, 399) = The X and Y coordinates of the waypoint on
+                     haystack.png.
+        1 = The X and Y variation in coordinates that will be used when
+            clicking on the minimap.
+        (4, 4) = The X and Y variation in coordinates the function will
+                 allow when checking if the player has reached the
+                 waypoint.
+        (5, 10) = The minimum and maximum number of seconds to wait for
+                  the player to walk/run to the location clicked on in
+                  the minimap.
 
     Args:
         param_list (list): A list of the coordinates to move the player
@@ -713,7 +726,7 @@ def travel(param_list, haystack_map):
             # Absolute coordinates are used rather than using an image
             #   search to speed things up.
             coords_client_x = vision.client[0] + 642
-            coords_client_y = vision.client[1] + 86
+            coords_client_y = vision.client[1] + 85
 
             # Figure out how far the waypoint is from the current location.
             waypoint_distance_x = waypoint[0] - coords_map_x
@@ -721,9 +734,9 @@ def travel(param_list, haystack_map):
             log.info('dest_distance x is %s.', waypoint_distance_x)
             log.info('dest_distance y is %s.', waypoint_distance_y)
 
-            # Check if player has reached waypoint.
-            if (abs(waypoint_distance_y) <= waypoint_tolerance[0] and
-                    abs(waypoint_distance_x) <= waypoint_tolerance[1]):
+            # Check if player has reached waypoint before making the click.
+            if (abs(waypoint_distance_x) <= waypoint_tolerance[0] and
+                    abs(waypoint_distance_y) <= waypoint_tolerance[1]):
                 break
 
             # Generate random click coordinate variation.
@@ -737,14 +750,14 @@ def travel(param_list, haystack_map):
                 #   enough, we can make the click-position for the X-coordinate
                 #   farther left/right to take advantage of the extra space.
                 if waypoint_distance_y <= 10:
-                    click_pos_x += 12
+                    click_pos_x += 13
 
             # If the waypoint's X distance is "negative", we know we
             #   need to subtract X coordinates.
             elif abs(waypoint_distance_x) >= 50:
                 click_pos_x = coords_client_x - 50 + coord_rand
                 if abs(waypoint_distance_y) <= 10:
-                    click_pos_x -= 12
+                    click_pos_x -= 13
             else:
                 click_pos_x = coords_client_x + waypoint_distance_x \
                               + coord_rand
@@ -757,11 +770,11 @@ def travel(param_list, haystack_map):
             if waypoint_distance_y >= 50:
                 click_pos_y = coords_client_y + 50 + coord_rand
                 if waypoint_distance_x <= 10:
-                    click_pos_y += 12
+                    click_pos_y += 13
             elif abs(waypoint_distance_y) >= 50:
                 click_pos_y = coords_client_y - 50 + coord_rand
                 if abs(waypoint_distance_x) <= 10:
-                    click_pos_y -= 12
+                    click_pos_y -= 13
             else:
                 click_pos_y = coords_client_y + waypoint_distance_y \
                               + coord_rand
@@ -776,13 +789,11 @@ def travel(param_list, haystack_map):
                         move_duration_range=(0, 300)).click_coord()
             misc.sleep_rand((sleep_range[0] * 1000), (sleep_range[1] * 1000))
 
-            if (abs(waypoint_distance_y) <= waypoint_tolerance[0] and
-                    abs(waypoint_distance_x) <= waypoint_tolerance[1]):
+            if (abs(waypoint_distance_x) <= waypoint_tolerance[0] and
+                    abs(waypoint_distance_y) <= waypoint_tolerance[1]):
                 break
-        logout()
-        raise Exception('Could not reach waypoint after 500 tries!')
-    logout()
-    raise Exception('Could not reach destination!')
+    #logout()
+    #raise Exception('Could not reach destination!')
 
 
 def ocv_find_location(haystack):
