@@ -502,7 +502,7 @@ def human_behavior_rand(chance):
             elif roll == 4:
                 open_side_stone('prayers')
             elif roll == 5:
-                open_side_stone('spellbooks')
+                open_side_stone('spellbook')
             elif roll == 6:
                 open_side_stone('music')
             elif roll == 7:
