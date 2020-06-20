@@ -8,39 +8,25 @@ import sys
 from ocvbot import skilling, behavior, vision as vis, startup as start
 
 
-def mining_lumbridge_swamp():
+def miner(scenario):
     """
-    Script for mining copper in the mine in Lumbridge swamp.
+    Script for mining in a variety of locations, based on preset
+    "scenarios".
 
-    See "/docs/client-configuration/" for the required client
-    configuration settings.
+    Supported scenarios:
+        'lumbridge-swamp' = Mines copper in Lumbridge Swamp. Banking is
+                            not supported for this scenario.
+        'varrock-east' = Mines iron in Varrock East mine.
 
-    """
-    while True:
-        # Ensure the client is logged in before starting.
-        client_status = vis.orient()
-        if client_status[0] == 'logged_out':
-            behavior.login_full()
+        See "/docs/client-configuration/" for the required client
+        configuration settings for each scenario.
 
-        skilling.miner(
-            rocks=[('./needles/game-screen/lumbridge-mine/east-full.png',
-                    './needles/game-screen/lumbridge-mine/east-empty.png'),
-                   ('./needles/game-screen/lumbridge-mine/south-full.png',
-                    './needles/game-screen/lumbridge-mine/south-empty.png')],
-            ore='./needles/items/copper-ore.png',
-            ore_type='copper', drop_ore=False)
+    Args:
+        scenario (str): The scenario to use. See above for supported
+                        scenario types.
 
-        # Roll for randomized actions when the script returns.
-        behavior.human_behavior_rand(chance=100)
-        behavior.logout_rand_range()
-
-
-def mining_varrock_east():
-    """
-    Script for mining iron in the eastern Varrock mine.
-
-    See "/docs/client-configuration/" for the required client
-    configuration settings.
+    Raises:
+        Raises an exception if an unsupported scenario is passed.
 
     """
     while True:
@@ -48,14 +34,26 @@ def mining_varrock_east():
         client_status = vis.orient()
         if client_status[0] == 'logged_out':
             behavior.login_full()
-        skilling.miner(
-            rocks=[('./needles/game-screen/varrock-east-mine/north-full2.png',
-                    './needles/game-screen/varrock-east-mine/north-empty.png'),
-                   ('./needles/game-screen/varrock-east-mine/west-full.png',
-                    './needles/game-screen/varrock-east-mine/west-empty.png')],
-            ore='./needles/items/iron-ore.png',
-            ore_type='iron',
-            drop_ore=start.config_file['drop_ore'])
+
+        if scenario == 'varrock-east-mine':
+            skilling.mine(rocks=[('./needles/game-screen/varrock-east-mine/north-full2.png',
+                                  './needles/game-screen/varrock-east-mine/north-empty.png'),
+                                 ('./needles/game-screen/varrock-east-mine/west-full.png',
+                                  './needles/game-screen/varrock-east-mine/west-empty.png')],
+                          ore='./needles/items/iron-ore.png',
+                          ore_type='iron',
+                          drop_ore=start.config_file['drop_ore'])
+
+        elif scenario == 'lumbridge-mine':
+            skilling.mine(rocks=[('./needles/game-screen/lumbridge-mine/east-full.png',
+                                  './needles/game-screen/lumbridge-mine/east-empty.png'),
+                                 ('./needles/game-screen/lumbridge-mine/south-full.png',
+                                  './needles/game-screen/lumbridge-mine/south-empty.png')],
+                          ore='./needles/items/copper-ore.png',
+                          ore_type='copper', drop_ore=False)
+
+        else:
+            raise Exception('Scenario not supported!')
 
         # Roll for randomized actions when the script returns.
         behavior.logout_rand_range()
@@ -104,10 +102,10 @@ def spellcaster(scenario):
 
 
 if start.config_file['script'] == '1':
-    mining_lumbridge_swamp()
+    miner('lumbridge-mine')
     sys.exit(0)
 elif start.config_file['script'] == '2':
-    mining_varrock_east()
+    miner('varrock-east-mine')
     sys.exit(0)
 elif start.config_file['script'] == '3':
     spellcaster('curse-varrock-castle')
