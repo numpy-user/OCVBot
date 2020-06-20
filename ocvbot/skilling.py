@@ -4,20 +4,42 @@ Contains skilling-related functions.
 
 """
 import logging as log
+import time
 
 from ocvbot import behavior, vision as vis, misc, startup as start
 
 
-def curse():
-    for _ in range(100):
-        curse = vis.Vision(ltwh=vis.inv, loop_num=1, needle='./needles/buttons/curse.png') \
-            .click_image(sleep_range=(50, 500, 50, 500,), move_duration_range=(100, 1000))
-        for _ in range(100):
-            monk = vis.Vision(ltwh=vis.game_screen, loop_num=1, needle='./needles/game-screen/monk-of-zamorak.png', conf=0.75) \
-                .click_image(sleep_range=(50, 500, 50, 500,), move_duration_range=(100, 1000))
-            if monk is True:
-                break
-        misc.sleep_rand(1000, 1500)
+def spellcast(spell, target):
+    spell = './needles/buttons/' + spell + '.png'
+    target = './needles/game-screen/' + target + '.png'
+
+    for _ in range(10000):
+        # Look for spell.
+        spell_needle = vis.Vision(ltwh=vis.inv, loop_num=1, needle=spell) \
+            .click_image(sleep_range=(10, 500, 10, 500,), move_duration_range=(10, 1000))
+        if spell_needle is True:
+            # Look for target.
+            for _ in range(100):
+                monk = vis.Vision(needle=target, ltwh=vis.game_screen, loop_num=1, conf=0.75) \
+                    .click_image(sleep_range=(10, 500, 10, 500,), move_duration_range=(10, 1000))
+                if monk is True:
+                    break
+        else:
+            log.critical('Could not find %s spell! Logging out in 10 seconds!', spell)
+            time.sleep(10)
+            behavior.logout()
+
+        # Wait for spell to be cast.
+        misc.sleep_rand(900, 1800)
+        # Roll for random wait.
+        misc.wait_rand(chance=200, wait_min=10000, wait_max=60000)
+        # Roll for logout after the configured period of time.
+        behavior.logout_rand_range()
+
+    log.critical('Out of iterations! Logging out in 10 seconds!')
+    time.sleep(10)
+    behavior.logout()
+
 
 
 def miner(rocks, ore, ore_type, drop):
@@ -102,8 +124,8 @@ def miner(rocks, ore, ore_type, drop):
                     log.debug('Timed out waiting for mining to start.')
 
                     inv_full = vis.Vision(ltwh=vis.chat_menu, loop_num=1,
-                                          needle='./needles/chat-menu/mining-inventory-full.png') \
-                        .wait_for_image()
+                                          needle='./needles/chat-menu/'
+                                                 'mining-inventory-full.png').wait_for_image()
 
                     # If the inventory is full, empty the ore and
                     #   return.
@@ -139,9 +161,9 @@ def miner(rocks, ore, ore_type, drop):
 
                 # Wait until the rock is empty by waiting for the
                 #   "empty" version of the rock_needle tuple.
-                rock_empty = vis.Vision(ltwh=vis.game_screen, loop_num=35, conf=0.85,
-                                        needle=empty_rock_needle, loop_sleep_range=(100, 200)) \
-                    .wait_for_image()
+                rock_empty = vis.Vision(ltwh=vis.game_screen, loop_num=35,
+                                        conf=0.85, needle=empty_rock_needle,
+                                        loop_sleep_range=(100, 200)).wait_for_image()
 
                 if rock_empty is True:
                     log.info('Rock is empty.')
