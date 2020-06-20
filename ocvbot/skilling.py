@@ -9,55 +9,65 @@ import time
 from ocvbot import behavior, vision as vis, misc, startup as start
 
 
-def spellcast(scenario):
-    if scenario == 'curse-varrock-castle':
-        spell = './needles/buttons/curse.png'
-        target = './needles/game-screen/monk-of-zamorak.png'
-        haystack = './haystacks/varrock-castle.png'
-    else:
-        raise Exception('Scenario not supported!')
+def cast_spell(spell, target, haystack=None):
+    """
+    Casts a spell at a target. Optionally can require the player to be
+    in a specific location.
 
+    Args:
+        spell (file): Filepath to the spell to cast as it appears in the
+                      player's spellbook (NOT greyed-out).
+        target (file): Filepath to an image of the target to cast the
+                       spell on, as it appears in the game world.
+        haystack (file): Filepath to the haystack map to use to ensure
+                         the player is in the correct location when
+                         casting the spell.
+
+    Returns:
+        Returns True if spell is cast successfully.
+
+    """
     behavior.open_side_stone('spellbook')
 
-    # Make sure character is in right spot.
-    behavior.travel([((75, 128), 1, (4, 4), (5, 10))], haystack)
+    if haystack is not None:
+        # Make sure character is in right spot.
+        behavior.travel([((75, 128), 1, (4, 4), (5, 10))], haystack)
 
-    for _ in range(10000):
-        # Look for spell.
+    # Try 5 times to find the spell to cast.
+    for _ in range(5):
         spell_needle = vis.Vision(ltwh=vis.inv, loop_num=1, needle=spell) \
             .click_image(sleep_range=(10, 500, 10, 500,), move_duration_range=(10, 1000))
-        if spell_needle is True:
-            # Look for target.
+        # Make sure the spellbook is open if spell cannot be found.
+        if spell_needle is False:
+            behavior.open_side_stone('spellbook')
+        else:
+            # Try 5 times to find the target.
             for _ in range(5):
                 target_needle = vis.Vision(needle=target, ltwh=vis.game_screen, loop_num=1, conf=0.75) \
                     .click_image(sleep_range=(10, 500, 10, 500,), move_duration_range=(10, 1000))
-                if target_needle is True:
-                    break
-                else:
+                if target_needle is False:
                     # If target cannot be found, check to see if character
                     #   moved accidentally.
                     # Click the spell again to de-activate it.
                     vis.Vision(ltwh=vis.inv, loop_num=1, needle=spell) \
                         .click_image(sleep_range=(10, 500, 10, 500,), move_duration_range=(10, 1000))
-                    behavior.travel([((75, 128), 1, (4, 4), (5, 10))], haystack)
-            else:
-                log.critical('Could not find %s target! Logging out in 10 seconds!', target)
-                time.sleep(10)
-                behavior.logout()
-        else:
-            log.critical('Could not find %s spell! Logging out in 10 seconds!', spell)
-            time.sleep(10)
+                    if haystack is not None:
+                        behavior.travel([((75, 128), 1, (4, 4), (5, 10))], haystack)
+                else:
+                    # Wait for spell to be cast.
+                    misc.sleep_rand(900, 1800)
+                    # Roll for random wait.
+                    misc.wait_rand(chance=200, wait_min=10000, wait_max=60000)
+                    # Roll for logout after the configured period of time.
+                    behavior.logout_rand_range()
+                    return True
+
+            log.critical('Could not find %s target! Logging out in 10-20 seconds!', target)
+            misc.sleep_rand(10000, 20000)
             behavior.logout()
 
-        # Wait for spell to be cast.
-        misc.sleep_rand(900, 1800)
-        # Roll for random wait.
-        misc.wait_rand(chance=200, wait_min=10000, wait_max=60000)
-        # Roll for logout after the configured period of time.
-        behavior.logout_rand_range()
-
-    log.critical('Out of iterations! Logging out in 10 seconds!')
-    time.sleep(10)
+    log.critical('Could not find %s spell or out of runes! Logging out in 10-20 seconds!', spell)
+    misc.sleep_rand(10000, 20000)
     behavior.logout()
 
 
