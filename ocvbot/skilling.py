@@ -102,7 +102,7 @@ def miner(rocks, ore, ore_type, drop):
                         else:
                             behavior.open_side_stone('inventory')
                             # Bank from mining spot.
-                            behavior.travel([((253, 171), 5, (35, 35), (1, 6)),
+                            behavior.travel([((253, 181), 5, (35, 35), (1, 6)),
                                             ((112, 158), 5, (20, 20), (1, 6)),
                                             ((108, 194), 1, (10, 4), (3, 8))],
                                             './haystacks/varrock-east-mine.png')
@@ -110,7 +110,7 @@ def miner(rocks, ore, ore_type, drop):
                             vis.Vision(ltwh=vis.inv, needle=ore).click_image()
                             for gem in gems:
                                 vis.Vision(ltwh=vis.inv, needle=gem, loop_num=1).click_image()
-                            misc.sleep_rand(1000, 10000)
+                            misc.sleep_rand(500, 3000)
                             # Mining spot from bank.
                             behavior.travel([((240, 161), 5, (35, 35), (1, 6)),
                                             ((262, 365), 5, (25, 25), (1, 6)),
