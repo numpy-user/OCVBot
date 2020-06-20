@@ -50,7 +50,7 @@ def miner(scenario):
                                  ('./needles/game-screen/lumbridge-mine/south-full.png',
                                   './needles/game-screen/lumbridge-mine/south-empty.png')],
                           ore='./needles/items/copper-ore.png',
-                          ore_type='copper', drop_ore=False)
+                          ore_type='copper', drop_ore=False) # Dropping ore not supported.
 
         else:
             raise Exception('Scenario not supported!')
@@ -84,8 +84,9 @@ def spellcaster(scenario):
         spell = './needles/buttons/curse.png'
         target = './needles/game-screen/monk-of-zamorak.png'
         haystack = './haystacks/varrock-castle.png'
+        cast_delay = (800, 1200)
         for _ in range(10000):
-            skilling.cast_spell(spell, target, haystack)
+            skilling.cast_spell(spell, target, haystack, cast_delay)
 
     else:
         raise Exception('Scenario not supported!')

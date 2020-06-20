@@ -9,7 +9,7 @@ import time
 from ocvbot import behavior, vision as vis, misc, startup as start
 
 
-def cast_spell(spell, target, haystack_map=None):
+def cast_spell(spell, target, haystack_map=None, cast_delay=(1000, 2000)):
     """
     Casts a spell at a target. Optionally can require the player to be
     in a specific location.
@@ -23,6 +23,9 @@ def cast_spell(spell, target, haystack_map=None):
                              the player is in the correct location when
                              casting the spell. This is identical to the
                              parameter used by the travel() function.
+        cast_delay (tuple): A 2-tuple containing the minimum and maximum
+                            number of miliseconds to wait after clicking
+                            the target and returning.
 
     Returns:
         Returns True if spell is cast successfully.
@@ -61,7 +64,7 @@ def cast_spell(spell, target, haystack_map=None):
                         behavior.login_full()
                 else:
                     # Wait for spell to be cast.
-                    misc.sleep_rand(900, 1800)
+                    misc.sleep_rand(cast_delay[0], cast_delay[1])
                     # Roll for random wait.
                     misc.wait_rand(chance=200, wait_min=10000, wait_max=60000)
                     # Roll for logout after the configured period of time.
@@ -120,6 +123,8 @@ def mine(rocks, ore, ore_type, drop_ore):
 
     # TODO: count the number of items in the inventory to make sure
     #   the function never receives an "inventory is already full" message
+
+    # TODO: refactor a mine_rock() function out of this one.
 
     # Make sure inventory is selected.
     behavior.open_side_stone('inventory')
@@ -192,8 +197,8 @@ def mine(rocks, ore, ore_type, drop_ore):
                         elapsed_time = misc.run_duration(human_readable=True)
                         log.info('Script has been running for %s (HH:MM:SS)',
                                  elapsed_time)
-                        return
-                    return
+                        return True
+                    return True
 
                 log.info('Mining started.')
 
@@ -209,7 +214,7 @@ def mine(rocks, ore, ore_type, drop_ore):
                     behavior.human_behavior_rand(chance=100)
                 else:
                     log.info('Timed out waiting for mining to finish.')
-    return
+    return True
 
 
 def fdrop_ore(ore):
@@ -248,3 +253,4 @@ def fdrop_ore(ore):
         (drop_item, path) = item
         if drop_item is True:
             behavior.drop_item(item=str(path), track=False)
+            return True
