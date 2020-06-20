@@ -58,9 +58,7 @@ def miner(rocks, ore, ore_type, drop):
         #   used to re-adjust the player if a mis-click moves the player
         #   out of position.
         # Applies to Varrock East mine only.
-        behavior.travel(
-            [((240, 399), 1, (4, 4), (5, 10))],
-            './haystacks/varrock-east-mine.png')
+        behavior.travel([((240, 399), 1, (4, 4), (5, 10))], './haystacks/varrock-east-mine.png')
 
         for rock_needle in rocks:
             # Unpack each tuple in the rocks[] list to obtain the "full"
@@ -72,11 +70,8 @@ def miner(rocks, ore, ore_type, drop):
             # If current rock is full, begin mining it.
             # Move the mouse away from the rock so it doesn't
             #   interfere with matching the needle.
-            rock_full = vis.Vision(ltwh=vis.game_screen, loop_num=1,
-                                   needle=full_rock_needle, conf=0.8) \
-                .click_image(sleep_range=(0, 100, 0, 100,),
-                             move_duration_range=(0, 500),
-                             move_away=True)
+            rock_full = vis.Vision(ltwh=vis.game_screen, loop_num=1, needle=full_rock_needle, conf=0.8) \
+                .click_image(sleep_range=(0, 100, 0, 100,), move_duration_range=(0, 500), move_away=True)
             if rock_full is True:
                 log.info('Waiting for mining to start.')
 
@@ -85,22 +80,17 @@ def miner(rocks, ore, ore_type, drop):
 
                 # Once the rock has been clicked on, wait for mining to
                 #   start by monitoring chat.
-                mining_started = vis.Vision(ltwh=vis.chat_menu_recent,
-                                            loop_num=5, conf=0.9,
-                                            needle='./needles/chat-menu/'
-                                                   'mining-started.png',
-                                            loop_sleep_range=(100, 200)) \
-                    .wait_for_image()
+                mining_started = vis.Vision(ltwh=vis.chat_menu_recent, loop_num=5, conf=0.9,
+                                            needle='./needles/chat-menu/mining-started.png',
+                                            loop_sleep_range=(100, 200)).wait_for_image()
 
                 # If mining hasn't started after looping has finished,
                 #   check to see if the inventory is full.
                 if mining_started is False:
                     log.debug('Timed out waiting for mining to start.')
 
-                    inv_full = vis.Vision(ltwh=vis.chat_menu,
-                                          loop_num=1,
-                                          needle='./needles/chat-menu/'
-                                                 'mining-inventory-full.png') \
+                    inv_full = vis.Vision(ltwh=vis.chat_menu, loop_num=1,
+                                          needle='./needles/chat-menu/mining-inventory-full.png') \
                         .wait_for_image()
 
                     # If the inventory is full, empty the ore and
@@ -111,28 +101,21 @@ def miner(rocks, ore, ore_type, drop):
                             drop_ore(ore)
                         else:
                             behavior.open_side_stone('inventory')
-                            behavior.enable_run()
                             # Bank from mining spot.
-                            behavior.travel(
-                                [((253, 171), 5, (35, 35), (1, 6)),
-                                 ((112, 158), 5, (20, 20), (1, 6)),
-                                 ((108, 194), 1, (10, 4), (3, 8))],
-                                './haystacks/varrock-east-mine.png')
+                            behavior.travel([((253, 171), 5, (35, 35), (1, 6)),
+                                            ((112, 158), 5, (20, 20), (1, 6)),
+                                            ((108, 194), 1, (10, 4), (3, 8))],
+                                            './haystacks/varrock-east-mine.png')
                             behavior.open_bank('south')
-                            vis.Vision(ltwh=vis.inv,
-                                       needle=ore).click_image()
+                            vis.Vision(ltwh=vis.inv, needle=ore).click_image()
                             for gem in gems:
-                                vis.Vision(ltwh=vis.inv,
-                                           needle=gem,
-                                           loop_num=1).click_image()
+                                vis.Vision(ltwh=vis.inv, needle=gem, loop_num=1).click_image()
                             misc.sleep_rand(1000, 10000)
-                            behavior.enable_run()
                             # Mining spot from bank.
-                            behavior.travel(
-                                [((240, 161), 5, (35, 35), (1, 6)),
-                                 ((262, 365), 5, (25, 25), (1, 6)),
-                                 ((240, 399), 1, (4, 4), (3, 8))],
-                                './haystacks/varrock-east-mine.png')
+                            behavior.travel([((240, 161), 5, (35, 35), (1, 6)),
+                                            ((262, 365), 5, (25, 25), (1, 6)),
+                                            ((240, 399), 1, (4, 4), (3, 8))],
+                                            './haystacks/varrock-east-mine.png')
                             misc.sleep_rand(300, 800)
                         elapsed_time = misc.run_duration(human_readable=True)
                         log.info('Script has been running for %s (HH:MM:SS)',
@@ -144,10 +127,8 @@ def miner(rocks, ore, ore_type, drop):
 
                 # Wait until the rock is empty by waiting for the
                 #   "empty" version of the rock_needle tuple.
-                rock_empty = vis.Vision(ltwh=vis.game_screen,
-                                        loop_num=35, conf=0.85,
-                                        needle=empty_rock_needle,
-                                        loop_sleep_range=(100, 200)) \
+                rock_empty = vis.Vision(ltwh=vis.game_screen, loop_num=35, conf=0.85,
+                                        needle=empty_rock_needle, loop_sleep_range=(100, 200)) \
                     .wait_for_image()
 
                 if rock_empty is True:
