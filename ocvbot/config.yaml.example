@@ -35,6 +35,12 @@ drop_diamond: False
 #   clue scrolls.
 drop_clue_geode: False
 
+# Whether the Varrock East Mine mining script should drop the ore or
+#   bank it.
+# The user's bank PIN must have already been entered before using the
+#   bank
+drop_ore: False
+
 # A random logout break will occur once between these two times. Units
 #   are in minutes.
 min_session_duration: '120'
