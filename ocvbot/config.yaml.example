@@ -11,6 +11,7 @@
 script: '2'
 # 1: Lumbridge Swamp drop mining copper ore. (client-configuration/mining-lumbridge-swamp)
 # 2: Varrock East drop mining iron ore. (client-configuration/mining-varrock-east)
+# 3: Casting curse on Monk of Zamorak in Varrock Castle. (client-configuration/magic-curse)
 
 # This is the path to the user's credential files. This can be a relative
 #   path (starting from ocvbot/ocvbot/) or an absolute path.

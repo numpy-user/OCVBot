@@ -9,10 +9,18 @@ import time
 from ocvbot import behavior, vision as vis, misc, startup as start
 
 
-def spellcast(spell, target):
-    spell = './needles/buttons/' + spell + '.png'
-    target = './needles/game-screen/' + target + '.png'
+def spellcast(scenario):
+    if scenario == 'curse-varrock-castle':
+        spell = './needles/buttons/curse.png'
+        target = './needles/game-screen/monk-of-zamorak.png'
+        haystack = './haystacks/varrock-castle.png'
+    else:
+        raise Exception('Scenario not supported!')
+
     behavior.open_side_stone('spellbook')
+
+    # Make sure character is in right spot.
+    behavior.travel([((75, 128), 1, (4, 4), (5, 10))], haystack)
 
     for _ in range(10000):
         # Look for spell.
@@ -20,11 +28,22 @@ def spellcast(spell, target):
             .click_image(sleep_range=(10, 500, 10, 500,), move_duration_range=(10, 1000))
         if spell_needle is True:
             # Look for target.
-            for _ in range(100):
-                monk = vis.Vision(needle=target, ltwh=vis.game_screen, loop_num=1, conf=0.75) \
+            for _ in range(5):
+                target_needle = vis.Vision(needle=target, ltwh=vis.game_screen, loop_num=1, conf=0.75) \
                     .click_image(sleep_range=(10, 500, 10, 500,), move_duration_range=(10, 1000))
-                if monk is True:
+                if target_needle is True:
                     break
+                else:
+                    # If target cannot be found, check to see if character
+                    #   moved accidentally.
+                    # Click the spell again to de-activate it.
+                    vis.Vision(ltwh=vis.inv, loop_num=1, needle=spell) \
+                        .click_image(sleep_range=(10, 500, 10, 500,), move_duration_range=(10, 1000))
+                    behavior.travel([((75, 128), 1, (4, 4), (5, 10))], haystack)
+            else:
+                log.critical('Could not find %s target! Logging out in 10 seconds!', target)
+                time.sleep(10)
+                behavior.logout()
         else:
             log.critical('Could not find %s spell! Logging out in 10 seconds!', spell)
             time.sleep(10)

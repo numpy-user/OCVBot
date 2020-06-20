@@ -78,5 +78,5 @@ elif start.config_file['script'] == '2':
     mining_varrock_east()
     sys.exit(0)
 elif start.config_file['script'] == '3':
-    skilling.spellcast(spell='curse', target='monk-of-zamorak')
+    skilling.spellcast('curse-varrock-castle')
     sys.exit(0)
