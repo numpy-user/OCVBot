@@ -705,6 +705,8 @@ def travel(param_list, haystack_map):
 
     """
     haystack = cv2.imread(haystack_map, cv2.IMREAD_GRAYSCALE)
+    # Disable failsafe for now.
+    pag.FAILSAFE = False
 
     # Get the first waypoint.
     for params in param_list:
@@ -797,6 +799,7 @@ def travel(param_list, haystack_map):
                 break
     #logout()
     #raise Exception('Could not reach destination!')
+    return True
 
 
 def ocv_find_location(haystack):
