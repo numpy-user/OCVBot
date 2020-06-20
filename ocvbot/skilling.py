@@ -72,7 +72,7 @@ def cast_spell(spell, target, haystack_map=None):
     behavior.logout()
 
 
-def miner(rocks, ore, ore_type, drop_ore):
+def mine(rocks, ore, ore_type, drop_ore):
     """
     A mining function.
 
