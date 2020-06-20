@@ -28,7 +28,7 @@ def mining_lumbridge_swamp():
                    ('./needles/game-screen/lumbridge-mine/south-full.png',
                     './needles/game-screen/lumbridge-mine/south-empty.png')],
             ore='./needles/items/copper-ore.png',
-            ore_type='copper', drop=False)
+            ore_type='copper', drop_ore=False)
 
         # Roll for randomized actions when the script returns.
         behavior.human_behavior_rand(chance=100)
@@ -55,7 +55,7 @@ def mining_varrock_east():
                     './needles/game-screen/varrock-east-mine/west-empty.png')],
             ore='./needles/items/iron-ore.png',
             ore_type='iron',
-            drop = False)
+            drop_ore=start.config_file['drop_ore'])
 
         # Roll for randomized actions when the script returns.
         behavior.logout_rand_range()

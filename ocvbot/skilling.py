@@ -12,6 +12,7 @@ from ocvbot import behavior, vision as vis, misc, startup as start
 def spellcast(spell, target):
     spell = './needles/buttons/' + spell + '.png'
     target = './needles/game-screen/' + target + '.png'
+    behavior.open_side_stone('spellbook')
 
     for _ in range(10000):
         # Look for spell.
@@ -41,8 +42,7 @@ def spellcast(spell, target):
     behavior.logout()
 
 
-
-def miner(rocks, ore, ore_type, drop):
+def miner(rocks, ore, ore_type, drop_ore):
     """
     A mining function.
 
@@ -63,6 +63,9 @@ def miner(rocks, ore, ore_type, drop):
                     inventory.
         ore_type (str): The type of ore being mined, used for generating
                         stats. Available options are: "copper", "iron"
+        drop_ore (bool): Whether to drop the ore or bank it. Setting
+                         this to 'False' only works for Varrock East
+                         bank.
 
     Raises:
         Raises a runtime error if the player's inventory is full but
@@ -131,8 +134,8 @@ def miner(rocks, ore, ore_type, drop):
                     #   return.
                     if inv_full is True:
                         log.info('Inventory is full.')
-                        if drop is True:
-                            drop_ore(ore)
+                        if drop_ore is True:
+                            fdrop_ore(ore)
                         else:
                             behavior.open_side_stone('inventory')
                             # Bank from mining spot.
@@ -174,7 +177,7 @@ def miner(rocks, ore, ore_type, drop):
     return
 
 
-def drop_ore(ore):
+def fdrop_ore(ore):
     """
     Drops ore and optionally gems in inventory.
 
