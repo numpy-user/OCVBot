@@ -38,9 +38,12 @@ def cast_spell(spell, target, haystack_map=None):
     for _ in range(5):
         spell_needle = vis.Vision(ltwh=vis.inv, loop_num=1, needle=spell) \
             .click_image(sleep_range=(10, 500, 10, 500,), move_duration_range=(10, 1000))
-        # Make sure the spellbook is open if spell cannot be found.
+        # Make sure the spellbook is open and client is logged in if
+        #    spell cannot be found.
         if spell_needle is False:
             behavior.open_side_stone('spellbook')
+            if vis.orient()[0] == 'logged_out':
+                behavior.login_full()
         else:
             # Try 5 times to find the target.
             for _ in range(5):
@@ -48,12 +51,14 @@ def cast_spell(spell, target, haystack_map=None):
                     .click_image(sleep_range=(10, 500, 10, 500,), move_duration_range=(10, 1000))
                 if target_needle is False:
                     # If target cannot be found, check to see if character
-                    #   moved accidentally.
+                    #   moved accidentally or client was logged out.
                     # Click the spell again to de-activate it.
                     vis.Vision(ltwh=vis.inv, loop_num=1, needle=spell) \
                         .click_image(sleep_range=(10, 500, 10, 500,), move_duration_range=(10, 1000))
                     if haystack_map is not None:
                         behavior.travel([((75, 128), 1, (4, 4), (5, 10))], haystack_map)
+                    if vis.orient()[0] == 'logged_out':
+                        behavior.login_full()
                 else:
                     # Wait for spell to be cast.
                     misc.sleep_rand(900, 1800)
