@@ -783,9 +783,13 @@ def travel(param_list, haystack_map):
 
             click_pos_y = abs(click_pos_y)
             click_pos_x = abs(click_pos_x)
+            # Holding down ctrl while clicking will cause character to
+            #   run.
+            pag.keyDown('ctrl')
             input.Mouse(ltwh=(click_pos_x, click_pos_y, 0, 0),
                         sleep_range=(50, 100, 100, 200),
                         move_duration_range=(0, 300)).click_coord()
+            pag.keyUp('ctrl')
             misc.sleep_rand((sleep_range[0] * 1000), (sleep_range[1] * 1000))
 
             if (abs(waypoint_distance_x) <= waypoint_tolerance[0] and
