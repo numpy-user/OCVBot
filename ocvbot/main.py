@@ -77,3 +77,6 @@ if start.config_file['script'] == '1':
 elif start.config_file['script'] == '2':
     mining_varrock_east()
     sys.exit(0)
+elif start.config_file['script'] == '3':
+    skilling.curse()
+    sys.exit(0)

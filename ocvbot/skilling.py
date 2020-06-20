@@ -8,6 +8,18 @@ import logging as log
 from ocvbot import behavior, vision as vis, misc, startup as start
 
 
+def curse():
+    for _ in range(100):
+        curse = vis.Vision(ltwh=vis.inv, loop_num=1, needle='./needles/buttons/curse.png') \
+            .click_image(sleep_range=(50, 500, 50, 500,), move_duration_range=(100, 1000))
+        for _ in range(100):
+            monk = vis.Vision(ltwh=vis.game_screen, loop_num=1, needle='./needles/game-screen/monk-of-zamorak.png', conf=0.75) \
+                .click_image(sleep_range=(50, 500, 50, 500,), move_duration_range=(100, 1000))
+            if monk is True:
+                break
+        misc.sleep_rand(1000, 1500)
+
+
 def miner(rocks, ore, ore_type, drop):
     """
     A mining function.
