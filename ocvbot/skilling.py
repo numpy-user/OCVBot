@@ -9,7 +9,7 @@ import time
 from ocvbot import behavior, vision as vis, misc, startup as start
 
 
-def cast_spell(spell, target, haystack=None):
+def cast_spell(spell, target, haystack_map=None):
     """
     Casts a spell at a target. Optionally can require the player to be
     in a specific location.
@@ -19,9 +19,10 @@ def cast_spell(spell, target, haystack=None):
                       player's spellbook (NOT greyed-out).
         target (file): Filepath to an image of the target to cast the
                        spell on, as it appears in the game world.
-        haystack (file): Filepath to the haystack map to use to ensure
-                         the player is in the correct location when
-                         casting the spell.
+        haystack_map (file): Filepath to the haystack map to use to ensure
+                             the player is in the correct location when
+                             casting the spell. This is identical to the
+                             parameter used by the travel() function.
 
     Returns:
         Returns True if spell is cast successfully.
@@ -29,9 +30,9 @@ def cast_spell(spell, target, haystack=None):
     """
     behavior.open_side_stone('spellbook')
 
-    if haystack is not None:
+    if haystack_map is not None:
         # Make sure character is in right spot.
-        behavior.travel([((75, 128), 1, (4, 4), (5, 10))], haystack)
+        behavior.travel([((75, 128), 1, (4, 4), (5, 10))], haystack_map)
 
     # Try 5 times to find the spell to cast.
     for _ in range(5):
@@ -51,8 +52,8 @@ def cast_spell(spell, target, haystack=None):
                     # Click the spell again to de-activate it.
                     vis.Vision(ltwh=vis.inv, loop_num=1, needle=spell) \
                         .click_image(sleep_range=(10, 500, 10, 500,), move_duration_range=(10, 1000))
-                    if haystack is not None:
-                        behavior.travel([((75, 128), 1, (4, 4), (5, 10))], haystack)
+                    if haystack_map is not None:
+                        behavior.travel([((75, 128), 1, (4, 4), (5, 10))], haystack_map)
                 else:
                     # Wait for spell to be cast.
                     misc.sleep_rand(900, 1800)
