@@ -55,6 +55,15 @@ DISPLAY_HEIGHT = pag.size().height
 LOGIN_FIELD_WIDTH = 258
 LOGIN_FIELD_HEIGHT = 12
 
+# The entire minimap.
+MINIMAP_WIDTH = 146
+MINIMAP_HEIGHT = 151
+
+# The largest area of the minimap, centered on the player, that can be
+#   used to determine the player's location for the travel() function.
+MINIMAP_SLICE_WIDTH = 110
+MINIMAP_SLICE_HEIGHT = 73
+
 # TODO: Finish stats
 # Stats ----------------------------------------------------------------
 

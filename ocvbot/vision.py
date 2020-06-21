@@ -338,8 +338,8 @@ game_screen_top = client_top + 4
 game_screen = (game_screen_left, game_screen_top,
                start.GAME_SCREEN_WIDTH, start.GAME_SCREEN_HEIGHT)
 
-# The player's inventory, plus the "side stone" tabs that open all the
-#   different menus.
+# The player's inventory, plus the top and bottom "side stone" tabs that
+#   open all the different menus.
 side_stones_left = client_left + 516
 side_stones_top = client_top + 166
 side_stones = (side_stones_left, side_stones_top,
@@ -355,8 +355,7 @@ chat_menu = (chat_menu_left, chat_menu_top,
 chat_menu_recent_left = chat_menu_left - 3
 chat_menu_recent_top = chat_menu_top + 98
 chat_menu_recent = (chat_menu_recent_left, chat_menu_recent_top,
-                    start.CHAT_MENU_RECENT_WIDTH,
-                    start.CHAT_MENU_RECENT_HEIGHT)
+                    start.CHAT_MENU_RECENT_WIDTH, start.CHAT_MENU_RECENT_HEIGHT)
 
 # The text input fields on the login menu.
 login_field_left = client_left + 273
@@ -369,12 +368,14 @@ pass_field_top = client_top + 258
 pass_field = (pass_field_left, pass_field_top,
               start.LOGIN_FIELD_WIDTH, start.LOGIN_FIELD_HEIGHT)
 
-# The entire minimap
+# The entire minimap.
 minimap_left = client_left + 571
 minimap_top = client_top + 11
-minimap = (minimap_left, minimap_top, 146, 151)
+minimap = (minimap_left, minimap_top,
+           start.MINIMAP_WIDTH, start.MINIMAP_HEIGHT)
 
 # The current minimap "slice" for locating the player on the world map.
 minimap_slice_left = client_left + 590
 minimap_slice_top = client_top + 51
-minimap_slice = (minimap_slice_left, minimap_slice_top, 110, 73)
+minimap_slice = (minimap_slice_left, minimap_slice_top,
+                 start.MINIMAP_SLICE_WIDTH, start.MINIMAP_SLICE_HEIGHT)
