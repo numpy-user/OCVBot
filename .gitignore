@@ -26,4 +26,5 @@ bin/main/build
 # User files
 **/credentials/*.txt
 **/ocvbot/config.yaml
+**/ocvbot/config.ini
 **/tools/login_*.py

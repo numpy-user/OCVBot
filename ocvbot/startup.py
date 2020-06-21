@@ -7,8 +7,8 @@ import logging as log
 import random as rand
 import time
 
+import configparser
 import pyautogui as pag
-import yaml
 
 # Constants ------------------------------------------------------------
 
@@ -46,8 +46,8 @@ DISPLAY_HEIGHT = pag.size().height
 LOGIN_FIELD_WIDTH = 258
 LOGIN_FIELD_HEIGHT = 12
 
-with open('./config.yaml') as config:
-    config_file = yaml.safe_load(config)
+config = configparser.ConfigParser()
+config.read('./config.ini')
 
 # Stats ----------------------------------------------------------------
 
@@ -81,10 +81,8 @@ checkpoint_3_checked = False
 checkpoint_4_checked = False
 
 # Convert run duration within config file from minutes to seconds.
-min_session_duration_sec = \
-    (int(config_file['min_session_duration'])) * 60
-max_session_duration_sec = \
-    (int(config_file['max_session_duration'])) * 60
+min_session_duration_sec = (int(config.get('main', 'min_session_duration'))) * 60
+max_session_duration_sec = (int(config.get('main', 'max_session_duration'))) * 60
 
 # Break the duration of time between the minimum and maximum duration
 #   into a set of evenly-sized durations of time. These chunks of time
@@ -119,8 +117,8 @@ log.info('Checkpoint 5 is at %s', time.ctime(checkpoint_5))
 # str(checkpoint_5 - checkpoint_4))
 
 # Determine how many sessions the bot will run for before quitting.
-min_sessions = int(config_file['min_sessions'])
-max_sessions = int(config_file['max_sessions'])
+min_sessions = int(config.get('main', 'min_sessions'))
+max_sessions = int(config.get('main', 'max_sessions'))
 session_total = rand.randint(min_sessions, max_sessions)
 log.info('session_total is %s', session_total)
 

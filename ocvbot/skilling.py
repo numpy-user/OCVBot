@@ -4,7 +4,6 @@ Contains skilling-related functions.
 
 """
 import logging as log
-import time
 
 from ocvbot import behavior, vision as vis, misc, startup as start
 
@@ -23,9 +22,11 @@ def cast_spell(spell, target, haystack_map=None, cast_delay=(1000, 2000)):
                              the player is in the correct location when
                              casting the spell. This is identical to the
                              parameter used by the travel() function.
+                             The only haystack map supported at the
+                             moment is Varrock Castle.
         cast_delay (tuple): A 2-tuple containing the minimum and maximum
                             number of miliseconds to wait after clicking
-                            the target and returning.
+                            the target and returning, default is (1000, 2000)
 
     Returns:
         Returns True if spell is cast successfully.
@@ -55,13 +56,11 @@ def cast_spell(spell, target, haystack_map=None, cast_delay=(1000, 2000)):
                 if target_needle is False:
                     # If target cannot be found, check to see if character
                     #   moved accidentally or client was logged out.
-                    # Click the spell again to de-activate it.
-                    vis.Vision(ltwh=vis.inv, loop_num=1, needle=spell) \
-                        .click_image(sleep_range=(10, 500, 10, 500,), move_duration_range=(10, 1000))
                     if haystack_map is not None:
                         behavior.travel([((75, 128), 1, (4, 4), (5, 10))], haystack_map)
                     if vis.orient()[0] == 'logged_out':
                         behavior.login_full()
+                    misc.sleep_rand(500, 2000)
                 else:
                     # Wait for spell to be cast.
                     misc.sleep_rand(cast_delay[0], cast_delay[1])
@@ -226,16 +225,11 @@ def fdrop_ore(ore):
     """
 
     # Create tuples of whether or not to drop the item and the item's path.
-    drop_sapphire = (start.config_file['drop_sapphire'],
-                     './needles/items/uncut-sapphire.png')
-    drop_emerald = (start.config_file['drop_emerald'],
-                    './needles/items/uncut-emerald.png')
-    drop_ruby = (start.config_file['drop_ruby'],
-                 './needles/items/uncut-ruby.png')
-    drop_diamond = (start.config_file['drop_diamond'],
-                    './needles/items/uncut-diamond.png')
-    drop_clue_geode = (start.config_file['drop_clue_geode'],
-                       './needles/items/clue-geode.png')
+    drop_sapphire = (start.config.get('mining', 'drop_sapphire'), './needles/items/uncut-sapphire.png')
+    drop_emerald = (start.config.get('mining', 'drop_emerald'), './needles/items/uncut-emerald.png')
+    drop_ruby = (start.config.get('mining', 'drop_ruby'), './needles/items/uncut-ruby.png')
+    drop_diamond = (start.config.get('mining', 'drop_diamond'), './needles/items/uncut-diamond.png')
+    drop_clue_geode = (start.config.get('mining', 'drop_clue_geode'), './needles/items/clue-geode.png')
     ore_dropped = behavior.drop_item(item=ore)
     if ore_dropped is False:
         behavior.logout()

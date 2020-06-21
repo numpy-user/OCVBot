@@ -10,7 +10,7 @@ import time
 
 import cv2
 import numpy as np
-import pyautogui
+import pathlib
 import pyautogui as pag
 
 from ocvbot import input, vision as vis, startup as start, vision, misc
@@ -27,8 +27,8 @@ def switch_worlds_logged_out():
     pass
 
 
-def login_basic(username_file=start.config_file['username_file'],
-                password_file=start.config_file['password_file'],
+def login_basic(username_file=start.config.get('main', 'username_file'),
+                password_file=start.config.get('main', 'password_file'),
                 cred_sleep_range=(800, 5000)):
     """
     Performs a login without checking if the login was successful.
@@ -231,6 +231,7 @@ def logout():
                 logout_button = logout_button_highlighted
                 break
 
+            # TODO: fix missing logout-world-switcher.png
             # The logout button when the world switcher is open.
             logout_button_world_switcher = \
                 vis.Vision(ltwh=vis.side_stones,
@@ -344,8 +345,8 @@ def logout_rand_range():
 
 
 def logout_rand(chance,
-                wait_min=int(start.config_file['min_break_duration']),
-                wait_max=int(start.config_file['max_break_duration'])):
+                wait_min=int(start.config.get('main', 'min_break_duration')),
+                wait_max=int(start.config.get('main', 'max_break_duration'))):
     """
     Rolls for a chance to logout of the client and wait.
 
@@ -704,7 +705,10 @@ def travel(param_list, haystack_map):
         Logs out if any errors occur.
 
     """
+    # Make sure file path is OS-agnostic.
+    haystack_map = str(pathlib.Path(haystack_map))
     haystack = cv2.imread(haystack_map, cv2.IMREAD_GRAYSCALE)
+
     # Disable failsafe for now.
     pag.FAILSAFE = False
 
@@ -803,7 +807,7 @@ def travel(param_list, haystack_map):
 
 
 def ocv_find_location(haystack):
-    needle = pyautogui.screenshot(region=vision.minimap_slice)
+    needle = pag.screenshot(region=vision.minimap_slice)
     needle = cv2.cvtColor(np.array(needle), cv2.COLOR_RGB2GRAY)
     w, h = needle.shape[::-1]
     result = cv2.matchTemplate(haystack, needle, cv2.TM_CCOEFF_NORMED)

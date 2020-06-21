@@ -42,7 +42,7 @@ def miner(scenario):
                                   './needles/game-screen/varrock-east-mine/west-empty.png')],
                           ore='./needles/items/iron-ore.png',
                           ore_type='iron',
-                          drop_ore=start.config_file['drop_ore'])
+                          drop_ore=start.config.get('mining', 'drop_ore'))
 
         elif scenario == 'lumbridge-mine':
             skilling.mine(rocks=[('./needles/game-screen/lumbridge-mine/east-full.png',
@@ -50,7 +50,7 @@ def miner(scenario):
                                  ('./needles/game-screen/lumbridge-mine/south-full.png',
                                   './needles/game-screen/lumbridge-mine/south-empty.png')],
                           ore='./needles/items/copper-ore.png',
-                          ore_type='copper', drop_ore=False) # Dropping ore not supported.
+                          ore_type='copper', drop_ore=False)  # Dropping ore not supported.
 
         else:
             raise Exception('Scenario not supported!')
@@ -84,7 +84,7 @@ def spellcaster(scenario):
         spell = './needles/buttons/curse.png'
         target = './needles/game-screen/monk-of-zamorak.png'
         haystack = './haystacks/varrock-castle.png'
-        cast_delay = (800, 1200)
+        cast_delay = (700, 900)
         for _ in range(10000):
             skilling.cast_spell(spell, target, haystack, cast_delay)
 
@@ -102,12 +102,15 @@ def spellcaster(scenario):
 #  "fishing tiles" don't change much is fly fishing at barbarian village.
 
 
-if start.config_file['script'] == '1':
-    miner('lumbridge-mine')
-    sys.exit(0)
-elif start.config_file['script'] == '2':
-    miner('varrock-east-mine')
-    sys.exit(0)
-elif start.config_file['script'] == '3':
-    spellcaster('curse-varrock-castle')
-    sys.exit(0)
+if start.config.get('main', 'script') == 'mining':
+    if start.config.get('mining', 'location') == 'varrock-east-mine':
+        miner('varrock-east-mine')
+        sys.exit(0)
+    if start.config.get('mining', 'location') == 'lumbridge-mine':
+        miner('lumbridge-mine')
+        sys.exit(0)
+
+elif start.config.get('main', 'script') == 'magic':
+    if start.config.get('magic', 'scenario') == 'curse-varrock-castle':
+        spellcaster('curse-varrock-castle')
+        sys.exit(0)

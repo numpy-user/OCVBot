@@ -1,0 +1,65 @@
+# Rename this file to 'config.ini' before doing anything else!!!
+
+[main]
+# The 'script' field determines which script to run, as dictated by the
+#   section headers in this file.
+# Available values for this field are "magic" and "mining".
+script: magic
+
+# This is the path to the user's credential files. This can be a relative
+#   path (starting from ocvbot/ocvbot/) or an absolute path.
+# If you are on Linux, comment out the two fields below "WINDOWS PATHS"
+#   and remove the comments from the two fields below "LINUX PATHS".
+# WINDOWS PATHS
+username_file: 'credentials\username.txt'
+password_file: 'credentials\password.txt'
+# LINUX PATHS
+#username_file: 'credentials/username.txt'
+#password_file: 'credentials/password.txt'
+
+# A random logout break will occur once between these two times. Units
+#   are in minutes.
+min_session_duration: 120
+max_session_duration: 180
+
+# The amount of time to wait during a logout break. Units are in
+#   minutes.
+min_break_duration: 5
+max_break_duration: 120
+
+# The minimum and maximum number of logout breaks that will occur before
+#   the bot stops for good.
+min_sessions: 1
+max_sessions: 3
+
+# Can be set to CRITICAL, ERROR, WARNING, INFO, or DEBUG.
+log_level: INFO
+
+[mining]
+# Make sure your client has already been configured with all the settings
+#   shown in client-configuration/common before you do anything else!
+# lumbridge-mine: (client-configuration/mining-lumbridge-swamp)
+# varrock-east-mine: (client-configuration/mining-varrock-east)
+location: varrock-east-mine
+
+# These settings control whether the mining script should drop precious
+#   gems and other items that have been obtained randomly through mining.
+#   These settings are ignored if the mining script is configured for
+#   banking (not yet implemented).
+drop_sapphire: False
+drop_emerald: False
+drop_ruby: False
+drop_diamond: False
+# Clue geodes contain clue scrolls. Mining iron ore provides only "easy"
+#   clue scrolls.
+drop_clue_geode: False
+
+# Whether the Varrock East Mine mining script should drop the ore or
+#   bank it.
+# The user's bank PIN must have already been entered before using the
+#   bank
+drop_ore: False
+
+[magic]
+# Casting curse on Monk of Zamorak in Varrock Castle: (client-configuration/magic-curse)
+scenario: curse-varrock-castle
