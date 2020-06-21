@@ -64,19 +64,14 @@ def main(debug=False):
             # If the client is logged in, censor the player's username
             #   by drawing a black box over it with ImageMagick.
             os.system(
-                'pngcrush -s "/tmp/screenshot.tmp.png" '
-                '"/tmp/screenshot.tmp2.png" '
-                '2>/dev/null '
+                'pngcrush -s "/tmp/screenshot.tmp.png" "/tmp/screenshot.tmp2.png" 2>/dev/null '
                 '&& '
-                'convert /tmp/screenshot.tmp2.png '
-                '-fill black '
-                '-draw "rectangle 7 458 190 473" '
+                'convert /tmp/screenshot.tmp2.png -fill black -draw "rectangle 7 458 190 473" '
                 '"$(pwd)/haystack_$(date +%Y-%m-%d_%H:%M:%S).png" '
                 '&& '
                 'rm -f /tmp/screenshot.tmp*')
         elif vis.client_status == 'logged_out':
-            os.system('pngcrush -s '
-                      '"/tmp/screenshot.tmp.png" '
+            os.system('pngcrush -s "/tmp/screenshot.tmp.png" '
                       '"$(pwd)/haystack_$(date +%Y-%m-%d_%H:%M:%S).png" '
                       '2>/dev/null '
                       '&& '
