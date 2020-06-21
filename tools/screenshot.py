@@ -1,11 +1,16 @@
 # coding=UTF-8
 """
-Simple screenshot tool for quickly capturing client window.
+Simple screenshot tool for quickly capturing the OSRS client window.
 Linux-only. Requires pngcrush and ImageMagick.
+
+Optionally allows you to specify the number of seconds to wait before
+taking the screenshot on the commandline, default is 0.
 
 """
 import logging as log
 import os
+import time
+import sys
 
 import pyautogui as pag
 
@@ -13,6 +18,12 @@ from ocvbot import vision as vis, startup as start
 
 log.basicConfig(format='%(asctime)s -- %(filename)s.%(funcName)s - %(message)s'
                 , level='INFO')
+
+# If no argument is given, default to 0.
+if len(sys.argv) == 1:
+    delay = 0
+else:
+    delay = int(sys.argv[1])
 
 
 def main(debug=False):
@@ -35,6 +46,10 @@ def main(debug=False):
                       the current directory.
 
     """
+    if delay > 0:
+        log.info('Waiting %s seconds', delay)
+        time.sleep(delay)
+
     log.info('Initializing...')
     # Remove old screenshots with similar names, otherwise it will break.
     os.system('rm -f /tmp/screenshot.tmp*')
