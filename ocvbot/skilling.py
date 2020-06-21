@@ -63,7 +63,7 @@ def cast_spell(spell, target, haystack_map=None, cast_delay=(1000, 2000)):
                     misc.sleep_rand(500, 2000)
                 else:
                     # Wait for spell to be cast.
-                    misc.sleep_rand(cast_delay[0], cast_delay[1])
+                    misc.sleep_rand(int(cast_delay[0]), int(cast_delay[1]))
                     # Roll for random wait.
                     misc.wait_rand(chance=200, wait_min=10000, wait_max=60000)
                     # Roll for logout after the configured period of time.

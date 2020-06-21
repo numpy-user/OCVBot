@@ -84,7 +84,8 @@ def spellcaster(scenario):
         spell = './needles/buttons/curse.png'
         target = './needles/game-screen/monk-of-zamorak.png'
         haystack = './haystacks/varrock-castle.png'
-        cast_delay = (700, 900)
+        cast_delay = (start.config.get('magic', 'min_cast_delay'),
+                      start.config.get('magic', 'max_cast_delay'))
         for _ in range(10000):
             skilling.cast_spell(spell, target, haystack, cast_delay)
 
@@ -111,6 +112,6 @@ if start.config.get('main', 'script') == 'mining':
         sys.exit(0)
 
 elif start.config.get('main', 'script') == 'magic':
-    if start.config.get('magic', 'scenario') == 'curse-varrock-castle':
-        spellcaster('curse-varrock-castle')
-        sys.exit(0)
+    scenario = start.config.get('magic', 'scenario')
+    spellcaster(scenario)
+    sys.exit(0)

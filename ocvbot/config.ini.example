@@ -63,3 +63,6 @@ drop_ore: False
 [magic]
 # Casting curse on Monk of Zamorak in Varrock Castle: (client-configuration/magic-curse)
 scenario: curse-varrock-castle
+# Minimum and maximum number of miliseconds to wait after casting each spell.
+min_cast_delay: 0
+max_cast_delay: 500
