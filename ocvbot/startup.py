@@ -10,45 +10,52 @@ import time
 import configparser
 import pyautogui as pag
 
+# Read the config file.
+config = configparser.ConfigParser()
+config.read('./config.ini')
+
 # Constants ------------------------------------------------------------
 
 # See ./docs/client_anatomy.png for more info.
-# Width and height of the entire game client.
+# Captures the width and height of various different elements within the
+#  game client. Units are in pixels.
+
+# The entire OSRS game client (in fixed-size mode).
 CLIENT_WIDTH = 765
 CLIENT_HEIGHT = 503
 
-# Width and height of the inventory screen, in pixels.
+# The player's inventory.
 INV_WIDTH = 186
 INV_HEIGHT = 262
 INV_HALF_WIDTH = round((INV_WIDTH / 2) + 5)
 INV_HALF_HEIGHT = round(INV_HEIGHT / 2)
 
+# The player's inventory plus the top and bottom rows of side stones.
 SIDE_STONES_WIDTH = 249
 SIDE_STONES_HEIGHT = 366
 
-# Width and height of just the game screen in the game client.
+# The "gameplay screen". This is the screen that displays the player
+#   character and the game world.
 GAME_SCREEN_WIDTH = 512
 GAME_SCREEN_HEIGHT = 334
 
+# The bottom chat menu pane.
 CHAT_MENU_WIDTH = 506
 CHAT_MENU_HEIGHT = 129
 
-# Dimensions of the most recent "line" in the chat history.
+# The most recent "line" in the chat menu's chat history.
 CHAT_MENU_RECENT_WIDTH = 490
 CHAT_MENU_RECENT_HEIGHT = 17
 
-# Get the display size in pixels.
+# The entire display.
 DISPLAY_WIDTH = pag.size().width
 DISPLAY_HEIGHT = pag.size().height
 
-# Dimensions of the "Login" and "Password" fields on the main login
-#   screen.
+# The "Login" and "Password" fields on the main login screen.
 LOGIN_FIELD_WIDTH = 258
 LOGIN_FIELD_HEIGHT = 12
 
-config = configparser.ConfigParser()
-config.read('./config.ini')
-
+# TODO: Finish stats
 # Stats ----------------------------------------------------------------
 
 # Used for tracking how long the script has been running.
@@ -60,7 +67,6 @@ inventories = 0
 items_gathered = 0
 # The amount of experience gained since the script started, approximately.
 xp_gained = 0
-# TODO:
 # The amount of experience gained since installing this package
 xp_per_hour = 0
 
@@ -68,7 +74,6 @@ ore_xp_dict = {
     'copper': 16.5,
     'iron': 35.5
 }
-
 
 # ----------------------------------------------------------------------
 # These variables are used to setup behavior.logout_rand_range(). ------
@@ -88,39 +93,21 @@ max_session_duration_sec = (int(config.get('main', 'max_session_duration'))) * 6
 #   into a set of evenly-sized durations of time. These chunks of time
 #   are consecutively added to the start time to create "checkpoints".
 #   Checkpoints are timestamps at which a logout roll will occur.
-checkpoint_interval = ((max_session_duration_sec -
-                        min_session_duration_sec) / 4)
+checkpoint_interval = ((max_session_duration_sec - min_session_duration_sec) / 4)
 
 # Space each checkpoint evenly between the min duration and the max
 #   duration.
 checkpoint_1 = round(start_time + min_session_duration_sec)
-checkpoint_2 = round(start_time + min_session_duration_sec +
-                     checkpoint_interval)
-checkpoint_3 = round(start_time + min_session_duration_sec +
-                     (checkpoint_interval * 2))
-checkpoint_4 = round(start_time + min_session_duration_sec +
-                     (checkpoint_interval * 3))
+checkpoint_2 = round(start_time + min_session_duration_sec + checkpoint_interval)
+checkpoint_3 = round(start_time + min_session_duration_sec + (checkpoint_interval * 2))
+checkpoint_4 = round(start_time + min_session_duration_sec + (checkpoint_interval * 3))
 checkpoint_5 = round(start_time + max_session_duration_sec)
-
-log.info('Checkpoint 1 is at %s', time.ctime(checkpoint_1))
-log.info('Checkpoint 2 is at %s', time.ctime(checkpoint_2))
-log.info('Checkpoint 3 is at %s', time.ctime(checkpoint_3))
-log.info('Checkpoint 4 is at %s', time.ctime(checkpoint_4))
-log.info('Checkpoint 5 is at %s', time.ctime(checkpoint_5))
-# log.info('Time between checkpoint 1 and 2 is ' +
-# str(checkpoint_2 - checkpoint_1))
-# log.info('Time between checkpoint 3 and 2 is ' +
-# str(checkpoint_3 - checkpoint_2))
-# log.info('Time between checkpoint 4 and 3 is ' +
-# str(checkpoint_4 - checkpoint_3))
-# log.info('Time between checkpoint 5 and 4 is ' +
-# str(checkpoint_5 - checkpoint_4))
 
 # Determine how many sessions the bot will run for before quitting.
 min_sessions = int(config.get('main', 'min_sessions'))
 max_sessions = int(config.get('main', 'max_sessions'))
 session_total = rand.randint(min_sessions, max_sessions)
-log.info('session_total is %s', session_total)
+log.info('Checkpoint 1 is at %s, session_total is %s', time.ctime(checkpoint_1), session_total)
 
 # The current number of sessions that have been completed.
 session_num = 0
