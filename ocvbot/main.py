@@ -83,15 +83,21 @@ def spellcaster(scenario):
     if scenario == 'curse-varrock-castle':
         spell = './needles/buttons/curse.png'
         target = './needles/game-screen/monk-of-zamorak.png'
-        haystack = './haystacks/varrock-castle.png'
-        cast_delay = (start.config.get('magic', 'min_cast_delay'),
-                      start.config.get('magic', 'max_cast_delay'))
+        haystack_map = './haystacks/varrock-castle.png'
         for _ in range(10000):
-            skilling.cast_spell(spell, target, haystack, cast_delay)
+            behavior.travel([((75, 128), 1, (4, 4), (5, 10))], haystack_map)
+            skilling.Magic(spell=spell, target=target, logout=True, conf=0.75, haystack=vis.game_screen).cast_spell()
+
+    elif scenario == 'high-alchemy':
+        spell = './needles/high-alchemy.png'
+        target = './needles/bank-note-slice.png'
+        for _ in range(10000):
+            spell_cast = skilling.Magic(spell=spell, target=target, logout=False, conf=0.45, haystack=vis.inv).cast_spell()
+            if spell_cast is False:
+                sys.exit(0)
 
     else:
         raise Exception('Scenario not supported!')
-
 
 # TODO: Add basic firemaking script that starts at a bank booth and
 #   creates 27 fires, all in a straight line, then returns to the booth.

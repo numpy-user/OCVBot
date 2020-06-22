@@ -4,79 +4,108 @@ Contains skilling-related functions.
 
 """
 import logging as log
+import sys
 
 from ocvbot import behavior, vision as vis, misc, startup as start
 
 
-def cast_spell(spell, target, haystack_map=None, cast_delay=(1000, 2000)):
-    """
-    Casts a spell at a target. Optionally can require the player to be
-    in a specific location.
+class Magic:
+    def __init__(self, spell, target, conf, haystack, logout=False):
+        self.spell = spell
+        self.haystack = haystack
+        self.logout = logout
+        self.target = target
+        self.conf = conf
 
-    Args:
-        spell (file): Filepath to the spell to cast as it appears in the
-                      player's spellbook (NOT greyed-out).
-        target (file): Filepath to an image of the target to cast the
-                       spell on, as it appears in the game world.
-        haystack_map (file): Filepath to the haystack map to use to ensure
-                             the player is in the correct location when
-                             casting the spell. This is identical to the
-                             parameter used by the travel() function.
-                             The only haystack map supported at the
-                             moment is Varrock Castle.
-        cast_delay (tuple): A 2-tuple containing the minimum and maximum
-                            number of miliseconds to wait after clicking
-                            the target and returning, default is (1000, 2000)
+    def _select_spell(self):
+        """
+        Activates the desired spell.
 
-    Returns:
-        Returns True if spell is cast successfully.
+        """
+        for _ in range(3):
+            spell_available = vis.Vision(ltwh=vis.inv, loop_num=3, needle=self.spell)\
+                              .click_image(sleep_range=(10, 500, 10, 500,),
+                                           move_duration_range=(10, 1000))
+            if spell_available is False:
+                behavior.open_side_stone('spellbook')
+                misc.sleep_rand(100, 200)
+            else:
+                return True
+        return False
 
-    """
-    behavior.open_side_stone('spellbook')
+    def _select_target(self):
+        """
+        Attempt to find the target to cast the spell on.
+        Returns:
 
-    if haystack_map is not None:
-        # Make sure character is in right spot.
-        behavior.travel([((75, 128), 1, (4, 4), (5, 10))], haystack_map)
+        """
+        for _ in range(3):
+            target = vis.Vision(needle=self.target, ltwh=self.haystack, loop_num=3, conf=self.conf) \
+                .click_image(sleep_range=(10, 500, 10, 500,), move_duration_range=(10, 1000))
 
-    # Try 5 times to find the spell to cast.
-    for _ in range(5):
-        spell_needle = vis.Vision(ltwh=vis.inv, loop_num=1, needle=spell) \
-            .click_image(sleep_range=(10, 500, 10, 500,), move_duration_range=(10, 1000))
-        # Make sure the spellbook is open and client is logged in if
-        #    spell cannot be found.
-        if spell_needle is False:
-            behavior.open_side_stone('spellbook')
-            if vis.orient()[0] == 'logged_out':
-                behavior.login_full()
-        else:
-            # Try 5 times to find the target.
-            for _ in range(5):
-                target_needle = vis.Vision(needle=target, ltwh=vis.game_screen, loop_num=1, conf=0.75) \
-                    .click_image(sleep_range=(10, 500, 10, 500,), move_duration_range=(10, 1000))
-                if target_needle is False:
-                    # If target cannot be found, check to see if character
-                    #   moved accidentally or client was logged out.
-                    if haystack_map is not None:
-                        behavior.travel([((75, 128), 1, (4, 4), (5, 10))], haystack_map)
-                    if vis.orient()[0] == 'logged_out':
-                        behavior.login_full()
-                    misc.sleep_rand(500, 2000)
-                else:
-                    # Wait for spell to be cast.
-                    misc.sleep_rand(int(cast_delay[0]), int(cast_delay[1]))
-                    # Roll for random wait.
-                    misc.wait_rand(chance=200, wait_min=10000, wait_max=60000)
-                    # Roll for logout after the configured period of time.
-                    behavior.logout_rand_range()
-                    return True
+            if target is False:
+                if vis.orient()[0] == 'logged_out':
+                    behavior.login_full()
+                misc.sleep_rand(1000, 2000)
+            else:
+                return True
+        return False
 
-            log.critical('Could not find %s target! Logging out in 10-20 seconds!', target)
-            misc.sleep_rand(10000, 20000)
-            behavior.logout()
+    def cast_spell(self):
+        """
+        Casts a spell at a target. Optionally can require the player to be
+        in a specific location.
 
-    log.critical('Could not find %s spell or out of runes! Logging out in 10-20 seconds!', spell)
-    misc.sleep_rand(10000, 20000)
-    behavior.logout()
+        Args:
+            spell (file): Filepath to the spell to cast as it appears in the
+                          player's spellbook (NOT greyed-out).
+            target (file): Filepath to an image of the target to cast the
+                           spell on, as it appears in the game world.
+            haystack_map (file): Filepath to the haystack map to use to ensure
+                                 the player is in the correct location when
+                                 casting the spell. This is identical to the
+                                 parameter used by the travel() function.
+                                 The only haystack map supported at the
+                                 moment is Varrock Castle.
+            cast_delay (tuple): A 2-tuple containing the minimum and maximum
+                                number of miliseconds to wait after clicking
+                                the target and returning, default is (1000, 2000)
+
+        Returns:
+            Returns True if spell is cast successfully.
+
+        """
+        spell_selected = self._select_spell()
+        if spell_selected is False:
+            if self.logout is True:
+                log.critical('Out of runes! Logging out in 10-20 seconds!')
+                misc.sleep_rand(10000, 20000)
+                behavior.logout()
+            else:
+                log.critical('All done!')
+                return False
+
+        target_selected = self._select_target()
+        if target_selected is False:
+            if self.logout is True:
+                log.critical('Unable to find target! Logging out in 10-20 seconds!')
+                misc.sleep_rand(10000, 20000)
+                behavior.logout()
+            else:
+                log.critical('All done!')
+                return False
+
+        # Wait for spell to be cast.
+        misc.sleep_rand(int(start.config.get('magic', 'min_cast_delay')),
+                        int(start.config.get('magic', 'max_cast_delay')))
+        # Roll for random wait.
+        misc.wait_rand(chance=200, wait_min=10000, wait_max=60000)
+
+        if self.logout is True:
+            # Roll for logout after the configured period of time.
+            behavior.logout_rand_range()
+
+        return True
 
 
 def mine(rocks, ore, ore_type, drop_ore):
