@@ -4,12 +4,27 @@ Contains skilling-related functions.
 
 """
 import logging as log
-import sys
 
 from ocvbot import behavior, vision as vis, misc, startup as start
 
 
 class Magic:
+    """
+    Class for all activities related to the Magic skill.
+
+    Args:
+        spell (file): Filepath to the spell to cast as it appears in the
+                      player's spellbook (NOT greyed-out).
+        target (file): Filepath to an image of the target to cast the
+                       spell on, as it appears in the game world.
+        conf (float): Confidence required to match the target.
+        haystack (tuple): The 4-tuple to use when searching for the
+                          target. This will either be "vis.inv" or
+                          "vis.game_screen".
+        logout (bool): Whether or not to logout once out of runes or the
+                       target cannot be found, default is False.
+
+    """
     def __init__(self, spell, target, conf, haystack, logout=False):
         self.spell = spell
         self.haystack = haystack
@@ -56,24 +71,6 @@ class Magic:
         Casts a spell at a target. Optionally can require the player to be
         in a specific location.
 
-        Args:
-            spell (file): Filepath to the spell to cast as it appears in the
-                          player's spellbook (NOT greyed-out).
-            target (file): Filepath to an image of the target to cast the
-                           spell on, as it appears in the game world.
-            haystack_map (file): Filepath to the haystack map to use to ensure
-                                 the player is in the correct location when
-                                 casting the spell. This is identical to the
-                                 parameter used by the travel() function.
-                                 The only haystack map supported at the
-                                 moment is Varrock Castle.
-            cast_delay (tuple): A 2-tuple containing the minimum and maximum
-                                number of miliseconds to wait after clicking
-                                the target and returning, default is (1000, 2000)
-
-        Returns:
-            Returns True if spell is cast successfully.
-
         """
         spell_selected = self._select_spell()
         if spell_selected is False:
@@ -103,7 +100,7 @@ class Magic:
 
         if self.logout is True:
             # Roll for logout after the configured period of time.
-            behavior.logout_rand_range()
+            behavior.logout_break_range()
 
         return True
 
@@ -222,7 +219,7 @@ def mine(rocks, ore, ore_type, drop_ore):
                                             ((240, 399), 1, (4, 4), (3, 8))],
                                             './haystacks/varrock-east-mine.png')
                             misc.sleep_rand(300, 800)
-                        elapsed_time = misc.run_duration(human_readable=True)
+                        elapsed_time = misc.session_duration(human_readable=True)
                         log.info('Script has been running for %s (HH:MM:SS)',
                                  elapsed_time)
                         return True
