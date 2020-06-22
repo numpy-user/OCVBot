@@ -1,6 +1,6 @@
 ## OCVbot: The OSRS Computer Vision Bot
 
-**Currently under development. v0.1 for Linux available now.**
+**Currently under development.**
 
 ## INSTALLATION
 
@@ -42,3 +42,6 @@ nothing for a short while.
 
 For more technical users, comprehensive API documentation is located at
 `docs/build/html/`
+
+*This bot was written for educational purposes only. I am not responsible for how
+you use this software.*
