@@ -16,7 +16,7 @@ and your account's password to it. Accounts with 2-factor authentication are
 not supported.
 
 1. Rename `ocvbot/config.ini.example` to `ocvbot/config.ini`.
-1. Edit `config.yaml` with your desired configuration settings.
+1. Edit `ocvbot/config.ini` with your desired configuration settings.
 
 1. Check `docs/client-configuration` for the proper client
 configuration settings. Configurations in the `common/` directory are shared by
