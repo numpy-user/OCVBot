@@ -555,6 +555,7 @@ def drop_item(item, track=True, wait_chance=120, wait_min=5000, wait_max=20000):
     return False
 
 
+# TODO:
 def bank_config_check(config, status):
     """
     Checks for specific bank configurations in the bank window, such
@@ -579,6 +580,16 @@ def bank_config_check(config, status):
 
 
 def open_bank(direction):
+    """
+    Opens the bank, assuming the player is within a 2 tiles of the booth.
+
+    Args:
+        direction (str): The direction of the bank booth. Must be 'north',
+                         'south', 'east', or 'west'.
+
+    Returns:
+
+    """
     for _ in range(10):
         one_tile = vis.Vision(ltwh=vis.game_screen,
                               needle='./needles/game-screen/bank/bank-booth-' + direction + '-1-tile.png',
@@ -678,8 +689,7 @@ def travel(param_list, haystack_map):
 
             # Find the minimap position within the haystack map.
             coords = ocv_find_location(haystack)
-            (coords_map_left, coords_map_top,
-             coords_map_width, coords_map_height) = coords
+            (coords_map_left, coords_map_top, coords_map_width, coords_map_height) = coords
 
             # Get center of minimap coordinates within haystack map.
             coords_map_x = int(coords_map_left + (coords_map_width / 2))
@@ -694,8 +704,8 @@ def travel(param_list, haystack_map):
             # Figure out how far the waypoint is from the current location.
             waypoint_distance_x = waypoint[0] - coords_map_x
             waypoint_distance_y = waypoint[1] - coords_map_y
-            log.info('dest_distance x is %s.', waypoint_distance_x)
-            log.info('dest_distance y is %s.', waypoint_distance_y)
+            log.debug('dest_distance x is %s.', waypoint_distance_x)
+            log.debug('dest_distance y is %s.', waypoint_distance_y)
 
             # Check if player has reached waypoint before making the click.
             if (abs(waypoint_distance_x) <= waypoint_tolerance[0] and
@@ -722,11 +732,7 @@ def travel(param_list, haystack_map):
                 if abs(waypoint_distance_y) <= 10:
                     click_pos_x -= 13
             else:
-                click_pos_x = coords_client_x + waypoint_distance_x \
-                              + coord_rand
-
-            log.info('coord rand is x %s', coord_rand)
-            log.info('click position x is %s', click_pos_x)
+                click_pos_x = coords_client_x + waypoint_distance_x + coord_rand
 
             # Do the same thing, but for the Y coordinates.
             coord_rand = rand.randint(-coord_tolerance, coord_tolerance)
@@ -739,11 +745,7 @@ def travel(param_list, haystack_map):
                 if abs(waypoint_distance_x) <= 10:
                     click_pos_y -= 13
             else:
-                click_pos_y = coords_client_y + waypoint_distance_y \
-                              + coord_rand
-
-            log.info('coord rand is y %s', coord_rand)
-            log.info('click position y is %s', click_pos_y)
+                click_pos_y = coords_client_y + waypoint_distance_y + coord_rand
 
             click_pos_y = abs(click_pos_y)
             click_pos_x = abs(click_pos_x)
@@ -765,6 +767,22 @@ def travel(param_list, haystack_map):
 
 
 def ocv_find_location(haystack):
+    """
+    OpenCV helper function used by travel() to find the minimap within
+    the haystack map.
+
+    Currently hard-coded to using the travel() function, so it's not
+    very flexible.
+
+    Args:
+        haystack: The haystack to match the needle within. Must be
+                  an OpenCV vision object.
+
+    Returns:
+        Returns the (left, top, width, height) coordinates of the
+        needle within the haystack.
+
+    """
     needle = pag.screenshot(region=vision.minimap_slice)
     needle = cv2.cvtColor(np.array(needle), cv2.COLOR_RGB2GRAY)
     w, h = needle.shape[::-1]
