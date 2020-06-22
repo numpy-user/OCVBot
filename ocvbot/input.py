@@ -238,30 +238,3 @@ class Keyboard:
         pag.keyUp(key)
         misc.sleep_rand(rmin=self.sleep_range[2], rmax=self.sleep_range[3])
         return True
-
-    def double_hotkey_press(self, key1, key2):
-        """
-        Performs a two-key hotkey shortcut, such as Ctrl-c for copying
-        text.
-
-        Args:
-            key1 (str): The first hotkey used in the two-hotkey shortcut,
-                        sometimes also called the modifier key.
-            key2 (str): The second hotkey used in the two-hotkey shortcut.
-
-        """
-        log.debug('Pressing hotkeys: ' + str(key1) + ' + ' + str(key2))
-        sleep_before_min, sleep_before_max, sleep_after_min, sleep_after_max = \
-            self.sleep_range
-        action_duration_min, action_duration_max = self.action_duration_range
-
-        misc.sleep_rand(rmin=sleep_before_min, rmax=sleep_before_max)
-        pag.keyDown(key1)
-        misc.sleep_rand(rmin=action_duration_min, rmax=action_duration_max)
-        pag.keyDown(key2)
-        misc.sleep_rand(rmin=action_duration_min, rmax=action_duration_max)
-        pag.keyUp(key1)
-        misc.sleep_rand(rmin=action_duration_min, rmax=action_duration_max)
-        pag.keyUp(key2)
-        misc.sleep_rand(rmin=sleep_after_min, rmax=sleep_after_max)
-        return True
