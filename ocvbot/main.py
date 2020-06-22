@@ -37,18 +37,18 @@ def miner(scenario):
 
         if scenario == 'varrock-east-mine':
             skills.mine(rocks=[('./needles/game-screen/varrock-east-mine/north-full2.png',
-                                  './needles/game-screen/varrock-east-mine/north-empty.png'),
+                                './needles/game-screen/varrock-east-mine/north-empty.png'),
                                ('./needles/game-screen/varrock-east-mine/west-full.png',
-                                  './needles/game-screen/varrock-east-mine/west-empty.png')],
+                                './needles/game-screen/varrock-east-mine/west-empty.png')],
                         ore='./needles/items/iron-ore.png',
                         ore_type='iron',
                         drop_ore=start.config.get('mining', 'drop_ore'))
 
         elif scenario == 'lumbridge-mine':
             skills.mine(rocks=[('./needles/game-screen/lumbridge-mine/east-full.png',
-                                  './needles/game-screen/lumbridge-mine/east-empty.png'),
+                                './needles/game-screen/lumbridge-mine/east-empty.png'),
                                ('./needles/game-screen/lumbridge-mine/south-full.png',
-                                  './needles/game-screen/lumbridge-mine/south-empty.png')],
+                                './needles/game-screen/lumbridge-mine/south-empty.png')],
                         ore='./needles/items/copper-ore.png',
                         ore_type='copper', drop_ore=False)  # Dropping ore not supported.
 
@@ -100,6 +100,7 @@ def spellcaster(scenario):
 
     else:
         raise Exception('Scenario not supported!')
+
 
 # TODO: Add basic firemaking script that starts at a bank booth and
 #   creates 27 fires, all in a straight line, then returns to the booth.
