@@ -100,15 +100,13 @@ def login_basic(username_file=start.config.get('main', 'username_file'),
                 input.Keyboard().keypress(key='enter')
                 return True
 
-            log.error('Could not find credential screen!')
-            return False
-        log.error('Could not find Existing User or OK button!')
-        return False
     log.error('Could perform login!')
     return False
 
 
-def login_full(login_sleep_range=(500, 5000), postlogin_sleep_range=(500, 5000)):
+def login_full(login_sleep_range=(500, 5000), postlogin_sleep_range=(500, 5000),
+               username_file=start.config.get('main', 'username_file'),
+               password_file=start.config.get('main', 'password_file')):
     """
     Logs into the client using the credentials specified in the main
     config file. Waits until the login is successful before returning.
@@ -133,7 +131,7 @@ def login_full(login_sleep_range=(500, 5000), postlogin_sleep_range=(500, 5000))
     """
     for _ in range(3):
 
-        login = login_basic()
+        login = login_basic(username_file, password_file)
         if login is False:
             raise Exception('Could not perform initial login!')
 
