@@ -4,13 +4,17 @@ Simple screenshot tool for quickly capturing the OSRS client window.
 
 Linux-only! Requires pngcrush and ImageMagick.
 
-Optionally allows you to specify the number of seconds to wait before
-taking the screenshot on the commandline, default is 0.
+Syntax:
+    python screnshot.py [DELAY] [DEBUG]
 
-Optionally overlays the coordinates of coordinate spaces, which can
-be useful for debugging.
+Example:
+    python screenshot.py 5 False = Wait 5 seconds before taking screenshot,
+                                   no debugging.
 
 Positional arguments:
+    delay (int): The number of seconds to wait before taking the
+                 screnshot.
+
     debug (bool): Whether the function will perform extra processing
                   to overlay rectanges onto the screenshot
                   cooresponding to the various coordinate spaces used
