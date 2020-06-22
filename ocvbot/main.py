@@ -5,7 +5,7 @@ Invokes main bot scripts.
 """
 import sys
 
-from ocvbot import skilling, behavior, vision as vis, startup as start
+from ocvbot import skills, behavior, vision as vis, startup as start
 
 
 def miner(scenario):
@@ -36,21 +36,21 @@ def miner(scenario):
             behavior.login_full()
 
         if scenario == 'varrock-east-mine':
-            skilling.mine(rocks=[('./needles/game-screen/varrock-east-mine/north-full2.png',
+            skills.mine(rocks=[('./needles/game-screen/varrock-east-mine/north-full2.png',
                                   './needles/game-screen/varrock-east-mine/north-empty.png'),
-                                 ('./needles/game-screen/varrock-east-mine/west-full.png',
+                               ('./needles/game-screen/varrock-east-mine/west-full.png',
                                   './needles/game-screen/varrock-east-mine/west-empty.png')],
-                          ore='./needles/items/iron-ore.png',
-                          ore_type='iron',
-                          drop_ore=start.config.get('mining', 'drop_ore'))
+                        ore='./needles/items/iron-ore.png',
+                        ore_type='iron',
+                        drop_ore=start.config.get('mining', 'drop_ore'))
 
         elif scenario == 'lumbridge-mine':
-            skilling.mine(rocks=[('./needles/game-screen/lumbridge-mine/east-full.png',
+            skills.mine(rocks=[('./needles/game-screen/lumbridge-mine/east-full.png',
                                   './needles/game-screen/lumbridge-mine/east-empty.png'),
-                                 ('./needles/game-screen/lumbridge-mine/south-full.png',
+                               ('./needles/game-screen/lumbridge-mine/south-full.png',
                                   './needles/game-screen/lumbridge-mine/south-empty.png')],
-                          ore='./needles/items/copper-ore.png',
-                          ore_type='copper', drop_ore=False)  # Dropping ore not supported.
+                        ore='./needles/items/copper-ore.png',
+                        ore_type='copper', drop_ore=False)  # Dropping ore not supported.
 
         else:
             raise Exception('Scenario not supported!')
@@ -86,15 +86,15 @@ def spellcaster(scenario):
         haystack_map = './haystacks/varrock-castle.png'
         for _ in range(10000):
             behavior.travel([((75, 128), 1, (4, 4), (5, 10))], haystack_map)
-            skilling.Magic(spell=spell, target=target, logout=True,
-                           conf=0.75, haystack=vis.game_screen).cast_spell()
+            skills.Magic(spell=spell, target=target, logout=True,
+                         conf=0.75, haystack=vis.game_screen).cast_spell()
 
     elif scenario == 'high-alchemy':
         spell = './needles/side-stones/spellbook/high-alchemy.png'
         target = './needles/items/bank-note.png'
         for _ in range(10000):
-            spell_cast = skilling.Magic(spell=spell, target=target, logout=False,
-                                        conf=0.45, haystack=vis.inv).cast_spell()
+            spell_cast = skills.Magic(spell=spell, target=target, logout=False,
+                                      conf=0.45, haystack=vis.inv).cast_spell()
             if spell_cast is False:
                 sys.exit(0)
 
