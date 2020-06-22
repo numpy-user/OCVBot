@@ -16,14 +16,14 @@ import pyautogui as pag
 from ocvbot import input, vision as vis, startup as start, vision, misc
 
 
+# TODO
 def switch_worlds_logged_in(members=False, free_to_play=True, safe=True):
-    # TODO
     if members is False and free_to_play is False:
         raise Exception('A world type must be selected!')
 
 
+# TODO
 def switch_worlds_logged_out():
-    # TODO
     pass
 
 
@@ -32,6 +32,9 @@ def login_basic(username_file=start.config.get('main', 'username_file'),
                 cred_sleep_range=(800, 5000)):
     """
     Performs a login without checking if the login was successful.
+
+    Advances to the user credentials screen, enters the user's
+    credentials, and submits the user's credentials, that's it.
 
     Args;
         username_file (file): The path to a file containing the user's
@@ -62,60 +65,53 @@ def login_basic(username_file=start.config.get('main', 'username_file'),
         log.info('Logging in.')
 
         # Click the "Ok" button if it's present at the login screen.
-        # This button appears if the user was disconnected due to idle
-        #   activity.
+        # This button appears if the user was disconnected due to
+        #   inactivity.
         ok_button = vis.Vision(ltwh=vis.client,
-                               needle='./needles/login-menu/'
-                                      'ok-button.png',
+                               needle='./needles/login-menu/ok-button.png',
                                loop_num=1).click_image()
         # If the "Ok" button isn't found, look for the "Existing user"
         #   button.
         existing_user_button = vis.Vision(ltwh=vis.client,
-                                          needle='./needles/login-menu/'
-                                                 'existing-user-button.png',
+                                          needle='./needles/login-menu/existing-user-button.png',
                                           loop_num=1).click_image()
 
         if existing_user_button is True or ok_button is True:
             credential_screen = vis.Vision(ltwh=vis.client,
-                                           needle='./needles/login-menu/'
-                                                  'login-cancel-buttons.png',
+                                           needle='./needles/login-menu/login-cancel-buttons.png',
                                            loop_num=5).wait_for_image()
-            # Make sure clicking "Ok" or hitting "Enter" has advanced to
-            #   the next screen so the user's credentials can be entered.
+
             if credential_screen is True:
                 # Click to make sure the "Login" field is active.
-                input.Mouse(ltwh=(vis.login_field_left,
-                                  vis.login_field_top,
-                                  start.LOGIN_FIELD_WIDTH,
-                                  start.LOGIN_FIELD_HEIGHT)).click_coord()
+                input.Mouse(ltwh=(vis.login_field_left, vis.login_field_top,
+                                  start.LOGIN_FIELD_WIDTH, start.LOGIN_FIELD_HEIGHT)).click_coord()
                 # Enter login field credentials.
                 misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
-                input.Keyboard(log=False).typewriter(username)
+                input.Keyboard(log_keys=False).typewriter(username)
                 misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
 
                 # Click to make sure the "Password" field is active.
-                input.Mouse(ltwh=(vis.pass_field_left,
-                                  vis.pass_field_top,
-                                  start.LOGIN_FIELD_WIDTH,
-                                  start.LOGIN_FIELD_HEIGHT)).click_coord()
+                input.Mouse(ltwh=(vis.pass_field_left, vis.pass_field_top,
+                                  start.LOGIN_FIELD_WIDTH, start.LOGIN_FIELD_HEIGHT)).click_coord()
                 # Enter password field credentials and login.
-                input.Keyboard(log=False).typewriter(password)
+                input.Keyboard(log_keys=False).typewriter(password)
                 misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
+
                 input.Keyboard().keypress(key='enter')
                 return True
+
             log.error('Could not find credential screen!')
             return False
         log.error('Could not find Existing User or OK button!')
         return False
-    log.error('Could perform initial login!')
+    log.error('Could perform login!')
     return False
 
 
-def login_full(login_sleep_range=(500, 5000),
-               postlogin_sleep_range=(500, 5000)):
+def login_full(login_sleep_range=(500, 5000), postlogin_sleep_range=(500, 5000)):
     """
-    Logs into the client using the credentials specified the main config
-    file. Waits until the login is successful before returning.
+    Logs into the client using the credentials specified in the main
+    config file. Waits until the login is successful before returning.
 
     Args:
         login_sleep_range (tuple): A 2-tuple containing the minimum and
@@ -132,62 +128,57 @@ def login_full(login_sleep_range=(500, 5000),
         reason.
 
     Returns:
-        Returns True if login was successful.
+        Returns True if the login was successful.
         
     """
-    while True:
-        for _ in range(3):
-            login = login_basic()
-            if login is False:
-                raise Exception('Could not perform initial login!')
+    for _ in range(3):
 
-            misc.sleep_rand(login_sleep_range[0], login_sleep_range[1])
+        login = login_basic()
+        if login is False:
+            raise Exception('Could not perform initial login!')
 
-            postlogin_screen_button = \
-                vis.Vision(ltwh=vis.display,
-                           needle='./needles/login-menu/'
-                                  'orient-postlogin.png',
-                           conf=0.8,
-                           loop_num=10,
-                           loop_sleep_range=(1000, 2000)).click_image()
+        misc.sleep_rand(login_sleep_range[0], login_sleep_range[1])
+        postlogin_screen_button = vis.Vision(ltwh=vis.display,
+                                             needle='./needles/login-menu/orient-postlogin.png',
+                                             conf=0.8, loop_num=10, loop_sleep_range=(1000, 2000)).click_image()
 
-            if postlogin_screen_button is True:
-                misc.sleep_rand(postlogin_sleep_range[0],
-                                postlogin_sleep_range[1])
-                # Wait for the orient.png to appear in the client window.
-                logged_in = \
-                    vis.Vision(ltwh=vis.display,
-                               needle='./needles/minimap/orient.png',
-                               loop_num=50,
-                               loop_sleep_range=(1000, 2000)).wait_for_image()
-                if logged_in is True:
-                    # Reset the timer that's used to count the number of
-                    #   seconds the bot has been running for.
-                    start.start_time = time.time()
-                    # Make sure client camera is oriented correctly after
-                    #   logging in.
-                    pag.keyDown('Up')
-                    misc.sleep_rand(3000, 7000)
-                    pag.keyUp('Up')
-                    return True
-                else:
-                    raise Exception(
-                        'Could not detect login after postlogin screen!')
+        if postlogin_screen_button is True:
+            misc.sleep_rand(postlogin_sleep_range[0], postlogin_sleep_range[1])
 
-            # Begin checking for the different non-successful login messages.
-            #   This includes the "invalid credentials", "you must be a member
-            #   to use this world", "cannot connect to server," etc.
+            # Wait for the orient function to return true in order to
+            #    confirm the login.
+            logged_in = vis.Vision(ltwh=vis.display,
+                                   needle='./needles/minimap/orient.png',
+                                   loop_num=50, loop_sleep_range=(1000, 2000)).wait_for_image()
+            if logged_in is True:
+                # Reset the timer that's used to count the number of
+                #   seconds the bot has been running for.
+                start.start_time = time.time()
+                # Make sure client camera is oriented correctly after
+                #   logging in.
+                pag.keyDown('Up')
+                misc.sleep_rand(3000, 7000)
+                pag.keyUp('Up')
+                return True
+            else:
+                raise Exception('Could not detect login after postlogin screen!')
+
+        else:
+            # Begin checking for the various non-successful login messages.
+            #   This includes messages like "invalid credentials",
+            #   "you must be a member to use this world", "cannot
+            #   connect to server," etc.
             log.warning('Cannot find postlogin screen!')
-            invalid_credentials = \
-                vis.Vision(ltwh=vis.display,
-                           needle='./needles/login-menu/'
-                                  'invalid-credentials.png',
-                           loop_num=1).wait_for_image()
+
+            # TODO: add additional checks to other login messages
+            invalid_credentials = vis.Vision(ltwh=vis.display,
+                                             needle='./needles/login-menu/invalid-credentials.png',
+                                             loop_num=1).wait_for_image()
             if invalid_credentials is True:
-                log.critical('Invalid user credentials!')
                 raise Exception('Invalid user credentials!')
             log.error('Cannot find postlogin screen!')
-        raise Exception('Unable to login!')
+
+    raise Exception('Unable to login!')
 
 
 def logout():
@@ -195,145 +186,133 @@ def logout():
     If the client is logged in, logs out.
 
     Raises:
-        Raises an exception if the client could not logout for any
-        reason.
+        Raises an exception if the client could not logout.
 
     Returns:
         Returns True if the logout was successful.
 
     """
     # Make sure the client is logged in.
-    orient = vis.orient()
-    if orient[0] == 'logged_in':
-        open_side_stone('logout')
-
-        # Look for any of the three possible logout buttons.
-        logout_button_world_switcher = False
-        logout_button_highlighted = False
-        logout_button = False
-        for _ in range(5):
-            # The standard logout button.
-            logout_button = \
-                vis.Vision(ltwh=vis.inv,
-                           needle='./needles/side-stones/logout/logout.png',
-                           conf=0.9, loop_num=1).wait_for_image(get_tuple=True)
-            if isinstance(logout_button, tuple) is True:
-                break
-
-            # The logout button as it appears when the mouse is over it.
-            logout_button_highlighted = \
-                vis.Vision(ltwh=vis.inv,
-                           needle='./needles/side-stones/logout/'
-                                  'logout-highlighted.png',
-                           conf=0.9,
-                           loop_num=1).wait_for_image(get_tuple=True)
-            if isinstance(logout_button_highlighted, tuple) is True:
-                logout_button = logout_button_highlighted
-                break
-
-            # TODO: fix missing logout-world-switcher.png
-            # The logout button when the world switcher is open.
-            logout_button_world_switcher = \
-                vis.Vision(ltwh=vis.side_stones,
-                           needle='./needles/side-stones/logout/'
-                                  'logout-world-switcher.png',
-                           conf=0.9,
-                           loop_num=1).wait_for_image(get_tuple=True)
-            if isinstance(logout_button_world_switcher, tuple) is True:
-                logout_button = logout_button_world_switcher
-                break
-
-        if logout_button is False and logout_button_highlighted is False \
-                and logout_button_world_switcher is False:
-            raise Exception("Failed to find logout button!")
-
-        # Once a logout button has been found, click on its coords and
-        #   wait for the logout to complete.
-        # If a logout is not detected after the first try, keep clicking
-        #   on the location of the detected logout button and try again.
-        else:
-            input.Mouse(ltwh=logout_button).click_coord(move_away=True)
-            for tries in range(5):
-                logged_out = vis.Vision(
-                    ltwh=vis.client,
-                    needle='./needles/login-menu/orient-logged-out.png',
-                    loop_num=5,
-                    loop_sleep_range=(1000, 1200)).wait_for_image()
-                if logged_out is True:
-                    log.info('Logged out after trying %s times(s)', tries)
-                    return True
-                else:
-                    log.info('Unable to log out, trying again.')
-                    input.Mouse(ltwh=logout_button).click_coord(move_away=True)
-
-            raise RuntimeError('Could not logout!')
-    else:
+    if vis.orient()[0] == 'logged_out':
         log.warning('Client already logged out!')
         return True
 
+    open_side_stone('logout')
 
-def logout_rand_range():
+    logout_button_world_switcher = False
+    logout_button_highlighted = False
+    logout_button = False
+
+    # Look for any of the three possible logout buttons.
+    for _ in range(5):
+        # The standard logout button.
+        logout_button = vis.Vision(ltwh=vis.inv,
+                                   needle='./needles/side-stones/logout/logout.png',
+                                   conf=0.9, loop_num=1).wait_for_image(get_tuple=True)
+        if isinstance(logout_button, tuple) is True:
+            # Break out of the loop if any of the buttons was found.
+            break
+
+        # The logout button as it appears when the mouse is over it.
+        logout_button_highlighted = vis.Vision(ltwh=vis.inv,
+                                               needle='./needles/side-stones/logout/logout-highlighted.png',
+                                               conf=0.9, loop_num=1).wait_for_image(get_tuple=True)
+        if isinstance(logout_button_highlighted, tuple) is True:
+            logout_button = logout_button_highlighted
+            break
+
+        # TODO: fix missing logout-world-switcher.png
+        # The logout button when the world switcher is open.
+        logout_button_world_switcher = vis.Vision(ltwh=vis.side_stones,
+                                                  needle='./needles/side-stones/logout/logout-world-switcher.png',
+                                                  conf=0.9, loop_num=1).wait_for_image(get_tuple=True)
+        if isinstance(logout_button_world_switcher, tuple) is True:
+            logout_button = logout_button_world_switcher
+            break
+
+    if logout_button is False and logout_button_highlighted is False \
+            and logout_button_world_switcher is False:
+        raise Exception("Failed to find logout button!")
+
+    # Once a logout button has been found, click on its coordinates
+    #   and wait for the logout to complete.
+    # If a logout is not detected after the first try, keep clicking
+    #   on the location of the detected logout button and try again.
+    input.Mouse(ltwh=logout_button).click_coord(move_away=True)
+    for tries in range(5):
+        logged_out = vis.Vision(ltwh=vis.client,
+                                needle='./needles/login-menu/orient-logged-out.png',
+                                loop_num=5, loop_sleep_range=(1000, 1200)).wait_for_image()
+        if logged_out is True:
+            log.info('Logged out after trying %s times(s)', tries)
+            return True
+        else:
+            log.info('Unable to log out, trying again.')
+            input.Mouse(ltwh=logout_button).click_coord(move_away=True)
+
+    raise Exception('Could not logout!')
+
+
+def logout_break_range():
     """
-    Triggers a random logout within a specific range of time, set
+    Triggers a random logout within a specific range of times, set
     by the user in the main config file. Additional configuration for
     this function is set by variables in startup.py.
 
     To determine when a logout roll should occur, this function creates
-    five evenly-spaced timestamps at which to roll for a logout.
-    Each roll has a 1/5 chance to pass. The first and last timestamps
-    are based on the desired minimum and maximum session duration, set
-    by the user. The function forces a logout on the fifth and final
-    timestamp (aka "checkpoint"). All variables are reset if a logout
-    roll passes.
+    five evenly-spaced timestamps at which to roll for a logout. These
+    timestamps are called "checkpoints" interanally. Each roll has a
+    1/5 chance to pass. The first and last checkpoints are based on the
+    user-defined minimum and maximum session duration. As a result of
+    this, the last checkpoint's roll always has a 100% chance of
+    success.
+    All variables set by this function are reset if a logout roll passes.
 
-    When called, this function checks if an checkpoint has occurred that
-    hasn't yet been rolled. If true, it rolls for that checkpoint and
-    marks it (so it's not rolled again). If the roll passes, a logout is
-    called and all checkpoints are reset. If it's not time to roll for a
-    checkpoint, the function does nothing and returns.
+    When called, this function checks if an checkpoint's timestamp has
+    passed and hasn't yet been rolled. If true, it rolls for that checkpoint
+    and marks it (so it's not rolled again). If the roll passes, a logout
+    is called and all checkpoints are reset. If the roll fails or a
+    checkpoint's timestamp hasn't yet passed, the function does nothing
+    and returns.
+
     """
-
+    # TODO: there's probably a way to refactor all these near-duplicate
+    #   if-statements into a single for-loop
     current_time = round(time.time())
 
     # If a checkpoint's timestamp has passed, roll for a logout, then set
-    #   a global variable so another roll doesn't occur between that
-    #   checkpoint and the next checkpoint.
-    if current_time >= start.checkpoint_1 and \
-            start.checkpoint_1_checked is False:
-        log.info('Rolling checkpoint 1')
+    #   a global variable so that checkpoint isn't rolled again.
+    if current_time >= start.checkpoint_1 and start.checkpoint_1_checked is False:
+        log.info('Rolling for checkpoint 1...')
         start.checkpoint_1_checked = True
-        logout_rand(5)
+        logout_break_roll(5)
 
-    elif current_time >= start.checkpoint_2 and \
-            start.checkpoint_2_checked is False:
-        log.info('Rolling checkpoint 2')
+    elif current_time >= start.checkpoint_2 and start.checkpoint_2_checked is False:
+        log.info('Rolling for checkpoint 2...')
         start.checkpoint_2_checked = True
-        logout_rand(5)
+        logout_break_roll(5)
 
-    elif current_time >= start.checkpoint_3 and \
-            start.checkpoint_3_checked is False:
-        log.info('Rolling checkpoint 3')
+    elif current_time >= start.checkpoint_3 and start.checkpoint_3_checked is False:
+        log.info('Rolling for checkpoint 3...')
         start.checkpoint_3_checked = True
-        logout_rand(5)
+        logout_break_roll(5)
 
-    elif current_time >= start.checkpoint_4 and \
-            start.checkpoint_4_checked is False:
-        log.info('Rolling checkpoint 4')
+    elif current_time >= start.checkpoint_4 and start.checkpoint_4_checked is False:
+        log.info('Rolling checkpoint 4...')
         start.checkpoint_4_checked = True
-        logout_rand(5)
+        logout_break_roll(5)
 
-    # The last checkpoint's timestamp is the start time of the session
-    #   plus the maximum session duration, so force a logout and
-    #   reset all the other checkpoints.
+    # The last checkpoint's timestamp is based on the maximum session
+    #   duration, so force a logout and reset all the other checkpoints.
     elif current_time >= start.checkpoint_5:
         start.checkpoint_1_checked = False
         start.checkpoint_2_checked = False
         start.checkpoint_3_checked = False
         start.checkpoint_4_checked = False
-        logout_rand(1)
+        logout_break_roll(1)
 
-    # Print the correct logging information according to which checkpoint
-    #   has been checked.
+    # Print the correct logging information according to which checkpoint(s)
+    #   have been rolled for.
     else:
         if start.checkpoint_1_checked is False:
             log.info('Checkpoint 1 is at %s', time.ctime(start.checkpoint_1))
@@ -345,48 +324,40 @@ def logout_rand_range():
             log.info('Checkpoint 4 is at %s', time.ctime(start.checkpoint_4))
         elif start.checkpoint_4_checked is True:
             log.info('Checkpoint 5 is at %s', time.ctime(start.checkpoint_5))
-        return
-    return
+    return True
 
 
-def logout_rand(chance,
-                wait_min=int(start.config.get('main', 'min_break_duration')),
-                wait_max=int(start.config.get('main', 'max_break_duration'))):
+def logout_break_roll(chance,
+                      wait_min=int(start.config.get('main', 'min_break_duration')),
+                      wait_max=int(start.config.get('main', 'max_break_duration'))):
     """
-    Rolls for a chance to logout of the client and wait.
+    Rolls for a chance to logout and wait.
 
     Args:
         chance (int): See wait_rand()'s docstring.
         wait_min (int): The minimum number of minutes to wait if the
-                        roll passes, by default reads a config file.
+                        roll passes, by default reads the config file.
         wait_max (int): The maximum number of minutes to wait if the
-                        roll passes, by default reads a config file.
-    """
+                        roll passes, by default reads the config file.
 
+    """
     logout_roll = rand.randint(1, chance)
     log.info('Logout roll was %s', logout_roll)
+
     if logout_roll == chance:
         log.info('Random logout called.')
-
-        # Reset all the logout checkpoints for the next session.
-        start.checkpoint_1_checked = False
-        start.checkpoint_2_checked = False
-        start.checkpoint_3_checked = False
-        start.checkpoint_4_checked = False
-
         logout()
 
         # Track the number of play sessions that have occurred so far.
         start.session_num += 1
-        log.info('Completed session %s/%s', start.session_num,
-                 start.session_total)
-        # If the maximum number of sessions has been reached, kill the
-        #   bot.
+        log.info('Completed session %s/%s', start.session_num, start.session_total)
+
+        # If the maximum number of sessions has been reached, kill the bot.
         if start.session_num >= start.session_total:
             log.info('Final session completed! Script done.')
             sys.exit(0)
 
-        elif start.session_num < start.session_total:
+        else:
             # Convert from minutes to miliseconds.
             wait_min *= 60000
             wait_max *= 60000
@@ -406,8 +377,6 @@ def logout_rand(chance,
                      stop_time_human[4], stop_time_human[5])
 
             time.sleep(wait_time_seconds)
-        else:
-            raise Exception('Error with session numbers!')
     else:
         return
 
@@ -625,19 +594,16 @@ def bank_config_check(config, status):
 def open_bank(direction):
     for _ in range(10):
         one_tile = vis.Vision(ltwh=vis.game_screen,
-                              needle='./needles/game-screen/bank/'
-                                     'bank-booth-' + direction + '-1-tile.png',
+                              needle='./needles/game-screen/bank/bank-booth-' + direction + '-1-tile.png',
                               loop_num=1, conf=0.85).click_image()
 
         two_tiles = vis.Vision(ltwh=vis.game_screen,
-                               needle='./needles/game-screen/bank/'
-                                      'bank-booth-' + direction + '-2-tiles.png',
+                               needle='./needles/game-screen/bank/bank-booth-' + direction + '-2-tiles.png',
                                loop_num=1, conf=0.85).click_image()
 
         if one_tile is True or two_tiles is True:
             bank_open = vis.Vision(ltwh=vis.game_screen,
-                                   needle='./needles/buttons/'
-                                          'close.png',
+                                   needle='./needles/buttons/close.png',
                                    loop_num=50).wait_for_image()
             if bank_open is True:
                 return True
@@ -806,8 +772,8 @@ def travel(param_list, haystack_map):
             if (abs(waypoint_distance_x) <= waypoint_tolerance[0] and
                     abs(waypoint_distance_y) <= waypoint_tolerance[1]):
                 break
-    #logout()
-    #raise Exception('Could not reach destination!')
+    # logout()
+    # raise Exception('Could not reach destination!')
     return True
 
 

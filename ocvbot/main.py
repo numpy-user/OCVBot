@@ -56,7 +56,7 @@ def miner(scenario):
             raise Exception('Scenario not supported!')
 
         # Roll for randomized actions when the script returns.
-        behavior.logout_rand_range()
+        behavior.logout_break_range()
 
 
 def spellcaster(scenario):
@@ -81,18 +81,20 @@ def spellcaster(scenario):
 
     """
     if scenario == 'curse-varrock-castle':
-        spell = './needles/buttons/curse.png'
-        target = './needles/game-screen/monk-of-zamorak.png'
+        spell = './needles/side-stones/spellbook/curse.png'
+        target = './needles/game-screen/varrock/monk-of-zamorak.png'
         haystack_map = './haystacks/varrock-castle.png'
         for _ in range(10000):
             behavior.travel([((75, 128), 1, (4, 4), (5, 10))], haystack_map)
-            skilling.Magic(spell=spell, target=target, logout=True, conf=0.75, haystack=vis.game_screen).cast_spell()
+            skilling.Magic(spell=spell, target=target, logout=True,
+                           conf=0.75, haystack=vis.game_screen).cast_spell()
 
     elif scenario == 'high-alchemy':
-        spell = './needles/high-alchemy.png'
-        target = './needles/bank-note-slice.png'
+        spell = './needles/side-stones/spellbook/high-alchemy.png'
+        target = './needles/items/bank-note.png'
         for _ in range(10000):
-            spell_cast = skilling.Magic(spell=spell, target=target, logout=False, conf=0.45, haystack=vis.inv).cast_spell()
+            spell_cast = skilling.Magic(spell=spell, target=target, logout=False,
+                                        conf=0.45, haystack=vis.inv).cast_spell()
             if spell_cast is False:
                 sys.exit(0)
 
