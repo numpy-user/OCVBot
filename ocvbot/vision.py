@@ -27,16 +27,12 @@ def haystack_locate(needle, haystack, grayscale=False, conf=0.95):
     # Make sure file path is OS-agnostic.
     needle = str(pathlib.Path(needle))
 
-    target_image = pag.locate(needle, haystack,
-                              confidence=conf,
-                              grayscale=grayscale)
+    target_image = pag.locate(needle, haystack, confidence=conf, grayscale=grayscale)
     if target_image is not None:
-        log.debug('Found center of ' + str(needle) + ', ' +
-                  str(target_image))
+        log.debug('Found center of %s, %s', needle, target_image)
         return target_image
 
-    log.debug('Cannot find center of ' + str(needle) +
-              ', conf=' + str(conf))
+    log.debug('Cannot find center of %s, conf=%s', needle, conf)
     return False
 
 
@@ -75,10 +71,8 @@ class Vision:
 
     """
 
-    def __init__(self, ltwh, needle,
-                 loctype='regular', conf=0.95,
-                 loop_num=10, loop_sleep_range=(0, 100),
-                 grayscale=False):
+    def __init__(self, ltwh, needle, loctype='regular', conf=0.95,
+                 loop_num=10, loop_sleep_range=(0, 100), grayscale=False):
         self.grayscale = grayscale
         self.ltwh = ltwh
         self.needle = needle
@@ -103,31 +97,25 @@ class Vision:
         needle = str(pathlib.Path(self.needle))
 
         if self.loctype == 'regular':
-            target_image = pag.locateOnScreen(needle,
-                                              confidence=self.conf,
+            target_image = pag.locateOnScreen(needle, confidence=self.conf,
                                               grayscale=self.grayscale,
                                               region=self.ltwh)
             if target_image is not None:
-                log.debug('Found regular image ' + str(needle) + ', ' +
-                          str(target_image))
+                log.debug('Found regular image %s, %s', needle, target_image)
                 return target_image
 
-            log.debug('Cannot find regular image ' + str(needle) +
-                      ' conf=' + str(self.conf))
+            log.debug('Cannot find regular image %s, conf=%s', needle, self.conf)
             return False
 
         elif self.loctype == 'center':
-            target_image = pag.locateCenterOnScreen(needle,
-                                                    confidence=self.conf,
+            target_image = pag.locateCenterOnScreen(needle, confidence=self.conf,
                                                     grayscale=self.grayscale,
                                                     region=self.ltwh)
             if target_image is not None:
-                log.debug('Found center of ' + str(needle) + ', ' +
-                          str(target_image))
+                log.debug('Found center of image %s, %s', needle, target_image)
                 return target_image
 
-            log.debug('Cannot find center of ' + str(needle) +
-                      ', conf=' + str(self.conf))
+            log.debug('Cannot find center of image %s, conf=%s', needle, self.conf)
             return False
 
         raise RuntimeError('Incorrect mlocate function parameters!')
@@ -161,19 +149,17 @@ class Vision:
             target_image = Vision.mlocate(self)
 
             if target_image is False:
-                log.debug('Cannot find ' + str(self.needle) + ', tried '
-                          + str(tries) + ' times.')
+                log.debug('Cannot find %s, tried %s times.', self.needle, tries)
                 loop_sleep_min, loop_sleep_max = self.loop_sleep_range
                 misc.sleep_rand(loop_sleep_min, loop_sleep_max)
 
             else:
-                log.debug('Found ' + str(self.needle) + ' after trying '
-                          + str(tries) + ' times.')
+                log.debug('Found %s after trying %s times.', self.needle, tries)
                 if get_tuple is True:
                     return target_image
                 return True
 
-        log.debug('Timed out looking for ' + str(self.needle) + '.')
+        log.debug('Timed out looking for %s', self.needle)
         return False
 
     def click_image(self, sleep_range=(50, 200, 50, 200),
@@ -201,7 +187,7 @@ class Vision:
             returns False otherwise.
 
         """
-        log.debug('Looking for ' + str(self.needle) + ' to click on.')
+        log.debug('Looking for %s to click on.', self.needle)
 
         target_image = self.wait_for_image(get_tuple=True)
 
@@ -213,13 +199,12 @@ class Vision:
                         move_duration_range=move_duration_range,
                         button=button).click_coord()
 
-            log.debug('Clicking on ' + str(self.needle) + '.')
+            log.debug('Clicking on %s', self.needle)
 
             if move_away is True:
-                input.Mouse(ltwh=(25, 25, 100, 100),
-                            move_duration_range=(50, 200)).moverel()
-
+                input.Mouse(ltwh=(25, 25, 100, 100), move_duration_range=(50, 200)).moverel()
             return True
+
         else:
             return False
 
@@ -256,16 +241,14 @@ def orient(ltwh=(0, 0, start.DISPLAY_WIDTH, start.DISPLAY_HEIGHT),
          coordinates of the orient-logged-out needle.
 
     """
-    logged_in = Vision(ltwh=ltwh,
-                       needle='needles/minimap/orient.png',
+    logged_in = Vision(ltwh=ltwh, needle='needles/minimap/orient.png',
                        loctype='center', loop_num=1, conf=0.8) \
         .wait_for_image(get_tuple=True)
     if isinstance(logged_in, tuple) is True:
         return 'logged_in', logged_in
 
     # If the client is not logged in, check if it's logged out.
-    logged_out = Vision(ltwh=ltwh,
-                        needle='needles/login-menu/orient-logged-out.png',
+    logged_out = Vision(ltwh=ltwh, needle='needles/login-menu/orient-logged-out.png',
                         loctype='center', loop_num=1, conf=0.8) \
         .wait_for_image(get_tuple=True)
     if isinstance(logged_out, tuple) is True:
