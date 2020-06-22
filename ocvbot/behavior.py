@@ -332,14 +332,19 @@ def logout_rand_range():
         start.checkpoint_4_checked = False
         logout_rand(1)
 
+    # Print the correct logging information according to which checkpoint
+    #   has been checked.
     else:
-        log.info('time is ' + str(time.ctime(current_time)))
-        log.info('Checkpoint 1 is at %s', time.ctime(start.checkpoint_1))
-        log.info('Checkpoint 2 is at %s', time.ctime(start.checkpoint_2))
-        log.info('Checkpoint 3 is at %s', time.ctime(start.checkpoint_3))
-        log.info('Checkpoint 4 is at %s', time.ctime(start.checkpoint_4))
-        log.info('Checkpoint 5 is at %s', time.ctime(start.checkpoint_5))
-        log.info('Not time for a logout roll')
+        if start.checkpoint_1_checked is False:
+            log.info('Checkpoint 1 is at %s', time.ctime(start.checkpoint_1))
+        elif start.checkpoint_1_checked is True and start.checkpoint_2_checked is False:
+            log.info('Checkpoint 2 is at %s', time.ctime(start.checkpoint_2))
+        elif start.checkpoint_2_checked is True and start.checkpoint_3_checked is False:
+            log.info('Checkpoint 3 is at %s', time.ctime(start.checkpoint_3))
+        elif start.checkpoint_3_checked is True and start.checkpoint_4_checked is False:
+            log.info('Checkpoint 4 is at %s', time.ctime(start.checkpoint_4))
+        elif start.checkpoint_4_checked is True:
+            log.info('Checkpoint 5 is at %s', time.ctime(start.checkpoint_5))
         return
     return
 
