@@ -410,28 +410,27 @@ def open_side_stone(side_stone):
         log.debug('Side stone already open.')
         return True
     else:
-        log.debug('Opening side stone.')
+        log.debug('Opening side stone...')
 
     # Try a total of 5 times to open the desired side stone menu using
     #   the mouse.
     for tries in range(6):
         # Move mouse out of the way after clicking so the function can
         #   tell if the stone is open.
-        vis.Vision(ltwh=vis.side_stones,
-                   needle=side_stone_closed,
+        vis.Vision(ltwh=vis.side_stones, needle=side_stone_closed,
                    loop_num=3, loop_sleep_range=(100, 300)). \
             click_image(sleep_range=(0, 200, 0, 200), move_away=True)
-        stone_open = vis.Vision(ltwh=vis.side_stones,
-                                needle=side_stone_open,
-                                loop_num=3, conf=0.98,
-                                loop_sleep_range=(100, 200)).wait_for_image()
+
+        stone_open = vis.Vision(ltwh=vis.side_stones, needle=side_stone_open,
+                                loop_num=3, conf=0.98, loop_sleep_range=(100, 200)). \
+            wait_for_image()
+
         if stone_open is True:
             log.info('Opened side stone after %s tries.', tries)
             return True
         # Make sure the bank window isn't open, which would block
         #   access to the side stones.
-        vis.Vision(ltwh=vis.game_screen,
-                   needle='./needles/buttons/close.png',
+        vis.Vision(ltwh=vis.game_screen, needle='./needles/buttons/close.png',
                    loop_num=1).click_image()
     raise Exception('Could not open side stone!')
 
@@ -440,11 +439,11 @@ def check_skills():
     """
     Used to mimic human-like behavior. Checks the stats of a random
     skill.
-    """
 
+    """
     open_side_stone('skills')
     input.Mouse(ltwh=vis.inv).move_to()
-    misc.sleep_rand(500, 5000)
+    misc.sleep_rand(1000, 7000)
 
 
 def human_behavior_rand(chance):
@@ -457,8 +456,8 @@ def human_behavior_rand(chance):
                       behavior to be triggered. For example, if this
                       parameter is 25, then there is a 1 in 25 chance
                       for the roll to pass.
-    """
 
+    """
     roll = rand.randint(1, chance)
     log.info('Human behavior rolled %s', roll)
     if roll == chance:
@@ -488,8 +487,7 @@ def human_behavior_rand(chance):
     return
 
 
-def drop_item(item, track=True,
-              wait_chance=120, wait_min=5000, wait_max=20000):
+def drop_item(item, track=True, wait_chance=120, wait_min=5000, wait_max=20000):
     """
     Drops all instances of the provided item from the inventory.
     Shift+Click to drop item MUST be enabled.
@@ -516,38 +514,29 @@ def drop_item(item, track=True,
     open_side_stone('inventory')
 
     item_remains = vis.inv.wait_for_image(loop_num=1, needle=item)
-
     if item_remains is False:
-        log.info('Could not find %s.', item)
+        log.info('Could not find %s', item)
         return False
 
-    log.info('Dropping %s.', item)
-    tries = 0
-    while item_remains is True and tries <= 40:
+    log.info('Dropping all instances of %s', item)
+    for tries in range(40):
 
-        tries += 1
         pag.keyDown('shift')
         # Alternate between searching for the item in left half and the
         #   right half of the player's inventory. This helps reduce the
         #   chances the bot will click on the same item twice.
-        item_on_right = vis.inv_right_half.click_image(loop_num=1,
-                                                       sleep_befmin=10,
-                                                       sleep_befmax=50,
-                                                       sleep_afmin=50,
-                                                       sleep_afmax=300,
-                                                       move_durmin=50,
-                                                       move_durmax=800,
-                                                       needle=item)
+        item_on_right = \
+            vis.inv_right_half(needle=item).click_image(loop_num=1,
+                                                        sleep_range=(10, 50, 50, 300),
+                                                        move_duration_range=(50, 800))
+        # TODO: this "track" parameter is for stats. implement stats!
         if item_on_right is True and track is True:
             start.items_gathered += 1
-        item_on_left = vis.inv_left_half.click_image(loop_num=1,
-                                                     sleep_befmin=10,
-                                                     sleep_befmax=50,
-                                                     sleep_afmin=50,
-                                                     sleep_afmax=300,
-                                                     move_durmin=50,
-                                                     move_durmax=800,
-                                                     needle=item)
+
+        item_on_left = \
+            vis.inv_left_half(needle=item).click_image(loop_num=1,
+                                                       sleep_range=(10, 50, 50, 300),
+                                                       move_duration_range=(50, 800))
         if item_on_left is True and track is True:
             start.items_gathered += 1
 
@@ -562,10 +551,8 @@ def drop_item(item, track=True,
         if item_remains is False:
             return True
 
-    if tries > 40:
-        log.error('Tried dropping item too many times!')
-        return False
-    return True
+    log.error('Tried dropping item too many times!')
+    return False
 
 
 def bank_config_check(config, status):
