@@ -1,3 +1,10 @@
+# coding=UTF-8
+"""
+Unit tests for the behavior.py module.
+
+Linux only. Requires feh.
+
+"""
 import logging as log
 import subprocess as sub
 import time
@@ -11,13 +18,13 @@ directory = "../tests/test_behavior/"
 #   is reliable.
 interval = 0.1
 
-log.basicConfig(format='%(asctime)s %(filename)s.%(funcName)s - %(message)s'
-                , level='DEBUG')
+log.basicConfig(format='%(asctime)s %(filename)s.%(funcName)s - %(message)s', level='DEBUG')
 
 
 def kill_feh():
     """
-    Kills feh so the next set of images can be displayed.
+    Kills feh so the next slideshow of images can be displayed.
+
     """
     for proc in psutil.process_iter():
         if proc.name() == 'feh':
@@ -41,6 +48,7 @@ def feh(test_name, test_type, test_number):
                            name of the directory immediately beneath
                            the "test_name" parameter. Ignore the "test"
                            in the directory's name
+
     """
     kill_feh()
     time.sleep(interval)
@@ -101,6 +109,11 @@ login_fail_params = (
    '02',  # Client is already logged in.
 )
 
+open_bank_params = (
+    ('south', '01'),  # Booth, 1 tile south.
+    ('south', '02'),  # Booth, 2 tiles south.
+)
+
 drop_item_pass_params = (
     ('iron_ore.png', '01'),
 )
@@ -113,59 +126,69 @@ drop_item_pass_params = (
 # OPEN SIDE STONE ------------------------------------------------------
 
 
-@pytest.mark.parametrize('params', open_side_stone_pass_params)
-def test_open_side_stone_pass(params):
-    side_stone, test_number = params
-    feh('open_side_stone', 'pass', test_number)
-    result = behavior.open_side_stone(side_stone)
-    assert result is True
+#@pytest.mark.parametrize('params', open_side_stone_pass_params)
+#def test_open_side_stone_pass(params):
+    #side_stone, test_number = params
+    #feh('open_side_stone', 'pass', test_number)
+    #result = behavior.open_side_stone(side_stone)
+    #assert result is True
 
 
-@pytest.mark.parametrize('params', open_side_stone_fail_params)
-def test_open_side_stone_fail(params):
-    side_stone, test_number = params
-    feh('open_side_stone', 'fail', test_number)
-    with pytest.raises(Exception, match='Could not open side stone!'):
-        behavior.open_side_stone(side_stone)
-        kill_feh()
+#@pytest.mark.parametrize('params', open_side_stone_fail_params)
+#def test_open_side_stone_fail(params):
+    #side_stone, test_number = params
+    #feh('open_side_stone', 'fail', test_number)
+    #with pytest.raises(Exception, match='Could not open side stone!'):
+        #behavior.open_side_stone(side_stone)
+        #kill_feh()
 
 
 # LOGOUT ---------------------------------------------------------------
 
 
-@pytest.mark.parametrize('params', logout_pass_params)
-def test_logout_pass(params):
-    feh('logout', 'pass', params)
-    result = behavior.logout()
-    assert result is True
+#@pytest.mark.parametrize('params', logout_pass_params)
+#def test_logout_pass(params):
+    #feh('logout', 'pass', params)
+    #result = behavior.logout()
+    #assert result is True
 
 
-@pytest.mark.parametrize('params', logout_fail_params)
-def test_open_side_stone_fail(params):
-    feh('logout', 'fail', params)
-    with pytest.raises(Exception, match='.*'):
-        behavior.logout()
-        kill_feh()
+#@pytest.mark.parametrize('params', logout_fail_params)
+#def test_open_side_stone_fail(params):
+    #feh('logout', 'fail', params)
+    #with pytest.raises(Exception, match='.*'):
+        #behavior.logout()
+        #kill_feh()
 
 
 # LOGIN ----------------------------------------------------------------
 
 
-@pytest.mark.parametrize('params', login_pass_params)
-def test_logout_pass(params):
-    feh('login', 'pass', params)
-    import os
-    os.system('pwd')
-    result = behavior.login(
-        username_file=(directory + './test_login/sampleu.txt'),
-        password_file=(directory + './test_login/samplep.txt'))
+#@pytest.mark.parametrize('params', login_pass_params)
+#def test_logout_pass(params):
+    #feh('login', 'pass', params)
+    #import os
+    #os.system('pwd')
+    #result = behavior.login_full(username_file=(directory + './test_login/sampleu.txt'),
+                                 #password_file=(directory + './test_login/samplep.txt'))
+    #assert result is True
+
+
+#@pytest.mark.parametrize('params', login_fail_params)
+#def test_login_fail(params):
+    #feh('login', 'fail', params)
+    #with pytest.raises(Exception, match='.*'):
+        #behavior.login_full(username_file=(directory + './test_login/sampleu.txt'),
+                       #password_file=(directory + './test_login/samplep.txt'))
+        #kill_feh()
+
+
+# OPEN_BANK ------------------------------------------------------------
+
+
+@pytest.mark.parametrize('params', open_bank_params)
+def test_open_bank_pass(params):
+    direction, test_number = params
+    feh('open_bank', 'pass', test_number)
+    result = behavior.open_bank(direction)
     assert result is True
-
-
-@pytest.mark.parametrize('params', login_fail_params)
-def test_login_fail(params):
-    feh('login', 'fail', params)
-    with pytest.raises(Exception, match='.*'):
-        behavior.login(username_file=(directory + './test_login/sampleu.txt'),
-                       password_file=(directory + './test_login/samplep.txt'))
-        kill_feh()
