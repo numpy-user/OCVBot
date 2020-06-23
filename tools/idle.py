@@ -11,8 +11,8 @@ from ocvbot import input, misc, vision as vis
 input.Mouse(ltwh=vis.chat_menu).click_coord(move_away=True)
 
 while True:
-    # Every 30-120 seconds, hit an arrow key to move the client's camera.
-    misc.sleep_rand(30000, 120000)
+    # Every 3-5 minutes, hit an arrow key to move the client's camera.
+    misc.sleep_rand(180000, 299000)
     key = rand.randint(1, 4)
     log.info('Hitting arrow key')
     if key == 1:
