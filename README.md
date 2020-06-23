@@ -2,13 +2,19 @@
 
 *Currently under development.*
 
-## INSTALLATION
+## INSTALLATION (Windows)
 
-**A binary is available for Linux. If you're on Windows, you'll have to
-run the bot by cloning the repo and using a Python interpreter.**
+- Make sure you have Git for Windows installed: https://gitforwindows.org/
+- Make sure you have the latest version of Python installed: 
 
-1. Download the correct archive from the Releases page, according to your
-OS.
+1. Clone this repository using Git
+```
+# TODO
+```
+
+## INSTALLATION (Linux)
+
+1. Download the latest release tarball from the releases page.
 
 1. Decompress the archive somewhere in your home directory.
 
