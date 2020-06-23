@@ -1,6 +1,6 @@
 ## OCVbot: The OSRS Computer Vision Bot
 
-**Currently under development. v0.1 for Linux available now.**
+**Currently under development.**
 
 ## INSTALLATION
 
@@ -15,8 +15,8 @@ your account's login to it.
 and your account's password to it. Accounts with 2-factor authentication are
 not supported.
 
-1. Rename `config.yaml.example` to `config.yaml`.
-1. Edit `config.yaml` with your desired configuration settings.
+1. Rename `ocvbot/config.ini.example` to `ocvbot/config.ini`.
+1. Edit `ocvbot/config.ini` with your desired configuration settings.
 
 1. Check `docs/client-configuration` for the proper client
 configuration settings. Configurations in the `common/` directory are shared by
@@ -33,7 +33,7 @@ only.
 
 ## CONFIGURATION
 
-Currently OCVBot is configured via a few basic settings in the `config.yaml`
+Currently OCVBot is configured via a few basic settings in the `ocvbot/config.ini`
 file. Please see the comments in that file for information on how to configure
 each parameter.
 
@@ -42,3 +42,6 @@ nothing for a short while.
 
 For more technical users, comprehensive API documentation is located at
 `docs/build/html/`
+
+*This bot was written for educational purposes only. I am not responsible for how
+you use this software.*
