@@ -37,7 +37,7 @@ SIDE_STONES_HEIGHT = 366
 # The "gameplay screen". This is the screen that displays the player
 #   character and the game world.
 GAME_SCREEN_WIDTH = 512
-GAME_SCREEN_HEIGHT = 334
+GAME_SCREEN_HEIGHT = 340
 
 # The bottom chat menu pane.
 CHAT_MENU_WIDTH = 506
