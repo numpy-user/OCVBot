@@ -64,7 +64,7 @@ MINIMAP_HEIGHT = 151
 MINIMAP_SLICE_WIDTH = 110
 MINIMAP_SLICE_HEIGHT = 73
 
-# TODO: Finish stats
+# TODO: Finish implementing stats.
 # Stats ----------------------------------------------------------------
 
 # Used for tracking how long the script has been running.
@@ -88,7 +88,7 @@ ore_xp_dict = {
 # These variables are used to setup behavior.logout_rand_range(). ------
 # ----------------------------------------------------------------------
 
-# Reset initial checkpoint_checked values.
+# Set initial checkpoint_checked values.
 checkpoint_1_checked = False
 checkpoint_2_checked = False
 checkpoint_3_checked = False
@@ -97,6 +97,15 @@ checkpoint_4_checked = False
 # Convert run duration within config file from minutes to seconds.
 min_session_duration_sec = (int(config.get('main', 'min_session_duration'))) * 60
 max_session_duration_sec = (int(config.get('main', 'max_session_duration'))) * 60
+
+if min_session_duration_sec > max_session_duration_sec:
+    raise Exception('min_session_duration must be less than max_session_duration!')
+
+min_break_duration = int(config.get('main', 'min_break_duration'))
+max_break_duration = int(config.get('main', 'max_break_duration'))
+
+if min_break_duration > max_break_duration:
+    raise Exception('min_break_duration must be less than max_break_duration!')
 
 # Break the duration of time between the minimum and maximum duration
 #   into a set of evenly-sized durations of time. These chunks of time
@@ -115,6 +124,10 @@ checkpoint_5 = round(start_time + max_session_duration_sec)
 # Determine how many sessions the bot will run for before quitting.
 min_sessions = int(config.get('main', 'min_sessions'))
 max_sessions = int(config.get('main', 'max_sessions'))
+
+if min_sessions > max_sessions:
+    raise Exception('min_sessions must be less than max_sessions!')
+
 session_total = rand.randint(min_sessions, max_sessions)
 log.info('Checkpoint 1 is at %s, session_total is %s', time.ctime(checkpoint_1), session_total)
 
