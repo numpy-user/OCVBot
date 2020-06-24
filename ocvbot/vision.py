@@ -40,6 +40,7 @@ class Vision:
     """
     Contains methods for locating images on the display.
     All coordinates are relative to the top left corner of the display.
+    All coordinates are in a (left, top, width, height) format.
 
     Args:
         region (tuple): A 4-tuple containing the Left, Top, Width, and
@@ -192,8 +193,9 @@ class Vision:
         needle_coords = self.wait_for_needle(get_tuple=True)
 
         if isinstance(needle_coords, tuple) is True:
-            # Randomize the location the pointer will move to using the
-            #   dimensions of needle image.
+            # Randomize the location the mouse cursor will move to using
+            #   the dimensions of needle image.
+            # The mouse will click anywhere within the needle image.
             input.Mouse(region=needle_coords,
                         sleep_range=sleep_range,
                         move_duration_range=move_duration_range,
@@ -269,7 +271,7 @@ def orient(region=(0, 0, start.DISPLAY_WIDTH, start.DISPLAY_HEIGHT),
 
 
 # ----------------------------------------------------------------------
-# Setup the necessary tuples for the Vision class and orient the client.
+# Setup the necessary region tuples for the Vision class and orient the client.
 # ----------------------------------------------------------------------
 
 display = (0, 0, start.DISPLAY_WIDTH, start.DISPLAY_HEIGHT)
@@ -288,6 +290,11 @@ elif client_status == 'logged_out':
 #   in the Vision class to look for needles within the specified set of
 #   coordinates, rather than within the entire display's coordinates,
 #   which is much faster.
+
+# All coordinates are in a (left, top, width, height) format, to match
+#   PyAutoGUI.
+
+# The fixed-width Java game client.
 client = (client_left, client_top,
           start.CLIENT_WIDTH, start.CLIENT_HEIGHT)
 
