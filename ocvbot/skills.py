@@ -1,11 +1,40 @@
 # coding=UTF-8
 """
-Contains skilling-related functions.
+Contains all functions related to training skills.
 
 """
 import logging as log
 
 from ocvbot import behavior, vision as vis, misc, startup as start
+
+
+class Cooking:
+    """
+    Class for all cooking-related functions.
+
+    """
+
+    def __init__(self, item_inv, item_bank, heat_source, logout=False):
+        self.item_inv = item_inv
+        self.item_bank = item_bank
+        self.heat_source = heat_source
+        self.logout = logout
+
+    def cook_item(self):
+        """
+        Cooks all instances of the given item in the player's inventory.
+
+        Returns:
+
+        """
+        item_selected = vis.Vision(ltwh=vis.client,
+                                   needle=self.item_inv,
+                                   loop_num=1).click_needle()
+        if item_selected is True:
+            heat_source_selected = vis.Vision(ltwh=vis.game_screen,
+                                              needle=self.heat_source,
+                                              loop_num=3).click_needle()
+
 
 
 class Magic:
@@ -25,6 +54,7 @@ class Magic:
                        target cannot be found, default is False.
 
     """
+
     def __init__(self, spell, target, conf, haystack, logout=False):
         self.spell = spell
         self.haystack = haystack
@@ -36,11 +66,14 @@ class Magic:
         """
         Activates the desired spell.
 
+        Returns:
+            Returns True if spell was activated, False if otherwise.
+
         """
-        for _ in range(3):
-            spell_available = vis.Vision(ltwh=vis.inv, loop_num=3, needle=self.spell)\
-                              .click_image(sleep_range=(10, 500, 10, 500,),
-                                           move_duration_range=(10, 1000))
+        for _ in range(1, 3):
+            spell_available = vis.Vision(ltwh=vis.inv, loop_num=3, needle=self.spell) \
+                .click_needle(sleep_range=(10, 500, 10, 500,),
+                              move_duration_range=(10, 1000))
             if spell_available is False:
                 behavior.open_side_stone('spellbook')
                 misc.sleep_rand(100, 200)
@@ -51,12 +84,15 @@ class Magic:
     def _select_target(self):
         """
         Attempt to find the target to cast the spell on.
+
         Returns:
+            Returns True if target was found and selected, False if
+            otherwise.
 
         """
-        for _ in range(3):
+        for _ in range(1, 3):
             target = vis.Vision(needle=self.target, ltwh=self.haystack, loop_num=3, conf=self.conf) \
-                .click_image(sleep_range=(10, 500, 10, 500,), move_duration_range=(10, 1000))
+                .click_needle(sleep_range=(10, 500, 10, 500,), move_duration_range=(10, 1000))
 
             if target is False:
                 if vis.orient()[0] == 'logged_out':
@@ -70,6 +106,9 @@ class Magic:
         """
         Casts a spell at a target. Optionally can require the player to be
         in a specific location.
+
+        Returns:
+            Returns True if spell was cast, false if otherwise.
 
         """
         spell_selected = self._select_spell()
@@ -135,6 +174,10 @@ def mine(rocks, ore, ore_type, drop_ore):
         the function can't find any ore in the player's inventory to
         drop.
 
+    Returns:
+        Returns True if a full inventory of ore was mined and banked or
+        dropped, or if script timed out looking for ore.
+
     """
     gems = ['./needles/items/uncut-sapphire.png',
             './needles/items/uncut-emerald.png',
@@ -160,6 +203,8 @@ def mine(rocks, ore, ore_type, drop_ore):
         #   used to re-adjust the player if a mis-click moves the player
         #   out of position.
         # Applies to Varrock East mine only.
+        # TODO: These coords should be passed in from
+        #   main.py, not hard-coded.
         behavior.travel([((240, 399), 1, (4, 4), (5, 10))], './haystacks/varrock-east-mine.png')
 
         for rock_needle in rocks:
@@ -173,7 +218,7 @@ def mine(rocks, ore, ore_type, drop_ore):
             # Move the mouse away from the rock so it doesn't
             #   interfere with matching the needle.
             rock_full = vis.Vision(ltwh=vis.game_screen, loop_num=1, needle=full_rock_needle, conf=0.8) \
-                .click_image(sleep_range=(0, 100, 0, 100,), move_duration_range=(0, 500), move_away=True)
+                .click_needle(sleep_range=(0, 100, 0, 100,), move_duration_range=(0, 500), move_away=True)
             if rock_full is True:
                 log.info('Waiting for mining to start.')
 
@@ -184,7 +229,7 @@ def mine(rocks, ore, ore_type, drop_ore):
                 #   start by monitoring chat.
                 mining_started = vis.Vision(ltwh=vis.chat_menu_recent, loop_num=5, conf=0.9,
                                             needle='./needles/chat-menu/mining-started.png',
-                                            loop_sleep_range=(100, 200)).wait_for_image()
+                                            loop_sleep_range=(100, 200)).wait_for_needle()
 
                 # If mining hasn't started after looping has finished,
                 #   check to see if the inventory is full.
@@ -192,8 +237,8 @@ def mine(rocks, ore, ore_type, drop_ore):
                     log.debug('Timed out waiting for mining to start.')
 
                     inv_full = vis.Vision(ltwh=vis.chat_menu, loop_num=1,
-                                          needle='./needles/chat-menu/'
-                                                 'mining-inventory-full.png').wait_for_image()
+                                          needle='./needles/chat-menu/mining-inventory-full.png'). \
+                        wait_for_needle()
 
                     # If the inventory is full, empty the ore and
                     #   return.
@@ -204,24 +249,28 @@ def mine(rocks, ore, ore_type, drop_ore):
                         else:
                             behavior.open_side_stone('inventory')
                             # Bank from mining spot.
+                            # TODO: These coords should be passed in from
+                            #   main.py, not hard-coded.
                             behavior.travel([((253, 181), 5, (35, 35), (1, 6)),
-                                            ((112, 158), 5, (20, 20), (1, 6)),
-                                            ((108, 194), 1, (10, 4), (3, 8))],
+                                             ((112, 158), 5, (20, 20), (1, 6)),
+                                             ((108, 194), 1, (10, 4), (3, 8))],
                                             './haystacks/varrock-east-mine.png')
                             behavior.open_bank('south')
-                            vis.Vision(ltwh=vis.inv, needle=ore).click_image()
+                            vis.Vision(ltwh=vis.inv, needle=ore).click_needle()
                             for gem in gems:
-                                vis.Vision(ltwh=vis.inv, needle=gem, loop_num=1).click_image()
+                                vis.Vision(ltwh=vis.inv, needle=gem, loop_num=1).click_needle()
+                            # TODO: Instead of waiting a hard-coded period of time,
+                            #   wait until the item can no longer be found in the
+                            #   player's inventory.
                             misc.sleep_rand(500, 3000)
                             # Mining spot from bank.
                             behavior.travel([((240, 161), 5, (35, 35), (1, 6)),
-                                            ((262, 365), 5, (25, 25), (1, 6)),
-                                            ((240, 399), 1, (4, 4), (3, 8))],
+                                             ((262, 365), 5, (25, 25), (1, 6)),
+                                             ((240, 399), 1, (4, 4), (3, 8))],
                                             './haystacks/varrock-east-mine.png')
                             misc.sleep_rand(300, 800)
                         elapsed_time = misc.session_duration(human_readable=True)
-                        log.info('Script has been running for %s (HH:MM:SS)',
-                                 elapsed_time)
+                        log.info('Script has been running for %s (HH:MM:SS)', elapsed_time)
                         return True
                     return True
 
@@ -231,7 +280,7 @@ def mine(rocks, ore, ore_type, drop_ore):
                 #   "empty" version of the rock_needle tuple.
                 rock_empty = vis.Vision(ltwh=vis.game_screen, loop_num=35,
                                         conf=0.85, needle=empty_rock_needle,
-                                        loop_sleep_range=(100, 200)).wait_for_image()
+                                        loop_sleep_range=(100, 200)).wait_for_needle()
 
                 if rock_empty is True:
                     log.info('Rock is empty.')

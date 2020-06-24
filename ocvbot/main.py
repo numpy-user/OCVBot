@@ -89,17 +89,45 @@ def spellcaster(scenario):
             skills.Magic(spell=spell, target=target, logout=True,
                          conf=0.75, haystack=vis.game_screen).cast_spell()
 
+    # Casts high-level alchemy on all noted items in the left half of the
+#   player's inventory
     elif scenario == 'high-alchemy':
         spell = './needles/side-stones/spellbook/high-alchemy.png'
         target = './needles/items/bank-note.png'
         for _ in range(10000):
             spell_cast = skills.Magic(spell=spell, target=target, logout=False,
-                                      conf=0.45, haystack=vis.inv).cast_spell()
+                                      conf=0.45, haystack=vis.inv_left_half).cast_spell()
             if spell_cast is False:
                 sys.exit(0)
 
     else:
         raise Exception('Scenario not supported!')
+
+
+def chef(item, location):
+        haystack_map = './haystacks/' + location + '.png'
+        item_inv = './needles/items/' + item + '_inv.png'
+        item_bank = './needles/items/' + item + '_bank.png'
+
+        if location == 'al-kharid':
+            bank_coords = [((75, 128), 1, (4, 4), (5, 10))]
+            range_coords = []
+            heat_source = './needles/game_screen/'
+
+        for _ in range(1000):
+            # assumes starting location is the bank
+            behavior.travel(range_coords, haystack_map)
+            items_cooked = skills.Cooking(item_inv, item_bank, heat_source).chef
+            behavior.travel(bank_coords, haystack_map)
+            # Deposit cooked inventory.
+            behavior.open_bank('west')
+            vis.Vision(ltwh=vis.game_screen,
+                       needle='./needles/bank/deposit-all.png',
+                       loop_num=3).click_needle()
+            # Withdraw raw items from bank.
+            vis.Vision(ltwh=vis.game_screen,
+                       needle='./needles/items/' + item + 'bank.png',
+                       loop_num=3).click_needle()
 
 
 # TODO: Add basic firemaking script that starts at a bank booth and

@@ -69,17 +69,17 @@ def login_basic(username_file=start.config.get('main', 'username_file'),
         #   inactivity.
         ok_button = vis.Vision(ltwh=vis.client,
                                needle='./needles/login-menu/ok-button.png',
-                               loop_num=1).click_image()
+                               loop_num=1).click_needle()
         # If the "Ok" button isn't found, look for the "Existing user"
         #   button.
         existing_user_button = vis.Vision(ltwh=vis.client,
                                           needle='./needles/login-menu/existing-user-button.png',
-                                          loop_num=1).click_image()
+                                          loop_num=1).click_needle()
 
         if existing_user_button is True or ok_button is True:
             credential_screen = vis.Vision(ltwh=vis.client,
                                            needle='./needles/login-menu/login-cancel-buttons.png',
-                                           loop_num=5).wait_for_image()
+                                           loop_num=5).wait_for_needle()
 
             if credential_screen is True:
                 # Click to make sure the "Login" field is active.
@@ -138,7 +138,7 @@ def login_full(login_sleep_range=(500, 5000), postlogin_sleep_range=(500, 5000),
         misc.sleep_rand(login_sleep_range[0], login_sleep_range[1])
         postlogin_screen_button = vis.Vision(ltwh=vis.display,
                                              needle='./needles/login-menu/orient-postlogin.png',
-                                             conf=0.8, loop_num=10, loop_sleep_range=(1000, 2000)).click_image()
+                                             conf=0.8, loop_num=10, loop_sleep_range=(1000, 2000)).click_needle()
 
         if postlogin_screen_button is True:
             misc.sleep_rand(postlogin_sleep_range[0], postlogin_sleep_range[1])
@@ -147,7 +147,7 @@ def login_full(login_sleep_range=(500, 5000), postlogin_sleep_range=(500, 5000),
             #    confirm the login.
             logged_in = vis.Vision(ltwh=vis.display,
                                    needle='./needles/minimap/orient.png',
-                                   loop_num=50, loop_sleep_range=(1000, 2000)).wait_for_image()
+                                   loop_num=50, loop_sleep_range=(1000, 2000)).wait_for_needle()
             if logged_in is True:
                 # Reset the timer that's used to count the number of
                 #   seconds the bot has been running for.
@@ -171,7 +171,7 @@ def login_full(login_sleep_range=(500, 5000), postlogin_sleep_range=(500, 5000),
             # TODO: add additional checks to other login messages
             invalid_credentials = vis.Vision(ltwh=vis.display,
                                              needle='./needles/login-menu/invalid-credentials.png',
-                                             loop_num=1).wait_for_image()
+                                             loop_num=1).wait_for_needle()
             if invalid_credentials is True:
                 raise Exception('Invalid user credentials!')
             log.error('Cannot find postlogin screen!')
@@ -206,7 +206,7 @@ def logout():
         # The standard logout button.
         logout_button = vis.Vision(ltwh=vis.inv,
                                    needle='./needles/side-stones/logout/logout.png',
-                                   conf=0.9, loop_num=1).wait_for_image(get_tuple=True)
+                                   conf=0.9, loop_num=1).wait_for_needle(get_tuple=True)
         if isinstance(logout_button, tuple) is True:
             # Break out of the loop if any of the buttons was found.
             break
@@ -214,7 +214,7 @@ def logout():
         # The logout button as it appears when the mouse is over it.
         logout_button_highlighted = vis.Vision(ltwh=vis.inv,
                                                needle='./needles/side-stones/logout/logout-highlighted.png',
-                                               conf=0.9, loop_num=1).wait_for_image(get_tuple=True)
+                                               conf=0.9, loop_num=1).wait_for_needle(get_tuple=True)
         if isinstance(logout_button_highlighted, tuple) is True:
             logout_button = logout_button_highlighted
             break
@@ -222,7 +222,7 @@ def logout():
         # The logout button when the world switcher is open.
         logout_button_world_switcher = vis.Vision(ltwh=vis.side_stones,
                                                   needle='./needles/side-stones/logout/logout-world-switcher.png',
-                                                  conf=0.9, loop_num=1).wait_for_image(get_tuple=True)
+                                                  conf=0.9, loop_num=1).wait_for_needle(get_tuple=True)
         if isinstance(logout_button_world_switcher, tuple) is True:
             logout_button = logout_button_world_switcher
             break
@@ -239,7 +239,7 @@ def logout():
     for tries in range(5):
         logged_out = vis.Vision(ltwh=vis.client,
                                 needle='./needles/login-menu/orient-logged-out.png',
-                                loop_num=5, loop_sleep_range=(1000, 1200)).wait_for_image()
+                                loop_num=5, loop_sleep_range=(1000, 1200)).wait_for_needle()
         if logged_out is True:
             log.info('Logged out after trying %s times(s)', tries)
             return True
@@ -402,7 +402,7 @@ def open_side_stone(side_stone):
     # Some side stones need a higher than default confidence to determine
     #   if they're open.
     stone_open = vis.Vision(ltwh=vis.side_stones, needle=side_stone_open,
-                            loop_num=1, conf=0.98).wait_for_image()
+                            loop_num=1, conf=0.98).wait_for_needle()
     if stone_open is True:
         log.debug('Side stone already open.')
         return True
@@ -416,11 +416,11 @@ def open_side_stone(side_stone):
         #   tell if the stone is open.
         vis.Vision(ltwh=vis.side_stones, needle=side_stone_closed,
                    loop_num=3, loop_sleep_range=(100, 300)). \
-            click_image(sleep_range=(0, 200, 0, 200), move_away=True)
+            click_needle(sleep_range=(0, 200, 0, 200), move_away=True)
 
         stone_open = vis.Vision(ltwh=vis.side_stones, needle=side_stone_open,
                                 loop_num=3, conf=0.98, loop_sleep_range=(100, 200)). \
-            wait_for_image()
+            wait_for_needle()
 
         if stone_open is True:
             log.info('Opened side stone after %s tries.', tries)
@@ -428,7 +428,7 @@ def open_side_stone(side_stone):
         # Make sure the bank window isn't open, which would block
         #   access to the side stones.
         vis.Vision(ltwh=vis.game_screen, needle='./needles/buttons/close.png',
-                   loop_num=1).click_image()
+                   loop_num=1).click_needle()
     raise Exception('Could not open side stone!')
 
 
@@ -510,7 +510,7 @@ def drop_item(item, track=True, wait_chance=120, wait_min=5000, wait_max=20000):
     log.debug('Making sure inventory is selected')
     open_side_stone('inventory')
 
-    item_remains = vis.inv.wait_for_image(loop_num=1, needle=item)
+    item_remains = vis.inv.wait_for_needle(loop_num=1, needle=item)
     if item_remains is False:
         log.info('Could not find %s', item)
         return False
@@ -523,23 +523,23 @@ def drop_item(item, track=True, wait_chance=120, wait_min=5000, wait_max=20000):
         #   right half of the player's inventory. This helps reduce the
         #   chances the bot will click on the same item twice.
         item_on_right = \
-            vis.inv_right_half(needle=item).click_image(loop_num=1,
-                                                        sleep_range=(10, 50, 50, 300),
-                                                        move_duration_range=(50, 800))
+            vis.inv_right_half(needle=item).click_needle(loop_num=1,
+                                                         sleep_range=(10, 50, 50, 300),
+                                                         move_duration_range=(50, 800))
         # TODO: this "track" parameter is for stats. implement stats!
         if item_on_right is True and track is True:
             start.items_gathered += 1
 
         item_on_left = \
-            vis.inv_left_half(needle=item).click_image(loop_num=1,
-                                                       sleep_range=(10, 50, 50, 300),
-                                                       move_duration_range=(50, 800))
+            vis.inv_left_half(needle=item).click_needle(loop_num=1,
+                                                        sleep_range=(10, 50, 50, 300),
+                                                        move_duration_range=(50, 800))
         if item_on_left is True and track is True:
             start.items_gathered += 1
 
         # Search the entire inventory to check if the item is still
         #   there.
-        item_remains = vis.inv.wait_for_image(loop_num=1, needle=item)
+        item_remains = vis.inv.wait_for_needle(loop_num=1, needle=item)
 
         # Chance to briefly wait while dropping items.
         misc.wait_rand(wait_chance, wait_min, wait_max)
@@ -553,26 +553,43 @@ def drop_item(item, track=True, wait_chance=120, wait_min=5000, wait_max=20000):
 
 
 # TODO:
-def bank_config_check(config, status):
+def bank_settings_check(setting, value):
     """
-    Checks for specific bank window configurations.
-    Sets the value of "config" to "status".
+    Checks for specific bank window configuration settings.
 
     Args:
-        config:
-        status:
+        setting:
+        value:
 
     Returns:
 
     """
-    if config == 'quantity':
-        if status == 'all':
-            quantity_all_enabled = vis.Vision(ltwh=vis.game_screen,
-                                              needle='./needles/buttons/'
-                                                     'bank-preset-all.png',
-                                              loop_num=2).wait_for_image()
-            if quantity_all_enabled is False:
-                return
+    log.debug('Checking %s is set to %s', setting, value)
+
+    # Check if the setting is already at the desired value.
+    value_already_set = vis.Vision(ltwh=vis.game_screen,
+                                   needle='./needles/buttons/bank-setting'
+                                          + setting + '-' + value + '-set.png',
+                                   loop_num=1).wait_for_needle()
+    if value_already_set is True:
+        log.debug('%s is already set to %s', setting, value)
+        return True
+
+    # If not, try a total of 5 times to get the setting to the desired
+    #   value.
+    for _ in range(1, 5):
+        vis.Vision(ltwh=vis.game_screen,
+                   needle='./needles/buttons/bank-setting'
+                          + setting + '-' + value + '-unset.png',
+                   loop_num=1).click_needle()
+
+        value_set = vis.Vision(ltwh=vis.game_screen,
+                               needle='./needles/buttons/bank-setting'
+                                      + setting + '-' + value + '-set.png',
+                               loop_num=10).wait_for_needle()
+        if value_set is True:
+            log.debug('%s has been set to %s', setting, value)
+            return True
 
 
 def open_bank(direction):
@@ -589,17 +606,19 @@ def open_bank(direction):
     # TODO: Deal with bank PINs.
     for _ in range(1, 10):
         one_tile = vis.Vision(ltwh=vis.game_screen,
-                              needle='./needles/game-screen/bank/bank-booth-' + direction + '-1-tile.png',
-                              loop_num=1, conf=0.85).click_image()
+                              needle='./needles/game-screen/bank/bank-booth-'
+                                     + direction + '-1-tile.png',
+                              loop_num=1, conf=0.85).click_needle()
 
         two_tiles = vis.Vision(ltwh=vis.game_screen,
-                               needle='./needles/game-screen/bank/bank-booth-' + direction + '-2-tiles.png',
-                               loop_num=1, conf=0.85).click_image()
+                               needle='./needles/game-screen/bank/bank-booth-'
+                                      + direction + '-2-tiles.png',
+                               loop_num=1, conf=0.85).click_needle()
 
         if one_tile is True or two_tiles is True:
             bank_open = vis.Vision(ltwh=vis.game_screen,
                                    needle='./needles/buttons/close.png',
-                                   loop_num=30).wait_for_image()
+                                   loop_num=30).wait_for_needle()
             if bank_open is True:
                 return True
             else:
@@ -626,8 +645,8 @@ def enter_bank_pin(pin=tuple(start.config.get('main', 'bank_pin'))):
     """
     # Confirm that the bank PIN screen is actually present
     bank_pin_screen = vis.Vision(ltwh=vis.game_screen,
-                              needle='./needles/.png',
-                              loop_num=1).wait_for_image(get_tuple=False)
+                                 needle='./needles/.png',
+                                 loop_num=1).wait_for_needle(get_tuple=False)
     if bank_pin_screen is False:
         return False
 
@@ -637,14 +656,14 @@ def enter_bank_pin(pin=tuple(start.config.get('main', 'bank_pin'))):
         # Wait for the first/second/third/fourth PIN prompt screen to
         #   appear
         pin_ordinal_prompt = vis.Vision(ltwh=vis.game_screen,
-                            needle='./needles/' + pin_ordinal,
-                            loop_num=1).wait_for_image(get_tuple=False)
+                                        needle='./needles/' + pin_ordinal,
+                                        loop_num=1).wait_for_needle(get_tuple=False)
 
         # Enter the first/second/third/fourth digit of the PIN.
         if pin_ordinal_prompt is True:
             enter_digit = vis.Vision(ltwh=vis.game_screen,
-                            needle='./needles/' + pin[pin_ordinal],
-                            loop_num=1).click_image()
+                                     needle='./needles/' + pin[pin_ordinal],
+                                     loop_num=1).click_needle()
 
 
 def enable_run():
@@ -656,12 +675,12 @@ def enable_run():
     for _ in range(1, 5):
         run_full_off = vis.Vision(ltwh=vis.client,
                                   needle='./needles/buttons/run-full-off.png',
-                                  loop_num=1).click_image(move_away=True)
+                                  loop_num=1).click_needle(move_away=True)
         if run_full_off is True:
             misc.sleep_rand(300, 1000)
             run_full_on = vis.Vision(ltwh=vis.client,
                                      needle='./needles/buttons/run-full-on.png',
-                                     loop_num=1).wait_for_image()
+                                     loop_num=1).wait_for_needle()
             if run_full_on is True:
                 return True
         else:

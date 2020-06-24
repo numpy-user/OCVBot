@@ -81,7 +81,7 @@ class Vision:
         self.loop_num = loop_num
         self.loop_sleep_range = loop_sleep_range
 
-    def mlocate(self):
+    def find_needle(self):
         """
         Searches within the self.ltwh coordinates for self.needle.
 
@@ -124,7 +124,7 @@ class Vision:
 
         raise RuntimeError('Incorrect mlocate function parameters!')
 
-    def wait_for_image(self, get_tuple=False):
+    def wait_for_needle(self, get_tuple=False):
         """
         Repeatedly searches within the self.ltwh coordinates for the needle.
 
@@ -147,7 +147,7 @@ class Vision:
 
         for tries in range(1, self.loop_num):
 
-            needle_coords = Vision.mlocate(self)
+            needle_coords = Vision.find_needle(self)
 
             if isinstance(needle_coords, tuple) is True:
                 log.debug('Found %s after trying %s times.', self.needle, tries)
@@ -162,9 +162,9 @@ class Vision:
         log.debug('Timed out looking for %s', self.needle)
         return False
 
-    def click_image(self, sleep_range=(50, 200, 50, 200),
-                    move_duration_range=(50, 1500),
-                    button='left', move_away=False):
+    def click_needle(self, sleep_range=(50, 200, 50, 200),
+                     move_duration_range=(50, 1500),
+                     button='left', move_away=False):
         """
         Moves the mouse to the provided needle image and clicks on
         it.
@@ -189,7 +189,7 @@ class Vision:
         """
         log.debug('Looking for %s to click on.', self.needle)
 
-        needle_coords = self.wait_for_image(get_tuple=True)
+        needle_coords = self.wait_for_needle(get_tuple=True)
 
         if isinstance(needle_coords, tuple) is True:
             # Randomize the location the pointer will move to using the
@@ -243,14 +243,14 @@ def orient(ltwh=(0, 0, start.DISPLAY_WIDTH, start.DISPLAY_HEIGHT),
     """
     logged_in = Vision(ltwh=ltwh, needle='needles/minimap/orient.png',
                        loctype='center', loop_num=1,
-                       conf=0.8).wait_for_image(get_tuple=True)
+                       conf=0.8).wait_for_needle(get_tuple=True)
     if isinstance(logged_in, tuple) is True:
         return 'logged_in', logged_in
 
     # If the client is not logged in, check if it's logged out.
     logged_out = Vision(ltwh=ltwh, needle='needles/login-menu/orient-logged-out.png',
                         loctype='center', loop_num=1,
-                        conf=0.8).wait_for_image(get_tuple=True)
+                        conf=0.8).wait_for_needle(get_tuple=True)
     if isinstance(logged_out, tuple) is True:
         return 'logged_out', logged_out
 
