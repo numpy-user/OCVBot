@@ -121,11 +121,11 @@ def chef(item, location):
             behavior.travel(bank_coords, haystack_map)
             # Deposit cooked inventory.
             behavior.open_bank('west')
-            vis.Vision(ltwh=vis.game_screen,
+            vis.Vision(region=vis.game_screen,
                        needle='./needles/bank/deposit-all.png',
                        loop_num=3).click_needle()
             # Withdraw raw items from bank.
-            vis.Vision(ltwh=vis.game_screen,
+            vis.Vision(region=vis.game_screen,
                        needle='./needles/items/' + item + 'bank.png',
                        loop_num=3).click_needle()
 

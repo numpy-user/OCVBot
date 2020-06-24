@@ -27,11 +27,11 @@ class Cooking:
         Returns:
 
         """
-        item_selected = vis.Vision(ltwh=vis.client,
+        item_selected = vis.Vision(region=vis.client,
                                    needle=self.item_inv,
                                    loop_num=1).click_needle()
         if item_selected is True:
-            heat_source_selected = vis.Vision(ltwh=vis.game_screen,
+            heat_source_selected = vis.Vision(region=vis.game_screen,
                                               needle=self.heat_source,
                                               loop_num=3).click_needle()
 
@@ -71,7 +71,7 @@ class Magic:
 
         """
         for _ in range(1, 3):
-            spell_available = vis.Vision(ltwh=vis.inv, loop_num=3, needle=self.spell) \
+            spell_available = vis.Vision(region=vis.inv, loop_num=3, needle=self.spell) \
                 .click_needle(sleep_range=(10, 500, 10, 500,),
                               move_duration_range=(10, 1000))
             if spell_available is False:
@@ -91,7 +91,7 @@ class Magic:
 
         """
         for _ in range(1, 3):
-            target = vis.Vision(needle=self.target, ltwh=self.haystack, loop_num=3, conf=self.conf) \
+            target = vis.Vision(needle=self.target, region=self.haystack, loop_num=3, conf=self.conf) \
                 .click_needle(sleep_range=(10, 500, 10, 500,), move_duration_range=(10, 1000))
 
             if target is False:
@@ -217,7 +217,7 @@ def mine(rocks, ore, ore_type, drop_ore):
             # If current rock is full, begin mining it.
             # Move the mouse away from the rock so it doesn't
             #   interfere with matching the needle.
-            rock_full = vis.Vision(ltwh=vis.game_screen, loop_num=1, needle=full_rock_needle, conf=0.8) \
+            rock_full = vis.Vision(region=vis.game_screen, loop_num=1, needle=full_rock_needle, conf=0.8) \
                 .click_needle(sleep_range=(0, 100, 0, 100,), move_duration_range=(0, 500), move_away=True)
             if rock_full is True:
                 log.info('Waiting for mining to start.')
@@ -227,7 +227,7 @@ def mine(rocks, ore, ore_type, drop_ore):
 
                 # Once the rock has been clicked on, wait for mining to
                 #   start by monitoring chat.
-                mining_started = vis.Vision(ltwh=vis.chat_menu_recent, loop_num=5, conf=0.9,
+                mining_started = vis.Vision(region=vis.chat_menu_recent, loop_num=5, conf=0.9,
                                             needle='./needles/chat-menu/mining-started.png',
                                             loop_sleep_range=(100, 200)).wait_for_needle()
 
@@ -236,7 +236,7 @@ def mine(rocks, ore, ore_type, drop_ore):
                 if mining_started is False:
                     log.debug('Timed out waiting for mining to start.')
 
-                    inv_full = vis.Vision(ltwh=vis.chat_menu, loop_num=1,
+                    inv_full = vis.Vision(region=vis.chat_menu, loop_num=1,
                                           needle='./needles/chat-menu/mining-inventory-full.png'). \
                         wait_for_needle()
 
@@ -256,9 +256,9 @@ def mine(rocks, ore, ore_type, drop_ore):
                                              ((108, 194), 1, (10, 4), (3, 8))],
                                             './haystacks/varrock-east-mine.png')
                             behavior.open_bank('south')
-                            vis.Vision(ltwh=vis.inv, needle=ore).click_needle()
+                            vis.Vision(region=vis.inv, needle=ore).click_needle()
                             for gem in gems:
-                                vis.Vision(ltwh=vis.inv, needle=gem, loop_num=1).click_needle()
+                                vis.Vision(region=vis.inv, needle=gem, loop_num=1).click_needle()
                             # TODO: Instead of waiting a hard-coded period of time,
                             #   wait until the item can no longer be found in the
                             #   player's inventory.
@@ -278,7 +278,7 @@ def mine(rocks, ore, ore_type, drop_ore):
 
                 # Wait until the rock is empty by waiting for the
                 #   "empty" version of the rock_needle tuple.
-                rock_empty = vis.Vision(ltwh=vis.game_screen, loop_num=35,
+                rock_empty = vis.Vision(region=vis.game_screen, loop_num=35,
                                         conf=0.85, needle=empty_rock_needle,
                                         loop_sleep_range=(100, 200)).wait_for_needle()
 

@@ -8,7 +8,7 @@ import random as rand
 from ocvbot import input, misc, vision as vis
 
 # Focus the client.
-input.Mouse(ltwh=vis.chat_menu).click_coord(move_away=True)
+input.Mouse(region=vis.chat_menu).click_coord(move_away=True)
 
 while True:
     # Every 3-5 minutes, hit an arrow key to move the client's camera.

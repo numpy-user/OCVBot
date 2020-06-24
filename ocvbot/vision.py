@@ -42,7 +42,7 @@ class Vision:
     All coordinates are relative to the top left corner of the display.
 
     Args:
-        ltwh (tuple): A 4-tuple containing the Left, Top, Width, and
+        region (tuple): A 4-tuple containing the Left, Top, Width, and
                       Height of the region in which to look for the
                       needle.
         needle (file): The image to search within the (ltwh) coordinates
@@ -71,10 +71,10 @@ class Vision:
 
     """
 
-    def __init__(self, ltwh, needle, loctype='regular', conf=0.95,
+    def __init__(self, region, needle, loctype='regular', conf=0.95,
                  loop_num=10, loop_sleep_range=(0, 100), grayscale=False):
         self.grayscale = grayscale
-        self.ltwh = ltwh
+        self.region = region
         self.needle = needle
         self.loctype = loctype
         self.conf = conf
@@ -102,7 +102,7 @@ class Vision:
             needle_coords = pag.locateOnScreen(needle,
                                                confidence=self.conf,
                                                grayscale=self.grayscale,
-                                               region=self.ltwh)
+                                               region=self.region)
             if needle_coords is not None:
                 log.debug('Found regular image %s, %s', needle, needle_coords)
                 return needle_coords
@@ -114,7 +114,7 @@ class Vision:
             needle_coords = pag.locateCenterOnScreen(needle,
                                                      confidence=self.conf,
                                                      grayscale=self.grayscale,
-                                                     region=self.ltwh)
+                                                     region=self.region)
             if needle_coords is not None:
                 log.debug('Found center of image %s, %s', needle, needle_coords)
                 return needle_coords
@@ -194,7 +194,7 @@ class Vision:
         if isinstance(needle_coords, tuple) is True:
             # Randomize the location the pointer will move to using the
             #   dimensions of needle image.
-            input.Mouse(ltwh=needle_coords,
+            input.Mouse(region=needle_coords,
                         sleep_range=sleep_range,
                         move_duration_range=move_duration_range,
                         button=button).click_coord()
@@ -202,14 +202,14 @@ class Vision:
             log.debug('Clicking on %s', self.needle)
 
             if move_away is True:
-                input.Mouse(ltwh=(25, 25, 100, 100), move_duration_range=(50, 200)).moverel()
+                input.Mouse(region=(25, 25, 100, 100), move_duration_range=(50, 200)).moverel()
             return True
 
         else:
             return False
 
 
-def orient(ltwh=(0, 0, start.DISPLAY_WIDTH, start.DISPLAY_HEIGHT),
+def orient(region=(0, 0, start.DISPLAY_WIDTH, start.DISPLAY_HEIGHT),
            launch_client=False):
     """
     Looks for an icon to orient the client. If it's found, use its
@@ -221,7 +221,7 @@ def orient(ltwh=(0, 0, start.DISPLAY_WIDTH, start.DISPLAY_HEIGHT),
     startup.
 
     Args:
-        ltwh (tuple): A 4-tuple containing the left, top, width, and
+        region (tuple): A 4-tuple containing the left, top, width, and
                       height of the coordinate space to search within,
                       relative to the display's coordinates. By default
                       uses the entire display.
@@ -241,14 +241,14 @@ def orient(ltwh=(0, 0, start.DISPLAY_WIDTH, start.DISPLAY_HEIGHT),
          coordinates of the orient-logged-out needle.
 
     """
-    logged_in = Vision(ltwh=ltwh, needle='needles/minimap/orient.png',
+    logged_in = Vision(region=region, needle='needles/minimap/orient.png',
                        loctype='center', loop_num=1,
                        conf=0.8).wait_for_needle(get_tuple=True)
     if isinstance(logged_in, tuple) is True:
         return 'logged_in', logged_in
 
     # If the client is not logged in, check if it's logged out.
-    logged_out = Vision(ltwh=ltwh, needle='needles/login-menu/orient-logged-out.png',
+    logged_out = Vision(region=region, needle='needles/login-menu/orient-logged-out.png',
                         loctype='center', loop_num=1,
                         conf=0.8).wait_for_needle(get_tuple=True)
     if isinstance(logged_out, tuple) is True:
@@ -260,7 +260,7 @@ def orient(ltwh=(0, 0, start.DISPLAY_WIDTH, start.DISPLAY_HEIGHT),
         # Try 10 times to find the login screen after launching the client.
         for _ in range(1, 10):
             misc.sleep_rand(8000, 15000)
-            orient(ltwh=ltwh, launch_client=False)
+            orient(region=region, launch_client=False)
         log.critical('Could not find client! %s', launch_client)
         raise Exception('Could not find client!')
 
@@ -273,7 +273,7 @@ def orient(ltwh=(0, 0, start.DISPLAY_WIDTH, start.DISPLAY_HEIGHT),
 # ----------------------------------------------------------------------
 
 display = (0, 0, start.DISPLAY_WIDTH, start.DISPLAY_HEIGHT)
-(client_status, anchor) = orient(ltwh=display)
+(client_status, anchor) = orient(region=display)
 (client_left, client_top) = anchor
 
 if client_status == 'logged_in':

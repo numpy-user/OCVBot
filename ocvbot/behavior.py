@@ -67,32 +67,32 @@ def login_basic(username_file=start.config.get('main', 'username_file'),
         # Click the "Ok" button if it's present at the login screen.
         # This button appears if the user was disconnected due to
         #   inactivity.
-        ok_button = vis.Vision(ltwh=vis.client,
+        ok_button = vis.Vision(region=vis.client,
                                needle='./needles/login-menu/ok-button.png',
                                loop_num=1).click_needle()
         # If the "Ok" button isn't found, look for the "Existing user"
         #   button.
-        existing_user_button = vis.Vision(ltwh=vis.client,
+        existing_user_button = vis.Vision(region=vis.client,
                                           needle='./needles/login-menu/existing-user-button.png',
                                           loop_num=1).click_needle()
 
         if existing_user_button is True or ok_button is True:
-            credential_screen = vis.Vision(ltwh=vis.client,
+            credential_screen = vis.Vision(region=vis.client,
                                            needle='./needles/login-menu/login-cancel-buttons.png',
                                            loop_num=5).wait_for_needle()
 
             if credential_screen is True:
                 # Click to make sure the "Login" field is active.
-                input.Mouse(ltwh=(vis.login_field_left, vis.login_field_top,
-                                  start.LOGIN_FIELD_WIDTH, start.LOGIN_FIELD_HEIGHT)).click_coord()
+                input.Mouse(region=(vis.login_field_left, vis.login_field_top,
+                                    start.LOGIN_FIELD_WIDTH, start.LOGIN_FIELD_HEIGHT)).click_coord()
                 # Enter login field credentials.
                 misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
                 input.Keyboard(log_keys=False).typewriter(username)
                 misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
 
                 # Click to make sure the "Password" field is active.
-                input.Mouse(ltwh=(vis.pass_field_left, vis.pass_field_top,
-                                  start.LOGIN_FIELD_WIDTH, start.LOGIN_FIELD_HEIGHT)).click_coord()
+                input.Mouse(region=(vis.pass_field_left, vis.pass_field_top,
+                                    start.LOGIN_FIELD_WIDTH, start.LOGIN_FIELD_HEIGHT)).click_coord()
                 # Enter password field credentials and login.
                 input.Keyboard(log_keys=False).typewriter(password)
                 misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
@@ -136,7 +136,7 @@ def login_full(login_sleep_range=(500, 5000), postlogin_sleep_range=(500, 5000),
             raise Exception('Could not perform initial login!')
 
         misc.sleep_rand(login_sleep_range[0], login_sleep_range[1])
-        postlogin_screen_button = vis.Vision(ltwh=vis.display,
+        postlogin_screen_button = vis.Vision(region=vis.display,
                                              needle='./needles/login-menu/orient-postlogin.png',
                                              conf=0.8, loop_num=10, loop_sleep_range=(1000, 2000)).click_needle()
 
@@ -145,7 +145,7 @@ def login_full(login_sleep_range=(500, 5000), postlogin_sleep_range=(500, 5000),
 
             # Wait for the orient function to return true in order to
             #    confirm the login.
-            logged_in = vis.Vision(ltwh=vis.display,
+            logged_in = vis.Vision(region=vis.display,
                                    needle='./needles/minimap/orient.png',
                                    loop_num=50, loop_sleep_range=(1000, 2000)).wait_for_needle()
             if logged_in is True:
@@ -169,7 +169,7 @@ def login_full(login_sleep_range=(500, 5000), postlogin_sleep_range=(500, 5000),
             log.warning('Cannot find postlogin screen!')
 
             # TODO: add additional checks to other login messages
-            invalid_credentials = vis.Vision(ltwh=vis.display,
+            invalid_credentials = vis.Vision(region=vis.display,
                                              needle='./needles/login-menu/invalid-credentials.png',
                                              loop_num=1).wait_for_needle()
             if invalid_credentials is True:
@@ -204,7 +204,7 @@ def logout():
     # Look for any of the three possible logout buttons.
     for _ in range(1, 5):
         # The standard logout button.
-        logout_button = vis.Vision(ltwh=vis.inv,
+        logout_button = vis.Vision(region=vis.inv,
                                    needle='./needles/side-stones/logout/logout.png',
                                    conf=0.9, loop_num=1).wait_for_needle(get_tuple=True)
         if isinstance(logout_button, tuple) is True:
@@ -212,7 +212,7 @@ def logout():
             break
 
         # The logout button as it appears when the mouse is over it.
-        logout_button_highlighted = vis.Vision(ltwh=vis.inv,
+        logout_button_highlighted = vis.Vision(region=vis.inv,
                                                needle='./needles/side-stones/logout/logout-highlighted.png',
                                                conf=0.9, loop_num=1).wait_for_needle(get_tuple=True)
         if isinstance(logout_button_highlighted, tuple) is True:
@@ -220,7 +220,7 @@ def logout():
             break
 
         # The logout button when the world switcher is open.
-        logout_button_world_switcher = vis.Vision(ltwh=vis.side_stones,
+        logout_button_world_switcher = vis.Vision(region=vis.side_stones,
                                                   needle='./needles/side-stones/logout/logout-world-switcher.png',
                                                   conf=0.9, loop_num=1).wait_for_needle(get_tuple=True)
         if isinstance(logout_button_world_switcher, tuple) is True:
@@ -235,9 +235,9 @@ def logout():
     #   and wait for the logout to complete.
     # If a logout is not detected after the first try, keep clicking
     #   on the location of the detected logout button and try again.
-    input.Mouse(ltwh=logout_button).click_coord(move_away=True)
+    input.Mouse(region=logout_button).click_coord(move_away=True)
     for tries in range(5):
-        logged_out = vis.Vision(ltwh=vis.client,
+        logged_out = vis.Vision(region=vis.client,
                                 needle='./needles/login-menu/orient-logged-out.png',
                                 loop_num=5, loop_sleep_range=(1000, 1200)).wait_for_needle()
         if logged_out is True:
@@ -245,7 +245,7 @@ def logout():
             return True
         else:
             log.info('Unable to log out, trying again.')
-            input.Mouse(ltwh=logout_button).click_coord(move_away=True)
+            input.Mouse(region=logout_button).click_coord(move_away=True)
 
     raise Exception('Could not logout!')
 
@@ -401,7 +401,7 @@ def open_side_stone(side_stone):
 
     # Some side stones need a higher than default confidence to determine
     #   if they're open.
-    stone_open = vis.Vision(ltwh=vis.side_stones, needle=side_stone_open,
+    stone_open = vis.Vision(region=vis.side_stones, needle=side_stone_open,
                             loop_num=1, conf=0.98).wait_for_needle()
     if stone_open is True:
         log.debug('Side stone already open.')
@@ -414,11 +414,11 @@ def open_side_stone(side_stone):
     for tries in range(6):
         # Move mouse out of the way after clicking so the function can
         #   tell if the stone is open.
-        vis.Vision(ltwh=vis.side_stones, needle=side_stone_closed,
+        vis.Vision(region=vis.side_stones, needle=side_stone_closed,
                    loop_num=3, loop_sleep_range=(100, 300)). \
             click_needle(sleep_range=(0, 200, 0, 200), move_away=True)
 
-        stone_open = vis.Vision(ltwh=vis.side_stones, needle=side_stone_open,
+        stone_open = vis.Vision(region=vis.side_stones, needle=side_stone_open,
                                 loop_num=3, conf=0.98, loop_sleep_range=(100, 200)). \
             wait_for_needle()
 
@@ -427,7 +427,7 @@ def open_side_stone(side_stone):
             return True
         # Make sure the bank window isn't open, which would block
         #   access to the side stones.
-        vis.Vision(ltwh=vis.game_screen, needle='./needles/buttons/close.png',
+        vis.Vision(region=vis.game_screen, needle='./needles/buttons/close.png',
                    loop_num=1).click_needle()
     raise Exception('Could not open side stone!')
 
@@ -439,7 +439,7 @@ def check_skills():
 
     """
     open_side_stone('skills')
-    input.Mouse(ltwh=vis.inv).move_to()
+    input.Mouse(region=vis.inv).move_to()
     misc.sleep_rand(1000, 7000)
 
 
@@ -567,7 +567,7 @@ def bank_settings_check(setting, value):
     log.debug('Checking %s is set to %s', setting, value)
 
     # Check if the setting is already at the desired value.
-    value_already_set = vis.Vision(ltwh=vis.game_screen,
+    value_already_set = vis.Vision(region=vis.game_screen,
                                    needle='./needles/buttons/bank-setting'
                                           + setting + '-' + value + '-set.png',
                                    loop_num=1).wait_for_needle()
@@ -578,12 +578,12 @@ def bank_settings_check(setting, value):
     # If not, try a total of 5 times to get the setting to the desired
     #   value.
     for _ in range(1, 5):
-        vis.Vision(ltwh=vis.game_screen,
+        vis.Vision(region=vis.game_screen,
                    needle='./needles/buttons/bank-setting'
                           + setting + '-' + value + '-unset.png',
                    loop_num=1).click_needle()
 
-        value_set = vis.Vision(ltwh=vis.game_screen,
+        value_set = vis.Vision(region=vis.game_screen,
                                needle='./needles/buttons/bank-setting'
                                       + setting + '-' + value + '-set.png',
                                loop_num=10).wait_for_needle()
@@ -605,18 +605,18 @@ def open_bank(direction):
     """
     # TODO: Deal with bank PINs.
     for _ in range(1, 10):
-        one_tile = vis.Vision(ltwh=vis.game_screen,
+        one_tile = vis.Vision(region=vis.game_screen,
                               needle='./needles/game-screen/bank/bank-booth-'
                                      + direction + '-1-tile.png',
                               loop_num=1, conf=0.85).click_needle()
 
-        two_tiles = vis.Vision(ltwh=vis.game_screen,
+        two_tiles = vis.Vision(region=vis.game_screen,
                                needle='./needles/game-screen/bank/bank-booth-'
                                       + direction + '-2-tiles.png',
                                loop_num=1, conf=0.85).click_needle()
 
         if one_tile is True or two_tiles is True:
-            bank_open = vis.Vision(ltwh=vis.game_screen,
+            bank_open = vis.Vision(region=vis.game_screen,
                                    needle='./needles/buttons/close.png',
                                    loop_num=30).wait_for_needle()
             if bank_open is True:
@@ -644,7 +644,7 @@ def enter_bank_pin(pin=tuple(start.config.get('main', 'bank_pin'))):
 
     """
     # Confirm that the bank PIN screen is actually present
-    bank_pin_screen = vis.Vision(ltwh=vis.game_screen,
+    bank_pin_screen = vis.Vision(region=vis.game_screen,
                                  needle='./needles/.png',
                                  loop_num=1).wait_for_needle(get_tuple=False)
     if bank_pin_screen is False:
@@ -655,13 +655,13 @@ def enter_bank_pin(pin=tuple(start.config.get('main', 'bank_pin'))):
 
         # Wait for the first/second/third/fourth PIN prompt screen to
         #   appear
-        pin_ordinal_prompt = vis.Vision(ltwh=vis.game_screen,
+        pin_ordinal_prompt = vis.Vision(region=vis.game_screen,
                                         needle='./needles/' + pin_ordinal,
                                         loop_num=1).wait_for_needle(get_tuple=False)
 
         # Enter the first/second/third/fourth digit of the PIN.
         if pin_ordinal_prompt is True:
-            enter_digit = vis.Vision(ltwh=vis.game_screen,
+            enter_digit = vis.Vision(region=vis.game_screen,
                                      needle='./needles/' + pin[pin_ordinal],
                                      loop_num=1).click_needle()
 
@@ -673,12 +673,12 @@ def enable_run():
     """
     # TODO: turn run on when over 75%
     for _ in range(1, 5):
-        run_full_off = vis.Vision(ltwh=vis.client,
+        run_full_off = vis.Vision(region=vis.client,
                                   needle='./needles/buttons/run-full-off.png',
                                   loop_num=1).click_needle(move_away=True)
         if run_full_off is True:
             misc.sleep_rand(300, 1000)
-            run_full_on = vis.Vision(ltwh=vis.client,
+            run_full_on = vis.Vision(region=vis.client,
                                      needle='./needles/buttons/run-full-on.png',
                                      loop_num=1).wait_for_needle()
             if run_full_on is True:
@@ -804,7 +804,7 @@ def travel(param_list, haystack_map):
             # Holding down ctrl while clicking will cause character to
             #   run.
             pag.keyDown('ctrl')
-            input.Mouse(ltwh=(click_pos_x, click_pos_y, 0, 0),
+            input.Mouse(region=(click_pos_x, click_pos_y, 0, 0),
                         sleep_range=(50, 100, 100, 200),
                         move_duration_range=(0, 300)).click_coord()
             pag.keyUp('ctrl')

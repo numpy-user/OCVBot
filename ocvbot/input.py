@@ -20,7 +20,7 @@ class Mouse:
     Class to move and click the mouse cursor.
 
     Args:
-        ltwh (tuple): A 4-tuple containing the left, top, width, and
+        region (tuple): A 4-tuple containing the left, top, width, and
                       height coordinates. The width and height values
                       are used for randomizing the location of the mouse
                       cursor.
@@ -45,13 +45,13 @@ class Mouse:
 
     """
     def __init__(self,
-                 ltwh,  # "left, top, width, height"
+                 region,  # In the format of (left, top, width, height).
                  sleep_range=(0, 500, 0, 500),
                  move_duration_range=(50, 1500),
                  action_duration_range=(1, 100),
                  button='left'):
 
-        self.ltwh = ltwh
+        self.region = region
         self.sleep_range = sleep_range
         self.move_duration_range = move_duration_range
         self.action_duration_range = action_duration_range
@@ -72,7 +72,7 @@ class Mouse:
         self.move_to()
         self.click()
         if move_away is True:
-            self.ltwh = (15, 15, 100, 100)
+            self.region = (15, 15, 100, 100)
             self.move_duration_range = (0, 500)
             self.moverel()
         return True
@@ -84,7 +84,7 @@ class Mouse:
         Bezier curves to make mouse movement appear more human-like.
 
         """
-        left, top, width, height = self.ltwh
+        left, top, width, height = self.region
 
         # hc.move uses a (x1, x2, y1, y2) coordinate format instead of a
         #   (left, top, width, height) format.
@@ -107,7 +107,7 @@ class Mouse:
         will be used as the maximum X distance. Same for top/height.
 
         """
-        left, top, width, height = self.ltwh
+        left, top, width, height = self.region
         (x_position, y_position) = pag.position()
 
         # Get min and max values based on the provided ltwh coordinates.
