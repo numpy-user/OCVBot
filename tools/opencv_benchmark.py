@@ -31,7 +31,7 @@ gw = None
 gh = None
 
 # Run the template match five times.
-for _ in range(runs):
+for _ in range(1, runs):
     start_time = cv2.getTickCount()
     rgb, cw, ch = needle_color.shape[::-1]
     result_color = cv2.matchTemplate(haystack_color, needle_color,
