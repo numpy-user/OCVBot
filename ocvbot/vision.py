@@ -142,9 +142,7 @@ class Vision:
         """
         # log.debug('Looking for ' + str(needle))
 
-        # Need to add 1 to loop_num because if range() starts at 0, the
-        #   first loop will be the "0th" loop, which is confusing.
-        for tries in range((self.loop_num + 1)):
+        for tries in range(1, self.loop_num):
 
             target_image = Vision.mlocate(self)
 
