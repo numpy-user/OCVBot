@@ -61,7 +61,7 @@ def login_basic(username_file=start.config.get('main', 'username_file'),
     password = open(password_file, 'r').read()
     password = str(password.replace('\n', ''))
 
-    for _ in range(3):
+    for _ in range(1, 3):
         log.info('Logging in.')
 
         # Click the "Ok" button if it's present at the login screen.
@@ -129,7 +129,7 @@ def login_full(login_sleep_range=(500, 5000), postlogin_sleep_range=(500, 5000),
         Returns True if the login was successful.
         
     """
-    for _ in range(3):
+    for _ in range(1, 3):
 
         login = login_basic(username_file, password_file)
         if login is False:
@@ -202,7 +202,7 @@ def logout():
     logout_button = False
 
     # Look for any of the three possible logout buttons.
-    for _ in range(5):
+    for _ in range(1, 5):
         # The standard logout button.
         logout_button = vis.Vision(ltwh=vis.inv,
                                    needle='./needles/side-stones/logout/logout.png',
@@ -219,7 +219,6 @@ def logout():
             logout_button = logout_button_highlighted
             break
 
-        # TODO: fix missing logout-world-switcher.png
         # The logout button when the world switcher is open.
         logout_button_world_switcher = vis.Vision(ltwh=vis.side_stones,
                                                   needle='./needles/side-stones/logout/logout-world-switcher.png',
@@ -556,8 +555,8 @@ def drop_item(item, track=True, wait_chance=120, wait_min=5000, wait_max=20000):
 # TODO:
 def bank_config_check(config, status):
     """
-    Checks for specific bank configurations in the bank window, such
-    as the "All" button being highlighted.
+    Checks for specific bank window configurations.
+    Sets the value of "config" to "status".
 
     Args:
         config:
@@ -573,7 +572,6 @@ def bank_config_check(config, status):
                                                      'bank-preset-all.png',
                                               loop_num=2).wait_for_image()
             if quantity_all_enabled is False:
-                quantity_all_disabled = vis.Vision(ltwh)
                 return
 
 
@@ -588,7 +586,8 @@ def open_bank(direction):
     Returns:
 
     """
-    for _ in range(10):
+    # TODO: Deal with bank PINs.
+    for _ in range(1, 10):
         one_tile = vis.Vision(ltwh=vis.game_screen,
                               needle='./needles/game-screen/bank/bank-booth-' + direction + '-1-tile.png',
                               loop_num=1, conf=0.85).click_image()
@@ -600,13 +599,52 @@ def open_bank(direction):
         if one_tile is True or two_tiles is True:
             bank_open = vis.Vision(ltwh=vis.game_screen,
                                    needle='./needles/buttons/close.png',
-                                   loop_num=50).wait_for_image()
+                                   loop_num=30).wait_for_image()
             if bank_open is True:
                 return True
+            else:
+                pin = enter_bank_pin()
+                if pin is False:
+                    return False
+                else:
+                    return True
 
         misc.sleep_rand(1000, 3000)
 
     raise Exception('Could not find bank booth!')
+
+
+def enter_bank_pin(pin=tuple(start.config.get('main', 'bank_pin'))):
+    """
+    Enters the user's bank PIN.
+
+    Args:
+        pin (tuple): A 4-tuple of the player's PIN.
+
+    Returns:
+
+    """
+    # Confirm that the bank PIN screen is actually present
+    bank_pin_screen = vis.Vision(ltwh=vis.game_screen,
+                              needle='./needles/.png',
+                              loop_num=1).wait_for_image(get_tuple=False)
+    if bank_pin_screen is False:
+        return False
+
+    # Loop through the different PIN screens for each of the 4 digits
+    for pin_ordinal in range(1, 4):
+
+        # Wait for the first/second/third/fourth PIN prompt screen to
+        #   appear
+        pin_ordinal_prompt = vis.Vision(ltwh=vis.game_screen,
+                            needle='./needles/' + pin_ordinal,
+                            loop_num=1).wait_for_image(get_tuple=False)
+
+        # Enter the first/second/third/fourth digit of the PIN.
+        if pin_ordinal_prompt is True:
+            enter_digit = vis.Vision(ltwh=vis.game_screen,
+                            needle='./needles/' + pin[pin_ordinal],
+                            loop_num=1).click_image()
 
 
 def enable_run():
@@ -615,7 +653,7 @@ def enable_run():
 
     """
     # TODO: turn run on when over 75%
-    for _ in range(5):
+    for _ in range(1, 5):
         run_full_off = vis.Vision(ltwh=vis.client,
                                   needle='./needles/buttons/run-full-off.png',
                                   loop_num=1).click_image(move_away=True)
@@ -675,9 +713,6 @@ def travel(param_list, haystack_map):
     # Make sure file path is OS-agnostic.
     haystack_map = str(pathlib.Path(haystack_map))
     haystack = cv2.imread(haystack_map, cv2.IMREAD_GRAYSCALE)
-
-    # Disable failsafe for now.
-    pag.FAILSAFE = False
 
     # Get the first waypoint.
     for params in param_list:
