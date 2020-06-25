@@ -146,7 +146,9 @@ class Vision:
         """
         # log.debug('Looking for %s', + self.needle)
 
-        for tries in range(1, self.loop_num):
+        # Add 1 to self.loop_num because if loop_num=1, it won't loop at
+        #   all.
+        for tries in range(1, (self.loop_num + 1)):
 
             needle_coords = Vision.find_needle(self)
 
