@@ -484,7 +484,7 @@ def human_behavior_rand(chance):
     return
 
 
-def drop_item(item, track=True, wait_chance=120, wait_min=5000, wait_max=20000):
+def drop_item(item, track=True, wait_chance=120, wait_range=(5000, 20000)):
     """
     Drops all instances of the provided item from the inventory.
     Shift+Click to drop item MUST be enabled.
@@ -497,10 +497,10 @@ def drop_item(item, track=True, wait_chance=120, wait_min=5000, wait_max=20000):
        wait_chance (int): Chance to wait randomly while dropping item,
                           see wait_rand()'s docstring for more info,
                           default is 50.
-       wait_min (int): Minimum number of miliseconds to wait if
-                       a wait is triggered, default is 5000.
-       wait_max (int): Maximum number of miliseconds to wait if
-                       a wait is triggered, default is 20000.
+       wait_range (tuple): A 2-tuple of the minimum number of miliseconds
+                           to wait and the maximum number of miliseconds
+                           to wait if a wait is triggered, default is
+                           (5000, 20000).
     """
     # TODO: Create four objects, one for each quadrant of the inventory
     #   and rotate dropping items randomly among each quadrant to make
@@ -542,7 +542,7 @@ def drop_item(item, track=True, wait_chance=120, wait_min=5000, wait_max=20000):
         item_remains = vis.Vision(region=vis.inv, loop_num=1, needle=item).wait_for_needle()
 
         # Chance to briefly wait while dropping items.
-        misc.wait_rand(wait_chance, wait_min, wait_max)
+        misc.wait_rand(wait_chance, wait_range[0], wait_range[1])
 
         pag.keyUp('shift')
         if item_remains is False:
