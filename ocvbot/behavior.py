@@ -568,8 +568,8 @@ def bank_settings_check(setting, value):
 
     # Check if the setting is already at the desired value.
     value_already_set = vis.Vision(region=vis.game_screen,
-                                   needle='./needles/buttons/bank-setting'
-                                          + setting + '-' + value + '-set.png',
+                                   needle='./needles/bank/settings/'
+                                          + setting + '/' + value + '-set.png',
                                    loop_num=1).wait_for_needle()
     if value_already_set is True:
         log.debug('%s is already set to %s', setting, value)
@@ -594,7 +594,7 @@ def bank_settings_check(setting, value):
 
 def open_bank(direction):
     """
-    Opens the bank, assuming the player is within a 2 tiles of the booth.
+    Opens the bank, assuming the player is within 2 tiles of the booth.
 
     Args:
         direction (str): The direction of the bank booth. Must be 'north',
@@ -656,7 +656,7 @@ def enter_bank_pin(pin=tuple(start.config.get('main', 'bank_pin'))):
         # Wait for the first/second/third/fourth PIN prompt screen to
         #   appear
         pin_ordinal_prompt = vis.Vision(region=vis.game_screen,
-                                        needle='./needles/' + pin_ordinal,
+                                        needle='./needles/' + str(pin_ordinal),
                                         loop_num=1).wait_for_needle(get_tuple=False)
 
         # Enter the first/second/third/fourth digit of the PIN.
@@ -688,34 +688,42 @@ def enable_run():
     log.error('Unable to turn on running!')
 
 
-def travel(param_list, haystack_map):
+def travel(param_list, haystack_map, attempts=100):
     """
-    Clicks on the minimap until the plater has arrived at the desired
+    Clicks on the minimap until the player has arrived at the desired
     coordinates.
 
     Here's an example of what the arguments might look like for this
     function:
-        [((240, 399), 1, (4, 4), (5, 10))], haystack.png
-        (240, 399) = The X and Y coordinates of the waypoint on
+
+        ([((240, 399), 1, (4, 4), (5, 10)),   <- This is the first waypoint.
+        ((420, 401),  3, (25, 25), (5, 10))], <- This is the second waypoint.
+        haystack.png, 150)
+
+        (240, 399) = The first waypoint is at X=240 Y=399, relative to
                      haystack.png.
-        1 = The X and Y variation in coordinates that will be used when
-            clicking on the minimap.
-        (4, 4) = The X and Y variation in coordinates the function will
-                 allow when checking if the player has reached the
-                 waypoint.
-        (5, 10) = The minimum and maximum number of seconds to wait for
-                  the player to walk/run to the location clicked on in
-                  the minimap.
+        1 = Issued "walk" or "run" commands will vary by 1 coordinate
+            when travelling to the waypoint.
+        (4, 4) = The player will have arrived at the waypoint when they're
+                 within 4 coordinates of the waypoit's coordinates.
+        (5, 10) = The function will wait between 5 and 10 seconds between
+                  each "walk" or "run" command.
+        150 = The function will issue a total of 150 "walk" or "run"
+              commands before giving up.
 
     Args:
-        param_list (list): A list of the coordinates to move the player
-                           to, among a few other parameters.
-                           Each item in the list containes three tuples
+        param_list (list): A list of tuples containing the parameters that
+                           describe how to get the player to the wapoint(s).
+                           Each tuple in the list describes a single
+                           waypoint with its associated parameters.
+                           Each tuple in the list containes three tuples
                            and an integer in the following order:
-                           - A 2-tuple of the desired XY coordinates.
+                           - A 2-tuple of the desired (X, Y) coordinates
+                             to travel to. This is the waypoint's coordinates
+                             relative to the haystack map's coordinates.
                            - An integer of the coordinate tolerance for
                              each minimap click.
-                           - A 2-tuple of the X and Y tolerance allowed
+                           - A 2-tuple of the (X, Y) tolerance allowed
                              for determining if the player has reached
                              the waypoint.
                            - A 2-tuple of the minimum and maximum number of
@@ -724,24 +732,37 @@ def travel(param_list, haystack_map):
         haystack_map (file): Filepath to the map to use to navigate.
                              All waypoint coordinates are relative to
                              this map.
+        attempts (int): The number of "walk" or "run" commands the function
+                        will issue to the player before giving up.
 
     Raises:
         Logs out if any errors occur.
 
     """
+    # TODO: Make this function travel to a single waypoint only.
+    #   Create a separate function if multiple waypoints need to be
+    #   joined together.
+
     # Make sure file path is OS-agnostic.
     haystack_map = str(pathlib.Path(haystack_map))
     haystack = cv2.imread(haystack_map, cv2.IMREAD_GRAYSCALE)
 
-    # Get the first waypoint.
+    # Loop through each waypoint.
     for params in param_list:
-        # Break down the parameters for that waypoint.
+
+        # Break down the parameters for the current waypoint.
         waypoint, coord_tolerance, waypoint_tolerance, sleep_range = params
-        for _ in range(500):
+
+        for attempt in range(1, attempts):
+
+            if attempt > attempts:
+                log.error('Could not reach destination!')
+                return False
 
             # Find the minimap position within the haystack map.
             coords = ocv_find_location(haystack)
-            (coords_map_left, coords_map_top, coords_map_width, coords_map_height) = coords
+            (coords_map_left, coords_map_top,
+             coords_map_width, coords_map_height) = coords
 
             # Get center of minimap coordinates within haystack map.
             coords_map_x = int(coords_map_left + (coords_map_width / 2))
