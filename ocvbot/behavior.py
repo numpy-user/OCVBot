@@ -168,7 +168,7 @@ def login_full(login_sleep_range=(500, 5000), postlogin_sleep_range=(500, 5000),
             #   connect to server," etc.
             log.warning('Cannot find postlogin screen!')
 
-            # TODO: add additional checks to other login messages
+            # TODO: Add additional checks to other login messages.
             invalid_credentials = vis.Vision(region=vis.display,
                                              needle='./needles/login-menu/invalid-credentials.png',
                                              loop_num=1).wait_for_needle()
@@ -273,8 +273,8 @@ def logout_break_range():
     and returns.
 
     """
-    # TODO: there's probably a way to refactor all these near-duplicate
-    #   if-statements into a single for-loop
+    # TODO: There's probably a way to refactor all these near-duplicate
+    #   if-statements into a single for-loop.
     current_time = round(time.time())
 
     # If a checkpoint's timestamp has passed, roll for a logout, then set
@@ -502,7 +502,7 @@ def drop_item(item, track=True, wait_chance=120, wait_min=5000, wait_max=20000):
        wait_max (int): Maximum number of miliseconds to wait if
                        a wait is triggered, default is 20000.
     """
-    # TODO: create four objects, one for each quadrant of the inventory
+    # TODO: Create four objects, one for each quadrant of the inventory
     #   and rotate dropping items randomly among each quadrant to make
     #   item-dropping more randomized.
 
@@ -510,7 +510,7 @@ def drop_item(item, track=True, wait_chance=120, wait_min=5000, wait_max=20000):
     log.debug('Making sure inventory is selected')
     open_side_stone('inventory')
 
-    item_remains = vis.inv.wait_for_needle(loop_num=1, needle=item)
+    item_remains = vis.Vision(region=vis.inv, loop_num=1, needle=item).wait_for_needle()
     if item_remains is False:
         log.info('Could not find %s', item)
         return False
@@ -523,23 +523,23 @@ def drop_item(item, track=True, wait_chance=120, wait_min=5000, wait_max=20000):
         #   right half of the player's inventory. This helps reduce the
         #   chances the bot will click on the same item twice.
         item_on_right = \
-            vis.inv_right_half(needle=item).click_needle(loop_num=1,
-                                                         sleep_range=(10, 50, 50, 300),
-                                                         move_duration_range=(50, 800))
-        # TODO: this "track" parameter is for stats. implement stats!
+            vis.Vision(region=vis.inv_right_half, needle=item, loop_num=1) \
+               .click_needle(sleep_range=(10, 50, 50, 300),
+                             move_duration_range=(50, 800))
+        # TODO: This "track" parameter is for stats. implement stats!
         if item_on_right is True and track is True:
             start.items_gathered += 1
 
         item_on_left = \
-            vis.inv_left_half(needle=item).click_needle(loop_num=1,
-                                                        sleep_range=(10, 50, 50, 300),
-                                                        move_duration_range=(50, 800))
+            vis.Vision(region=vis.inv_left_half, needle=item, loop_num=1) \
+               .click_needle(sleep_range=(10, 50, 50, 300),
+                             move_duration_range=(50, 800))
         if item_on_left is True and track is True:
             start.items_gathered += 1
 
         # Search the entire inventory to check if the item is still
         #   there.
-        item_remains = vis.inv.wait_for_needle(loop_num=1, needle=item)
+        item_remains = vis.Vision(region=vis.inv, loop_num=1, needle=item).wait_for_needle()
 
         # Chance to briefly wait while dropping items.
         misc.wait_rand(wait_chance, wait_min, wait_max)
