@@ -144,7 +144,7 @@ class Magic:
         return True
 
 
-def mine(rocks, ore, ore_type, drop_ore):
+def mine(rocks, ore, ore_type, drop_ore, position=None, conf=(0.8, 0.85)):
     """
     A mining function.
 
@@ -189,10 +189,10 @@ def mine(rocks, ore, ore_type, drop_ore):
     #   init_vision() function has to run before the objects get valid
     #   values.
 
-    # TODO: count the number of items in the inventory to make sure
-    #   the function never receives an "inventory is already full" message
+    # TODO: Count the number of items in the inventory to make sure
+    #   the function never receives an "inventory is already full" message.
 
-    # TODO: refactor a mine_rock() function out of this one.
+    # TODO: Refactor a mine_rock() function out of this one.
 
     # Make sure inventory is selected.
     behavior.open_side_stone('inventory')
@@ -205,7 +205,9 @@ def mine(rocks, ore, ore_type, drop_ore):
         # Applies to Varrock East mine only.
         # TODO: These coords should be passed in from
         #   main.py, not hard-coded.
-        behavior.travel([((240, 399), 1, (4, 4), (5, 10))], './haystacks/varrock-east-mine.png')
+
+        if position is not None:
+            behavior.travel(position[0], position[1])
 
         for rock_needle in rocks:
             # Unpack each tuple in the rocks[] list to obtain the "full"
@@ -217,8 +219,10 @@ def mine(rocks, ore, ore_type, drop_ore):
             # If current rock is full, begin mining it.
             # Move the mouse away from the rock so it doesn't
             #   interfere with matching the needle.
-            rock_full = vis.Vision(region=vis.game_screen, loop_num=1, needle=full_rock_needle, conf=0.8) \
-                .click_needle(sleep_range=(0, 100, 0, 100,), move_duration_range=(0, 500), move_away=True)
+            rock_full = vis.Vision(region=vis.game_screen, loop_num=1,
+                                   needle=full_rock_needle, conf=conf[0]) \
+                .click_needle(sleep_range=(0, 100, 0, 100,),
+                              move_duration_range=(0, 500), move_away=True)
             if rock_full is True:
                 log.info('Waiting for mining to start.')
 
@@ -279,7 +283,7 @@ def mine(rocks, ore, ore_type, drop_ore):
                 # Wait until the rock is empty by waiting for the
                 #   "empty" version of the rock_needle tuple.
                 rock_empty = vis.Vision(region=vis.game_screen, loop_num=35,
-                                        conf=0.85, needle=empty_rock_needle,
+                                        conf=conf[1], needle=empty_rock_needle,
                                         loop_sleep_range=(100, 200)).wait_for_needle()
 
                 if rock_empty is True:

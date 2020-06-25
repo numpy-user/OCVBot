@@ -42,7 +42,8 @@ def miner(scenario):
                                 './needles/game-screen/varrock-east-mine/west-empty.png')],
                         ore='./needles/items/iron-ore.png',
                         ore_type='iron',
-                        drop_ore=start.config.get('mining', 'drop_ore'))
+                        drop_ore=start.config.get('mining', 'drop_ore'),
+                        position=([((240, 399), 1, (4, 4), (5, 10))], './haystacks/varrock-east-mine.png'))
 
         elif scenario == 'lumbridge-mine':
             skills.mine(rocks=[('./needles/game-screen/lumbridge-mine/east-full.png',
@@ -50,7 +51,20 @@ def miner(scenario):
                                ('./needles/game-screen/lumbridge-mine/south-full.png',
                                 './needles/game-screen/lumbridge-mine/south-empty.png')],
                         ore='./needles/items/copper-ore.png',
-                        ore_type='copper', drop_ore=False)  # Dropping ore not supported.
+                        ore_type='copper',
+                        drop_ore=True)  # Banking ore not supported.
+
+        elif scenario == 'al-kharid-mine':
+            skills.mine(rocks=[('./needles/game-screen/al-kharid-mine/north-full.png',
+                                './needles/game-screen/al-kharid-mine/north-empty.png'),
+                               ('./needles/game-screen/al-kharid-mine/west-full.png',
+                                './needles/game-screen/al-kharid-mine/west-empty.png'),
+                               ('./needles/game-screen/al-kharid-mine/south-full.png',
+                                './needles/game-screen/al-kharid-mine/south-empty.png')],
+                        ore='./needles/items/iron-ore.png',
+                        ore_type='iron',
+                        drop_ore=True,
+                        conf=(0.95, 0.95))  # Banking ore not supported.
 
         else:
             raise Exception('Scenario not supported!')
@@ -90,7 +104,7 @@ def spellcaster(scenario):
                          conf=0.75, haystack=vis.game_screen).cast_spell()
 
     # Casts high-level alchemy on all noted items in the left half of the
-#   player's inventory
+    #   player's inventory
     elif scenario == 'high-alchemy':
         spell = './needles/side-stones/spellbook/high-alchemy.png'
         target = './needles/items/bank-note.png'
@@ -105,29 +119,29 @@ def spellcaster(scenario):
 
 
 def chef(item, location):
-        haystack_map = './haystacks/' + location + '.png'
-        item_inv = './needles/items/' + item + '_inv.png'
-        item_bank = './needles/items/' + item + '_bank.png'
+    haystack_map = './haystacks/' + location + '.png'
+    item_inv = './needles/items/' + item + '_inv.png'
+    item_bank = './needles/items/' + item + '_bank.png'
 
-        if location == 'al-kharid':
-            bank_coords = [((75, 128), 1, (4, 4), (5, 10))]
-            range_coords = []
-            heat_source = './needles/game_screen/'
+    if location == 'al-kharid':
+        bank_coords = [((75, 128), 1, (4, 4), (5, 10))]
+        range_coords = []
+        heat_source = './needles/game_screen/'
 
-        for _ in range(1000):
-            # assumes starting location is the bank
-            behavior.travel(range_coords, haystack_map)
-            items_cooked = skills.Cooking(item_inv, item_bank, heat_source).chef
-            behavior.travel(bank_coords, haystack_map)
-            # Deposit cooked inventory.
-            behavior.open_bank('west')
-            vis.Vision(region=vis.game_screen,
-                       needle='./needles/bank/deposit-all.png',
-                       loop_num=3).click_needle()
-            # Withdraw raw items from bank.
-            vis.Vision(region=vis.game_screen,
-                       needle='./needles/items/' + item + 'bank.png',
-                       loop_num=3).click_needle()
+    for _ in range(1000):
+        # assumes starting location is the bank
+        behavior.travel(range_coords, haystack_map)
+        items_cooked = skills.Cooking(item_inv, item_bank, heat_source).chef
+        behavior.travel(bank_coords, haystack_map)
+        # Deposit cooked inventory.
+        behavior.open_bank('west')
+        vis.Vision(region=vis.game_screen,
+                   needle='./needles/bank/deposit-all.png',
+                   loop_num=3).click_needle()
+        # Withdraw raw items from bank.
+        vis.Vision(region=vis.game_screen,
+                   needle='./needles/items/' + item + 'bank.png',
+                   loop_num=3).click_needle()
 
 
 # TODO: Add basic firemaking script that starts at a bank booth and
@@ -140,12 +154,17 @@ def chef(item, location):
 #  "fishing tiles" don't change much is fly fishing at barbarian village.
 
 
-if start.config.get('main', 'script') == 'mining':
-    if start.config.get('mining', 'location') == 'varrock-east-mine':
+scenario = start.config.get('main', 'script')
+if scenario == 'mining':
+    location = start.config.get(scenario, 'location')
+    if location == 'varrock-east-mine':
         miner('varrock-east-mine')
         sys.exit(0)
-    if start.config.get('mining', 'location') == 'lumbridge-mine':
+    elif location == 'lumbridge-mine':
         miner('lumbridge-mine')
+        sys.exit(0)
+    elif location == 'al-kharid-mine':
+        miner('al-kharid-mine')
         sys.exit(0)
 
 elif start.config.get('main', 'script') == 'magic':
