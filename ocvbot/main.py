@@ -120,28 +120,37 @@ def spellcaster(scenario):
 
 def chef(item, location):
     haystack_map = './haystacks/' + location + '.png'
-    item_inv = './needles/items/' + item + '_inv.png'
-    item_bank = './needles/items/' + item + '_bank.png'
+    item_inv = './needles/items/' + item + '.png'
+    item_bank = './needles/items/' + item + '-bank.png'
 
-    if location == 'al-kharid':
-        bank_coords = [((75, 128), 1, (4, 4), (5, 10))]
-        range_coords = []
-        heat_source = './needles/game_screen/'
+    bank_coords = [((91, 190), 1, (4, 4), (5, 8))]
+    range_coords = [((105, 152), 1, (4, 4), (5, 8))]
+    heat_source = './needles/game-screen/range.png'
 
+    # Assumes starting location is the bank.
     for _ in range(1000):
-        # assumes starting location is the bank
+        # Go to range.
         behavior.travel(range_coords, haystack_map)
-        items_cooked = skills.Cooking(item_inv, item_bank, heat_source).chef
+        # Cook food.
+        skills.Cooking(item_inv, item_bank, heat_source).cook_item()
+        # Go back to bank.
         behavior.travel(bank_coords, haystack_map)
-        # Deposit cooked inventory.
+        # Open bank window.
         behavior.open_bank('west')
+        # Deposit cooked food.
         vis.Vision(region=vis.game_screen,
-                   needle='./needles/bank/deposit-all.png',
+                   needle='./needles/bank/deposit-inventory.png',
                    loop_num=3).click_needle()
-        # Withdraw raw items from bank.
+        # Withdraw raw food from bank.
         vis.Vision(region=vis.game_screen,
                    needle='./needles/items/' + item + 'bank.png',
                    loop_num=3).click_needle()
+        # Wait for raw food to appear in inventory
+        items_in_inv = vis.Vision(region=vis.inv,
+                                  needle=item_inv,
+                                  loop_num=30).wait_for_needle()
+        if items_in_inv is False:
+            raise Exception('Cannot find items in inventory!')
 
 
 # TODO: Add basic firemaking script that starts at a bank booth and
@@ -162,4 +171,9 @@ if script == 'mining':
 
 elif script == 'magic':
     spellcaster(start.config.get(script, 'scenario'))
+    sys.exit(0)
+
+elif script == 'chef':
+    chef(start.config.get(script, 'item'),
+         start.config.get(script, 'location'))
     sys.exit(0)
