@@ -5,7 +5,32 @@ Contains all functions related to training skills.
 """
 import logging as log
 
-from ocvbot import behavior, vision as vis, misc, startup as start
+from ocvbot import behavior, vision as vis, misc, startup as start, input
+
+
+def wait_for_level_up(wait_time):
+    """
+    Waits the specified number of seconds for a level-up message to
+    appear in the chat menu.
+
+    Args:
+        wait_time: Approximately the number of seconds to wait for a
+                   level-up message to appear. Checks for a level-up
+                   message about once every second.
+
+    Returns:
+        If a level-up message appears, returns True.
+        Returns False otherwise.
+
+    """
+    level_up = vis.Vision(region=vis.chat_menu,
+                          needle='./needles/chat-menu/level-up.png',
+                          loop_num=wait_time,
+                          loop_sleep_range=(900, 1100)).wait_for_needle()
+    if level_up is True:
+        return True
+    else:
+        return False
 
 
 class Cooking:
@@ -13,7 +38,6 @@ class Cooking:
     Class for all cooking-related functions.
 
     """
-
     def __init__(self, item_inv, item_bank, heat_source, logout=False):
         self.item_inv = item_inv
         self.item_bank = item_bank
@@ -27,14 +51,41 @@ class Cooking:
         Returns:
 
         """
+        # Select the raw food in the inventory.
         item_selected = vis.Vision(region=vis.client,
                                    needle=self.item_inv,
-                                   loop_num=1).click_needle()
-        if item_selected is True:
-            heat_source_selected = vis.Vision(region=vis.game_screen,
-                                              needle=self.heat_source,
-                                              loop_num=3).click_needle()
+                                   loop_num=3).click_needle()
+        if item_selected is False:
+            log.error('Unable to find item!')
+            return False
 
+        # Select the range or fire.
+        heat_source_selected = vis.Vision(region=vis.game_screen,
+                                          needle=self.heat_source,
+                                          loop_num=3,
+                                          loop_sleep_range=(500, 1000),
+                                          conf=0.85).click_needle()
+        if heat_source_selected is False:
+            log.error('Unable to find heat source!')
+            return False
+
+        # Wait for the "how many of this item do you want to cook" chat
+        #   menu.
+        do_x_screen = vis.Vision(region=vis.chat_menu,
+                                 needle='./needles/chat-menu/do-x.png',
+                                 loop_num=30).wait_for_needle()
+        if do_x_screen is False:
+            log.error('Timed out waitinf for "Make X" screen!')
+            return False
+
+        # Begin cooking food.
+        input.Keyboard().keypress(key='space')
+
+        level_up = wait_for_level_up(60)
+        if level_up is True:
+            self.cook_item()
+
+        return True
 
 
 class Magic:
@@ -54,7 +105,6 @@ class Magic:
                        target cannot be found, default is False.
 
     """
-
     def __init__(self, spell, target, conf, haystack, logout=False):
         self.spell = spell
         self.haystack = haystack
