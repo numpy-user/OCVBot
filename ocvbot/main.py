@@ -154,20 +154,12 @@ def chef(item, location):
 #  "fishing tiles" don't change much is fly fishing at barbarian village.
 
 
-scenario = start.config.get('main', 'script')
-if scenario == 'mining':
-    location = start.config.get(scenario, 'location')
-    if location == 'varrock-east-mine':
-        miner('varrock-east-mine')
-        sys.exit(0)
-    elif location == 'lumbridge-mine':
-        miner('lumbridge-mine')
-        sys.exit(0)
-    elif location == 'al-kharid-mine':
-        miner('al-kharid-mine')
-        sys.exit(0)
+script = start.config.get('main', 'script')
 
-elif start.config.get('main', 'script') == 'magic':
-    scenario = start.config.get('magic', 'scenario')
-    spellcaster(scenario)
+if script == 'mining':
+    miner(start.config.get(script, 'location'))
+    sys.exit(0)
+
+elif script == 'magic':
+    spellcaster(start.config.get(script, 'scenario'))
     sys.exit(0)
