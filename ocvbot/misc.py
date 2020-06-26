@@ -76,7 +76,7 @@ def session_duration(human_readable=False):
         return elapsed_time_human_readable
 
 
-def wait_rand(chance, second_chance=10, wait_min=10000, wait_max=60000):
+def wait_rand(chance, wait_min=10000, wait_max=60000, second_chance=10):
     """
     Roll for a chance to do nothing for the specified period of time.
 
@@ -84,16 +84,16 @@ def wait_rand(chance, second_chance=10, wait_min=10000, wait_max=60000):
         chance (int): The number that must be rolled for the wait to be
                       called. For example, if chance is 25, then there
                       is a 1 in 25 chance for the roll to pass.
+        wait_min (int): The minimum number of miliseconds to wait if the
+                        roll passes, default is 10000.
+        wait_max (int): The maximum number of miliseconds to wait if the
+                        roll passes, default is 60000.
         second_chance (int): The number that must be rolled for an
                              additional wait to be called if the first
                              roll passes, default is 10. By default,
                              this means that 10% of waits that pass the
                              first roll wait for an additional period of
                              time.
-        wait_min (int): The minimum number of miliseconds to wait if the
-                        roll passes, default is 10000.
-        wait_max (int): The maximum number of miliseconds to wait if the
-                        roll passes, default is 60000.
 
     """
     wait_roll = rand.randint(1, chance)
