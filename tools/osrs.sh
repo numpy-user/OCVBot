@@ -21,7 +21,7 @@ trap 'rm -rf -- "/tmp/osrs.dmg" "/tmp/osrs-dmg" "$HOME/random.dat" "$HOME/jagex_
 mv "$HOME/.jagexcache" "$HOME/jagexcache" &>/dev/null
 
 # Pull the latest client version.
-wget "${dmg_url}" --output-document="/tmp/osrs.dmg" --no-check-certificate --quiet
+wget "${dmg_url}" --output-document="/tmp/osrs.dmg" --no-check-certificate &>/dev/null
 
 # Extract the JAR file from the DMG.
 7z x -y "/tmp/osrs.dmg" -o"/tmp/osrs-dmg/" &>/dev/null
