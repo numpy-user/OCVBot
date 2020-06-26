@@ -201,6 +201,9 @@ def logout():
     logout_button_highlighted = False
     logout_button = False
 
+    # TODO: Create a function that looks for multiple needles simultaneously.
+    #   This might even be able to be integrated into the wait_for_needle()
+    #   function with a for-loop.
     # Look for any of the three possible logout buttons.
     for _ in range(1, 5):
         # The standard logout button.
@@ -273,7 +276,7 @@ def logout_break_range():
     and returns.
 
     """
-    # TODO: There's probably a way to refactor all these near-duplicate
+    # TODO: There's probably a way to refactor these near-duplicate
     #   if-statements into a single for-loop.
     current_time = round(time.time())
 
@@ -325,17 +328,19 @@ def logout_break_range():
 
 
 def logout_break_roll(chance,
-                      wait_min=int(start.config.get('main', 'min_break_duration')),
-                      wait_max=int(start.config.get('main', 'max_break_duration'))):
+                      min_break_duration=int(start.config.get('main', 'min_break_duration')),
+                      max_break_duration=int(start.config.get('main', 'max_break_duration'))):
     """
-    Rolls for a chance to logout and wait.
+    Rolls for a chance to take a logout break.
 
     Args:
         chance (int): See wait_rand()'s docstring.
-        wait_min (int): The minimum number of minutes to wait if the
-                        roll passes, by default reads the config file.
-        wait_max (int): The maximum number of minutes to wait if the
-                        roll passes, by default reads the config file.
+        min_break_duration (int): The minimum number of minutes to wait
+                                  if the roll passes, by default reads
+                                  the config file.
+        max_break_duration (int): The maximum number of minutes to wait
+                                  if the roll passes, by default reads
+                                  the config file.
 
     """
     logout_roll = rand.randint(1, chance)
@@ -356,9 +361,9 @@ def logout_break_roll(chance,
 
         else:
             # Convert from minutes to miliseconds.
-            wait_min *= 60000
-            wait_max *= 60000
-            wait_time_seconds = misc.rand_seconds(wait_min, wait_max)
+            min_break_duration *= 60000
+            max_break_duration *= 60000
+            wait_time_seconds = misc.rand_seconds(min_break_duration, max_break_duration)
 
             # Convert back to human-readable format for logging.
             wait_time_minutes = wait_time_seconds / 60
@@ -411,7 +416,7 @@ def open_side_stone(side_stone):
 
     # Try a total of 5 times to open the desired side stone menu using
     #   the mouse.
-    for tries in range(6):
+    for tries in range(1, 5):
         # Move mouse out of the way after clicking so the function can
         #   tell if the stone is open.
         vis.Vision(region=vis.side_stones, needle=side_stone_closed,
@@ -487,7 +492,8 @@ def human_behavior_rand(chance):
 def drop_item(item, track=True, wait_chance=120, wait_range=(5000, 20000)):
     """
     Drops all instances of the provided item from the inventory.
-    Shift+Click to drop item MUST be enabled.
+    The "Shift+Click" setting to drop items MUST be enabled in the OSRS
+    client.
 
     Args:
        item (file): Filepath to an image of the item to drop, as it
@@ -600,7 +606,11 @@ def open_bank(direction):
         direction (str): The direction of the bank booth. Must be 'north',
                          'south', 'east', or 'west'.
 
+    Raises:
+        Raises an exception if the bank could not be opened.
+
     Returns:
+        Returns True if bank was opened successfully.
 
     """
     # TODO: Deal with bank PINs.
@@ -623,14 +633,12 @@ def open_bank(direction):
                 return True
             else:
                 pin = enter_bank_pin()
-                if pin is False:
-                    return False
-                else:
+                if pin is True:
                     return True
 
         misc.sleep_rand(1000, 3000)
 
-    raise Exception('Could not find bank booth!')
+    raise Exception('Unable to open bank!')
 
 
 def enter_bank_pin(pin=tuple(start.config.get('main', 'bank_pin'))):
@@ -664,8 +672,11 @@ def enter_bank_pin(pin=tuple(start.config.get('main', 'bank_pin'))):
             enter_digit = vis.Vision(region=vis.game_screen,
                                      needle='./needles/' + pin[pin_ordinal],
                                      loop_num=1).click_needle()
+            return True
 
 
+# TODO: This function may not even be necessary since we can CTRL+click
+#   to run.
 def enable_run():
     """
     If run is turned off but energy is full, turns running on.
@@ -688,6 +699,11 @@ def enable_run():
     log.error('Unable to turn on running!')
 
 
+# TODO: Update the terminology used in this function. Make sure to
+#   distinguish between "waypoint" and "destination". Probably going to
+#   redefine "waypoint" to be "the coordinates that you click on the
+#   minimap to tell your character to walk to", and "destination" to be
+#   "the desired coordinates you want your character to be at".
 def travel(param_list, haystack_map, attempts=100):
     """
     Clicks on the minimap until the player has arrived at the desired
@@ -748,6 +764,8 @@ def travel(param_list, haystack_map, attempts=100):
     haystack = cv2.imread(haystack_map, cv2.IMREAD_GRAYSCALE)
 
     # Loop through each waypoint.
+    # TODO: Change param_list to a dictionary so parameter names can be
+    #   seen when this function is called.
     for params in param_list:
 
         # Break down the parameters for the current waypoint.
@@ -777,8 +795,8 @@ def travel(param_list, haystack_map, attempts=100):
             # Figure out how far the waypoint is from the current location.
             waypoint_distance_x = waypoint[0] - coords_map_x
             waypoint_distance_y = waypoint[1] - coords_map_y
-            log.debug('dest_distance x is %s.', waypoint_distance_x)
-            log.debug('dest_distance y is %s.', waypoint_distance_y)
+            log.debug('dest_distance is (x=%s, y=%s)',
+                      waypoint_distance_x, waypoint_distance_y)
 
             # Check if player has reached waypoint before making the click.
             if (abs(waypoint_distance_x) <= waypoint_tolerance[0] and
