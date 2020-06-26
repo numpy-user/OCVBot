@@ -5,7 +5,7 @@ Invokes main bot scripts.
 """
 import sys
 
-from ocvbot import skills, behavior, vision as vis, startup as start
+from ocvbot import skills, behavior, vision as vis, startup as start, misc
 
 
 def miner(scenario):
@@ -119,12 +119,14 @@ def spellcaster(scenario):
 
 
 def chef(item, location):
+    # TODO: In Al Kharid, deal with the door to the house with the range
+    #   possibly being shut.
     haystack_map = './haystacks/' + location + '.png'
     item_inv = './needles/items/' + item + '.png'
     item_bank = './needles/items/' + item + '-bank.png'
 
-    bank_coords = [((91, 190), 1, (4, 4), (5, 8))]
-    range_coords = [((105, 152), 1, (4, 4), (5, 8))]
+    bank_coords = [((91, 198), 2, (4, 4), (8, 10))]
+    range_coords = [((105, 151), 2, (4, 4), (8, 10))]
     heat_source = './needles/game-screen/range.png'
 
     # Assumes starting location is the bank.
@@ -137,19 +139,26 @@ def chef(item, location):
         behavior.travel(bank_coords, haystack_map)
         # Open bank window.
         behavior.open_bank('west')
+        misc.wait_rand(20, 100, 10000)
         # Deposit cooked food.
         vis.Vision(region=vis.game_screen,
                    needle='./needles/bank/deposit-inventory.png',
                    loop_num=3).click_needle()
+        misc.wait_rand(20, 100, 10000)
         # Withdraw raw food from bank.
-        vis.Vision(region=vis.game_screen,
-                   needle='./needles/items/' + item + 'bank.png',
-                   loop_num=3).click_needle()
+        # Conf is higher than default because raw food looks very
+        #   similar to cooked food.
+        raw_food_withdraw = vis.Vision(region=vis.game_screen,
+                                       needle=item_bank,
+                                       loop_num=3, conf=0.98).click_needle()
+        if raw_food_withdraw is False:
+            raise Exception('Cannot find raw food in bank!')
         # Wait for raw food to appear in inventory
-        items_in_inv = vis.Vision(region=vis.inv,
-                                  needle=item_inv,
-                                  loop_num=30).wait_for_needle()
-        if items_in_inv is False:
+        raw_food_in_inv = vis.Vision(region=vis.inv,
+                                     needle=item_inv,
+                                     loop_num=30, conf=0.99).wait_for_needle()
+        misc.wait_rand(20, 100, 10000)
+        if raw_food_in_inv is False:
             raise Exception('Cannot find items in inventory!')
 
 
