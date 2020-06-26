@@ -23,6 +23,7 @@ def wait_for_level_up(wait_time):
         Returns False otherwise.
 
     """
+    log.info('Checking for level-up')
     level_up = vis.Vision(region=vis.chat_menu,
                           needle='./needles/chat-menu/level-up.png',
                           loop_num=wait_time,
@@ -52,9 +53,11 @@ class Cooking:
 
         """
         # Select the raw food in the inventory.
+        # Confidence must be higher than normal since raw food is very
+        #   similar in appearance to cooked food.
         item_selected = vis.Vision(region=vis.client,
                                    needle=self.item_inv,
-                                   loop_num=3).click_needle()
+                                   loop_num=3, conf=0.99).click_needle()
         if item_selected is False:
             log.error('Unable to find item!')
             return False
@@ -68,14 +71,16 @@ class Cooking:
         if heat_source_selected is False:
             log.error('Unable to find heat source!')
             return False
+        misc.wait_rand(10, 1000, 10000)
 
         # Wait for the "how many of this item do you want to cook" chat
         #   menu.
         do_x_screen = vis.Vision(region=vis.chat_menu,
                                  needle='./needles/chat-menu/do-x.png',
-                                 loop_num=30).wait_for_needle()
+                                 loop_num=30,
+                                 loop_sleep_range=(500, 1000)).wait_for_needle()
         if do_x_screen is False:
-            log.error('Timed out waitinf for "Make X" screen!')
+            log.error('Timed out waiting for "Make X" screen!')
             return False
 
         # Begin cooking food.
@@ -85,6 +90,7 @@ class Cooking:
         if level_up is True:
             self.cook_item()
 
+        misc.wait_rand(15, 20000, 120000)
         return True
 
 
