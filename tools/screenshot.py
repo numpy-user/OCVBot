@@ -51,6 +51,11 @@ else:
     raise Exception('Unsupported arguments!')
 
 
+def pngcrush():
+    log.info('Compressing screenshot...')
+    os.system('pngcrush -s /tmp/haystack.tmp2.png /tmp/haystack.tmp.png 2>/dev/null')
+
+
 def main():
     """
     Takes a screenshot of the OldSchool Runescape client window.
@@ -59,9 +64,13 @@ def main():
 
     """
     log.info('Initializing...')
-    # Remove old screenshots with similar names, otherwise the function
-    #   will break.
-    os.system('rm -f /tmp/screenshot.tmp*.png')
+    # Clean up from any previous runs, otherwise the function will break.
+    for file in ('/tmp/haystack.tmp.png', '/tmp/haystack.tmp.png'):
+        try:
+            os.remove(file)
+        except FileNotFoundError:
+            pass
+
     client_status = vis.orient()[0]
 
     if delay > 0:
@@ -69,37 +78,29 @@ def main():
         time.sleep(delay)
 
     if debug is False:
-        pag.screenshot('/tmp/screenshot.tmp.png', region=vis.client)
-        log.info('Processing screenshot...')
+        pag.screenshot('/tmp/haystack.tmp2.png', region=vis.client)
+        pngcrush()
 
         if client_status == 'logged_in':
             # If the client is logged in, censor the player's username
-            #   by drawing a black box over it with ImageMagick.
-            os.system('pngcrush -s "/tmp/screenshot.tmp.png" "/tmp/screenshot.tmp2.png" 2>/dev/null '
-                      '&& '
-                      'convert /tmp/screenshot.tmp2.png -fill black -draw "rectangle 7 458 190 473" '
-                      '"$(pwd)/haystack_$(date +%Y-%m-%d_%H:%M:%S).png" '
-                      '&& '
-                      'rm -f /tmp/screenshot.tmp*')
+            #   by drawing a black rectangle over it with ImageMagick.
+            os.system('convert /tmp/haystack.tmp.png -fill black -draw "rectangle 7 458 190 473" '
+                      '"$(pwd)/haystack_$(date +%Y-%m-%d_%H:%M:%S).png"')
         elif client_status == 'logged_out':
-            os.system('pngcrush -s "/tmp/screenshot.tmp.png" '
-                      '"$(pwd)/haystack_$(date +%Y-%m-%d_%H:%M:%S).png" '
-                      '2>/dev/null '
-                      '&& '
-                      'rm -f /tmp/screenshot.tmp*')
+            os.system('mv -- "/tmp/haystack.tmp2.png" '
+                      '"$(pwd)/haystack_$(date +%Y-%m-%d_%H:%M:%S).png"')
         else:
             raise Exception("Could not interpret client_status var!")
 
     else:
-        pag.screenshot('/tmp/screenshot.tmp2.png', region=vis.display)
-        log.info('Processing screenshot...')
-        os.system('pngcrush -s /tmp/screenshot.tmp2.png /tmp/screenshot.tmp.png')
+        pag.screenshot('/tmp/haystack.tmp2.png', region=vis.display)
+        pngcrush()
 
         # Import all the coordinate spaces to overlay onto the screenshot.
         # Create a separate file for coordinate space, as some of them
         #   overlap.
         log.info('Creating ocvbot_client.png')
-        os.system('convert /tmp/screenshot.tmp.png '
+        os.system('convert /tmp/haystack.tmp.png '
                   '-fill red '
                   '-draw "rectangle '
                   + str(vis.client_left)
@@ -109,7 +110,7 @@ def main():
                   + '" ocvbot_client.png')
 
         log.info('Creating ocvbot_inv.png')
-        os.system('convert /tmp/screenshot.tmp.png '
+        os.system('convert /tmp/haystack.tmp.png '
                   '-fill red '
                   '-draw "rectangle '
                   + str(vis.inv_left)
@@ -119,7 +120,7 @@ def main():
                   + '" ocvbot_inv.png')
 
         log.info('Creating inv_bottom_half.png')
-        os.system('convert /tmp/screenshot.tmp.png '
+        os.system('convert /tmp/haystack.tmp.png '
                   '-fill red '
                   '-draw "rectangle '
                   + str(vis.inv_bottom_left)
@@ -129,7 +130,7 @@ def main():
                   + '" inv_bottom_half.png')
 
         log.info('Creating ocvbot_inv_right_half.png')
-        os.system('convert /tmp/screenshot.tmp.png '
+        os.system('convert /tmp/haystack.tmp.png '
                   '-fill red '
                   '-draw "rectangle '
                   + str(vis.inv_right_half_left)
@@ -139,7 +140,7 @@ def main():
                   + '" ocvbot_inv_right_half.png')
 
         log.info('Creating ocvbot_inv_left_half.png')
-        os.system('convert /tmp/screenshot.tmp.png '
+        os.system('convert /tmp/haystack.tmp.png '
                   '-fill red '
                   '-draw "rectangle '
                   + str(vis.inv_left_half_left)
@@ -149,7 +150,7 @@ def main():
                   + '" ocvbot_inv_left_half.png')
 
         log.info('Creating ocvbot_game_screen.png')
-        os.system('convert /tmp/screenshot.tmp.png '
+        os.system('convert /tmp/haystack.tmp.png '
                   '-fill red '
                   '-draw "rectangle '
                   + str(vis.game_screen_left)
@@ -159,7 +160,7 @@ def main():
                   + '" ocvbot_game_screen.png')
 
         log.info('Creating ocvbot_side_stones.png')
-        os.system('convert /tmp/screenshot.tmp.png '
+        os.system('convert /tmp/haystack.tmp.png '
                   '-fill red '
                   '-draw "rectangle '
                   + str(vis.side_stones_left)
@@ -169,7 +170,7 @@ def main():
                   + '" ocvbot_side_stones.png')
 
         log.info('Creating ocvbot_chat_menu.png')
-        os.system('convert /tmp/screenshot.tmp.png '
+        os.system('convert /tmp/haystack.tmp.png '
                   '-fill red '
                   '-draw "rectangle '
                   + str(vis.chat_menu_left)
@@ -179,7 +180,7 @@ def main():
                   + '" ocvbot_chat_menu_recent.png')
 
         log.info('Creating ocvbot_chat_menu_recent.png')
-        os.system('convert /tmp/screenshot.tmp.png '
+        os.system('convert /tmp/haystack.tmp.png '
                   '-fill red '
                   '-draw "rectangle '
                   + str(vis.chat_menu_recent_left)
@@ -189,7 +190,7 @@ def main():
                   + '" ocvbot_chat_menu_recent.png')
 
         log.info('Creating ocvbot_minimap.png')
-        os.system('convert /tmp/screenshot.tmp.png '
+        os.system('convert /tmp/haystack.tmp.png '
                   '-fill red '
                   '-draw "rectangle '
                   + str(vis.minimap_left)
@@ -199,7 +200,7 @@ def main():
                   + '" ocvbot_minimap.png')
 
         log.info('Creating ocvbot_minimap_slice.png')
-        os.system('convert /tmp/screenshot.tmp.png '
+        os.system('convert /tmp/haystack.tmp.png '
                   '-fill red '
                   '-draw "rectangle '
                   + str(vis.minimap_slice_left)
@@ -207,10 +208,6 @@ def main():
                   + ' ' + str(vis.minimap_slice_left + start.MINIMAP_SLICE_WIDTH)
                   + ' ' + str(vis.minimap_slice_top + start.MINIMAP_SLICE_HEIGHT)
                   + '" ocvbot_minimap_slice.png')
-
-        os.system('rm /tmp/screenshot.tmp*.png '
-                  '&& '
-                  'notify-send -u low "Debug screenshots taken!" 2>/dev/null')
     return True
 
 
