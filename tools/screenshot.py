@@ -1,29 +1,27 @@
 # coding=UTF-8
 """
 Simple screenshot tool for quickly capturing the OSRS client window.
-
 Linux-only! Requires pngcrush and ImageMagick.
+
+If DEBUG is False, produces an image called
+haystack_$(date +%Y-%m-%d_%H:%M:%S).png in the current directory.
 
 Syntax:
     python screnshot.py [DELAY] [DEBUG]
 
 Example:
-    python screenshot.py 5 False = Wait 5 seconds before taking screenshot,
-                                   no debugging.
+    python screenshot.py 5 True = Wait 5 seconds before taking screenshot,
+                                  enable debugging mode.
 
-Positional arguments:
-    delay (int): The number of seconds to wait before taking the
-                 screnshot.
+Optional positional arguments:
 
-    debug (bool): Whether the function will perform extra processing
+    DELAY (int): The number of seconds to wait before taking the
+                 screenshot, default is 0.
+
+    DEBUG (bool): Whether the function will perform extra processing
                   to overlay rectanges onto the screenshot
                   cooresponding to the various coordinate spaces used
-                  by the bot. This takes a second or two, default is
-                  false.
-
-                  If set to false, this function produces an image
-                  called haystack_$(date +%Y-%m-%d_%H:%M:%S).png in
-                  the current directory.
+                  by the bot, default is False.
 
 """
 import logging as log
@@ -36,14 +34,21 @@ import pyautogui as pag
 from ocvbot import vision as vis, startup as start
 
 log.basicConfig(format='%(asctime)s -- %(filename)s.%(funcName)s - %(message)s', level='INFO')
+arguments = len(sys.argv)
 
-# If no argument is given, default to 0.
-if len(sys.argv) == 1:
+# If the name of the script is the only argument given, set the optional
+#   arguments to their default values.
+if arguments == 1:
     delay = 0
     debug = False
-else:
+elif arguments == 2:
+    delay = int(sys.argv[1])
+    debug = False
+elif arguments == 3:
     delay = int(sys.argv[1])
     debug = bool(sys.argv[2])
+else:
+    raise Exception('Unsupported arguments!')
 
 
 def main():
@@ -53,20 +58,21 @@ def main():
     Automatically censors player's username.
 
     """
-    if delay > 0:
-        log.info('Waiting %s seconds', delay)
-        time.sleep(delay)
-
     log.info('Initializing...')
     # Remove old screenshots with similar names, otherwise the function
     #   will break.
     os.system('rm -f /tmp/screenshot.tmp*.png')
+    client_status = vis.orient()[0]
+
+    if delay > 0:
+        log.info('Waiting %s seconds', delay)
+        time.sleep(delay)
 
     if debug is False:
         pag.screenshot('/tmp/screenshot.tmp.png', region=vis.client)
         log.info('Processing screenshot...')
 
-        if vis.client_status == 'logged_in':
+        if client_status == 'logged_in':
             # If the client is logged in, censor the player's username
             #   by drawing a black box over it with ImageMagick.
             os.system('pngcrush -s "/tmp/screenshot.tmp.png" "/tmp/screenshot.tmp2.png" 2>/dev/null '
@@ -75,7 +81,7 @@ def main():
                       '"$(pwd)/haystack_$(date +%Y-%m-%d_%H:%M:%S).png" '
                       '&& '
                       'rm -f /tmp/screenshot.tmp*')
-        elif vis.client_status == 'logged_out':
+        elif client_status == 'logged_out':
             os.system('pngcrush -s "/tmp/screenshot.tmp.png" '
                       '"$(pwd)/haystack_$(date +%Y-%m-%d_%H:%M:%S).png" '
                       '2>/dev/null '
