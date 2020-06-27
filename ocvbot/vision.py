@@ -36,6 +36,44 @@ def haystack_locate(needle, haystack, grayscale=False, conf=0.95):
     return False
 
 
+def wait_for_needle_list(loops, needle_list, sleep_range):
+    """
+    Works like vision.wait_for_needle(), except multiple needles can be
+    searched for simultaneously.
+
+    Args:
+        loops: The number of tries to look for each needle in needle_list.
+        needle_list: A list of filepaths to the needles to look for. Each
+                     item in the list is a 2-tuple containing:
+                     - The filepath to the needle.
+                     - The region in which to search for that needle.
+        sleep_range: A 2-tuple containing the minimum and maximum number
+                     of miliseconds to wait after each loop.
+
+    Returns:
+        If a needle in needle_list is found, returns a 2-tuple containing
+        the ltwh dimensions of the needle and the index of the needle in
+        needle_list (This is so the function knows which needle was found).
+
+        Returns false if no needles in needle_list could be found.
+
+    """
+    for _ in range(1, loops):
+
+        for item in needle_list:
+            needle, region = item
+
+            needle_found = Vision(region=region,
+                                  needle=needle,
+                                  loop_num=1).wait_for_needle(get_tuple=True)
+            if needle_found is True:
+                return needle_found, needle_list.index(needle)
+
+        misc.sleep_rand(sleep_range[0], sleep_range[1])
+
+    return False
+
+
 class Vision:
     """
     Contains methods for locating images on the display.
