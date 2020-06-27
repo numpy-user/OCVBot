@@ -125,12 +125,31 @@ def chef(item, location):
     item_inv = './needles/items/' + item + '.png'
     item_bank = './needles/items/' + item + '-bank.png'
 
-    bank_coords = [((91, 203), 3, (4, 9), (3, 9))]
-    range_coords = [((105, 151), 1, (5, 5), (5, 10))]
+    bank_coords = [((91, 203), 3, (4, 12), (3, 9))]
+    range_coords = [((107, 151), 1, (5, 5), (3, 8))]
     heat_source = './needles/game-screen/range.png'
 
     # Assumes starting location is the bank.
+    behavior.open_bank('west')
+
     for _ in range(1000):
+        # Withdraw raw food from bank.
+        # Conf is higher than default because raw food looks very
+        #   similar to cooked food.
+        # TODO: If item cannot be found in the bank, click the down arrow
+        #   in the bank window until item is found.
+        raw_food_withdraw = vis.Vision(region=vis.game_screen,
+                                       needle=item_bank,
+                                       loop_num=3, conf=0.98).click_needle()
+        if raw_food_withdraw is False:
+            raise Exception('Cannot find raw food in bank!')
+        # Wait for raw food to appear in inventory
+        raw_food_in_inv = vis.Vision(region=vis.inv,
+                                     needle=item_inv,
+                                     loop_num=30, conf=0.99).wait_for_needle()
+        misc.sleep_rand_roll(20, 100, 10000)
+        if raw_food_in_inv is False:
+            raise Exception('Cannot find items in inventory!')
         # Go to range.
         behavior.travel(range_coords, haystack_map)
         # Cook food.
@@ -159,21 +178,6 @@ def chef(item, location):
                 break
         if inv_full is True:
             raise Exception('Could not empty inventory!')
-        # Withdraw raw food from bank.
-        # Conf is higher than default because raw food looks very
-        #   similar to cooked food.
-        raw_food_withdraw = vis.Vision(region=vis.game_screen,
-                                       needle=item_bank,
-                                       loop_num=3, conf=0.98).click_needle()
-        if raw_food_withdraw is False:
-            raise Exception('Cannot find raw food in bank!')
-        # Wait for raw food to appear in inventory
-        raw_food_in_inv = vis.Vision(region=vis.inv,
-                                     needle=item_inv,
-                                     loop_num=30, conf=0.99).wait_for_needle()
-        misc.sleep_rand_roll(20, 100, 10000)
-        if raw_food_in_inv is False:
-            raise Exception('Cannot find items in inventory!')
 
 
 # TODO: Add basic firemaking script that starts at a bank booth and
