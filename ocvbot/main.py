@@ -125,8 +125,8 @@ def chef(item, location):
     item_inv = './needles/items/' + item + '.png'
     item_bank = './needles/items/' + item + '-bank.png'
 
-    bank_coords = [((91, 198), 2, (4, 4), (8, 10))]
-    range_coords = [((105, 151), 2, (4, 4), (8, 10))]
+    bank_coords = [((91, 203), 3, (4, 9), (3, 9))]
+    range_coords = [((105, 151), 1, (5, 5), (5, 10))]
     heat_source = './needles/game-screen/range.png'
 
     # Assumes starting location is the bank.
@@ -140,11 +140,25 @@ def chef(item, location):
         # Open bank window.
         behavior.open_bank('west')
         misc.wait_rand(20, 100, 10000)
-        # Deposit cooked food.
-        vis.Vision(region=vis.game_screen,
-                   needle='./needles/bank/deposit-inventory.png',
-                   loop_num=3).click_needle()
-        misc.wait_rand(20, 100, 10000)
+        # Deposit cooked food. Try multiple times if not successful on
+        #   the first attempt.
+        inv_full = True
+        for _ in range(1, 5):
+            vis.Vision(region=vis.game_screen,
+                       needle='./needles/bank/deposit-inventory.png',
+                       loop_num=3).click_needle()
+            misc.sleep_rand(500, 1000)
+            misc.wait_rand(20, 100, 10000)
+            # Make sure inventory is empty.
+            inv_full = vis.Vision(region=vis.inv,
+                                  needle=item_inv,
+                                  loop_sleep_range=(100, 300),
+                                  loop_num=3, conf=0.8).wait_for_needle()
+            # Only continue if the inventory is empty.
+            if inv_full is False:
+                break
+        if inv_full is True:
+            raise Exception('Could not empty inventory!')
         # Withdraw raw food from bank.
         # Conf is higher than default because raw food looks very
         #   similar to cooked food.
