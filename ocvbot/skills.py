@@ -55,6 +55,7 @@ class Cooking:
         # Select the raw food in the inventory.
         # Confidence must be higher than normal since raw food is very
         #   similar in appearance to cooked food.
+        behavior.open_side_stone('inventory')
         item_selected = vis.Vision(region=vis.client,
                                    needle=self.item_inv,
                                    loop_num=3, conf=0.99).click_needle()
