@@ -139,7 +139,7 @@ def chef(item, location):
         behavior.travel(bank_coords, haystack_map)
         # Open bank window.
         behavior.open_bank('west')
-        misc.wait_rand(20, 100, 10000)
+        misc.sleep_rand_roll(20, 100, 10000)
         # Deposit cooked food. Try multiple times if not successful on
         #   the first attempt.
         inv_full = True
@@ -148,7 +148,7 @@ def chef(item, location):
                        needle='./needles/bank/deposit-inventory.png',
                        loop_num=3).click_needle()
             misc.sleep_rand(500, 1000)
-            misc.wait_rand(20, 100, 10000)
+            misc.sleep_rand_roll(20, 100, 10000)
             # Make sure inventory is empty.
             inv_full = vis.Vision(region=vis.inv,
                                   needle=item_inv,
@@ -171,7 +171,7 @@ def chef(item, location):
         raw_food_in_inv = vis.Vision(region=vis.inv,
                                      needle=item_inv,
                                      loop_num=30, conf=0.99).wait_for_needle()
-        misc.wait_rand(20, 100, 10000)
+        misc.sleep_rand_roll(20, 100, 10000)
         if raw_food_in_inv is False:
             raise Exception('Cannot find items in inventory!')
 

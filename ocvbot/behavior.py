@@ -548,7 +548,7 @@ def drop_item(item, track=True, wait_chance=120, wait_range=(5000, 20000)):
         item_remains = vis.Vision(region=vis.inv, loop_num=1, needle=item).wait_for_needle()
 
         # Chance to briefly wait while dropping items.
-        misc.wait_rand(wait_chance, wait_range[0], wait_range[1])
+        misc.sleep_rand_roll(wait_chance, wait_range[0], wait_range[1])
 
         pag.keyUp('shift')
         if item_remains is False:

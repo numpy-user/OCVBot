@@ -76,7 +76,7 @@ def session_duration(human_readable=False):
         return elapsed_time_human_readable
 
 
-def wait_rand(chance, wait_min=10000, wait_max=60000, second_chance=10):
+def sleep_rand_roll(chance, wait_min=10000, wait_max=60000, second_chance=10):
     """
     Roll for a chance to do nothing for the specified period of time.
 
