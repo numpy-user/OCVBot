@@ -401,8 +401,8 @@ def open_side_stone(side_stone):
         Raises an exception if side stone could not be opened.
 
     """
-    side_stone_open = ('./needles/side-stones/open/' + side_stone + '.png')
-    side_stone_closed = ('./needles/side-stones/closed/' + side_stone + '.png')
+    side_stone_open = './needles/side-stones/open/' + side_stone + '.png'
+    side_stone_closed = './needles/side-stones/closed/' + side_stone + '.png'
 
     # Some side stones need a higher than default confidence to determine
     #   if they're open.
@@ -419,11 +419,13 @@ def open_side_stone(side_stone):
     for tries in range(1, 5):
         # Move mouse out of the way after clicking so the function can
         #   tell if the stone is open.
-        vis.Vision(region=vis.side_stones, needle=side_stone_closed,
+        vis.Vision(region=vis.side_stones,
+                   needle=(side_stone_closed,),
                    loop_num=3, loop_sleep_range=(100, 300)). \
             click_needle(sleep_range=(0, 200, 0, 200), move_away=True)
 
-        stone_open = vis.Vision(region=vis.side_stones, needle=side_stone_open,
+        stone_open = vis.Vision(region=vis.side_stones,
+                                needle=(side_stone_open,),
                                 loop_num=3, conf=0.98, loop_sleep_range=(100, 200)). \
             wait_for_needle()
 
@@ -432,7 +434,8 @@ def open_side_stone(side_stone):
             return True
         # Make sure the bank window isn't open, which would block
         #   access to the side stones.
-        vis.Vision(region=vis.game_screen, needle='./needles/buttons/close.png',
+        vis.Vision(region=vis.game_screen,
+                   needle=('./needles/buttons/close.png',),
                    loop_num=1).click_needle()
     raise Exception('Could not open side stone!')
 
@@ -613,6 +616,14 @@ def open_bank(direction):
         Returns True if bank was opened successfully.
 
     """
+    # Check if bank is already open
+    bank_open = vis.Vision(region=vis.game_screen,
+                           needle='./needles/buttons/close.png',
+                           loop_num=1).wait_for_needle()
+    if bank_open is True:
+        log.info('Bank already open!')
+        return True
+
     # TODO: Deal with bank PINs.
     for _ in range(1, 10):
         one_tile = vis.Vision(region=vis.game_screen,
