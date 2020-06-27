@@ -126,13 +126,13 @@ class Magic:
             Returns True if spell was activated, False if otherwise.
 
         """
-        for _ in range(1, 3):
-            spell_available = vis.Vision(region=vis.inv, loop_num=3, needle=self.spell) \
+        for _ in range(1, 5):
+            spell_available = vis.Vision(needle=self.spell, region=vis.inv, loop_num=10) \
                 .click_needle(sleep_range=(10, 500, 10, 500,),
                               move_duration_range=(10, 1000))
             if spell_available is False:
                 behavior.open_side_stone('spellbook')
-                misc.sleep_rand(100, 200)
+                misc.sleep_rand(100, 300)
             else:
                 return True
         return False
@@ -146,14 +146,15 @@ class Magic:
             otherwise.
 
         """
-        for _ in range(1, 3):
-            target = vis.Vision(needle=self.target, region=self.haystack, loop_num=3, conf=self.conf) \
-                .click_needle(sleep_range=(10, 500, 10, 500,), move_duration_range=(10, 1000))
+        for _ in range(1, 5):
+            target = vis.Vision(needle=self.target, region=self.haystack, loop_num=10, conf=self.conf) \
+                .click_needle(sleep_range=(10, 500, 10, 500,),
+                              move_duration_range=(10, 1000))
 
             if target is False:
                 if vis.orient()[0] == 'logged_out':
                     behavior.login_full()
-                misc.sleep_rand(1000, 2000)
+                misc.sleep_rand(1000, 3000)
             else:
                 return True
         return False
