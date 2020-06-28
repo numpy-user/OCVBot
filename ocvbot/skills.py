@@ -126,12 +126,14 @@ class Magic:
                        target cannot be found, default is False.
 
     """
-    def __init__(self, spell, target, conf, haystack, logout=False):
+    def __init__(self, spell, target, conf, haystack,
+                 move_duration_range=(10, 1000), logout=False):
         self.spell = spell
         self.haystack = haystack
         self.logout = logout
         self.target = target
         self.conf = conf
+        self.move_duration_range = move_duration_range
 
     def _select_spell(self):
         """
@@ -142,7 +144,8 @@ class Magic:
 
         """
         for _ in range(1, 5):
-            spell_available = vis.Vision(needle=self.spell, region=vis.inv, loop_num=30) \
+            spell_available = vis.Vision(needle=self.spell, region=vis.inv,
+                                         loop_num=30) \
                 .click_needle(sleep_range=(50, 800, 50, 800,),
                               move_duration_range=(10, 1000))
             if spell_available is False:
@@ -162,9 +165,10 @@ class Magic:
 
         """
         for _ in range(1, 5):
-            target = vis.Vision(needle=self.target, region=self.haystack, loop_num=10, conf=self.conf) \
+            target = vis.Vision(needle=self.target, region=self.haystack,
+                                loop_num=10, conf=self.conf) \
                 .click_needle(sleep_range=(10, 500, 10, 500,),
-                              move_duration_range=(10, 1000))
+                              move_duration_range=self.move_duration_range)
 
             if target is False:
                 if vis.orient()[0] == 'logged_out':
