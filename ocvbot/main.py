@@ -108,13 +108,14 @@ def spellcaster(scenario):
     elif scenario == 'high-alchemy':
         spell = './needles/side-stones/spellbook/high-alchemy.png'
         target = './needles/items/bank-note.png'
+        behavior.open_side_stone('spellbook')
         for _ in range(10000):
             spell_cast = skills.Magic(spell=spell, target=target, logout=False,
                                       conf=0.45, haystack=vis.inv_left_half,
                                       move_duration_range=(0, 500)).cast_spell()
             if spell_cast is False:
                 sys.exit(0)
-            misc.sleep_rand_roll(chance_range=(10, 20), sleep_range=(1000, 3000))
+            misc.sleep_rand_roll(chance_range=(10, 30), sleep_range=(0, 3000))
 
     else:
         raise Exception('Scenario not supported!')
