@@ -420,12 +420,12 @@ def open_side_stone(side_stone):
         # Move mouse out of the way after clicking so the function can
         #   tell if the stone is open.
         vis.Vision(region=vis.side_stones,
-                   needle=(side_stone_closed,),
+                   needle=side_stone_closed,
                    loop_num=3, loop_sleep_range=(100, 300)). \
             click_needle(sleep_range=(0, 200, 0, 200), move_away=True)
 
         stone_open = vis.Vision(region=vis.side_stones,
-                                needle=(side_stone_open,),
+                                needle=side_stone_open,
                                 loop_num=3, conf=0.98, loop_sleep_range=(100, 200)). \
             wait_for_needle()
 
@@ -642,10 +642,10 @@ def open_bank(direction):
                                    loop_num=30).wait_for_needle()
             if bank_open is True:
                 return True
-            else:
-                pin = enter_bank_pin()
-                if pin is True:
-                    return True
+            #else:
+                #pin = enter_bank_pin()
+                #if pin is True:
+                    #return True
 
         misc.sleep_rand(1000, 3000)
 
