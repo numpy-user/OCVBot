@@ -48,6 +48,7 @@ class Cooking:
                             item with as it appears in the game world.
 
     """
+
     def __init__(self, item_inv, item_bank, heat_source):
         self.item_inv = item_inv
         self.item_bank = item_bank
@@ -146,6 +147,7 @@ class Magic:
                        target cannot be found, default is False.
 
     """
+
     def __init__(self, spell, target, conf, region,
                  move_duration_range=(10, 1000), logout=False):
         self.spell = spell
@@ -239,14 +241,9 @@ class Magic:
         return True
 
 
-def mine(rocks, ore, ore_type, drop_ore, position=None, conf=(0.8, 0.85)):
+class Mining:
     """
-    A mining function.
-
-    This function alternates mining among the rocks that were provided
-    (it can mine one rock, two rocks, or many rocks at once).
-    All rocks must be of the same ore type. All mined ore, gems, and
-    clue geodes are dropped by default when the inventory is full.
+    Class for all activities related to training the Mining skill.
 
     Args:
         rocks (list): A list containing an arbitrary number of 2-tuples.
@@ -258,167 +255,123 @@ def mine(rocks, ore, ore_type, drop_ore, position=None, conf=(0.8, 0.85)):
         ore (file): Filepath to a needle of the item icon of the ore
                     being mined, as it appears in the player's
                     inventory.
-        ore_type (str): The type of ore being mined, used for generating
-                        stats. Available options are: "copper", "iron"
-        drop_ore (bool): Whether to drop the ore or bank it. Setting
-                         this to 'False' only works for Varrock East
-                         bank.
-
-    Raises:
-        Raises a runtime error if the player's inventory is full but
-        the function can't find any ore in the player's inventory to
-        drop.
-
-    Returns:
-        Returns True if a full inventory of ore was mined and banked or
-        dropped, or if script timed out looking for ore.
 
     """
-    gems = ['./needles/items/uncut-sapphire.png',
-            './needles/items/uncut-emerald.png',
-            './needles/items/uncut-ruby.png',
-            './needles/items/uncut-diamond.png',
-            './needles/items/clue-geode.png']
+    # Create a list of tuples to determine which items to drop
+    drop_items = [(bool(start.config.get('mining', 'drop_sapphire')), './needles/items/uncut-sapphire.png'),
+                  (bool(start.config.get('mining', 'drop_emerald')), './needles/items/uncut-emerald.png'),
+                  (bool(start.config.get('mining', 'drop_ruby')), './needles/items/uncut-ruby.png'),
+                  (bool(start.config.get('mining', 'drop_diamond')), './needles/items/uncut-diamong.png'),
+                  (bool(start.config.get('mining', 'drop_clue_geode')), './needles/items/clue-geode.png')]
 
-    # Vision objects have to be imported within functions because the
-    #   init_vision() function has to run before the objects get valid
-    #   values.
-
-    # TODO: Count the number of items in the inventory to make sure
-    #   the function never receives an "inventory is already full" message.
-
-    # TODO: Refactor a mine_rock() function out of this one.
-
-    # Make sure inventory is selected.
-    behavior.open_side_stone('inventory')
-
-    for tries in range(100):
-
-        # Confirm player is in the correct mining spot. This is also
-        #   used to re-adjust the player if a mis-click moves the player
-        #   out of position.
-        # Applies to Varrock East mine only.
-        # TODO: These coords should be passed in from
-        #   main.py, not hard-coded.
+    def __init__(self, rocks, ore, position=None, conf=(0.8, 0.85)):
+        self.rocks = rocks
+        self.ore = ore
+        self.position = position
+        self.conf = conf
 
         if position is not None:
             behavior.travel(position[0], position[1])
 
-        for rock_needle in rocks:
-            # Unpack each tuple in the rocks[] list to obtain the "full"
-            #   and "empty" versions of each ore.
-            (full_rock_needle, empty_rock_needle) = rock_needle
+    def mine_rocks(self):
+        """
+        Mines the provided rocks until inventory is full.
 
-            log.debug('Searching for ore %s...', tries)
+        This function alternates mining among the rocks that were provided
+        (it can mine one rock, two rocks, or many rocks at once).
+        All rocks must be of the same ore type.
 
-            # If current rock is full, begin mining it.
-            # Move the mouse away from the rock so it doesn't
-            #   interfere with matching the needle.
-            rock_full = vis.Vision(region=vis.game_screen, loop_num=1,
-                                   needle=full_rock_needle, conf=conf[0]) \
-                .click_needle(sleep_range=(0, 100, 0, 100,),
-                              move_duration_range=(0, 500), move_away=True)
-            if rock_full is True:
-                log.info('Waiting for mining to start.')
+        Returns:
+            Returns True if a full inventory of ore was mined and banked or
+            dropped, or if script timed out looking for ore.
 
-                # Small chance to do nothing for a short while.
-                misc.sleep_rand_roll(chance_range=(1, 200))
+        """
+        # TODO: Count the number of items in the inventory to make sure
+        #   the function never receives an "inventory is already full" message.
 
-                # Once the rock has been clicked on, wait for mining to
-                #   start by monitoring chat.
-                mining_started = vis.Vision(region=vis.chat_menu_recent, loop_num=5, conf=0.9,
-                                            needle='./needles/chat-menu/mining-started.png',
+        # Make sure inventory is selected.
+        behavior.open_side_stone('inventory')
+
+        for tries in range(100):
+
+            for rock_needle in self.rocks:
+                # Unpack each tuple in the rocks[] list to obtain the "full"
+                #   and "empty" versions of each ore.
+                (full_rock_needle, empty_rock_needle) = rock_needle
+
+                log.debug('Searching for ore %s...', tries)
+
+                # If current rock is full, begin mining it.
+                # Move the mouse away from the rock so it doesn't
+                #   interfere with matching the needle.
+                rock_full = vis.Vision(region=vis.game_screen, loop_num=1,
+                                       needle=full_rock_needle, conf=self.conf[0]) \
+                    .click_needle(sleep_range=(0, 100, 0, 100,),
+                                  move_duration_range=(0, 500), move_away=True)
+
+                if rock_full is True:
+                    log.info('Waiting for mining to start.')
+                    misc.sleep_rand_roll(chance_range=(1, 200))
+
+                    # Once the rock has been clicked on, wait for mining to
+                    #   start by monitoring chat messages.
+                    mining_started = vis.Vision(region=vis.chat_menu_recent, loop_num=5, conf=0.9,
+                                                needle='./needles/chat-menu/mining-started.png',
+                                                loop_sleep_range=(100, 200)).wait_for_needle()
+
+                    # If mining hasn't started after looping has finished,
+                    #   check to see if the inventory is full.
+                    if mining_started is False:
+                        log.debug('Timed out waiting for mining to start.')
+
+                        inv_full = vis.Vision(region=vis.chat_menu, loop_num=1,
+                                              needle='./needles/chat-menu/mining-inventory-full.png'). \
+                            wait_for_needle()
+
+                        # If the inventory is full, empty the ore and
+                        #   return.
+                        if inv_full is True:
+                            return 'inventory-full'
+
+                    log.debug('Mining started.')
+
+                    # Wait until the rock is empty by waiting for the
+                    #   "empty" version of the rock_needle tuple.
+                    rock_empty = vis.Vision(region=vis.game_screen, loop_num=35,
+                                            conf=self.conf[1], needle=empty_rock_needle,
                                             loop_sleep_range=(100, 200)).wait_for_needle()
 
-                # If mining hasn't started after looping has finished,
-                #   check to see if the inventory is full.
-                if mining_started is False:
-                    log.debug('Timed out waiting for mining to start.')
+                    if rock_empty is True:
+                        log.info('Rock is empty.')
+                        log.debug('%s empty.', rock_needle)
+                        behavior.human_behavior_rand(chance=100)
+                    else:
+                        log.info('Timed out waiting for mining to finish.')
+        return True
 
-                    inv_full = vis.Vision(region=vis.chat_menu, loop_num=1,
-                                          needle='./needles/chat-menu/mining-inventory-full.png'). \
-                        wait_for_needle()
+    def drop_inv_ore(self):
+        """
+        Drops ore and optionally gems from inventory.
 
-                    # If the inventory is full, empty the ore and
-                    #   return.
-                    if inv_full is True:
-                        log.info('Inventory is full.')
-                        if drop_ore is True:
-                            fdrop_ore(ore)
-                        else:
-                            behavior.open_side_stone('inventory')
-                            # Bank from mining spot.
-                            # TODO: These coords should be passed in from
-                            #   main.py, not hard-coded.
-                            behavior.travel([((253, 181), 5, (35, 35), (1, 6)),
-                                             ((112, 158), 5, (20, 20), (1, 6)),
-                                             ((108, 194), 1, (10, 4), (3, 8))],
-                                            './haystacks/varrock-east-mine.png')
-                            behavior.open_bank('south')
-                            vis.Vision(region=vis.inv, needle=ore).click_needle()
-                            for gem in gems:
-                                vis.Vision(region=vis.inv, needle=gem, loop_num=1).click_needle()
-                            # TODO: Instead of waiting a hard-coded period of time,
-                            #   wait until the item can no longer be found in the
-                            #   player's inventory.
-                            misc.sleep_rand(500, 3000)
-                            # Mining spot from bank.
-                            behavior.travel([((240, 161), 5, (35, 35), (1, 6)),
-                                             ((262, 365), 5, (25, 25), (1, 6)),
-                                             ((240, 399), 1, (4, 4), (3, 8))],
-                                            './haystacks/varrock-east-mine.png')
-                            misc.sleep_rand(300, 800)
-                        elapsed_time = misc.session_duration(human_readable=True)
-                        log.info('Script has been running for %s (HH:MM:SS)', elapsed_time)
-                        return True
-                    return True
+        Returns:
+            Returns True if ore has been dropped.
 
-                log.info('Mining started.')
+        """
+        ore_dropped = behavior.drop_item(item=self.ore)
 
-                # Wait until the rock is empty by waiting for the
-                #   "empty" version of the rock_needle tuple.
-                rock_empty = vis.Vision(region=vis.game_screen, loop_num=35,
-                                        conf=conf[1], needle=empty_rock_needle,
-                                        loop_sleep_range=(100, 200)).wait_for_needle()
+        if ore_dropped is False:
+            behavior.logout()
+            # This runtime error will occur if the
+            #   player's inventory is full, but they
+            #   don't have any ore to drop.
+            raise Exception('Could not find ore to drop!')
 
-                if rock_empty is True:
-                    log.info('Rock is empty.')
-                    log.debug('%s empty.', rock_needle)
-                    behavior.human_behavior_rand(chance=100)
-                else:
-                    log.info('Timed out waiting for mining to finish.')
-    return True
-
-
-def fdrop_ore(ore):
-    """
-    Drops ore and optionally gems in inventory.
-
-    Returns:
-
-    """
-
-    # Create tuples of whether or not to drop the item and the item's path.
-    drop_sapphire = (start.config.get('mining', 'drop_sapphire'), './needles/items/uncut-sapphire.png')
-    drop_emerald = (start.config.get('mining', 'drop_emerald'), './needles/items/uncut-emerald.png')
-    drop_ruby = (start.config.get('mining', 'drop_ruby'), './needles/items/uncut-ruby.png')
-    drop_diamond = (start.config.get('mining', 'drop_diamond'), './needles/items/uncut-diamond.png')
-    drop_clue_geode = (start.config.get('mining', 'drop_clue_geode'), './needles/items/clue-geode.png')
-    ore_dropped = behavior.drop_item(item=ore)
-    if ore_dropped is False:
-        behavior.logout()
-        # This runtime error will occur if the
-        #   player's inventory is full, but they
-        #   don't have any ore to drop.
-        raise RuntimeError("Could not find ore to drop!")
-
-    # Iterate through the other items that could
-    #   be dropped. If any of them is true, drop that item.
-    # The for loop is iterating over a tuple of tuples.
-    for item in (drop_sapphire, drop_emerald, drop_ruby,
-                 drop_diamond, drop_clue_geode):
-        # Unpack the tuple
-        (drop_item, path) = item
-        if drop_item is True:
-            behavior.drop_item(item=str(path), track=False)
-            return True
+        # Iterate through the other items that could
+        #   be dropped. If any of them is true, drop that item.
+        # The for loop is iterating over a tuple of tuples.
+        for item in self.drop_items:
+            # Unpack the tuple
+            (drop_item_bool, path) = item
+            if drop_item_bool is True:
+                behavior.drop_item(item=str(path), track=False)
+                return True
