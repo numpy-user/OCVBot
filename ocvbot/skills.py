@@ -73,7 +73,7 @@ class Cooking:
         if heat_source_selected is False:
             log.error('Unable to find heat source!')
             return False
-        misc.sleep_rand_roll(20, 1000, 10000)
+        misc.sleep_rand_roll(chance_range=(15, 35), sleep_range=(1000, 10000))
 
         # Wait for the "how many of this item do you want to cook" chat
         #   menu.
@@ -105,7 +105,7 @@ class Cooking:
             if cooking_done is True:
                 break
 
-        misc.sleep_rand_roll(25, 20000, 120000)
+        misc.sleep_rand_roll(chance_range=(15, 35), sleep_range=(20000, 120000))
         return True
 
 
@@ -211,7 +211,7 @@ class Magic:
         misc.sleep_rand(int(start.config.get('magic', 'min_cast_delay')),
                         int(start.config.get('magic', 'max_cast_delay')))
         # Roll for random wait.
-        misc.sleep_rand_roll(chance=300, wait_min=10000, wait_max=60000)
+        misc.sleep_rand_roll(chance_range=(100, 400))
 
         if self.logout is True:
             # Roll for logout after the configured period of time.
@@ -303,7 +303,7 @@ def mine(rocks, ore, ore_type, drop_ore, position=None, conf=(0.8, 0.85)):
                 log.info('Waiting for mining to start.')
 
                 # Small chance to do nothing for a short while.
-                misc.sleep_rand_roll(chance=100, wait_min=10000, wait_max=60000)
+                misc.sleep_rand_roll(chance_range=(1, 200))
 
                 # Once the rock has been clicked on, wait for mining to
                 #   start by monitoring chat.

@@ -142,7 +142,7 @@ class Mouse:
 
         """
         move_durmin, move_durmax = self.move_duration_range
-        move_duration_var = misc.rand_seconds(rmin=move_durmin, rmax=move_durmax)
+        move_duration_var = misc.rand_seconds(min_seconds=move_durmin, max_seconds=move_durmax)
         return move_duration_var
 
     def click(self, hold=False):
@@ -159,17 +159,17 @@ class Mouse:
 
         """
         # Random sleep before click.
-        misc.sleep_rand(rmin=self.sleep_range[0], rmax=self.sleep_range[1])
+        misc.sleep_rand(sleep_min=self.sleep_range[0], sleep_max=self.sleep_range[1])
 
         if hold is True:
-            duration = misc.rand_seconds(rmin=self.action_duration_range[0],
-                                         rmax=self.action_duration_range[1])
+            duration = misc.rand_seconds(min_seconds=self.action_duration_range[0],
+                                         max_seconds=self.action_duration_range[1])
             pag.click(button=self.button, duration=duration)
         else:
             pag.click(button=self.button)
 
         # Random sleep after click.
-        misc.sleep_rand(rmin=self.sleep_range[2], rmax=self.sleep_range[3])
+        misc.sleep_rand(sleep_min=self.sleep_range[2], sleep_max=self.sleep_range[3])
         return True
 
 
@@ -231,10 +231,10 @@ class Keyboard:
         if self.log is True:
             log.debug('Pressing key: %s.', key)
 
-        misc.sleep_rand(rmin=self.sleep_range[0], rmax=self.sleep_range[1])
+        misc.sleep_rand(sleep_min=self.sleep_range[0], sleep_max=self.sleep_range[1])
         pag.keyDown(key)
-        misc.sleep_rand(rmin=self.action_duration_range[0],
-                        rmax=self.action_duration_range[1])
+        misc.sleep_rand(sleep_min=self.action_duration_range[0],
+                        sleep_max=self.action_duration_range[1])
         pag.keyUp(key)
-        misc.sleep_rand(rmin=self.sleep_range[2], rmax=self.sleep_range[3])
+        misc.sleep_rand(sleep_min=self.sleep_range[2], sleep_max=self.sleep_range[3])
         return True
