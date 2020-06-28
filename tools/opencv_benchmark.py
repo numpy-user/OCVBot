@@ -2,6 +2,7 @@
 """
 Compares OpenCV Template Matching speed of color image vs grayscale
 image.
+
 """
 import cv2
 
@@ -67,14 +68,10 @@ print('Grayscale Avg =', gray_avg, 'miliseconds')
 print('\nGrayscale avg / Color avg =', round((gray_avg / color_avg), 2))
 
 if show_match == 1:
-    cv2.rectangle(haystack_color, match_color,
-                  (match_color[0] + cw, match_color[1] + ch),
-                  (0, 255, 0), 2)
+    cv2.rectangle(haystack_color, match_color, (match_color[0] + cw, match_color[1] + ch), (0, 255, 0), 2)
     cv2.imshow("haystack", haystack_color)
     cv2.waitKey(0)
 
-    cv2.rectangle(haystack_gray, match_gray,
-                  (match_gray[0] + gw, match_gray[1] + gh),
-                  (0, 255, 0), 2)
+    cv2.rectangle(haystack_gray, match_gray, (match_gray[0] + gw, match_gray[1] + gh), (0, 255, 0), 2)
     cv2.imshow("haystack", haystack_gray)
     cv2.waitKey(0)
