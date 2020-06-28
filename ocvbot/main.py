@@ -11,13 +11,13 @@ from ocvbot import skills, behavior, vision as vis, startup as start, misc
 
 def miner(scenario):
     """
-    Script for mining in a variety of locations, based on preset
-    "scenarios".
+    Script for mining in a variety of locations, determined by a few
+    preset "scenarios".
 
     Supported scenarios:
-        'lumbridge-mine' = Mines copper in Lumbridge Swamp. Banking is
-                           not supported for this scenario.
-        'varrock-east-mine' = Mines iron in Varrock East mine.
+        'lumbridge-mine' = Mines copper in Lumbridge Swamp.
+        'varrock-east-mine' = Mines iron in Varrock East mine. Banking
+                              supported.
         'al-kharid-mine' = Mines iron in Al Kharid mine.
 
         See '/docs/client-configuration/' for the required client
@@ -30,8 +30,9 @@ def miner(scenario):
         Raises an exception if an unsupported scenario is passed.
 
     """
-    # Determine if the player will be dropping the ore or banking it (in
-    #   supported scenarios).
+    # Determine if the player will be dropping the ore or banking it.
+    # This var is forced to True in scenarios where banking is not
+    #   supported.
     drop_ore = start.config.get('mining', 'drop_ore')
     # Make the path to the rock needles shorter.
     prefix = './needles/game-screen/' + scenario + '/'
@@ -66,14 +67,15 @@ def miner(scenario):
                                ((240, 399), 1, (4, 4), (3, 8))])
 
         elif scenario == 'lumbridge-mine':
+            drop_ore = True  # Banking not supported.
             mining = skills.Mining(rocks=[(prefix + 'east-full.png',
                                            prefix + 'east-empty.png'),
                                           (prefix + 'south-full.png',
                                            prefix + 'south-empty.png')],
-                                   ore='./needles/items/copper-ore.png',
-                                   drop_ore=True)
+                                   ore='./needles/items/copper-ore.png')
 
         elif scenario == 'al-kharid-mine':
+            drop_ore = True  # Banking not supported.
             mining = skills.Mining(rocks=[(prefix + 'north-full.png',
                                            prefix + 'north-empty.png'),
                                           (prefix + 'west-full.png',
@@ -81,7 +83,7 @@ def miner(scenario):
                                           (prefix + 'south-full.png',
                                            prefix + 'south-empty.png')],
                                    ore='./needles/items/iron-ore.png',
-                                   drop_ore=True, conf=(0.95, 0.95))
+                                   conf=(0.95, 0.95))
         else:
             raise Exception('Scenario not supported!')
 
