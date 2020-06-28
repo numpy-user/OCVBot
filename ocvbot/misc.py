@@ -11,39 +11,39 @@ import time
 from ocvbot import startup as start
 
 
-def rand_seconds(rmin=0, rmax=100):
+def rand_seconds(min_seconds=0, max_seconds=100):
     """
     Gets a random integer between two values. Input arguments are in
     miliseconds but output is in seconds. For example, if this function
     generates a random value of 391, it will return a value of 0.391.
 
     Args:
-        rmin (int): The minimum number of miliseconds, default is 0.
-        rmax (int): The maximum number of miliseconds, default is 100.
+        min_seconds (int): The minimum number of miliseconds, default is 0.
+        max_seconds (int): The maximum number of miliseconds, default is 100.
 
     Returns:
         Returns a float.
 
     """
-    randval = rand.randint(rmin, rmax)
+    randval = rand.randint(min_seconds, max_seconds)
     randval = float(randval / 1000)
     # log.debug('Got random value of %s.', randval)
     return randval
 
 
-def sleep_rand(rmin=0, rmax=100):
+def sleep_rand(sleep_min=0, sleep_max=100):
     """
     Does nothing for a random period of time. Input arguments are in
     miliseconds.
 
     Args:
-        rmin (int): The minimum number of miliseconds to wait, default
-                    is 0.
-        rmax (int): The maximum number of miliseconds to wait, default
-                    is 100.
+        sleep_min (int): The minimum number of miliseconds to wait, default
+                         is 0.
+        sleep_max (int): The maximum number of miliseconds to wait, default
+                         is 100.
 
     """
-    sleeptime = rand_seconds(rmin=rmin, rmax=rmax)
+    sleeptime = rand_seconds(min_seconds=sleep_min, max_seconds=sleep_max)
     # log.debug('Sleeping for %s seconds.', sleeptime)
     time.sleep(sleeptime)
     return True
@@ -76,39 +76,39 @@ def session_duration(human_readable=False):
         return elapsed_time_human_readable
 
 
-def sleep_rand_roll(chance, wait_min=10000, wait_max=60000, second_chance=10):
+def sleep_rand_roll(chance_range=(10, 20), sleep_range=(10000, 60000), second_chance_range=(10, 20)):
     """
     Roll for a chance to do nothing for the specified period of time.
 
     Args:
-        chance (int): The number that must be rolled for the wait to be
-                      called. For example, if chance is 25, then there
-                      is a 1 in 25 chance for the roll to pass.
-        wait_min (int): The minimum number of miliseconds to wait if the
-                        roll passes, default is 10000.
-        wait_max (int): The maximum number of miliseconds to wait if the
-                        roll passes, default is 60000.
-        second_chance (int): The number that must be rolled for an
-                             additional wait to be called if the first
-                             roll passes, default is 10. By default,
-                             this means that 10% of waits that pass the
-                             first roll wait for an additional period of
-                             time.
+        chance_range (tuple): The minimum and maximum number that must be
+                              rolled for the sleep to trigger. For example,
+                              if chance_range is (20, 25), then a random
+                              number between 20 and 25 will be chosen as
+                              the number that must be rolled for the
+                              sleep to trigger, default is (10, 20).
+        sleep_range (tuple): The minimum and maximum number of miliseconds
+                             to wait if the sleep triggers, default is
+                             (10000, 60000).
+        second_chance_range (tuple): Same as chance_range, except this is
+                                     a second roll for an additional sleep
+                                     after the initial sleep, if it is
+                                     triggered.
 
     """
-    wait_roll = rand.randint(1, chance)
-    if wait_roll == chance:
+    chance = rand.randint(chance_range[0], chance_range[1])
+    roll = rand.randint(1, chance)
+    if roll == chance:
         log.info('Random wait called.')
-        sleeptime = rand_seconds(wait_min, wait_max)
+        sleeptime = rand_seconds(sleep_range[0], sleep_range[1])
         log.info('Sleeping for %s seconds...', round(sleeptime))
         time.sleep(sleeptime)
 
-        # Perform an additional wait roll so that (1/second_chance)
-        #   waits are extra long.
-        wait_roll = rand.randint(1, second_chance)
-        if wait_roll == 10:
+        second_chance = rand.randint(second_chance_range[0], second_chance_range[1])
+        second_roll = rand.randint(1, second_chance)
+        if second_roll == second_chance:
             log.info('Additional random wait called.')
-            sleeptime = rand_seconds(wait_min, wait_max)
+            sleeptime = rand_seconds(sleep_range[0], sleep_range[1])
             log.info('Sleeping for %s seconds...', round(sleeptime))
             time.sleep(sleeptime)
     return True
