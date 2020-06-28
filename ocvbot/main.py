@@ -1,6 +1,20 @@
 # coding=utf-8
 """
-Invokes main bot scripts.
+Module for invoking main bot scripts.
+
+Most main scripts define a preset list of 'scenarios' from which the user
+can choose from. Each scenario has a predetermined configuration that will
+used for training that skill. For example, the 'varrock-east-mine' scenario
+for the 'miner' script is configured to only mine two specific iron rocks
+within Varrock East Mine.
+
+Some scripts, however, are a little more flexible and don't define any
+rigid scenarios to which the user must adhere. The 'chef' script, for
+example, allows the user to specify both the item to be cooked as well as
+the location to use.
+
+See '/docs/client-configuration/' for the required client
+configuration settings in each scenario.
 
 """
 import logging as log
@@ -11,8 +25,8 @@ from ocvbot import skills, behavior, vision as vis, startup as start, misc
 
 def miner(scenario):
     """
-    Script for mining in a variety of locations, determined by a few
-    preset "scenarios".
+    Script for mining rocks in a handful of locations. Banking support is
+    limited.
 
     Supported scenarios:
         'lumbridge-mine' = Mines copper in Lumbridge Swamp.
@@ -22,9 +36,6 @@ def miner(scenario):
 
         See '/docs/client-configuration/' for the required client
         configuration settings for each scenario.
-
-    Args:
-        scenario (str): The scenario to use.
 
     Raises:
         Raises an exception if an unsupported scenario is passed.
@@ -116,20 +127,13 @@ def miner(scenario):
 
 def spellcaster(scenario):
     """
-    Defines a set of "scenarios" to use for magic training. Each
-    scenario has a preset spell, target, and haystack that the
-    cast_spell() function will use.
+    Script for training magic, either with combat spells or alchemy.
 
     Supported scenarios:
         'curse-varrock-castle' = Casts curse against the Monk of Zamorak
                                  in varrock castle.
-
-        See "/docs/client-configuration/" for the required client
-        configuration settings for each scenario.
-
-    Args:
-        scenario (str): The scenario to use. See above for supported
-                        scenario types.
+        'high-alchemy' = Casts high alchemy on all noted items within the
+                         left half of the player's inventory.
 
     Raises:
         Raises an exception if an unsupported scenario is passed.
@@ -148,7 +152,11 @@ def spellcaster(scenario):
     #   player's inventory
     elif scenario == 'high-alchemy':
         spell = './needles/side-stones/spellbook/high-alchemy.png'
-        target = './needles/items/bank-note.png'
+        item = start.config.get('magic', 'alch_item_type')
+        if item == 'bank-note':
+            target = './needles/items/bank-note.png'
+        else:
+            target = './needles/items/' + item + '.png'
         behavior.open_side_stone('spellbook')
         for _ in range(10000):
             spell_cast = skills.Magic(spell=spell, target=target, logout=False,
@@ -163,6 +171,16 @@ def spellcaster(scenario):
 
 
 def chef(item, location):
+    """
+    Cooks a given item at a given location.
+
+    Args:
+        item:
+        location:
+
+    Returns:
+
+    """
     # Must have staff of water equipped!
     # TODO: In Al Kharid, deal with the door to the house with the range
     #   possibly being shut.
