@@ -110,24 +110,27 @@ def spellcaster(scenario):
         target = './needles/items/bank-note.png'
         for _ in range(10000):
             spell_cast = skills.Magic(spell=spell, target=target, logout=False,
-                                      conf=0.45, haystack=vis.inv_left_half).cast_spell()
+                                      conf=0.45, haystack=vis.inv_left_half,
+                                      move_duration_range=(0, 500)).cast_spell()
             if spell_cast is False:
                 sys.exit(0)
+            misc.sleep_rand_roll(chance_range=(10, 20), sleep_range=(1000, 3000))
 
     else:
         raise Exception('Scenario not supported!')
 
 
 def chef(item, location):
+    # Must have staff of water equipped!
     # TODO: In Al Kharid, deal with the door to the house with the range
     #   possibly being shut.
     haystack_map = './haystacks/' + location + '.png'
     item_inv = './needles/items/' + item + '.png'
     item_bank = './needles/items/' + item + '-bank.png'
 
-    bank_coords = [((91, 203), 3, (4, 12), (3, 9))]
-    range_coords = [((107, 151), 1, (5, 5), (3, 8))]
-    heat_source = './needles/game-screen/range.png'
+    bank_coords = [((91, 207), 3, (4, 7), (3, 9))]
+    range_coords = [((107, 152), 1, (5, 5), (8, 12))]
+    heat_source = './needles/game-screen/al-kharid/range.png'
 
     # Assumes starting location is the bank.
     behavior.open_bank('west')
@@ -147,7 +150,7 @@ def chef(item, location):
         raw_food_in_inv = vis.Vision(region=vis.inv,
                                      needle=item_inv,
                                      loop_num=30, conf=0.99).wait_for_needle()
-        misc.sleep_rand_roll(20, 100, 10000)
+        misc.sleep_rand_roll(chance_range=(10, 20), sleep_range=(100, 10000))
         if raw_food_in_inv is False:
             raise Exception('Cannot find items in inventory!')
         # Go to range.
@@ -158,7 +161,7 @@ def chef(item, location):
         behavior.travel(bank_coords, haystack_map)
         # Open bank window.
         behavior.open_bank('west')
-        misc.sleep_rand_roll(20, 100, 10000)
+        misc.sleep_rand_roll(chance_range=(10, 20), sleep_range=(100, 10000))
         # Deposit cooked food. Try multiple times if not successful on
         #   the first attempt.
         inv_full = True
@@ -167,7 +170,7 @@ def chef(item, location):
                        needle='./needles/bank/deposit-inventory.png',
                        loop_num=3).click_needle()
             misc.sleep_rand(500, 1000)
-            misc.sleep_rand_roll(20, 100, 10000)
+            misc.sleep_rand_roll(chance_range=(10, 20), sleep_range=(100, 10000))
             # Make sure inventory is empty.
             inv_full = vis.Vision(region=vis.inv,
                                   needle=item_inv,
