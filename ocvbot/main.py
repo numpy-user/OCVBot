@@ -101,7 +101,7 @@ def spellcaster(scenario):
         for _ in range(10000):
             behavior.travel([((75, 128), 1, (4, 4), (5, 10))], haystack_map)
             skills.Magic(spell=spell, target=target, logout=True,
-                         conf=0.75, haystack=vis.game_screen).cast_spell()
+                         conf=0.75, region=vis.game_screen).cast_spell()
 
     # Casts high-level alchemy on all noted items in the left half of the
     #   player's inventory
@@ -111,7 +111,7 @@ def spellcaster(scenario):
         behavior.open_side_stone('spellbook')
         for _ in range(10000):
             spell_cast = skills.Magic(spell=spell, target=target, logout=False,
-                                      conf=0.45, haystack=vis.inv_left_half,
+                                      conf=0.45, region=vis.inv_left_half,
                                       move_duration_range=(0, 500)).cast_spell()
             if spell_cast is False:
                 sys.exit(0)

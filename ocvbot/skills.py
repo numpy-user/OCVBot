@@ -36,26 +36,36 @@ def wait_for_level_up(wait_time):
 
 class Cooking:
     """
-    Class for all cooking-related functions.
+    Class for all functions related to training the Cooking skill.
+
+    Args:
+        item_inv (file): Filepath to the food to cook as it appears in
+                         the player's inventory. This is the raw version.
+        item_bank (file): Filepath to the food to cook as it appears in
+                          the players' bank. Make sure this image doesn't
+                          include the stack count if this item is stacked.
+        heat_source (file): Filepath to the fire or range to cook the
+                            item with as it appears in the game world.
 
     """
-    def __init__(self, item_inv, item_bank, heat_source, logout=False):
+    def __init__(self, item_inv, item_bank, heat_source):
         self.item_inv = item_inv
         self.item_bank = item_bank
         self.heat_source = heat_source
-        self.logout = logout
 
     def cook_item(self):
         """
-        Cooks all instances of the given item in the player's inventory.
+        Cooks all instances of the given food in the player's inventory.
 
         Returns:
+            Returns True if all items were cooked. Returns False in all
+            other cases.
 
         """
+        behavior.open_side_stone('inventory')
         # Select the raw food in the inventory.
         # Confidence must be higher than normal since raw food is very
-        #   similar in appearance to cooked food.
-        behavior.open_side_stone('inventory')
+        #   similar in appearance to its cooked version.
         item_selected = vis.Vision(region=vis.client,
                                    needle=self.item_inv,
                                    loop_num=3,
@@ -73,10 +83,11 @@ class Cooking:
         if heat_source_selected is False:
             log.error('Unable to find heat source!')
             return False
+
         misc.sleep_rand_roll(chance_range=(15, 35), sleep_range=(1000, 10000))
 
         # Wait for the "how many of this item do you want to cook" chat
-        #   menu.
+        #   menu to appear.
         do_x_screen = vis.Vision(region=vis.chat_menu,
                                  needle='./needles/chat-menu/do-x.png',
                                  loop_num=30,
@@ -87,15 +98,17 @@ class Cooking:
 
         # Begin cooking food.
         input.Keyboard().keypress(key='space')
-        misc.sleep_rand(1000, 3000)
+        misc.sleep_rand(3000, 5000)
 
         # Wait for either a level-up or for the player to stop cooking.
         # To determine when the player is done cooking, look for the
-        #   bright red Staff of Water orb. The player must have this item
+        #   bright blue "Staff of Water" orb to re-appear (equipped weapons
+        #   disappear while cooking food). The player must have this item
         #   equipped.
         for _ in range(1, 60):
             misc.sleep_rand(1000, 3000)
             level_up = wait_for_level_up(1)
+            # If the player levels-up while cooking, restart cooking.
             if level_up is True:
                 self.cook_item()
             cooking_done = vis.Vision(region=vis.game_screen,
@@ -111,25 +124,32 @@ class Cooking:
 
 class Magic:
     """
-    Class for all activities related to the Magic skill.
+    Class for all activities related to training the Magic skill.
 
     Args:
         spell (file): Filepath to the spell to cast as it appears in the
                       player's spellbook (NOT greyed-out).
-        target (file): Filepath to an image of the target to cast the
-                       spell on, as it appears in the game world.
+        target (file): Filepath to the target to cast the spell on as it
+                       appears in the game world. If the spell is a non-
+                       combat spell, this would be an item as it appears
+                       in the player's inventory.
         conf (float): Confidence required to match the target.
-        haystack (tuple): The 4-tuple to use when searching for the
-                          target. This will either be "vis.inv" or
-                          "vis.game_screen".
-        logout (bool): Whether or not to logout once out of runes or the
+        region (tuple): The coordinate region to use when searching for
+                        the target. This will either be "vis.inv" or
+                        "vis.game_screen".
+        move_duration_range (tuple): A 2-tuple of the minimum and maximum
+                                     number of miliseconds the mouse cursor
+                                     will take while moving to the spell
+                                     icon and the target, default is
+                                     (10, 1000).
+        logout (bool): Whether to logout once out of runes or the
                        target cannot be found, default is False.
 
     """
-    def __init__(self, spell, target, conf, haystack,
+    def __init__(self, spell, target, conf, region,
                  move_duration_range=(10, 1000), logout=False):
         self.spell = spell
-        self.haystack = haystack
+        self.region = region
         self.logout = logout
         self.target = target
         self.conf = conf
@@ -137,17 +157,16 @@ class Magic:
 
     def _select_spell(self):
         """
-        Activates the desired spell.
+        Activate the desired spell.
 
         Returns:
             Returns True if spell was activated, False if otherwise.
 
         """
         for _ in range(1, 5):
-            spell_available = vis.Vision(needle=self.spell, region=vis.inv,
-                                         loop_num=30) \
+            spell_available = vis.Vision(needle=self.spell, region=vis.inv, loop_num=30) \
                 .click_needle(sleep_range=(50, 800, 50, 800,),
-                              move_duration_range=(10, 1000))
+                              move_duration_range=self.move_duration_range)
             if spell_available is False:
                 behavior.open_side_stone('spellbook')
                 misc.sleep_rand(100, 300)
@@ -157,7 +176,8 @@ class Magic:
 
     def _select_target(self):
         """
-        Attempt to find the target to cast the spell on.
+        Attempt to find the target to cast the spell on. Can be either a
+        monster in the game world or an item in the inventory.
 
         Returns:
             Returns True if target was found and selected, False if
@@ -165,7 +185,7 @@ class Magic:
 
         """
         for _ in range(1, 5):
-            target = vis.Vision(needle=self.target, region=self.haystack,
+            target = vis.Vision(needle=self.target, region=self.region,
                                 loop_num=10, conf=self.conf) \
                 .click_needle(sleep_range=(10, 500, 10, 500,),
                               move_duration_range=self.move_duration_range)
@@ -180,11 +200,10 @@ class Magic:
 
     def cast_spell(self):
         """
-        Casts a spell at a target. Optionally can require the player to be
-        in a specific location.
+        Cast a spell at a target.
 
         Returns:
-            Returns True if spell was cast, false if otherwise.
+            Returns True if spell was cast, False if otherwise.
 
         """
         spell_selected = self._select_spell()
