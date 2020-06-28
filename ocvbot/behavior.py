@@ -435,7 +435,7 @@ def open_side_stone(side_stone):
         # Make sure the bank window isn't open, which would block
         #   access to the side stones.
         vis.Vision(region=vis.game_screen,
-                   needle=('./needles/buttons/close.png',),
+                   needle='./needles/buttons/close.png',
                    loop_num=1).click_needle()
     raise Exception('Could not open side stone!')
 
