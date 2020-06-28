@@ -58,7 +58,8 @@ class Cooking:
         behavior.open_side_stone('inventory')
         item_selected = vis.Vision(region=vis.client,
                                    needle=self.item_inv,
-                                   loop_num=3, conf=0.99).click_needle()
+                                   loop_num=3,
+                                   conf=0.99).click_needle()
         if item_selected is False:
             log.error('Unable to find item!')
             return False
@@ -86,10 +87,23 @@ class Cooking:
 
         # Begin cooking food.
         input.Keyboard().keypress(key='space')
+        misc.sleep_rand(1000, 3000)
 
-        level_up = wait_for_level_up(60)
-        if level_up is True:
-            self.cook_item()
+        # Wait for either a level-up or for the player to stop cooking.
+        # To determine when the player is done cooking, look for the
+        #   bright red Staff of Water orb. The player must have this item
+        #   equipped.
+        for _ in range(1, 60):
+            misc.sleep_rand(1000, 3000)
+            level_up = wait_for_level_up(1)
+            if level_up is True:
+                self.cook_item()
+            cooking_done = vis.Vision(region=vis.game_screen,
+                                      needle='./needles/game-screen/staff-of-water-top.png',
+                                      conf=0.9,
+                                      loop_num=1).wait_for_needle()
+            if cooking_done is True:
+                break
 
         misc.sleep_rand_roll(25, 20000, 120000)
         return True
@@ -128,8 +142,8 @@ class Magic:
 
         """
         for _ in range(1, 5):
-            spell_available = vis.Vision(needle=self.spell, region=vis.inv, loop_num=10) \
-                .click_needle(sleep_range=(10, 500, 10, 500,),
+            spell_available = vis.Vision(needle=self.spell, region=vis.inv, loop_num=30) \
+                .click_needle(sleep_range=(50, 800, 50, 800,),
                               move_duration_range=(10, 1000))
             if spell_available is False:
                 behavior.open_side_stone('spellbook')
@@ -193,7 +207,7 @@ class Magic:
         misc.sleep_rand(int(start.config.get('magic', 'min_cast_delay')),
                         int(start.config.get('magic', 'max_cast_delay')))
         # Roll for random wait.
-        misc.sleep_rand_roll(chance=200, wait_min=10000, wait_max=60000)
+        misc.sleep_rand_roll(chance=300, wait_min=10000, wait_max=60000)
 
         if self.logout is True:
             # Roll for logout after the configured period of time.
