@@ -7,6 +7,7 @@ import logging as log
 import os
 import sys
 
+import keyboard
 import pyautogui as pag
 import configparser
 
@@ -34,3 +35,12 @@ log.basicConfig(format='%(asctime)s %(filename)s.%(funcName)s - %(message)s',
 # Clean up left over screenshots from previous runs.
 if os.name == 'posix':
     os.system('rm .screenshot2*.png >/dev/null 2>&1')
+
+def kill_script():
+    # TODO: Replace this with psutil.kill().
+    os.system('pkill -f main.py')
+    return
+
+
+keyboard.add_hotkey(config.get('main', 'kill_hotkey'), kill_script,)
+
