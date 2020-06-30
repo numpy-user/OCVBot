@@ -138,6 +138,9 @@ class Magic:
         region (tuple): The coordinate region to use when searching for
                         the target. This will either be "vis.inv" or
                         "vis.game_screen".
+        inventory (bool): Whether the spell is being cast on an item in
+                          the player's inventory (as opposed to a monster),
+                          default is False.
         move_duration_range (tuple): A 2-tuple of the minimum and maximum
                                      number of miliseconds the mouse cursor
                                      will take while moving to the spell
@@ -148,14 +151,15 @@ class Magic:
 
     """
 
-    def __init__(self, spell, target, conf, region,
+    def __init__(self, spell, target, conf, region, inventory=False,
                  move_duration_range=(10, 1000), logout=False):
         self.spell = spell
-        self.region = region
-        self.logout = logout
         self.target = target
         self.conf = conf
+        self.region = region
+        self.inventory = inventory
         self.move_duration_range = move_duration_range
+        self.logout = logout
 
     def _select_spell(self):
         """
@@ -186,6 +190,10 @@ class Magic:
             otherwise.
 
         """
+        # Make sure the inventory is active when casting on items.
+        if self.inventory is True:
+            behavior.open_side_stone('inventory')
+
         for _ in range(1, 5):
             target = vis.Vision(needle=self.target, region=self.region,
                                 loop_num=10, conf=self.conf) \

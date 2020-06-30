@@ -159,7 +159,8 @@ def spellcaster(scenario):
             target = './needles/items/' + item + '.png'
         behavior.open_side_stone('spellbook')
         for _ in range(10000):
-            spell_cast = skills.Magic(spell=spell, target=target, logout=False,
+            spell_cast = skills.Magic(spell=spell, target=target,
+                                      inventory=True, logout=False,
                                       conf=0.45, region=vis.inv_left_half,
                                       move_duration_range=(0, 500)).cast_spell()
             if spell_cast is False:
