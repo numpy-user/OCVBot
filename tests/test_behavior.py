@@ -110,8 +110,14 @@ login_fail_params = (
 )
 
 open_bank_params = (
-    ('south', '01'),  # Booth, 1 tile south.
-    ('south', '02'),  # Booth, 2 tiles south.
+    ('south', '01'),  # 1 tile south.
+    ('south', '02'),  # 2 tiles south.
+    ('west', '03'),   # 1 tile west.
+    ('west', '04')    # 2 tiles west.
+)
+
+bank_settings_check_params = (
+    ('quantity', 'all', '01')
 )
 
 drop_item_pass_params = (
@@ -186,9 +192,20 @@ drop_item_pass_params = (
 # OPEN_BANK ------------------------------------------------------------
 
 
-@pytest.mark.parametrize('params', open_bank_params)
-def test_open_bank_pass(params):
-    direction, test_number = params
-    feh('open_bank', 'pass', test_number)
-    result = behavior.open_bank(direction)
-    assert result is True
+#@pytest.mark.parametrize('params', open_bank_params)
+#def test_open_bank_pass(params):
+    #irection, test_number = params
+    #eh('open_bank', 'pass', test_number)
+    #esult = behavior.open_bank(direction)
+    #assert result is True
+
+
+# BANK_SETTINGS_CHECK --------------------------------------------------
+
+
+#@pytest.mark.parametrize('params', bank_settings_check_params)
+#def test_bank_settings_check(params):
+    #setting, value, test_number = params
+    #feh('bank_settings_check', 'pass', test_number)
+    #result = behavior.bank_settings_check(setting, value)
+    #assert result is True
