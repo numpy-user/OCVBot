@@ -190,9 +190,6 @@ class Magic:
             otherwise.
 
         """
-        # Make sure the inventory is active when casting on items.
-        if self.inventory is True:
-            behavior.open_side_stone('inventory')
 
         for _ in range(1, 5):
             target = vis.Vision(needle=self.target, region=self.region,
@@ -201,6 +198,9 @@ class Magic:
                               move_duration_range=self.move_duration_range)
 
             if target is False:
+                # Make sure the inventory is active when casting on items.
+                if self.inventory is True:
+                    behavior.open_side_stone('inventory')
                 if vis.orient()[0] == 'logged_out':
                     behavior.login_full()
                 misc.sleep_rand(1000, 3000)
