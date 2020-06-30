@@ -44,7 +44,7 @@ def miner(scenario):
     # Determine if the player will be dropping the ore or banking it.
     # This var is forced to True in scenarios where banking is not
     #   supported.
-    drop_ore = start.config.get('mining', 'drop_ore')
+    drop_ore = start.config['mining']['drop_ore']
     # Make the path to the rock needles shorter.
     prefix = './needles/game-screen/' + scenario + '/'
     haystack_map = './haystacks/' + scenario + '.png'
@@ -152,7 +152,7 @@ def spellcaster(scenario):
     #   player's inventory
     elif scenario == 'high-alchemy':
         spell = './needles/side-stones/spellbook/high-alchemy.png'
-        item = start.config.get('magic', 'alch_item_type')
+        item = start.config['magic']['alch_item_type']
         if item == 'bank-note':
             target = './needles/items/bank-note.png'
         else:
@@ -253,17 +253,17 @@ def chef(item, location):
 #  "fishing tiles" don't change much is fly fishing at barbarian village.
 
 
-script = start.config.get('main', 'script')
+script = start.config['main']['script']
 
 if script == 'mining':
-    miner(start.config.get(script, 'location'))
+    miner(start.config[script]['location'])
     sys.exit(0)
 
 elif script == 'magic':
-    spellcaster(start.config.get(script, 'scenario'))
+    spellcaster(start.config[script]['scenario'])
     sys.exit(0)
 
 elif script == 'chef':
-    chef(start.config.get(script, 'item'),
-         start.config.get(script, 'location'))
+    chef(start.config[script]['item'],
+         start.config[script]['location'])
     sys.exit(0)

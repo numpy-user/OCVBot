@@ -229,8 +229,8 @@ class Magic:
                 return False
 
         # Wait for spell to be cast.
-        misc.sleep_rand(int(start.config.get('magic', 'min_cast_delay')),
-                        int(start.config.get('magic', 'max_cast_delay')))
+        misc.sleep_rand(int(start.config['magic']['min_cast_delay']),
+                        int(start.config['magic']['max_cast_delay']))
         # Roll for random wait.
         misc.sleep_rand_roll(chance_range=(100, 400))
 
@@ -258,11 +258,11 @@ class Mining:
 
     """
     # Create a list of tuples to determine which items to drop
-    drop_items = [(bool(start.config.get('mining', 'drop_sapphire')), './needles/items/uncut-sapphire.png'),
-                  (bool(start.config.get('mining', 'drop_emerald')), './needles/items/uncut-emerald.png'),
-                  (bool(start.config.get('mining', 'drop_ruby')), './needles/items/uncut-ruby.png'),
-                  (bool(start.config.get('mining', 'drop_diamond')), './needles/items/uncut-diamong.png'),
-                  (bool(start.config.get('mining', 'drop_clue_geode')), './needles/items/clue-geode.png')]
+    drop_items = [(bool(start.config['mining']['drop_sapphire']), './needles/items/uncut-sapphire.png'),
+                  (bool(start.config['mining']['drop_emerald']), './needles/items/uncut-emerald.png'),
+                  (bool(start.config['mining']['drop_ruby']), './needles/items/uncut-ruby.png'),
+                  (bool(start.config['mining']['drop_diamond']), './needles/items/uncut-diamong.png'),
+                  (bool(start.config['mining']['drop_clue_geode']), './needles/items/clue-geode.png')]
 
     def __init__(self, rocks, ore, position=None, conf=(0.8, 0.85)):
         self.rocks = rocks

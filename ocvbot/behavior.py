@@ -27,8 +27,8 @@ def switch_worlds_logged_out():
     pass
 
 
-def login_basic(username_file=start.config.get('main', 'username_file'),
-                password_file=start.config.get('main', 'password_file'),
+def login_basic(username_file=start.config['main']['username_file'],
+                password_file=start.config['main']['password_file'],
                 cred_sleep_range=(800, 5000)):
     """
     Performs a login without checking if the login was successful.
@@ -105,8 +105,8 @@ def login_basic(username_file=start.config.get('main', 'username_file'),
 
 
 def login_full(login_sleep_range=(500, 5000), postlogin_sleep_range=(500, 5000),
-               username_file=start.config.get('main', 'username_file'),
-               password_file=start.config.get('main', 'password_file')):
+               username_file=start.config['main']['username_file'],
+               password_file=start.config['main']['password_file']):
     """
     Logs into the client using the credentials specified in the main
     config file. Waits until the login is successful before returning.
@@ -328,8 +328,8 @@ def logout_break_range():
 
 
 def logout_break_roll(chance,
-                      min_break_duration=int(start.config.get('main', 'min_break_duration')),
-                      max_break_duration=int(start.config.get('main', 'max_break_duration'))):
+                      min_break_duration=int(start.config['main']['min_break_duration']),
+                      max_break_duration=int(start.config['main']['max_break_duration'])):
     """
     Rolls for a chance to take a logout break.
 
@@ -653,7 +653,7 @@ def open_bank(direction):
     raise Exception('Unable to open bank!')
 
 
-def enter_bank_pin(pin=tuple(start.config.get('main', 'bank_pin'))):
+def enter_bank_pin(pin=tuple(str(start.config['main']['bank_pin']))):
     """
     Enters the user's bank PIN.
 

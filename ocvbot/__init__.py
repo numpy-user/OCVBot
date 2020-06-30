@@ -9,7 +9,7 @@ import sys
 
 import keyboard
 import pyautogui as pag
-import configparser
+import yaml
 
 pag.PAUSE = 0
 pag.FAILSAFE = False
@@ -24,10 +24,10 @@ else:
     os.chdir(os.path.dirname(__file__))
 
 # Read in the config file.
-config = configparser.ConfigParser()
-config.read('./config.ini')
+with open('config.yaml') as config:
+    config = yaml.safe_load(config)
 
-log_level = str(config.get('main', 'log_level'))
+log_level = config['main']['log_level']
 log.basicConfig(format='%(asctime)s %(filename)s.%(funcName)s - %(message)s',
                 level=log_level)
 
@@ -42,5 +42,5 @@ def kill_script():
     return
 
 
-keyboard.add_hotkey(config.get('main', 'kill_hotkey'), kill_script,)
+keyboard.add_hotkey(config['main']['kill_hotkey'], kill_script,)
 
