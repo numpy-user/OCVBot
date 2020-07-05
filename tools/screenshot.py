@@ -65,7 +65,7 @@ def main():
     """
     log.info('Initializing...')
     # Clean up from any previous runs, otherwise the function will break.
-    for file in ('/tmp/haystack.tmp.png', '/tmp/haystack.tmp.png'):
+    for file in ('/tmp/haystack.tmp.png', '/tmp/haystack.tmp2.png'):
         try:
             os.remove(file)
         except FileNotFoundError:
