@@ -34,6 +34,9 @@ main:
 
 # Can be set to CRITICAL, ERROR, WARNING, INFO, or DEBUG.
   log_level: INFO
+# Whether or not to enable the ability to manually terminate the bot. This
+    is False by default since it requires sudo privileges.
+  keyboard_kill: False
 # The hotkey combination to use to manually kill the bot. See Python's
 #   keyboard.add_hotkey() function docstring for exact syntax.
   kill_hotkey: ctrl+space

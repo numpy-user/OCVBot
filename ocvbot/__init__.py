@@ -7,7 +7,6 @@ import logging as log
 import os
 import sys
 
-import keyboard
 import pyautogui as pag
 import yaml
 
@@ -36,11 +35,17 @@ log.basicConfig(format='%(asctime)s %(filename)s.%(funcName)s - %(message)s',
 if os.name == 'posix':
     os.system('rm .screenshot2*.png >/dev/null 2>&1')
 
+
 def kill_script():
+    """
+    Used to manually terminate the primary thread of execution.
+
+    """
     # TODO: Replace this with psutil.kill().
     os.system('pkill -f main.py')
-    return
 
 
-keyboard.add_hotkey(config['main']['kill_hotkey'], kill_script,)
-
+# This requires sudo privileges, so it's optional.
+if config['main']['keyboard_kill'] is True:
+    import keyboard
+    keyboard.add_hotkey(config['main']['kill_hotkey'], kill_script,)
