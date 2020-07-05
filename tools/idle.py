@@ -4,11 +4,31 @@ Keeps the OSRS client logged in.
 
 """
 import logging as log
+import os
 import random as rand
+import yaml
+
 from ocvbot import input, misc, vision as vis
 
 # Focus the client.
 input.Mouse(region=vis.chat_menu).click_coord(move_away=True)
+
+with open('../ocvbot/config.yaml') as config:
+    config = yaml.safe_load(config)
+
+def kill_script():
+    """
+    Used to manually terminate the primary thread of execution.
+
+    """
+    # TODO: Replace this with psutil.kill().
+    os.system('pkill -f main.py')
+
+
+# This requires sudo privileges, so it's optional.
+if config['main']['keyboard_kill'] is True:
+    import keyboard
+    keyboard.add_hotkey(config['main']['kill_hotkey'], kill_script)
 
 while True:
     # Every 3-5 minutes, hit an arrow key to move the client's camera.
