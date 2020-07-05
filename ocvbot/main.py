@@ -161,12 +161,32 @@ def spellcaster(scenario):
         for _ in range(10000):
             spell_cast = skills.Magic(spell=spell, target=target,
                                       inventory=True, logout=False,
-                                      conf=0.45, region=vis.inv_left_half,
-                                      move_duration_range=(0, 500)).cast_spell()
+                                      conf=0.5, region=vis.inv_left_half,
+                                      move_duration_range=(0, 200)).cast_spell()
             if spell_cast is False:
+                if start.config['magic']['logout'] is True:
+                    behavior.logout()
                 sys.exit(0)
+                '''
+                check inv for nature runes
+                if nature runes = 0
+                    open inv
+                    get cash stack
+                    purchase nature runes equal to 10% cash stack
+                
+                check inv for alched item
+                if item = 0
+                    open inv
+                    get cash stack
+                    search for item on GE to get price
+                    determine how many of that item can be bought
+                    buy that many nature runes
+                    get new cash stack
+                    buy item 
+                '''
             misc.sleep_rand_roll(chance_range=(10, 30), sleep_range=(0, 3000))
 
+        behavior.logout()
     else:
         raise Exception('Scenario not supported!')
 
@@ -244,6 +264,15 @@ def chef(item, location):
             raise Exception('Could not empty inventory!')
 
 
+def test():
+    behavior.Travel(path=[
+        {'destination': (107, 152),
+         'waypoint_tolerance': 2,
+         'destination_tolerance': (5, 5),
+         'haystack_map': './haystacks/al-kharid.png'}
+    ]).travel_path()
+
+
 # TODO: Add basic firemaking script that starts at a bank booth and
 #   creates 27 fires, all in a straight line, then returns to the booth.
 
@@ -267,4 +296,8 @@ elif script == 'magic':
 elif script == 'chef':
     chef(start.config[script]['item'],
          start.config[script]['location'])
+    sys.exit(0)
+
+elif script == 'test':
+    test()
     sys.exit(0)
