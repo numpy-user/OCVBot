@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 
 # Downloads and runs the OSRS client on Linux.
 # Requires p7zip, wget, and java.
@@ -13,6 +14,14 @@ dmg_url="https://www.runescape.com/downloads/OldSchool.dmg"
 # ------------------------------------------------------------------------
 
 set -u
+
+# Check for required packages.
+for i in wget 7z java; do
+  if [[ -z $(which "${i}") ]]; then
+    printf "%s\n" "Missing binary ${i}!"
+    exit 1
+  fi
+done
 
 # Clean up when killed.
 trap 'rm -rf -- "/tmp/osrs.dmg" "/tmp/osrs-dmg" "$HOME/random.dat" "$HOME/jagex_cl_oldschool_LIVE.dat" "$HOME/jagexappletviewer.preferences" &>/dev/null ; mv -- "$HOME/jagexcache" "$HOME/.jagexcache" &>/dev/null' EXIT
@@ -45,6 +54,9 @@ rm -rf -- "/tmp/osrs.dmg" \
           "$HOME/jagex_cl_oldschool_LIVE.dat" \
           "$HOME/jagexappletviewer.preferences" \
           &>/dev/null
+
 mv -- "$HOME/jagexcache" \
       "$HOME/.jagexcache" \
       &>/dev/null
+
+exit 0
