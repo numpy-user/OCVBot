@@ -24,6 +24,9 @@
 - create GIF from video for README: https://askubuntu.com/questions/648603/how-to-create-an-animated-gif-from-mp4-video-via-command-line
 - reading for devolpers: https://blog.codinghorror.com/recommended-reading-for-developers/
 - code smells: https://blog.codinghorror.com/code-smells/
+- https://www.smartspate.com/how-to-write-a-bot-in-python-for-online-games/ 
+- https://github.com/PyUserInput/PyUserInput 
+- https://www.reddit.com/r/programming/comments/7wivfv/reverse_engineering_a_mmorpg_bot_to_find/ 
 ```python
 import cv2
 
