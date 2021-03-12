@@ -28,3 +28,5 @@ bin/main/build
 **/ocvbot/config.yaml
 **/ocvbot/config.ini
 **/tools/login_*.py
+
+ocvbot/package-lock.json
