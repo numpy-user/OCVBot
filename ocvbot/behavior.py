@@ -19,7 +19,7 @@ from ocvbot import input, vision as vis, startup as start, vision, misc
 # TODO
 def switch_worlds_logged_in(members=False, free_to_play=True, safe=True):
     if members is False and free_to_play is False:
-        raise Exception('A world type must be selected!')
+        raise Exception("A world type must be selected!")
 
 
 # TODO
@@ -27,9 +27,11 @@ def switch_worlds_logged_out():
     pass
 
 
-def login_basic(username_file=start.config['main']['username_file'],
-                password_file=start.config['main']['password_file'],
-                cred_sleep_range=(800, 5000)):
+def login_basic(
+    username_file=start.config["main"]["username_file"],
+    password_file=start.config["main"]["password_file"],
+    cred_sleep_range=(800, 5000),
+):
     """
     Performs a login without checking if the login was successful.
 
@@ -56,57 +58,76 @@ def login_basic(username_file=start.config['main']['username_file'],
     """
     # Remove line breaks from credential files to make logging in more
     #   predictable.
-    username = open(username_file, 'r').read()
-    username = str(username.replace('\n', ''))
-    password = open(password_file, 'r').read()
-    password = str(password.replace('\n', ''))
+    username = open(username_file, "r").read()
+    username = str(username.replace("\n", ""))
+    password = open(password_file, "r").read()
+    password = str(password.replace("\n", ""))
 
     for _ in range(1, 3):
-        log.info('Logging in.')
+        log.info("Logging in.")
 
         # Click the "Ok" button if it's present at the login screen.
         # This button appears if the user was disconnected due to
         #   inactivity.
-        ok_button = vis.Vision(region=vis.client,
-                               needle='./needles/login-menu/ok-button.png',
-                               loop_num=1).click_needle()
+        ok_button = vis.Vision(
+            region=vis.client, needle="./needles/login-menu/ok-button.png", loop_num=1
+        ).click_needle()
         # If the "Ok" button isn't found, look for the "Existing user"
         #   button.
-        existing_user_button = vis.Vision(region=vis.client,
-                                          needle='./needles/login-menu/existing-user-button.png',
-                                          loop_num=1).click_needle()
+        existing_user_button = vis.Vision(
+            region=vis.client,
+            needle="./needles/login-menu/existing-user-button.png",
+            loop_num=1,
+        ).click_needle()
 
         if existing_user_button is True or ok_button is True:
-            credential_screen = vis.Vision(region=vis.client,
-                                           needle='./needles/login-menu/login-cancel-buttons.png',
-                                           loop_num=5).wait_for_needle()
+            credential_screen = vis.Vision(
+                region=vis.client,
+                needle="./needles/login-menu/login-cancel-buttons.png",
+                loop_num=5,
+            ).wait_for_needle()
 
             if credential_screen is True:
                 # Click to make sure the "Login" field is active.
-                input.Mouse(region=(vis.login_field_left, vis.login_field_top,
-                                    start.LOGIN_FIELD_WIDTH, start.LOGIN_FIELD_HEIGHT)).click_coord()
+                input.Mouse(
+                    region=(
+                        vis.login_field_left,
+                        vis.login_field_top,
+                        start.LOGIN_FIELD_WIDTH,
+                        start.LOGIN_FIELD_HEIGHT,
+                    )
+                ).click_coord()
                 # Enter login field credentials.
                 misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
                 input.Keyboard(log_keys=False).typewriter(username)
                 misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
 
                 # Click to make sure the "Password" field is active.
-                input.Mouse(region=(vis.pass_field_left, vis.pass_field_top,
-                                    start.LOGIN_FIELD_WIDTH, start.LOGIN_FIELD_HEIGHT)).click_coord()
+                input.Mouse(
+                    region=(
+                        vis.pass_field_left,
+                        vis.pass_field_top,
+                        start.LOGIN_FIELD_WIDTH,
+                        start.LOGIN_FIELD_HEIGHT,
+                    )
+                ).click_coord()
                 # Enter password field credentials and login.
                 input.Keyboard(log_keys=False).typewriter(password)
                 misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
 
-                input.Keyboard().keypress(key='enter')
+                input.Keyboard().keypress(key="enter")
                 return True
 
-    log.error('Could perform login!')
+    log.error("Could perform login!")
     return False
 
 
-def login_full(login_sleep_range=(500, 5000), postlogin_sleep_range=(500, 5000),
-               username_file=start.config['main']['username_file'],
-               password_file=start.config['main']['password_file']):
+def login_full(
+    login_sleep_range=(500, 5000),
+    postlogin_sleep_range=(500, 5000),
+    username_file=start.config["main"]["username_file"],
+    password_file=start.config["main"]["password_file"],
+):
     """
     Logs into the client using the credentials specified in the main
     config file. Waits until the login is successful before returning.
@@ -127,56 +148,65 @@ def login_full(login_sleep_range=(500, 5000), postlogin_sleep_range=(500, 5000),
 
     Returns:
         Returns True if the login was successful.
-        
+
     """
     for _ in range(1, 3):
 
         login = login_basic(username_file, password_file)
         if login is False:
-            raise Exception('Could not perform initial login!')
+            raise Exception("Could not perform initial login!")
 
         misc.sleep_rand(login_sleep_range[0], login_sleep_range[1])
-        postlogin_screen_button = vis.Vision(region=vis.display,
-                                             needle='./needles/login-menu/orient-postlogin.png',
-                                             conf=0.8, loop_num=10, loop_sleep_range=(1000, 2000)).click_needle()
+        postlogin_screen_button = vis.Vision(
+            region=vis.display,
+            needle="./needles/login-menu/orient-postlogin.png",
+            conf=0.8,
+            loop_num=10,
+            loop_sleep_range=(1000, 2000),
+        ).click_needle()
 
         if postlogin_screen_button is True:
             misc.sleep_rand(postlogin_sleep_range[0], postlogin_sleep_range[1])
 
             # Wait for the orient function to return true in order to
             #    confirm the login.
-            logged_in = vis.Vision(region=vis.display,
-                                   needle='./needles/minimap/orient.png',
-                                   loop_num=50, loop_sleep_range=(1000, 2000)).wait_for_needle()
+            logged_in = vis.Vision(
+                region=vis.display,
+                needle="./needles/minimap/orient.png",
+                loop_num=50,
+                loop_sleep_range=(1000, 2000),
+            ).wait_for_needle()
             if logged_in is True:
                 # Reset the timer that's used to count the number of
                 #   seconds the bot has been running for.
                 start.start_time = time.time()
                 # Make sure client camera is oriented correctly after
                 #   logging in.
-                pag.keyDown('Up')
+                pag.keyDown("Up")
                 misc.sleep_rand(3000, 7000)
-                pag.keyUp('Up')
+                pag.keyUp("Up")
                 return True
             else:
-                raise Exception('Could not detect login after postlogin screen!')
+                raise Exception("Could not detect login after postlogin screen!")
 
         else:
             # Begin checking for the various non-successful login messages.
             #   This includes messages like "invalid credentials",
             #   "you must be a member to use this world", "cannot
             #   connect to server," etc.
-            log.warning('Cannot find postlogin screen!')
+            log.warning("Cannot find postlogin screen!")
 
             # TODO: Add additional checks to other login messages.
-            invalid_credentials = vis.Vision(region=vis.display,
-                                             needle='./needles/login-menu/invalid-credentials.png',
-                                             loop_num=1).wait_for_needle()
+            invalid_credentials = vis.Vision(
+                region=vis.display,
+                needle="./needles/login-menu/invalid-credentials.png",
+                loop_num=1,
+            ).wait_for_needle()
             if invalid_credentials is True:
-                raise Exception('Invalid user credentials!')
-            log.error('Cannot find postlogin screen!')
+                raise Exception("Invalid user credentials!")
+            log.error("Cannot find postlogin screen!")
 
-    raise Exception('Unable to login!')
+    raise Exception("Unable to login!")
 
 
 def logout():
@@ -191,11 +221,11 @@ def logout():
 
     """
     # Make sure the client is logged in.
-    if vis.orient()[0] == 'logged_out':
-        log.warning('Client already logged out!')
+    if vis.orient()[0] == "logged_out":
+        log.warning("Client already logged out!")
         return True
 
-    open_side_stone('logout')
+    open_side_stone("logout")
 
     logout_button_world_switcher = False
     logout_button_highlighted = False
@@ -207,31 +237,43 @@ def logout():
     # Look for any of the three possible logout buttons.
     for _ in range(1, 5):
         # The standard logout button.
-        logout_button = vis.Vision(region=vis.inv,
-                                   needle='./needles/side-stones/logout/logout.png',
-                                   conf=0.9, loop_num=1).wait_for_needle(get_tuple=True)
+        logout_button = vis.Vision(
+            region=vis.inv,
+            needle="./needles/side-stones/logout/logout.png",
+            conf=0.9,
+            loop_num=1,
+        ).wait_for_needle(get_tuple=True)
         if isinstance(logout_button, tuple) is True:
             # Break out of the loop if any of the buttons was found.
             break
 
         # The logout button as it appears when the mouse is over it.
-        logout_button_highlighted = vis.Vision(region=vis.inv,
-                                               needle='./needles/side-stones/logout/logout-highlighted.png',
-                                               conf=0.9, loop_num=1).wait_for_needle(get_tuple=True)
+        logout_button_highlighted = vis.Vision(
+            region=vis.inv,
+            needle="./needles/side-stones/logout/logout-highlighted.png",
+            conf=0.9,
+            loop_num=1,
+        ).wait_for_needle(get_tuple=True)
         if isinstance(logout_button_highlighted, tuple) is True:
             logout_button = logout_button_highlighted
             break
 
         # The logout button when the world switcher is open.
-        logout_button_world_switcher = vis.Vision(region=vis.side_stones,
-                                                  needle='./needles/side-stones/logout/logout-world-switcher.png',
-                                                  conf=0.9, loop_num=1).wait_for_needle(get_tuple=True)
+        logout_button_world_switcher = vis.Vision(
+            region=vis.side_stones,
+            needle="./needles/side-stones/logout/logout-world-switcher.png",
+            conf=0.9,
+            loop_num=1,
+        ).wait_for_needle(get_tuple=True)
         if isinstance(logout_button_world_switcher, tuple) is True:
             logout_button = logout_button_world_switcher
             break
 
-    if logout_button is False and logout_button_highlighted is False \
-            and logout_button_world_switcher is False:
+    if (
+        logout_button is False
+        and logout_button_highlighted is False
+        and logout_button_world_switcher is False
+    ):
         raise Exception("Failed to find logout button!")
 
     # Once a logout button has been found, click on its coordinates
@@ -240,17 +282,20 @@ def logout():
     #   on the location of the detected logout button and try again.
     input.Mouse(region=logout_button).click_coord(move_away=True)
     for tries in range(5):
-        logged_out = vis.Vision(region=vis.client,
-                                needle='./needles/login-menu/orient-logged-out.png',
-                                loop_num=5, loop_sleep_range=(1000, 1200)).wait_for_needle()
+        logged_out = vis.Vision(
+            region=vis.client,
+            needle="./needles/login-menu/orient-logged-out.png",
+            loop_num=5,
+            loop_sleep_range=(1000, 1200),
+        ).wait_for_needle()
         if logged_out is True:
-            log.info('Logged out after trying %s times(s)', tries)
+            log.info("Logged out after trying %s times(s)", tries)
             return True
         else:
-            log.info('Unable to log out, trying again.')
+            log.info("Unable to log out, trying again.")
             input.Mouse(region=logout_button).click_coord(move_away=True)
 
-    raise Exception('Could not logout!')
+    raise Exception("Could not logout!")
 
 
 def logout_break_range():
@@ -283,22 +328,22 @@ def logout_break_range():
     # If a checkpoint's timestamp has passed, roll for a logout, then set
     #   a global variable so that checkpoint isn't rolled again.
     if current_time >= start.checkpoint_1 and start.checkpoint_1_checked is False:
-        log.info('Rolling for checkpoint 1...')
+        log.info("Rolling for checkpoint 1...")
         start.checkpoint_1_checked = True
         logout_break_roll(5)
 
     elif current_time >= start.checkpoint_2 and start.checkpoint_2_checked is False:
-        log.info('Rolling for checkpoint 2...')
+        log.info("Rolling for checkpoint 2...")
         start.checkpoint_2_checked = True
         logout_break_roll(5)
 
     elif current_time >= start.checkpoint_3 and start.checkpoint_3_checked is False:
-        log.info('Rolling for checkpoint 3...')
+        log.info("Rolling for checkpoint 3...")
         start.checkpoint_3_checked = True
         logout_break_roll(5)
 
     elif current_time >= start.checkpoint_4 and start.checkpoint_4_checked is False:
-        log.info('Rolling checkpoint 4...')
+        log.info("Rolling checkpoint 4...")
         start.checkpoint_4_checked = True
         logout_break_roll(5)
 
@@ -315,21 +360,23 @@ def logout_break_range():
     #   have been rolled for.
     else:
         if start.checkpoint_1_checked is False:
-            log.info('Checkpoint 1 is at %s', time.ctime(start.checkpoint_1))
+            log.info("Checkpoint 1 is at %s", time.ctime(start.checkpoint_1))
         elif start.checkpoint_1_checked is True and start.checkpoint_2_checked is False:
-            log.info('Checkpoint 2 is at %s', time.ctime(start.checkpoint_2))
+            log.info("Checkpoint 2 is at %s", time.ctime(start.checkpoint_2))
         elif start.checkpoint_2_checked is True and start.checkpoint_3_checked is False:
-            log.info('Checkpoint 3 is at %s', time.ctime(start.checkpoint_3))
+            log.info("Checkpoint 3 is at %s", time.ctime(start.checkpoint_3))
         elif start.checkpoint_3_checked is True and start.checkpoint_4_checked is False:
-            log.info('Checkpoint 4 is at %s', time.ctime(start.checkpoint_4))
+            log.info("Checkpoint 4 is at %s", time.ctime(start.checkpoint_4))
         elif start.checkpoint_4_checked is True:
-            log.info('Checkpoint 5 is at %s', time.ctime(start.checkpoint_5))
+            log.info("Checkpoint 5 is at %s", time.ctime(start.checkpoint_5))
     return True
 
 
-def logout_break_roll(chance,
-                      min_break_duration=int(start.config['main']['min_break_duration']),
-                      max_break_duration=int(start.config['main']['max_break_duration'])):
+def logout_break_roll(
+    chance,
+    min_break_duration=int(start.config["main"]["min_break_duration"]),
+    max_break_duration=int(start.config["main"]["max_break_duration"]),
+):
     """
     Rolls for a chance to take a logout break.
 
@@ -344,26 +391,28 @@ def logout_break_roll(chance,
 
     """
     logout_roll = rand.randint(1, chance)
-    log.info('Logout roll was %s', logout_roll)
+    log.info("Logout roll was %s", logout_roll)
 
     if logout_roll == chance:
-        log.info('Random logout called.')
+        log.info("Random logout called.")
         logout()
 
         # Track the number of play sessions that have occurred so far.
         start.session_num += 1
-        log.info('Completed session %s/%s', start.session_num, start.session_total)
+        log.info("Completed session %s/%s", start.session_num, start.session_total)
 
         # If the maximum number of sessions has been reached, kill the bot.
         if start.session_num >= start.session_total:
-            log.info('Final session completed! Script done.')
+            log.info("Final session completed! Script done.")
             sys.exit(0)
 
         else:
             # Convert from minutes to miliseconds.
             min_break_duration *= 60000
             max_break_duration *= 60000
-            wait_time_seconds = misc.rand_seconds(min_break_duration, max_break_duration)
+            wait_time_seconds = misc.rand_seconds(
+                min_break_duration, max_break_duration
+            )
 
             # Convert back to human-readable format for logging.
             wait_time_minutes = wait_time_seconds / 60
@@ -374,9 +423,13 @@ def logout_break_roll(chance,
             #   format.
             stop_time_human = time.localtime(stop_time)
 
-            log.info('Sleeping for %s minutes. Break will be over at %s:%s:%s',
-                     round(wait_time_minutes), stop_time_human[3],
-                     stop_time_human[4], stop_time_human[5])
+            log.info(
+                "Sleeping for %s minutes. Break will be over at %s:%s:%s",
+                round(wait_time_minutes),
+                stop_time_human[3],
+                stop_time_human[4],
+                stop_time_human[5],
+            )
 
             time.sleep(wait_time_seconds)
     else:
@@ -401,43 +454,49 @@ def open_side_stone(side_stone):
         Raises an exception if side stone could not be opened.
 
     """
-    side_stone_open = './needles/side-stones/open/' + side_stone + '.png'
-    side_stone_closed = './needles/side-stones/closed/' + side_stone + '.png'
+    side_stone_open = "./needles/side-stones/open/" + side_stone + ".png"
+    side_stone_closed = "./needles/side-stones/closed/" + side_stone + ".png"
 
     # Some side stones need a higher than default confidence to determine
     #   if they're open.
-    stone_open = vis.Vision(region=vis.side_stones, needle=side_stone_open,
-                            loop_num=1, conf=0.98).wait_for_needle()
+    stone_open = vis.Vision(
+        region=vis.side_stones, needle=side_stone_open, loop_num=1, conf=0.98
+    ).wait_for_needle()
     if stone_open is True:
-        log.debug('Side stone already open.')
+        log.debug("Side stone already open.")
         return True
     else:
-        log.debug('Opening side stone...')
+        log.debug("Opening side stone...")
 
     # Try a total of 5 times to open the desired side stone menu using
     #   the mouse.
     for tries in range(1, 5):
         # Move mouse out of the way after clicking so the function can
         #   tell if the stone is open.
-        vis.Vision(region=vis.side_stones,
-                   needle=side_stone_closed,
-                   loop_num=3, loop_sleep_range=(100, 300)). \
-            click_needle(sleep_range=(0, 200, 0, 200), move_away=True)
+        vis.Vision(
+            region=vis.side_stones,
+            needle=side_stone_closed,
+            loop_num=3,
+            loop_sleep_range=(100, 300),
+        ).click_needle(sleep_range=(0, 200, 0, 200), move_away=True)
 
-        stone_open = vis.Vision(region=vis.side_stones,
-                                needle=side_stone_open,
-                                loop_num=3, conf=0.98, loop_sleep_range=(100, 200)). \
-            wait_for_needle()
+        stone_open = vis.Vision(
+            region=vis.side_stones,
+            needle=side_stone_open,
+            loop_num=3,
+            conf=0.98,
+            loop_sleep_range=(100, 200),
+        ).wait_for_needle()
 
         if stone_open is True:
-            log.info('Opened side stone after %s tries.', tries)
+            log.info("Opened side stone after %s tries.", tries)
             return True
         # Make sure the bank window isn't open, which would block
         #   access to the side stones.
-        vis.Vision(region=vis.game_screen,
-                   needle='./needles/buttons/close.png',
-                   loop_num=1).click_needle()
-    raise Exception('Could not open side stone!')
+        vis.Vision(
+            region=vis.game_screen, needle="./needles/buttons/close.png", loop_num=1
+        ).click_needle()
+    raise Exception("Could not open side stone!")
 
 
 def check_skills():
@@ -446,7 +505,7 @@ def check_skills():
     skill.
 
     """
-    open_side_stone('skills')
+    open_side_stone("skills")
     input.Mouse(region=vis.inv).move_to()
     misc.sleep_rand(1000, 7000)
 
@@ -464,30 +523,30 @@ def human_behavior_rand(chance):
 
     """
     roll = rand.randint(1, chance)
-    log.info('Human behavior rolled %s', roll)
+    log.info("Human behavior rolled %s", roll)
     if roll == chance:
-        log.info('Attempting to act human.')
+        log.info("Attempting to act human.")
         roll = rand.randint(1, 2)
         if roll == 1:
             check_skills()
         elif roll == 2:
             roll = rand.randint(1, 8)
             if roll == 1:
-                open_side_stone('attacks')
+                open_side_stone("attacks")
             elif roll == 2:
-                open_side_stone('quests')
+                open_side_stone("quests")
             elif roll == 3:
-                open_side_stone('equipment')
+                open_side_stone("equipment")
             elif roll == 4:
-                open_side_stone('prayers')
+                open_side_stone("prayers")
             elif roll == 5:
-                open_side_stone('spellbook')
+                open_side_stone("spellbook")
             elif roll == 6:
-                open_side_stone('music')
+                open_side_stone("music")
             elif roll == 7:
-                open_side_stone('friends')
+                open_side_stone("friends")
             elif roll == 8:
-                open_side_stone('settings')
+                open_side_stone("settings")
         return
     return
 
@@ -516,49 +575,51 @@ def drop_item(item, track=True, wait_chance=120, wait_range=(5000, 20000)):
     #   item-dropping more randomized.
 
     # Make sure the inventory tab is selected in the main menu.
-    log.debug('Making sure inventory is selected')
-    open_side_stone('inventory')
+    log.debug("Making sure inventory is selected")
+    open_side_stone("inventory")
 
     item_remains = vis.Vision(region=vis.inv, loop_num=1, needle=item).wait_for_needle()
     if item_remains is False:
-        log.info('Could not find %s', item)
+        log.info("Could not find %s", item)
         return False
 
-    log.info('Dropping all instances of %s', item)
+    log.info("Dropping all instances of %s", item)
     for tries in range(40):
 
-        pag.keyDown('shift')
+        pag.keyDown("shift")
         # Alternate between searching for the item in left half and the
         #   right half of the player's inventory. This helps reduce the
         #   chances the bot will click on the same item twice.
-        item_on_right = \
-            vis.Vision(region=vis.inv_right_half, needle=item, loop_num=1) \
-               .click_needle(sleep_range=(10, 50, 50, 300),
-                             move_duration_range=(50, 800))
+        item_on_right = vis.Vision(
+            region=vis.inv_right_half, needle=item, loop_num=1
+        ).click_needle(sleep_range=(10, 50, 50, 300), move_duration_range=(50, 800))
         # TODO: This "track" parameter is for stats. implement stats!
         if item_on_right is True and track is True:
             start.items_gathered += 1
 
-        item_on_left = \
-            vis.Vision(region=vis.inv_left_half, needle=item, loop_num=1) \
-               .click_needle(sleep_range=(10, 50, 50, 300),
-                             move_duration_range=(50, 800))
+        item_on_left = vis.Vision(
+            region=vis.inv_left_half, needle=item, loop_num=1
+        ).click_needle(sleep_range=(10, 50, 50, 300), move_duration_range=(50, 800))
         if item_on_left is True and track is True:
             start.items_gathered += 1
 
         # Search the entire inventory to check if the item is still
         #   there.
-        item_remains = vis.Vision(region=vis.inv, loop_num=1, needle=item).wait_for_needle()
+        item_remains = vis.Vision(
+            region=vis.inv, loop_num=1, needle=item
+        ).wait_for_needle()
 
         # Chance to briefly wait while dropping items.
-        misc.sleep_rand_roll(chance_range=(wait_chance-10, wait_chance+10),
-                             sleep_range=(wait_range[0], wait_range[1]))
+        misc.sleep_rand_roll(
+            chance_range=(wait_chance - 10, wait_chance + 10),
+            sleep_range=(wait_range[0], wait_range[1]),
+        )
 
-        pag.keyUp('shift')
+        pag.keyUp("shift")
         if item_remains is False:
             return True
 
-    log.error('Tried dropping item too many times!')
+    log.error("Tried dropping item too many times!")
     return False
 
 
@@ -574,31 +635,42 @@ def bank_settings_check(setting, value):
     Returns:
 
     """
-    log.debug('Checking %s is set to %s', setting, value)
+    log.debug("Checking %s is set to %s", setting, value)
 
     # Check if the setting is already at the desired value.
-    value_already_set = vis.Vision(region=vis.game_screen,
-                                   needle='./needles/bank/settings/'
-                                          + setting + '/' + value + '-set.png',
-                                   loop_num=1).wait_for_needle()
+    value_already_set = vis.Vision(
+        region=vis.game_screen,
+        needle="./needles/bank/settings/" + setting + "/" + value + "-set.png",
+        loop_num=1,
+    ).wait_for_needle()
     if value_already_set is True:
-        log.debug('%s is already set to %s', setting, value)
+        log.debug("%s is already set to %s", setting, value)
         return True
 
     # If not, try a total of 5 times to get the setting to the desired
     #   value.
     for _ in range(1, 5):
-        vis.Vision(region=vis.game_screen,
-                   needle='./needles/buttons/bank-setting'
-                          + setting + '-' + value + '-unset.png',
-                   loop_num=1).click_needle()
+        vis.Vision(
+            region=vis.game_screen,
+            needle="./needles/buttons/bank-setting"
+            + setting
+            + "-"
+            + value
+            + "-unset.png",
+            loop_num=1,
+        ).click_needle()
 
-        value_set = vis.Vision(region=vis.game_screen,
-                               needle='./needles/buttons/bank-setting'
-                                      + setting + '-' + value + '-set.png',
-                               loop_num=10).wait_for_needle()
+        value_set = vis.Vision(
+            region=vis.game_screen,
+            needle="./needles/buttons/bank-setting"
+            + setting
+            + "-"
+            + value
+            + "-set.png",
+            loop_num=10,
+        ).wait_for_needle()
         if value_set is True:
-            log.debug('%s has been set to %s', setting, value)
+            log.debug("%s has been set to %s", setting, value)
             return True
 
 
@@ -618,42 +690,50 @@ def open_bank(direction):
 
     """
     # Check if bank is already open
-    bank_open = vis.Vision(region=vis.game_screen,
-                           needle='./needles/buttons/close.png',
-                           loop_num=1).wait_for_needle()
+    bank_open = vis.Vision(
+        region=vis.game_screen, needle="./needles/buttons/close.png", loop_num=1
+    ).wait_for_needle()
     if bank_open is True:
-        log.info('Bank already open!')
+        log.info("Bank already open!")
         return True
 
     # TODO: Deal with bank PINs.
     for _ in range(1, 10):
-        one_tile = vis.Vision(region=vis.game_screen,
-                              needle='./needles/game-screen/bank/bank-booth-'
-                                     + direction + '-1-tile.png',
-                              loop_num=1, conf=0.85).click_needle()
+        one_tile = vis.Vision(
+            region=vis.game_screen,
+            needle="./needles/game-screen/bank/bank-booth-" + direction + "-1-tile.png",
+            loop_num=1,
+            conf=0.85,
+        ).click_needle()
 
-        two_tiles = vis.Vision(region=vis.game_screen,
-                               needle='./needles/game-screen/bank/bank-booth-'
-                                      + direction + '-2-tiles.png',
-                               loop_num=1, conf=0.85).click_needle()
+        two_tiles = vis.Vision(
+            region=vis.game_screen,
+            needle="./needles/game-screen/bank/bank-booth-"
+            + direction
+            + "-2-tiles.png",
+            loop_num=1,
+            conf=0.85,
+        ).click_needle()
 
         if one_tile is True or two_tiles is True:
-            bank_open = vis.Vision(region=vis.game_screen,
-                                   needle='./needles/buttons/close.png',
-                                   loop_num=30).wait_for_needle()
+            bank_open = vis.Vision(
+                region=vis.game_screen,
+                needle="./needles/buttons/close.png",
+                loop_num=30,
+            ).wait_for_needle()
             if bank_open is True:
                 return True
-            #else:
-                #pin = enter_bank_pin()
-                #if pin is True:
-                    #return True
+            # else:
+            # pin = enter_bank_pin()
+            # if pin is True:
+            # return True
 
         misc.sleep_rand(1000, 3000)
 
-    raise Exception('Unable to open bank!')
+    raise Exception("Unable to open bank!")
 
 
-def enter_bank_pin(pin=tuple(str(start.config['main']['bank_pin']))):
+def enter_bank_pin(pin=tuple(str(start.config["main"]["bank_pin"]))):
     """
     Enters the user's bank PIN.
 
@@ -664,9 +744,9 @@ def enter_bank_pin(pin=tuple(str(start.config['main']['bank_pin']))):
 
     """
     # Confirm that the bank PIN screen is actually present
-    bank_pin_screen = vis.Vision(region=vis.game_screen,
-                                 needle='./needles/.png',
-                                 loop_num=1).wait_for_needle(get_tuple=False)
+    bank_pin_screen = vis.Vision(
+        region=vis.game_screen, needle="./needles/.png", loop_num=1
+    ).wait_for_needle(get_tuple=False)
     if bank_pin_screen is False:
         return False
 
@@ -675,15 +755,17 @@ def enter_bank_pin(pin=tuple(str(start.config['main']['bank_pin']))):
 
         # Wait for the first/second/third/fourth PIN prompt screen to
         #   appear
-        pin_ordinal_prompt = vis.Vision(region=vis.game_screen,
-                                        needle='./needles/' + str(pin_ordinal),
-                                        loop_num=1).wait_for_needle(get_tuple=False)
+        pin_ordinal_prompt = vis.Vision(
+            region=vis.game_screen, needle="./needles/" + str(pin_ordinal), loop_num=1
+        ).wait_for_needle(get_tuple=False)
 
         # Enter the first/second/third/fourth digit of the PIN.
         if pin_ordinal_prompt is True:
-            enter_digit = vis.Vision(region=vis.game_screen,
-                                     needle='./needles/' + pin[pin_ordinal],
-                                     loop_num=1).click_needle()
+            enter_digit = vis.Vision(
+                region=vis.game_screen,
+                needle="./needles/" + pin[pin_ordinal],
+                loop_num=1,
+            ).click_needle()
             return True
 
 
@@ -696,19 +778,21 @@ def enable_run():
     """
     # TODO: turn run on when over 75%
     for _ in range(1, 5):
-        run_full_off = vis.Vision(region=vis.client,
-                                  needle='./needles/buttons/run-full-off.png',
-                                  loop_num=1).click_needle(move_away=True)
+        run_full_off = vis.Vision(
+            region=vis.client, needle="./needles/buttons/run-full-off.png", loop_num=1
+        ).click_needle(move_away=True)
         if run_full_off is True:
             misc.sleep_rand(300, 1000)
-            run_full_on = vis.Vision(region=vis.client,
-                                     needle='./needles/buttons/run-full-on.png',
-                                     loop_num=1).wait_for_needle()
+            run_full_on = vis.Vision(
+                region=vis.client,
+                needle="./needles/buttons/run-full-on.png",
+                loop_num=1,
+            ).wait_for_needle()
             if run_full_on is True:
                 return True
         else:
             return False
-    log.error('Unable to turn on running!')
+    log.error("Unable to turn on running!")
 
 
 # TODO: Update the terminology used in this function. Make sure to
@@ -786,13 +870,17 @@ def travel(param_list, haystack_map, attempts=100):
         for attempt in range(1, attempts):
 
             if attempt > attempts:
-                log.error('Could not reach destination!')
+                log.error("Could not reach destination!")
                 return False
 
             # Find the minimap position within the haystack map.
             coords = ocv_find_location(haystack)
-            (coords_map_left, coords_map_top,
-             coords_map_width, coords_map_height) = coords
+            (
+                coords_map_left,
+                coords_map_top,
+                coords_map_width,
+                coords_map_height,
+            ) = coords
 
             # Get center of minimap coordinates within haystack map.
             coords_map_x = int(coords_map_left + (coords_map_width / 2))
@@ -807,12 +895,17 @@ def travel(param_list, haystack_map, attempts=100):
             # Figure out how far the waypoint is from the current location.
             waypoint_distance_x = waypoint[0] - coords_map_x
             waypoint_distance_y = waypoint[1] - coords_map_y
-            log.debug('dest_distance is (x=%s, y=%s)',
-                      waypoint_distance_x, waypoint_distance_y)
+            log.debug(
+                "dest_distance is (x=%s, y=%s)",
+                waypoint_distance_x,
+                waypoint_distance_y,
+            )
 
             # Check if player has reached waypoint before making the click.
-            if (abs(waypoint_distance_x) <= waypoint_tolerance[0] and
-                    abs(waypoint_distance_y) <= waypoint_tolerance[1]):
+            if (
+                abs(waypoint_distance_x) <= waypoint_tolerance[0]
+                and abs(waypoint_distance_y) <= waypoint_tolerance[1]
+            ):
                 break
 
             # Generate random click coordinate variation.
@@ -854,15 +947,19 @@ def travel(param_list, haystack_map, attempts=100):
             click_pos_x = abs(click_pos_x)
             # Holding down ctrl while clicking will cause character to
             #   run.
-            pag.keyDown('ctrl')
-            input.Mouse(region=(click_pos_x, click_pos_y, 0, 0),
-                        sleep_range=(50, 100, 100, 200),
-                        move_duration_range=(0, 300)).click_coord()
-            pag.keyUp('ctrl')
+            pag.keyDown("ctrl")
+            input.Mouse(
+                region=(click_pos_x, click_pos_y, 0, 0),
+                sleep_range=(50, 100, 100, 200),
+                move_duration_range=(0, 300),
+            ).click_coord()
+            pag.keyUp("ctrl")
             misc.sleep_rand((sleep_range[0] * 1000), (sleep_range[1] * 1000))
 
-            if (abs(waypoint_distance_x) <= waypoint_tolerance[0] and
-                    abs(waypoint_distance_y) <= waypoint_tolerance[1]):
+            if (
+                abs(waypoint_distance_x) <= waypoint_tolerance[0]
+                and abs(waypoint_distance_y) <= waypoint_tolerance[1]
+            ):
                 break
     # logout()
     # raise Exception('Could not reach destination!')

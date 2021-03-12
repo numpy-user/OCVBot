@@ -76,7 +76,9 @@ def session_duration(human_readable=False):
         return elapsed_time_human_readable
 
 
-def sleep_rand_roll(chance_range=(10, 20), sleep_range=(10000, 60000), second_chance_range=(10, 20)):
+def sleep_rand_roll(
+    chance_range=(10, 20), sleep_range=(10000, 60000), second_chance_range=(10, 20)
+):
     """
     Roll for a chance to do nothing for the specified period of time.
 
@@ -99,16 +101,16 @@ def sleep_rand_roll(chance_range=(10, 20), sleep_range=(10000, 60000), second_ch
     chance = rand.randint(chance_range[0], chance_range[1])
     roll = rand.randint(1, chance)
     if roll == chance:
-        log.debug('Random wait called.')
+        log.debug("Random wait called.")
         sleeptime = rand_seconds(sleep_range[0], sleep_range[1])
-        log.info('Sleeping for %s seconds...', round(sleeptime, 1))
+        log.info("Sleeping for %s seconds...", round(sleeptime, 1))
         time.sleep(sleeptime)
 
         second_chance = rand.randint(second_chance_range[0], second_chance_range[1])
         second_roll = rand.randint(1, second_chance)
         if second_roll == second_chance:
-            log.info('Additional random wait called.')
+            log.info("Additional random wait called.")
             sleeptime = rand_seconds(sleep_range[0], sleep_range[1])
-            log.info('Sleeping for %s seconds...', round(sleeptime, 1))
+            log.info("Sleeping for %s seconds...", round(sleeptime, 1))
             time.sleep(sleeptime)
     return True

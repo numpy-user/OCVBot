@@ -23,11 +23,14 @@ def wait_for_level_up(wait_time):
         Returns False otherwise.
 
     """
-    log.info('Checking for level-up')
-    level_up = vis.Vision(region=vis.chat_menu,
-                          needle='./needles/chat-menu/level-up.png',
-                          loop_num=wait_time,
-                          loop_sleep_range=(900, 1100)).wait_for_needle()
+    log.info("Checking for level-up")
+    level_up = vis.Vision(
+        region=vis.chat_menu,
+        needle="./needles/chat-menu/level-up.png",
+        loop_num=wait_time,
+        loop_sleep_range=(900, 1100),
+    ).wait_for_needle()
+
     if level_up is True:
         return True
     else:
@@ -63,42 +66,45 @@ class Cooking:
             other cases.
 
         """
-        behavior.open_side_stone('inventory')
+        behavior.open_side_stone("inventory")
         # Select the raw food in the inventory.
         # Confidence must be higher than normal since raw food is very
         #   similar in appearance to its cooked version.
-        item_selected = vis.Vision(region=vis.client,
-                                   needle=self.item_inv,
-                                   loop_num=3,
-                                   conf=0.99).click_needle()
+        item_selected = vis.Vision(
+            region=vis.client, needle=self.item_inv, loop_num=3, conf=0.99
+        ).click_needle()
         if item_selected is False:
-            log.error('Unable to find item!')
+            log.error("Unable to find item!")
             return False
 
         # Select the range or fire.
-        heat_source_selected = vis.Vision(region=vis.game_screen,
-                                          needle=self.heat_source,
-                                          loop_num=3,
-                                          loop_sleep_range=(500, 1000),
-                                          conf=0.85).click_needle()
+        heat_source_selected = vis.Vision(
+            region=vis.game_screen,
+            needle=self.heat_source,
+            loop_num=3,
+            loop_sleep_range=(500, 1000),
+            conf=0.85,
+        ).click_needle()
         if heat_source_selected is False:
-            log.error('Unable to find heat source!')
+            log.error("Unable to find heat source!")
             return False
 
         misc.sleep_rand_roll(chance_range=(15, 35), sleep_range=(1000, 10000))
 
         # Wait for the "how many of this item do you want to cook" chat
         #   menu to appear.
-        do_x_screen = vis.Vision(region=vis.chat_menu,
-                                 needle='./needles/chat-menu/do-x.png',
-                                 loop_num=30,
-                                 loop_sleep_range=(500, 1000)).wait_for_needle()
+        do_x_screen = vis.Vision(
+            region=vis.chat_menu,
+            needle="./needles/chat-menu/do-x.png",
+            loop_num=30,
+            loop_sleep_range=(500, 1000),
+        ).wait_for_needle()
         if do_x_screen is False:
             log.error('Timed out waiting for "Make X" screen!')
             return False
 
         # Begin cooking food.
-        input.Keyboard().keypress(key='space')
+        input.Keyboard().keypress(key="space")
         misc.sleep_rand(3000, 5000)
 
         # Wait for either a level-up or for the player to stop cooking.
@@ -112,10 +118,12 @@ class Cooking:
             # If the player levels-up while cooking, restart cooking.
             if level_up is True:
                 self.cook_item()
-            cooking_done = vis.Vision(region=vis.game_screen,
-                                      needle='./needles/game-screen/staff-of-water-top.png',
-                                      conf=0.9,
-                                      loop_num=1).wait_for_needle()
+            cooking_done = vis.Vision(
+                region=vis.game_screen,
+                needle="./needles/game-screen/staff-of-water-top.png",
+                conf=0.9,
+                loop_num=1,
+            ).wait_for_needle()
             if cooking_done is True:
                 break
 
@@ -151,8 +159,16 @@ class Magic:
 
     """
 
-    def __init__(self, spell, target, conf, region, inventory=False,
-                 move_duration_range=(10, 1000), logout=False):
+    def __init__(
+        self,
+        spell,
+        target,
+        conf,
+        region,
+        inventory=False,
+        move_duration_range=(10, 1000),
+        logout=False,
+    ):
         self.spell = spell
         self.target = target
         self.conf = conf
@@ -170,11 +186,19 @@ class Magic:
 
         """
         for _ in range(1, 5):
-            spell_available = vis.Vision(needle=self.spell, region=vis.inv, loop_num=30) \
-                .click_needle(sleep_range=(50, 800, 50, 800,),
-                              move_duration_range=self.move_duration_range)
+            spell_available = vis.Vision(
+                needle=self.spell, region=vis.inv, loop_num=30
+            ).click_needle(
+                sleep_range=(
+                    50,
+                    800,
+                    50,
+                    800,
+                ),
+                move_duration_range=self.move_duration_range,
+            )
             if spell_available is False:
-                behavior.open_side_stone('spellbook')
+                behavior.open_side_stone("spellbook")
                 misc.sleep_rand(100, 300)
             else:
                 return True
@@ -192,16 +216,23 @@ class Magic:
         """
 
         for _ in range(1, 5):
-            target = vis.Vision(needle=self.target, region=self.region,
-                                loop_num=10, conf=self.conf) \
-                .click_needle(sleep_range=(10, 500, 10, 500,),
-                              move_duration_range=self.move_duration_range)
+            target = vis.Vision(
+                needle=self.target, region=self.region, loop_num=10, conf=self.conf
+            ).click_needle(
+                sleep_range=(
+                    10,
+                    500,
+                    10,
+                    500,
+                ),
+                move_duration_range=self.move_duration_range,
+            )
 
             if target is False:
                 # Make sure the inventory is active when casting on items.
                 if self.inventory is True:
-                    behavior.open_side_stone('inventory')
-                if vis.orient()[0] == 'logged_out':
+                    behavior.open_side_stone("inventory")
+                if vis.orient()[0] == "logged_out":
                     behavior.login_full()
                 misc.sleep_rand(1000, 3000)
             else:
@@ -219,26 +250,28 @@ class Magic:
         spell_selected = self._select_spell()
         if spell_selected is False:
             if self.logout is True:
-                log.critical('Out of runes! Logging out in 10-20 seconds!')
+                log.critical("Out of runes! Logging out in 10-20 seconds!")
                 misc.sleep_rand(10000, 20000)
                 behavior.logout()
             else:
-                log.critical('All done!')
+                log.critical("All done!")
                 return False
 
         target_selected = self._select_target()
         if target_selected is False:
             if self.logout is True:
-                log.critical('Unable to find target! Logging out in 10-20 seconds!')
+                log.critical("Unable to find target! Logging out in 10-20 seconds!")
                 misc.sleep_rand(10000, 20000)
                 behavior.logout()
             else:
-                log.critical('All done!')
+                log.critical("All done!")
                 return False
 
         # Wait for spell to be cast.
-        misc.sleep_rand(int(start.config['magic']['min_cast_delay']),
-                        int(start.config['magic']['max_cast_delay']))
+        misc.sleep_rand(
+            int(start.config["magic"]["min_cast_delay"]),
+            int(start.config["magic"]["max_cast_delay"]),
+        )
         # Roll for random wait.
         misc.sleep_rand_roll(chance_range=(100, 400))
 
@@ -265,12 +298,27 @@ class Mining:
                     inventory.
 
     """
+
     # Create a list of tuples to determine which items to drop
-    drop_items = [(bool(start.config['mining']['drop_sapphire']), './needles/items/uncut-sapphire.png'),
-                  (bool(start.config['mining']['drop_emerald']), './needles/items/uncut-emerald.png'),
-                  (bool(start.config['mining']['drop_ruby']), './needles/items/uncut-ruby.png'),
-                  (bool(start.config['mining']['drop_diamond']), './needles/items/uncut-diamong.png'),
-                  (bool(start.config['mining']['drop_clue_geode']), './needles/items/clue-geode.png')]
+    drop_items = [
+        (
+            bool(start.config["mining"]["drop_sapphire"]),
+            "./needles/items/uncut-sapphire.png",
+        ),
+        (
+            bool(start.config["mining"]["drop_emerald"]),
+            "./needles/items/uncut-emerald.png",
+        ),
+        (bool(start.config["mining"]["drop_ruby"]), "./needles/items/uncut-ruby.png"),
+        (
+            bool(start.config["mining"]["drop_diamond"]),
+            "./needles/items/uncut-diamong.png",
+        ),
+        (
+            bool(start.config["mining"]["drop_clue_geode"]),
+            "./needles/items/clue-geode.png",
+        ),
+    ]
 
     def __init__(self, rocks, ore, position=None, conf=(0.8, 0.85)):
         self.rocks = rocks
@@ -298,7 +346,7 @@ class Mining:
         #   the function never receives an "inventory is already full" message.
 
         # Make sure inventory is selected.
-        behavior.open_side_stone('inventory')
+        behavior.open_side_stone("inventory")
 
         for tries in range(100):
 
@@ -307,54 +355,75 @@ class Mining:
                 #   and "empty" versions of each ore.
                 (full_rock_needle, empty_rock_needle) = rock_needle
 
-                log.debug('Searching for ore %s...', tries)
+                log.debug("Searching for ore %s...", tries)
 
                 # If current rock is full, begin mining it.
                 # Move the mouse away from the rock so it doesn't
                 #   interfere with matching the needle.
-                rock_full = vis.Vision(region=vis.game_screen, loop_num=1,
-                                       needle=full_rock_needle, conf=self.conf[0]) \
-                    .click_needle(sleep_range=(0, 100, 0, 100,),
-                                  move_duration_range=(0, 500), move_away=True)
+                rock_full = vis.Vision(
+                    region=vis.game_screen,
+                    loop_num=1,
+                    needle=full_rock_needle,
+                    conf=self.conf[0],
+                ).click_needle(
+                    sleep_range=(
+                        0,
+                        100,
+                        0,
+                        100,
+                    ),
+                    move_duration_range=(0, 500),
+                    move_away=True,
+                )
 
                 if rock_full is True:
-                    log.info('Waiting for mining to start.')
+                    log.info("Waiting for mining to start.")
                     misc.sleep_rand_roll(chance_range=(1, 200))
 
                     # Once the rock has been clicked on, wait for mining to
                     #   start by monitoring chat messages.
-                    mining_started = vis.Vision(region=vis.chat_menu_recent, loop_num=5, conf=0.9,
-                                                needle='./needles/chat-menu/mining-started.png',
-                                                loop_sleep_range=(100, 200)).wait_for_needle()
+                    mining_started = vis.Vision(
+                        region=vis.chat_menu_recent,
+                        loop_num=5,
+                        conf=0.9,
+                        needle="./needles/chat-menu/mining-started.png",
+                        loop_sleep_range=(100, 200),
+                    ).wait_for_needle()
 
                     # If mining hasn't started after looping has finished,
                     #   check to see if the inventory is full.
                     if mining_started is False:
-                        log.debug('Timed out waiting for mining to start.')
+                        log.debug("Timed out waiting for mining to start.")
 
-                        inv_full = vis.Vision(region=vis.chat_menu, loop_num=1,
-                                              needle='./needles/chat-menu/mining-inventory-full.png'). \
-                            wait_for_needle()
+                        inv_full = vis.Vision(
+                            region=vis.chat_menu,
+                            loop_num=1,
+                            needle="./needles/chat-menu/mining-inventory-full.png",
+                        ).wait_for_needle()
 
                         # If the inventory is full, empty the ore and
                         #   return.
                         if inv_full is True:
-                            return 'inventory-full'
+                            return "inventory-full"
 
-                    log.debug('Mining started.')
+                    log.debug("Mining started.")
 
                     # Wait until the rock is empty by waiting for the
                     #   "empty" version of the rock_needle tuple.
-                    rock_empty = vis.Vision(region=vis.game_screen, loop_num=35,
-                                            conf=self.conf[1], needle=empty_rock_needle,
-                                            loop_sleep_range=(100, 200)).wait_for_needle()
+                    rock_empty = vis.Vision(
+                        region=vis.game_screen,
+                        loop_num=35,
+                        conf=self.conf[1],
+                        needle=empty_rock_needle,
+                        loop_sleep_range=(100, 200),
+                    ).wait_for_needle()
 
                     if rock_empty is True:
-                        log.info('Rock is empty.')
-                        log.debug('%s empty.', rock_needle)
+                        log.info("Rock is empty.")
+                        log.debug("%s empty.", rock_needle)
                         behavior.human_behavior_rand(chance=100)
                     else:
-                        log.info('Timed out waiting for mining to finish.')
+                        log.info("Timed out waiting for mining to finish.")
         return True
 
     def drop_inv_ore(self):
@@ -372,7 +441,7 @@ class Mining:
             # This runtime error will occur if the
             #   player's inventory is full, but they
             #   don't have any ore to drop.
-            raise Exception('Could not find ore to drop!')
+            raise Exception("Could not find ore to drop!")
 
         # Iterate through the other items that could
         #   be dropped. If any of them is true, drop that item.

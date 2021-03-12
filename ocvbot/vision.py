@@ -29,10 +29,10 @@ def haystack_locate(needle, haystack, grayscale=False, conf=0.95):
 
     target_image = pag.locate(needle, haystack, confidence=conf, grayscale=grayscale)
     if target_image is not None:
-        log.debug('Found center of %s, %s', needle, target_image)
+        log.debug("Found center of %s, %s", needle, target_image)
         return target_image
 
-    log.debug('Cannot find center of %s, conf=%s', needle, conf)
+    log.debug("Cannot find center of %s, conf=%s", needle, conf)
     return False
 
 
@@ -63,9 +63,9 @@ def wait_for_needle_list(loops, needle_list, sleep_range):
         for item in needle_list:
             needle, region = item
 
-            needle_found = Vision(region=region,
-                                  needle=needle,
-                                  loop_num=1).wait_for_needle(get_tuple=True)
+            needle_found = Vision(
+                region=region, needle=needle, loop_num=1
+            ).wait_for_needle(get_tuple=True)
             if needle_found is True:
                 return needle_found, needle_list.index(needle)
 
@@ -110,8 +110,16 @@ class Vision:
 
     """
 
-    def __init__(self, region, needle, loctype='regular', conf=0.95,
-                 loop_num=10, loop_sleep_range=(0, 100), grayscale=False):
+    def __init__(
+        self,
+        region,
+        needle,
+        loctype="regular",
+        conf=0.95,
+        loop_num=10,
+        loop_sleep_range=(0, 100),
+        grayscale=False,
+    ):
         self.grayscale = grayscale
         self.region = region
         self.needle = needle
@@ -137,31 +145,35 @@ class Vision:
         # Make sure file path is OS-agnostic.
         needle = str(pathlib.Path(self.needle))
 
-        if self.loctype == 'regular':
-            needle_coords = pag.locateOnScreen(needle,
-                                               confidence=self.conf,
-                                               grayscale=self.grayscale,
-                                               region=self.region)
+        if self.loctype == "regular":
+            needle_coords = pag.locateOnScreen(
+                needle,
+                confidence=self.conf,
+                grayscale=self.grayscale,
+                region=self.region,
+            )
             if needle_coords is not None:
-                log.debug('Found regular image %s, %s', needle, needle_coords)
+                log.debug("Found regular image %s, %s", needle, needle_coords)
                 return needle_coords
             else:
-                log.debug('Cannot find regular image %s, conf=%s', needle, self.conf)
+                log.debug("Cannot find regular image %s, conf=%s", needle, self.conf)
                 return False
 
-        elif self.loctype == 'center':
-            needle_coords = pag.locateCenterOnScreen(needle,
-                                                     confidence=self.conf,
-                                                     grayscale=self.grayscale,
-                                                     region=self.region)
+        elif self.loctype == "center":
+            needle_coords = pag.locateCenterOnScreen(
+                needle,
+                confidence=self.conf,
+                grayscale=self.grayscale,
+                region=self.region,
+            )
             if needle_coords is not None:
-                log.debug('Found center of image %s, %s', needle, needle_coords)
+                log.debug("Found center of image %s, %s", needle, needle_coords)
                 return needle_coords
             else:
-                log.debug('Cannot find center of image %s, conf=%s', needle, self.conf)
+                log.debug("Cannot find center of image %s, conf=%s", needle, self.conf)
                 return False
 
-        raise RuntimeError('Incorrect mlocate function parameters!')
+        raise RuntimeError("Incorrect mlocate function parameters!")
 
     def wait_for_needle(self, get_tuple=False):
         """
@@ -191,21 +203,25 @@ class Vision:
             needle_coords = Vision.find_needle(self)
 
             if isinstance(needle_coords, tuple) is True:
-                log.debug('Found %s after trying %s times.', self.needle, tries)
+                log.debug("Found %s after trying %s times.", self.needle, tries)
                 if get_tuple is True:
                     return needle_coords
                 else:
                     return True
             else:
-                log.debug('Cannot find %s, tried %s times.', self.needle, tries)
+                log.debug("Cannot find %s, tried %s times.", self.needle, tries)
                 misc.sleep_rand(self.loop_sleep_range[0], self.loop_sleep_range[1])
 
-        log.debug('Timed out looking for %s', self.needle)
+        log.debug("Timed out looking for %s", self.needle)
         return False
 
-    def click_needle(self, sleep_range=(50, 200, 50, 200),
-                     move_duration_range=(50, 1500),
-                     button='left', move_away=False):
+    def click_needle(
+        self,
+        sleep_range=(50, 200, 50, 200),
+        move_duration_range=(50, 1500),
+        button="left",
+        move_away=False,
+    ):
         """
         Moves the mouse to the provided needle image and clicks on
         it.
@@ -228,7 +244,7 @@ class Vision:
             returns False otherwise.
 
         """
-        log.debug('Looking for %s to click on.', self.needle)
+        log.debug("Looking for %s to click on.", self.needle)
 
         needle_coords = self.wait_for_needle(get_tuple=True)
 
@@ -236,23 +252,28 @@ class Vision:
             # Randomize the location the mouse cursor will move to using
             #   the dimensions of needle image.
             # The mouse will click anywhere within the needle image.
-            input.Mouse(region=needle_coords,
-                        sleep_range=sleep_range,
-                        move_duration_range=move_duration_range,
-                        button=button).click_coord()
+            input.Mouse(
+                region=needle_coords,
+                sleep_range=sleep_range,
+                move_duration_range=move_duration_range,
+                button=button,
+            ).click_coord()
 
-            log.debug('Clicking on %s', self.needle)
+            log.debug("Clicking on %s", self.needle)
 
             if move_away is True:
-                input.Mouse(region=(25, 25, 100, 100), move_duration_range=(50, 200)).moverel()
+                input.Mouse(
+                    region=(25, 25, 100, 100), move_duration_range=(50, 200)
+                ).moverel()
             return True
 
         else:
             return False
 
 
-def orient(region=(0, 0, start.DISPLAY_WIDTH, start.DISPLAY_HEIGHT),
-           launch_client=False):
+def orient(
+    region=(0, 0, start.DISPLAY_WIDTH, start.DISPLAY_HEIGHT), launch_client=False
+):
     """
     Looks for an icon to orient the client. If it's found, use its
     location within the game client to determine the coordinates of the
@@ -283,31 +304,39 @@ def orient(region=(0, 0, start.DISPLAY_WIDTH, start.DISPLAY_HEIGHT),
          coordinates of the orient-logged-out needle.
 
     """
-    logged_in = Vision(region=region, needle='needles/minimap/orient.png',
-                       loctype='center', loop_num=1,
-                       conf=0.8).wait_for_needle(get_tuple=True)
+    logged_in = Vision(
+        region=region,
+        needle="needles/minimap/orient.png",
+        loctype="center",
+        loop_num=1,
+        conf=0.8,
+    ).wait_for_needle(get_tuple=True)
     if isinstance(logged_in, tuple) is True:
-        return 'logged_in', logged_in
+        return "logged_in", logged_in
 
     # If the client is not logged in, check if it's logged out.
-    logged_out = Vision(region=region, needle='needles/login-menu/orient-logged-out.png',
-                        loctype='center', loop_num=1,
-                        conf=0.8).wait_for_needle(get_tuple=True)
+    logged_out = Vision(
+        region=region,
+        needle="needles/login-menu/orient-logged-out.png",
+        loctype="center",
+        loop_num=1,
+        conf=0.8,
+    ).wait_for_needle(get_tuple=True)
     if isinstance(logged_out, tuple) is True:
-        return 'logged_out', logged_out
+        return "logged_out", logged_out
 
     if launch_client is True:
         # TODO: Write start_client()
-        #start_client()
+        # start_client()
         # Try 10 times to find the login screen after launching the client.
         for _ in range(1, 10):
             misc.sleep_rand(8000, 15000)
             orient(region=region, launch_client=False)
-        log.critical('Could not find client! %s', launch_client)
-        raise Exception('Could not find client!')
+        log.critical("Could not find client! %s", launch_client)
+        raise Exception("Could not find client!")
 
     else:
-        raise Exception('Could not find client!')
+        raise Exception("Could not find client!")
 
 
 # ----------------------------------------------------------------------
@@ -318,10 +347,10 @@ display = (0, 0, start.DISPLAY_WIDTH, start.DISPLAY_HEIGHT)
 (client_status, anchor) = orient(region=display)
 (client_left, client_top) = anchor
 
-if client_status == 'logged_in':
+if client_status == "logged_in":
     client_left -= 735
     client_top -= 21
-elif client_status == 'logged_out':
+elif client_status == "logged_out":
     client_left -= 183
     client_top -= 59
 
@@ -335,77 +364,109 @@ elif client_status == 'logged_out':
 #   PyAutoGUI.
 
 # The fixed-width Java game client.
-client = (client_left, client_top,
-          start.CLIENT_WIDTH, start.CLIENT_HEIGHT)
+client = (client_left, client_top, start.CLIENT_WIDTH, start.CLIENT_HEIGHT)
 
 # The player's inventory.
 inv_left = client_left + 548
 inv_top = client_top + 205
-inv = (inv_left, inv_top,
-       start.INV_WIDTH, start.INV_HEIGHT)
+inv = (inv_left, inv_top, start.INV_WIDTH, start.INV_HEIGHT)
 
 # Bottom half of the player's inventory.
 inv_bottom_left = inv_left
 inv_bottom_top = inv_top + start.INV_HALF_HEIGHT
-inv_bottom = (inv_bottom_left, inv_bottom_top,
-              start.INV_WIDTH, start.INV_HALF_HEIGHT)
+inv_bottom = (inv_bottom_left, inv_bottom_top, start.INV_WIDTH, start.INV_HALF_HEIGHT)
 
 # Right half of the player's inventory.
 inv_right_half_left = (inv_left + start.INV_HALF_WIDTH) - 5
 inv_right_half_top = inv_top
-inv_right_half = (inv_right_half_left, inv_right_half_top,
-                  start.INV_HALF_WIDTH, start.INV_HEIGHT)
+inv_right_half = (
+    inv_right_half_left,
+    inv_right_half_top,
+    start.INV_HALF_WIDTH,
+    start.INV_HEIGHT,
+)
 
 # Left half of the player's inventory.
 inv_left_half_left = inv_left
 inv_left_half_top = inv_top
-inv_left_half = (inv_left_half_left, inv_left_half_top,
-                 start.INV_HALF_WIDTH, start.INV_HEIGHT)
+inv_left_half = (
+    inv_left_half_left,
+    inv_left_half_top,
+    start.INV_HALF_WIDTH,
+    start.INV_HEIGHT,
+)
 
 # Gameplay screen.
 game_screen_left = client_left + 4
 game_screen_top = client_top + 4
-game_screen = (game_screen_left, game_screen_top,
-               start.GAME_SCREEN_WIDTH, start.GAME_SCREEN_HEIGHT)
+game_screen = (
+    game_screen_left,
+    game_screen_top,
+    start.GAME_SCREEN_WIDTH,
+    start.GAME_SCREEN_HEIGHT,
+)
 
 # The player's inventory, plus the top and bottom "side stone" tabs that
 #   open all the different menus.
 side_stones_left = client_left + 516
 side_stones_top = client_top + 166
-side_stones = (side_stones_left, side_stones_top,
-               start.SIDE_STONES_WIDTH, start.SIDE_STONES_HEIGHT)
+side_stones = (
+    side_stones_left,
+    side_stones_top,
+    start.SIDE_STONES_WIDTH,
+    start.SIDE_STONES_HEIGHT,
+)
 
 # Chat menu.
 chat_menu_left = client_left + 7
 chat_menu_top = client_top + 345
-chat_menu = (chat_menu_left, chat_menu_top,
-             start.CHAT_MENU_WIDTH, start.CHAT_MENU_HEIGHT)
+chat_menu = (
+    chat_menu_left,
+    chat_menu_top,
+    start.CHAT_MENU_WIDTH,
+    start.CHAT_MENU_HEIGHT,
+)
 
 # The most recent chat message.
 chat_menu_recent_left = chat_menu_left - 3
 chat_menu_recent_top = chat_menu_top + 98
-chat_menu_recent = (chat_menu_recent_left, chat_menu_recent_top,
-                    start.CHAT_MENU_RECENT_WIDTH, start.CHAT_MENU_RECENT_HEIGHT)
+chat_menu_recent = (
+    chat_menu_recent_left,
+    chat_menu_recent_top,
+    start.CHAT_MENU_RECENT_WIDTH,
+    start.CHAT_MENU_RECENT_HEIGHT,
+)
 
 # The text input fields on the login menu.
 login_field_left = client_left + 273
 login_field_top = client_top + 242
-login_field = (login_field_left, login_field_top,
-               start.LOGIN_FIELD_WIDTH, start.LOGIN_FIELD_HEIGHT)
+login_field = (
+    login_field_left,
+    login_field_top,
+    start.LOGIN_FIELD_WIDTH,
+    start.LOGIN_FIELD_HEIGHT,
+)
 
 pass_field_left = client_left + 275
 pass_field_top = client_top + 258
-pass_field = (pass_field_left, pass_field_top,
-              start.LOGIN_FIELD_WIDTH, start.LOGIN_FIELD_HEIGHT)
+pass_field = (
+    pass_field_left,
+    pass_field_top,
+    start.LOGIN_FIELD_WIDTH,
+    start.LOGIN_FIELD_HEIGHT,
+)
 
 # The entire minimap.
 minimap_left = client_left + 571
 minimap_top = client_top + 11
-minimap = (minimap_left, minimap_top,
-           start.MINIMAP_WIDTH, start.MINIMAP_HEIGHT)
+minimap = (minimap_left, minimap_top, start.MINIMAP_WIDTH, start.MINIMAP_HEIGHT)
 
 # The current minimap "slice" for locating the player on the world map.
 minimap_slice_left = client_left + 590
 minimap_slice_top = client_top + 51
-minimap_slice = (minimap_slice_left, minimap_slice_top,
-                 start.MINIMAP_SLICE_WIDTH, start.MINIMAP_SLICE_HEIGHT)
+minimap_slice = (
+    minimap_slice_left,
+    minimap_slice_top,
+    start.MINIMAP_SLICE_WIDTH,
+    start.MINIMAP_SLICE_HEIGHT,
+)

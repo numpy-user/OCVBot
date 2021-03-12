@@ -44,12 +44,15 @@ class Mouse:
         button (str): The mouse button to click with, default is left.
 
     """
-    def __init__(self,
-                 region,  # In the format of (left, top, width, height).
-                 sleep_range=(0, 500, 0, 500),
-                 move_duration_range=(50, 1500),
-                 action_duration_range=(1, 100),
-                 button='left'):
+
+    def __init__(
+        self,
+        region,  # In the format of (left, top, width, height).
+        sleep_range=(0, 500, 0, 500),
+        move_duration_range=(50, 1500),
+        action_duration_range=(1, 100),
+        button="left",
+    ):
 
         self.region = region
         self.sleep_range = sleep_range
@@ -142,7 +145,9 @@ class Mouse:
 
         """
         move_durmin, move_durmax = self.move_duration_range
-        move_duration_var = misc.rand_seconds(min_seconds=move_durmin, max_seconds=move_durmax)
+        move_duration_var = misc.rand_seconds(
+            min_seconds=move_durmin, max_seconds=move_durmax
+        )
         return move_duration_var
 
     def click(self, hold=False):
@@ -162,8 +167,10 @@ class Mouse:
         misc.sleep_rand(sleep_min=self.sleep_range[0], sleep_max=self.sleep_range[1])
 
         if hold is True:
-            duration = misc.rand_seconds(min_seconds=self.action_duration_range[0],
-                                         max_seconds=self.action_duration_range[1])
+            duration = misc.rand_seconds(
+                min_seconds=self.action_duration_range[0],
+                max_seconds=self.action_duration_range[1],
+            )
             pag.click(button=self.button, duration=duration)
         else:
             pag.click(button=self.button)
@@ -195,10 +202,13 @@ class Keyboard:
                          credentials, default is True.
 
     """
-    def __init__(self,
-                 sleep_range=(0, 500, 0, 500),
-                 action_duration_range=(1, 100),
-                 log_keys=True):
+
+    def __init__(
+        self,
+        sleep_range=(0, 500, 0, 500),
+        action_duration_range=(1, 100),
+        log_keys=True,
+    ):
 
         self.sleep_range = sleep_range
         self.action_duration_range = action_duration_range
@@ -229,12 +239,14 @@ class Keyboard:
 
         """
         if self.log is True:
-            log.debug('Pressing key: %s.', key)
+            log.debug("Pressing key: %s.", key)
 
         misc.sleep_rand(sleep_min=self.sleep_range[0], sleep_max=self.sleep_range[1])
         pag.keyDown(key)
-        misc.sleep_rand(sleep_min=self.action_duration_range[0],
-                        sleep_max=self.action_duration_range[1])
+        misc.sleep_rand(
+            sleep_min=self.action_duration_range[0],
+            sleep_max=self.action_duration_range[1],
+        )
         pag.keyUp(key)
         misc.sleep_rand(sleep_min=self.sleep_range[2], sleep_max=self.sleep_range[3])
         return True
