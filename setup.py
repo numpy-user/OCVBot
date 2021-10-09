@@ -60,5 +60,6 @@ if __name__ == '__main__':
 
         description='The OldSchool Runescape Computer Vision Bot',
         license='GPLv3',
+        license="MIT",
     )
 
