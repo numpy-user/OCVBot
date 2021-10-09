@@ -9,7 +9,7 @@ if __name__ == '__main__':
 
         install_requires=
         [
-            'Babel~=2.8.0'
+            'Babel~=2.8.0',
             'Jinja2~=2.11.2',
             'Pillow~=6.2.1',
             'PyYAML~=5.3.1',
@@ -26,7 +26,7 @@ if __name__ == '__main__':
             'pytz~=2020.1',
             'recommonmark~=0.6.0',
             'requests~=2.23.0',
-            'snowballstemmer~=2.0.0'
+            'snowballstemmer~=2.0.0',
         ],
 
         extras_requires=
@@ -40,7 +40,7 @@ if __name__ == '__main__':
         tests_requires=
         [
             'pytest~=5.4.1',
-            'psutil~=5.7.0'
+            'psutil~=5.7.0',
         ],
 
         #package_data={
@@ -59,6 +59,6 @@ if __name__ == '__main__':
         author_email='hxyz@protonmail.com',
 
         description='The OldSchool Runescape Computer Vision Bot',
-        license='GPLv3'
+        license='GPLv3',
     )
 
