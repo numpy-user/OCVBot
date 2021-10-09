@@ -10,6 +10,6 @@ PLANNED:
   "needle" and "haystack."
 - Create unit tests for basic low-level functions, such as those in
   input.py.
-    - make tests playform-independent by removing dependence on Feh for
-      image viewing.
+- make tests playform-independent by removing dependence on Feh for
+  image viewing.
 - GUI with PySimpleGUI.
