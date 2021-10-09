@@ -1,3 +1,7 @@
+# LINKS
+
+Useful links on Python, computer vision, and botting.
+
 - https://www.jetbrains.com/help/pycharm/run-debug-configuration.html
 - https://realpython.com/python-testing/
 - https://realpython.com/python-refactoring/
