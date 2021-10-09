@@ -9,8 +9,7 @@ Project.xml
 
 # Sphinx files
 .doctrees
-/docs/_build
-/docs/build
+/docs/*build*/**
 
 # Temporary files
 */.screenshot*
@@ -22,6 +21,8 @@ bin/test/dist
 bin/test/build
 bin/main/dist
 bin/main/build
+tests/haystacks/locations/old
+tests/haystacks/unsorted
 
 # User files
 **/credentials/*.txt
