@@ -1,33 +1,30 @@
-# IDE files
-.idea
-Project.xml
-
 # Python files
-**/__pycache__/
-/venv_cpython/
-.pytest_cache/
+**/__pycache__
+.pytest_cache
+build
+dist
+ocvbot-env
+ocvbot.egg*
+ocvbot/package-lock.json
+venv_cpython
 
-# Sphinx files
-.doctrees
-/docs/*build*/**
-
-# Temporary files
+# Development files
+**/tmp
 */.screenshot*
-
-# Test and debugging files
-/haystacks/
-**/tmp/
-bin/test/dist
-bin/test/build
-bin/main/dist
+.idea
+/haystacks
+Project.xml
 bin/main/build
+bin/main/dist
+bin/test/build
+bin/test/dist
 tests/haystacks/locations/old
 tests/haystacks/unsorted
+tools/osrs.dev.sh
+NOTES.md
 
 # User files
-**/credentials/*.txt
+**/credentials
+!**/credentials/README.md
 **/ocvbot/config.yaml
-**/ocvbot/config.ini
 **/tools/login_*.py
-
-ocvbot/package-lock.json
