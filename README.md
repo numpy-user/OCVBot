@@ -4,23 +4,22 @@ The OSRS Computer Vision bot
 
 ## INSTALLATION
 
-1. Clone this repository into your home directory
+1. Clone this repository into your home directory.
 ```bash
 cd ~
 git clone --depth 1 https://github.com/takelley1/OCVBot.git
 ```
 
-2. Create a Python virtual environment
+2. Create and enter a Python virtual environment.
 ```bash
 cd OCVBot
-python3 -m venv ocvbot-env
-source ocvbot-env/bin/activate
+python3 -m venv ocvbot_venv
+source ocvbot_venv/bin/activate
 ```
 
-3. Install Python module dependencies into your virtual environment
-    - (For developers, use `pip install -r requirements.txt` instead)
+3. Install OCVBot's Python dependencies into your virtual environment.
 ```bash
-python3 ./setup.py install
+pip3 install -r requirements.txt
 ```
 
 4. Create a file in the `credentials` directory called `username.txt` and add
@@ -41,9 +40,9 @@ echo "ThisIsMySuperSecretPassword" > credentials/password.txt
 mv ocvbot/config.yaml.example ocvbot/config.yaml
 ```
 
-7. Edit `ocvbot/config.ini` with your desired configuration settings.
+7. Read and edit `ocvbot/config.yaml` with your desired configuration settings.
 
-8. Check `docs/client-configuration` for the proper client. configuration
+8. Check `docs/client-configuration` for the proper client configuration
    settings. Configurations in the `common/` directory are shared by all
    scripts. Configurations in all other directories are unique to that script
    only.
@@ -51,10 +50,10 @@ mv ocvbot/config.yaml.example ocvbot/config.yaml
 9. Launch the OldSchool Runescape client. A wrapper script is provided in
    this repository.
 ```bash
-./tools/osrs.sh
+bash ./tools/osrs.sh
 ```
 
-10. Configure your client to match the screenshots in `docs/client-configuration`.
+10. Adjust your client to match the screenshots in `docs/client-configuration`.
     Make sure your character is in the correct starting position before running
     the bot. Third-party clients like Runelite have not been tested.
 
@@ -63,9 +62,13 @@ mv ocvbot/config.yaml.example ocvbot/config.yaml
 python3 ./ocvbot/main.py
 ```
 
+- To stop the bot, use CTRL-C on the terminal window running the bot.
+- To exit the virtual environment, run `deactivate`.
+> NOTE: You must activate the virtual environment every time you wish to run the bot!
+
 ## CONFIGURATION
 
-Currently OCVBot is configured via a few basic settings in the `ocvbot/config.ini`
+Currently OCVBot is configured via a few basic settings in the `ocvbot/config.yaml`
 file. Please see the comments in that file for information on how to configure
 each parameter.
 
