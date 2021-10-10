@@ -1,17 +1,24 @@
 #!/usr/bin/env bash
 
-# Downloads and runs the OSRS client on Linux.
+# Helper script for running the OSRS Java client on Linux.
+# Downloads the Java client if it doesn't already exist.
 # Requires p7zip, wget, and java-11-openjdk.
 
+# The path to the Java executable you wish to use.
 java_path="/usr/lib/jvm/java-11-openjdk/bin/java"
 
 # These varaiables are unlikely to change.
 server="http://oldschool.runescape.com/jav_config.ws"
 dmg_url="https://www.runescape.com/downloads/OldSchool.dmg"
 
+install_location="${HOME}/.local/share/osrs"
+
 # ------------------------------------------------------------------------
 
 set -euo pipefail
+
+# Strip trailing slashes.
+install_location="$(printf "%s\n" "${install_location%/}")"
 
 print() {
     printf \
@@ -20,52 +27,67 @@ print() {
         "INFO: $* ####################################################################################################"
 }
 
+# Check for missing software.
 if ! hash wget 2>/dev/null; then echo "wget missing!" && exit 1; fi
 if ! hash 7z 2>/dev/null; then echo "7z missing!" && exit 1; fi
-if ! hash java 2>/dev/null; then echo "java missing!" && exit 1; fi
 
 cleanup() {
     print "Cleaning up"
     rm -rf -- \
-        /tmp/osrs*dmg \
         "${HOME}/random.dat" \
         "${HOME}/jagex_cl_oldschool_LIVE.dat" \
         "${HOME}/jagexappletviewer.preferences"
 
-    if [[ -d "${HOME}/jagexcache" ]]; then
-        mv -- "${HOME}/jagexcache" "${HOME}/.jagexcache"
-    fi
+    # Hide the cache directory.
+    [[ -d "${HOME}/jagexcache" ]] && mv -f -- "${HOME}/jagexcache" "${HOME}/.jagexcache"
 }
 
-# Clean up when killed.
+# Clean up when killed or exiting.
 trap cleanup EXIT
 
 # Un-hide the cache directory if it exists.
-if [[ -d "${HOME}/jagexcache" ]]; then
-    mv -v -- "$HOME/jagexcache" "$HOME/.jagexcache"
+[[ -d "${HOME}/.jagexcache" ]] && mv -f -- "$HOME/.jagexcache" "$HOME/jagexcache"
+
+# Try to enter the JAR directory and run the applet. If the JAR directory
+#   doesn't exist, then attempt to download the applet.
+print "Attempting to enter image directory"
+if cd "${install_location}/osrs.dmg/Old School RuneScape/Old School RuneScape.app/Contents/Java"; then
+
+    # Launch the OSRS client JAR file.
+    print "Launching Java applet"
+    "${java_path}" \
+        $* \
+        -Djava.class.path=./jagexappletviewer.jar \
+        -Dsun.java2d.nodraw=true \
+        -Dcom.jagex.config="${server}" \
+        -Xmx512m \
+        -Xss2m \
+        -XX:CompileThreshold=1500 \
+        jagexappletviewer "."
+
+else
+
+    # Download and extract the JAR file if it isn't present.
+    print "Pulling image"
+    [[ ! -d "${install_location}" ]] && mkdir -p -- "${install_location}"
+    wget --no-check-certificate --no-verbose "${dmg_url}" --output-document="${install_location}/osrs.dmg.7z"
+
+    # Extract the JAR file from the DMG archive.
+    print "Extracting image"
+    7z x -y "${install_location}/osrs.dmg.7z" -o"${install_location}/osrs.dmg/"
+
+    # Try running the applet again.
+    cd "${install_location}/osrs.dmg/Old School RuneScape/Old School RuneScape.app/Contents/Java"
+    print "Launching Java applet"
+    "${java_path}" \
+        $* \
+        -Djava.class.path=./jagexappletviewer.jar \
+        -Dsun.java2d.nodraw=true \
+        -Dcom.jagex.config="${server}" \
+        -Xmx512m \
+        -Xss2m \
+        -XX:CompileThreshold=1500 \
+        jagexappletviewer "."
 fi
-
-# Pull the latest client version.
-print "Pulling latest image"
-wget --no-check-certificate --no-verbose "${dmg_url}" --output-document="/tmp/osrs.dmg"
-
-# Extract the JAR file from the DMG.
-print "Extracting image"
-7z x -y "/tmp/osrs.dmg" -o"/tmp/osrs-dmg/"
-
-# Change working directory.
-print "Entering image directory"
-cd "/tmp/osrs-dmg/Old School RuneScape/Old School RuneScape.app/Contents/Java"
-
-# Launch the OSRS client JAR file.
-print "Launching Java applet"
-"${java_path}" \
-    -Djava.class.path=./jagexappletviewer.jar \
-    -Dsun.java2d.nodraw=true \
-    -Dcom.jagex.config="${server}" \
-    -Xmx512m \
-    -Xss2m \
-    -XX:CompileThreshold=1500 \
-    jagexappletviewer "."
 
 exit 0
