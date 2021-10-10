@@ -1,18 +1,19 @@
 # Python files
 **/__pycache__
+*venv*
 .pytest_cache
 build
 dist
-ocvbot-env
+ocvbot*env
 ocvbot.egg*
 ocvbot/package-lock.json
-venv_cpython
 
 # Development files
 **/tmp
 */.screenshot*
 .idea
 /haystacks
+NOTES.md
 Project.xml
 bin/main/build
 bin/main/dist
@@ -21,7 +22,6 @@ bin/test/dist
 tests/haystacks/locations/old
 tests/haystacks/unsorted
 tools/osrs.dev.sh
-NOTES.md
 
 # User files
 **/credentials
