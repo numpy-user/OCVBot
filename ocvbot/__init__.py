@@ -7,6 +7,7 @@ import logging as log
 import os
 import sys
 
+import pathlib
 import pyautogui as pag
 import yaml
 
@@ -21,6 +22,10 @@ if hasattr(sys, "frozen"):
     os.chdir(os.path.dirname(sys.executable))
 else:
     os.chdir(os.path.dirname(__file__))
+
+# Ensure ocvbot files are added to sys.path.
+SCRIPTPATH = str(pathlib.Path(__file__).parent.parent.absolute())
+sys.path.insert(1, SCRIPTPATH)
 
 # Read in the config file.
 with open('config.yaml') as config:
