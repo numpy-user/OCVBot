@@ -186,25 +186,22 @@ def login_full(
                 misc.sleep_rand(3000, 7000)
                 pag.keyUp("Up")
                 return True
-            else:
-                raise Exception("Could not detect login after postlogin screen!")
+            raise Exception("Could not detect login after postlogin screen!")
+        # Begin checking for the various non-successful login messages.
+        #   This includes messages like "invalid credentials",
+        #   "you must be a member to use this world", "cannot
+        #   connect to server," etc.
+        log.warning("Cannot find postlogin screen!")
 
-        else:
-            # Begin checking for the various non-successful login messages.
-            #   This includes messages like "invalid credentials",
-            #   "you must be a member to use this world", "cannot
-            #   connect to server," etc.
-            log.warning("Cannot find postlogin screen!")
-
-            # TODO: Add additional checks to other login messages.
-            invalid_credentials = vis.Vision(
-                region=vis.display,
-                needle="./needles/login-menu/invalid-credentials.png",
-                loop_num=1,
-            ).wait_for_needle()
-            if invalid_credentials is True:
-                raise Exception("Invalid user credentials!")
-            log.error("Cannot find postlogin screen!")
+        # TODO: Add additional checks to other login messages.
+        invalid_credentials = vis.Vision(
+            region=vis.display,
+            needle="./needles/login-menu/invalid-credentials.png",
+            loop_num=1,
+        ).wait_for_needle()
+        if invalid_credentials is True:
+            raise Exception("Invalid user credentials!")
+        log.error("Cannot find postlogin screen!")
 
     raise Exception("Unable to login!")
 
