@@ -7,7 +7,7 @@ dist
 ocvbot*env
 ocvbot.egg*
 ocvbot/package-lock.json
-**/*mypy*
+.mypy_cache
 
 # Development files
 **/tmp
