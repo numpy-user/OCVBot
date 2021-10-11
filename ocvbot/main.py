@@ -18,7 +18,17 @@ configuration settings in each scenario.
 
 """
 import logging as log
+import os
+import pathlib
 import sys
+
+# Make sure the program's working directory is the directory in which
+#   this file is located.
+os.chdir(os.path.dirname(__file__))
+
+# Ensure ocvbot files are added to sys.path.
+SCRIPTPATH = str(pathlib.Path(__file__).parent.parent.absolute())
+sys.path.insert(1, SCRIPTPATH)
 
 from ocvbot import skills, behavior, vision as vis, startup as start, misc
 
