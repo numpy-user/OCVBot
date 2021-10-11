@@ -16,12 +16,8 @@ pag.FAILSAFE = False
 sys.setrecursionlimit(9999)
 
 # Make sure the program's working directory is the directory in which
-#   this file is located. If the script is compiled (i.e. "frozen"), a
-#   different method must be used.
-if hasattr(sys, "frozen"):
-    os.chdir(os.path.dirname(sys.executable))
-else:
-    os.chdir(os.path.dirname(__file__))
+#   this file is located.
+os.chdir(os.path.dirname(__file__))
 
 # Ensure ocvbot files are added to sys.path.
 SCRIPTPATH = str(pathlib.Path(__file__).parent.parent.absolute())
