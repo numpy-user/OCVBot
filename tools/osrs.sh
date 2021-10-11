@@ -4,6 +4,9 @@
 # Downloads the Java client if it doesn't already exist.
 # Requires p7zip, wget, and java-11-openjdk.
 
+# Arguments can be added to the `java` command by passing them in a list on the
+#   command line, e.g. `osrs.sh "-Dhttp.proxyHost=10.0.0.1 -Dhttp.proxyPort=8008"`
+
 # The path to the Java executable you wish to use.
 java_path="/usr/lib/jvm/java-11-openjdk/bin/java"
 
