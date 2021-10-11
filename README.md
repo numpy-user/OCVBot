@@ -35,9 +35,9 @@ echo "ThisIsMyUsername" > credentials/username.txt
 echo "ThisIsMySuperSecretPassword" > credentials/password.txt
 ```
 
-6. Rename `ocvbot/config.yaml.example` to `ocvbot/config.yaml`.
+6. Copy `ocvbot/config.yaml.example` to `ocvbot/config.yaml`.
 ```bash
-mv ocvbot/config.yaml.example ocvbot/config.yaml
+cp "ocvbot/config.yaml.example" "ocvbot/config.yaml"
 ```
 
 7. Read and edit `ocvbot/config.yaml` with your desired configuration settings.
