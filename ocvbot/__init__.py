@@ -24,17 +24,18 @@ SCRIPTPATH = str(pathlib.Path(__file__).parent.parent.absolute())
 sys.path.insert(1, SCRIPTPATH)
 
 # Read in the config file.
-with open('config.yaml') as config:
+with open("config.yaml", encoding="utf-8") as config:
     config = yaml.safe_load(config)
 
-log_level = config['main']['log_level']
-log.basicConfig(format='%(asctime)s %(filename)s.%(funcName)s - %(message)s',
-                level=log_level)
+log_level = config["main"]["log_level"]
+log.basicConfig(
+    format="%(asctime)s %(filename)s.%(funcName)s - %(message)s", level=log_level
+)
 
 # TODO: Find a better way to do this.
 # Clean up left over screenshots from previous runs.
-if os.name == 'posix':
-    os.system('rm .screenshot2*.png >/dev/null 2>&1')
+if os.name == "posix":
+    os.system("rm .screenshot2*.png >/dev/null 2>&1")
 
 
 def kill_script():
@@ -43,10 +44,14 @@ def kill_script():
 
     """
     # TODO: Replace this with psutil.kill().
-    os.system('pkill -f main.py')
+    os.system("pkill -f main.py")
 
 
 # This requires sudo privileges, so it's optional.
-if config['main']['keyboard_kill'] is True:
+if config["main"]["keyboard_kill"] is True:
     import keyboard
-    keyboard.add_hotkey(config['main']['kill_hotkey'], kill_script,)
+
+    keyboard.add_hotkey(
+        config["main"]["kill_hotkey"],
+        kill_script,
+    )
