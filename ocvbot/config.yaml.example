@@ -1,80 +1,108 @@
-# Rename this file to 'config.ini' before doing anything else!!!
+
+#################################################################
+# Rename this file to 'config.yaml' before doing anything else!!!
+#################################################################
+
+# NOTE: Most values don't require quotes. This file follows standard YAML syntax.
+
+# General usage:
+#
+# 1. Set the value of `main.script`.
+#
+# 2. If `main.script` was set to `magic`, for example, edit the values of the
+#    `magic` section below accordingly.
 
 main:
-# The 'script' field determines which script to run, as dictated by the
-#   section headers in this file.
-# Available values for this field are "magic" and "mining".
+  # Determines which script to run.
+  # Available options:
+  #   `magic`
+  #   `mining`
+  #   `chef` -- TODO
   script: magic
 
-# This is the path to the user's credential files. This can be a relative
-#   path (starting from ocvbot/ocvbot/) or an absolute path.
-# If you are on Linux, comment out the two fields below "WINDOWS PATHS"
-#   and remove the comments from the two fields below "LINUX PATHS".
-# WINDOWS PATHS
-  username_file: 'credentials\username.txt'
-  password_file: 'credentials\password.txt'
-# LINUX PATHS
-  #username_file: 'credentials/username.txt'
-  #password_file: 'credentials/password.txt'
+  # Path to your user credential files. This can be a relative
+  #   path (starting from `./ocvbot/ocvbot/`) or an absolute path.
+  # This value should be surrounded by single quotes.
+  username_file: 'credentials/username.txt'
+  password_file: 'credentials/password.txt'
 
-# A random logout break will occur once between these two times. Units
-#   are in minutes.
+  # The minimum and maximum amount of time to wait between random logout breaks.
+  # Units are in minutes.
   min_session_duration: 120
   max_session_duration: 180
 
-# The amount of time to wait during a logout break. Units are in
-#   minutes.
+  # The minimum and maximum amount of time to wait during a logout break.
+  # Units are in minutes.
   min_break_duration: 5
   max_break_duration: 120
 
-# The minimum and maximum number of logout breaks that will occur before
-#   the bot stops for good.
+  # The minimum and maximum number of logout breaks that will occur before
+  #   the bot stops for good.
   min_sessions: 1
   max_sessions: 3
 
-# Can be set to CRITICAL, ERROR, WARNING, INFO, or DEBUG.
+  # Determines the verbosity of information printed to the terminal while the
+  #   bot is being run.
+  # Available options:
+  #   `CRITICAL`
+  #   `ERROR`
+  #   `WARNING`
+  #   `INFO`
+  #   `DEBUG`
   log_level: INFO
-# Whether or not to enable the ability to manually terminate the bot. This
-    is False by default since it requires sudo privileges.
+  # Whether or not to enable the ability to manually terminate the bot. This
+  #  is False by default since it requires sudo privileges.
   keyboard_kill: False
-# The hotkey combination to use to manually kill the bot. See Python's
-#   keyboard.add_hotkey() function docstring for exact syntax.
+  # The hotkey combination to use to manually kill the bot.
+  # See Python's keyboard.add_hotkey() function docstring for exact syntax.
   kill_hotkey: ctrl+space
 
 mining:
-# Make sure your client has already been configured with all the settings
-#   shown in client-configuration/common before you do anything else!
-# lumbridge-mine: (client-configuration/mining-lumbridge-swamp)
-# varrock-east-mine: (client-configuration/mining-varrock-east)
+  # Available options:
+  #   `lumbridge-mine`
+  #      Mines copper in Lumbridge Swamp.
+  #      Banking is NOT supported.
+  #      See `docs/client-configuration/mining-lumbridge-swamp`.
+  #   `varrock-east-mine`
+  #      Mines iron in Varrock East mine.
+  #      Banking supported. The user's bank PIN must have already been entered
+  #        before using the bank.
+  #      See `docs/client-configuration/mining-varrock-east`
   location: varrock-east-mine
 
-# These settings control whether the mining script should drop precious
-#   gems and other items that have been obtained randomly through mining.
-#   These settings are ignored if the mining script is configured for
-#   banking (not yet implemented).
+  # These settings control whether the mining script should drop precious
+  #   gems and other items that have been obtained randomly through mining.
+  #   These settings are ignored if the mining script is configured for
+  #   banking.
   drop_sapphire: False
   drop_emerald: False
   drop_ruby: False
   drop_diamond: False
-# Clue geodes contain clue scrolls. Mining iron ore provides only "easy"
-#   clue scrolls.
+  # Clue geodes contain clue scrolls. Mining iron ore provides only "easy"
+  #   clue scrolls.
   drop_clue_geode: False
 
-# Whether the Varrock East Mine mining script should drop the ore or
-#   bank it.
-# The user's bank PIN must have already been entered before using the
-#   bank
+  # Whether the bot will drop the ore it mines or bank it.
+  # This option is ignored for locations that don't support banking.
   drop_ore: False
 
 magic:
-# Casting curse on Monk of Zamorak in Varrock Castle: (client-configuration/magic-curse)
+  # Available options:
+  #   `curse-varrock-castle`
+  #      Casts curse on the Monk of Zamorak in Varrock Castle.
+  #      See `docs/client-configuration/magic-curse`.
+  #   `high-alchemy`
+  #      Casts High Alchemy on all noted items in the LEFT half of the
+  #        player's inventory. This means you should keep all your runes
+  #        and valuable items on the RIGHT half of your inventory.
   scenario: curse-varrock-castle
-# Whether to logout once alching has completed.
+  # Whether to logout once alching has completed.
   logout: False
-# Minimum and maximum number of miliseconds to wait after casting each spell.
+  # Minimum and maximum number of miliseconds to wait after casting each spell.
   min_cast_delay: 0
   max_cast_delay: 500
 
+# TODO
 chef:
   item: raw-anchovies
   location: al-kharid
