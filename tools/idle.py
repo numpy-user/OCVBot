@@ -5,8 +5,14 @@ Keeps the OSRS client logged in.
 """
 import logging as log
 import os
+import pathlib
 import random as rand
+import sys
 import yaml
+
+# Ensure ocvbot files are added to sys.path.
+SCRIPTPATH = str(pathlib.Path(__file__).parent.parent.absolute())
+sys.path.insert(1, SCRIPTPATH)
 
 from ocvbot import input, misc, vision as vis
 
