@@ -29,7 +29,12 @@ import os
 import time
 import sys
 
+import pathlib
 import pyautogui as pag
+
+# Ensure ocvbot files are added to sys.path.
+SCRIPTPATH = str(pathlib.Path(__file__).parent.parent.absolute())
+sys.path.insert(1, SCRIPTPATH)
 
 from ocvbot import vision as vis, startup as start
 
