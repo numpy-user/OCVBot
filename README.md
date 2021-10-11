@@ -50,7 +50,7 @@ cp "ocvbot/config.yaml.example" "ocvbot/config.yaml"
 9. Launch the OldSchool Runescape client. A wrapper script is provided in
    this repository.
 ```bash
-bash ./tools/osrs.sh
+./tools/osrs.sh
 ```
 
 10. Adjust your client to match the screenshots in `docs/client-configuration`.
@@ -75,8 +75,7 @@ each parameter.
 The bot takes random short breaks, so don't be alarmed if it appears to do
 nothing for a short while.
 
-For more technical users, comprehensive API documentation is located at
-`docs/build/html/`.
+For more technical users, comprehensive API documentation is source code docstrings.
 
 *This bot was written for educational purposes only. I am not responsible for how
 you use this software.*
