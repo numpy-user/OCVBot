@@ -90,6 +90,7 @@ magic:
   # Available options:
   #   `curse-varrock-castle`
   #      Casts curse on the Monk of Zamorak in Varrock Castle.
+  #      NOTE: Your spellbook tab must be open before you start!
   #      See `docs/client-configuration/magic-curse`.
   #   `high-alchemy`
   #      Casts High Alchemy on all noted items in the LEFT half of the
