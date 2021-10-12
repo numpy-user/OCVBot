@@ -11,10 +11,10 @@ import cv2
 import numpy as np
 
 # The base path to use for haystacks and templates.
-path = '../tests/haystacks/user-interface/maps/'
+path = "../tests/haystacks/user-interface/maps/"
 # The path to each image.
-haystack = path + 'chunks/varrock-east-mine.png'
-needle = path + 'minimap/image_001.png'
+haystack = path + "chunks/varrock-east-mine.png"
+needle = path + "minimap/image_001.png"
 
 # Specify a confidence threshold that each match must exceed to qualify.
 confidence = 1.0
@@ -45,4 +45,3 @@ while confidence >= 0.01:
 
     # Lower the confidence rating for the next loop.
     confidence = confidence - 0.05
-
