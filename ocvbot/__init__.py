@@ -45,13 +45,3 @@ def kill_script():
     """
     # TODO: Replace this with psutil.kill().
     os.system("pkill -f main.py")
-
-
-# This requires sudo privileges, so it's optional.
-if config["main"]["keyboard_kill"] is True:
-    import keyboard
-
-    keyboard.add_hotkey(
-        config["main"]["kill_hotkey"],
-        kill_script,
-    )
