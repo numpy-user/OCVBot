@@ -3,13 +3,24 @@
 Common functions used by unit testing files.
 
 """
+import os
+import pathlib
 import subprocess as sub
+import sys
 import time
 
 import psutil
 
+# Make sure the program's working directory is the directory in which
+#   this file is located.
+os.chdir(os.path.dirname(__file__))
 
-def kill_feh():
+# Ensure ocvbot files are added to sys.path.
+SCRIPTPATH = str(pathlib.Path(__file__).parent.parent.absolute())
+sys.path.insert(1, SCRIPTPATH)
+
+
+def kill_feh() -> None:
     """
     Kills feh so the next slideshow of images can be displayed.
 
@@ -17,10 +28,9 @@ def kill_feh():
     for proc in psutil.process_iter():
         if proc.name() == 'feh':
             proc.kill()
-    return
 
 
-def feh(test_name, test_type, test_number, interval, directory):
+def feh(test_name, test_type, test_number, directory, interval=0.1) -> None:
     """
     Runs the feh image viewer using the specified parameters.
 
@@ -39,10 +49,10 @@ def feh(test_name, test_type, test_number, interval, directory):
 
     """
     kill_feh()
+    # Some waiting is required after opening images before template matching
+    #   is reliable.
     time.sleep(interval)
     test = sub.Popen(['feh', directory + 'test_' + test_name + '/' + test_type
                       + '/test' + test_number + '/'])
     print("TEST IS ", test)
     time.sleep(interval)
-    return
-
