@@ -41,11 +41,11 @@ def login_basic(
     Args;
         username_file (file): The path to a file containing the user's
                               username login, by default reads the
-                              'username_file' field in the main config
+                              `username_file` field in the main config
                               file.
         password_file (file): The path to a file containing the user's
                               password, by default reads the
-                              'password_file' field in the main config
+                              `password_file` field in the main config
                               file.
         cred_sleep_range (tuple): A 2-tuple containing the minimum and
                                   maximum number of miliseconds to wait
@@ -439,10 +439,10 @@ def open_side_stone(side_stone):
 
     Args:
         side_stone (str): The name of the side stone to open. Available
-                          options are 'attacks', 'skills', 'quests',
-                          'inventory', 'equipment', 'prayers', 'spellbook',
-                          'clan', 'friends', 'account', 'logout',
-                          'settings', emotes', and 'music'.
+                          options are `attacks`, `skills`, `quests`,
+                          `inventory`, `equipment`, `prayers`, `spellbook`,
+                          `clan`, `friends`, `account`, `logout`,
+                          `settings`, `emotes`, and `music`.
 
     Returns:
         Returns True if desired side stone was opened or is already open.
@@ -676,8 +676,8 @@ def open_bank(direction):
     Opens the bank, assuming the player is within 2 tiles of the booth.
 
     Args:
-        direction (str): The direction of the bank booth. Must be 'north',
-                         'south', 'east', or 'west'.
+        direction (str): The direction of the bank booth. Must be `north`,
+                         `south`, `east`, or `west`.
 
     Raises:
         Raises an exception if the bank could not be opened.
@@ -686,7 +686,7 @@ def open_bank(direction):
         Returns True if bank was opened successfully.
 
     """
-    # Check if bank is already open
+    # Check if bank is already open.
     bank_open = vis.Vision(
         region=vis.game_screen, needle="./needles/buttons/close.png", loop_num=1
     ).wait_for_needle()
@@ -740,24 +740,25 @@ def enter_bank_pin(pin=tuple(str(start.config["main"]["bank_pin"]))):
     Returns:
 
     """
-    # Confirm that the bank PIN screen is actually present
+    # Confirm that the bank PIN screen is actually present.
     bank_pin_screen = vis.Vision(
         region=vis.game_screen, needle="./needles/.png", loop_num=1
     ).wait_for_needle(get_tuple=False)
     if bank_pin_screen is False:
         return False
 
-    # Loop through the different PIN screens for each of the 4 digits
+    # Loop through the different PIN screens for each of the 4 digits.
     for pin_ordinal in range(1, 4):
 
         # Wait for the first/second/third/fourth PIN prompt screen to
-        #   appear
+        #   appear.
         pin_ordinal_prompt = vis.Vision(
             region=vis.game_screen, needle="./needles/" + str(pin_ordinal), loop_num=1
         ).wait_for_needle(get_tuple=False)
 
         # Enter the first/second/third/fourth digit of the PIN.
         if pin_ordinal_prompt is True:
+            # TODO:
             enter_digit = vis.Vision(
                 region=vis.game_screen,
                 needle="./needles/" + pin[pin_ordinal],
@@ -773,7 +774,7 @@ def enable_run():
     If run is turned off but energy is full, turns running on.
 
     """
-    # TODO: turn run on when over 75%
+    # TODO: Turn run on when over 75%.
     for _ in range(1, 5):
         run_full_off = vis.Vision(
             region=vis.client, needle="./needles/buttons/run-full-off.png", loop_num=1
@@ -918,7 +919,7 @@ def travel(param_list, haystack_map, attempts=100):
                 if waypoint_distance_y <= 10:
                     click_pos_x += 13
 
-            # If the waypoint's X distance is "negative", we know we
+            # If the waypoint's X distance is negative, we know we
             #   need to subtract X coordinates.
             elif abs(waypoint_distance_x) >= 50:
                 click_pos_x = coords_client_x - 50 + coord_rand
@@ -942,7 +943,7 @@ def travel(param_list, haystack_map, attempts=100):
 
             click_pos_y = abs(click_pos_y)
             click_pos_x = abs(click_pos_x)
-            # Holding down ctrl while clicking will cause character to
+            # Holding down CTRL while clicking will cause character to
             #   run.
             pag.keyDown("ctrl")
             input.Mouse(
