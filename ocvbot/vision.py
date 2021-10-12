@@ -133,10 +133,10 @@ class Vision:
         Searches within the self.ltwh coordinates for self.needle.
 
         Returns:
-            If the needle is found and self.loctype is 'regular', returns
+            If the needle is found and self.loctype is `regular`, returns
             the needle's left/top/width/height dimensions as a 4-tuple.
 
-            If the needle is found and self.loctype is 'center', returns
+            If the needle is found and self.loctype is `center`, returns
             coordinates of the needle's (X, Y) center as a 2-tuple.
 
             If the needle is not found, returns False.
@@ -186,9 +186,9 @@ class Vision:
         Returns:
             If get_tuple is False, returns True if needle was found.
 
-            If get_tuple is true and self.loctype is 'regular', returns
+            If get_tuple is true and self.loctype is `regular`, returns
             a 4-tuple containing the (left, top, width, height) coordinates
-            of the needle. If self.loctype is 'center', returns a 2-tuple
+            of the needle. If self.loctype is `center`, returns a 2-tuple
             containing the (X, Y) center of the needle.
 
             Returns False if needle was not found.
@@ -233,7 +233,7 @@ class Vision:
                                          input.py, see its docstring for
                                          more info.
             button (str): The mouse button to use when clicking on the
-                          needle, default is 'left'.
+                          needle, default is `left`.
             move_away (bool): Whether to move the mouse out of the way
                               after clicking on the needle. Useful when
                               mlocate() needs to determine the status
