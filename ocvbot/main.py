@@ -2,18 +2,18 @@
 """
 Module for invoking main bot scripts.
 
-Most main scripts define a preset list of 'scenarios' from which the user
+Most main scripts define a preset list of `scenarios` from which the user
 can choose from. Each scenario has a predetermined configuration that will
-used for training that skill. For example, the 'varrock-east-mine' scenario
-for the 'miner' script is configured to only mine two specific iron rocks
+used for training that skill. For example, the `varrock-east-mine` scenario
+for the `miner` script is configured to only mine two specific iron rocks
 within Varrock East Mine.
 
 Some scripts, however, are a little more flexible and don't define any
-rigid scenarios to which the user must adhere. The 'chef' script, for
+rigid scenarios to which the user must adhere. The `chef` script, for
 example, allows the user to specify both the item to be cooked as well as
 the location to use.
 
-See '/docs/client-configuration/' for the required client
+See `/docs/client-configuration/` for the required client
 configuration settings in each scenario.
 
 """
@@ -39,12 +39,12 @@ def miner(scenario):
     limited.
 
     Supported scenarios:
-        'lumbridge-mine' = Mines copper in Lumbridge Swamp.
-        'varrock-east-mine' = Mines iron in Varrock East mine. Banking
+        `lumbridge-mine` = Mines copper in Lumbridge Swamp.
+        `varrock-east-mine` = Mines iron in Varrock East mine. Banking
                               supported.
-        'al-kharid-mine' = Mines iron in Al Kharid mine.
+        `al-kharid-mine` = Mines iron in Al Kharid mine.
 
-        See '/docs/client-configuration/' for the required client
+        See `/docs/client-configuration/` for the required client
         configuration settings for each scenario.
 
     Raises:
@@ -151,15 +151,16 @@ def spellcaster(scenario):
     Script for training magic, either with combat spells or alchemy.
 
     Supported scenarios:
-        'curse-varrock-castle' = Casts curse against the Monk of Zamorak
+        `curse-varrock-castle` = Casts curse against the Monk of Zamorak
                                  in varrock castle.
-        'high-alchemy' = Casts high alchemy on all noted items within the
+        `high-alchemy` = Casts high alchemy on all noted items within the
                          left half of the player's inventory.
 
     Raises:
         Raises an exception if an unsupported scenario is passed.
 
     """
+    # TODO: Ensure spellbook side-stone is open before starting loop.
     if scenario == "curse-varrock-castle":
         spell = "./needles/side-stones/spellbook/curse.png"
         target = "./needles/game-screen/varrock/monk-of-zamorak.png"
@@ -175,7 +176,7 @@ def spellcaster(scenario):
             ).cast_spell()
 
     # Casts high-level alchemy on all noted items in the left half of the
-    #   player's inventory
+    #   player's inventory.
     elif scenario == "high-alchemy":
         spell = "./needles/side-stones/spellbook/high-alchemy.png"
         item = start.config["magic"]["alch_item_type"]
@@ -198,23 +199,21 @@ def spellcaster(scenario):
                 if start.config["magic"]["logout"] is True:
                     behavior.logout()
                 sys.exit(0)
-                """
-                check inv for nature runes
-                if nature runes = 0
-                    open inv
-                    get cash stack
-                    purchase nature runes equal to 10% cash stack
+                #  check inv for nature runes
+                #  if nature runes = 0
+                #      open inv
+                #      get cash stack
+                #      purchase nature runes equal to 10% cash stack
 
-                check inv for alched item
-                if item = 0
-                    open inv
-                    get cash stack
-                    search for item on GE to get price
-                    determine how many of that item can be bought
-                    buy that many nature runes
-                    get new cash stack
-                    buy item
-                """
+                #  check inv for alched item
+                #  if item = 0
+                #      open inv
+                #      get cash stack
+                #      search for item on GE to get price
+                #      determine how many of that item can be bought
+                #      buy that many nature runes
+                #      get new cash stack
+                #      buy item
             misc.sleep_rand_roll(chance_range=(10, 30), sleep_range=(0, 3000))
 
         behavior.logout()
