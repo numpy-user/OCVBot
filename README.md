@@ -2,6 +2,15 @@
 
 The OSRS Computer Vision bot
 
+- This bot is an image bot, meaning it interacts with the game client the same
+  way a human does: by looking for specific images or patterns and responding
+  accordingly. No client injection, reflection, or modifications of any kind are
+  used. This makes the program undetectable using traditional methods.
+- All interactions with the game client are randomized to the greatest extent
+  possible. This includes randomized mouse movements, click coordinates, wait
+  durations, and session durations.
+- If you have a question about how the program works, please open an issue.
+
 ## INSTALLATION
 
 1. Clone this repository into your home directory.
@@ -68,14 +77,15 @@ python3 ./ocvbot/main.py
 
 ## CONFIGURATION
 
-Currently OCVBot is configured via a few basic settings in the `ocvbot/config.yaml`
-file. Please see the comments in that file for information on how to configure
-each parameter.
+- Currently OCVBot is configured via a few basic settings in the
+  `ocvbot/config.yaml` file. Please see the comments in that file for information
+  on how to configure each parameter.
+- The bot takes random short breaks, so don't be alarmed if it appears to do
+  nothing for a short while. The program's log output will indicate when this occurs.
+- For more technical users, comprehensive API documentation is available in
+  function docstrings.
 
-The bot takes random short breaks, so don't be alarmed if it appears to do
-nothing for a short while.
-
-For more technical users, comprehensive API documentation is source code docstrings.
+---
 
 *This bot was written for educational purposes only. I am not responsible for how
 you use this software.*
