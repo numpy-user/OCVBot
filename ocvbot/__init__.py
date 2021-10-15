@@ -24,9 +24,10 @@ SCRIPTPATH = str(pathlib.Path(__file__).parent.parent.absolute())
 sys.path.insert(1, SCRIPTPATH)
 
 # Read in the config file.
-with open("config.yaml", encoding="utf-8") as config:
-    config = yaml.safe_load(config)
+with open("config.yaml", encoding="utf-8") as config_file:
+    config = yaml.safe_load(config_file)
 
+# Configure logging.
 log_level = config["main"]["log_level"]
 log.basicConfig(
     format="%(asctime)s %(filename)s.%(funcName)s - %(message)s", level=log_level
@@ -38,7 +39,7 @@ if os.name == "posix":
     os.system("rm .screenshot2*.png >/dev/null 2>&1")
 
 
-def kill_script():
+def kill_script() -> None:
     """
     Used to manually terminate the primary thread of execution.
 
