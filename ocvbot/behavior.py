@@ -17,21 +17,29 @@ from ocvbot import input, vision as vis, startup as start, vision, misc
 
 
 # TODO
-def switch_worlds_logged_in(members=False, free_to_play=True, safe=True):
+def switch_worlds_logged_in(
+    members: bool = False, free_to_play: bool = True, safe: bool = True
+) -> None:
+    """
+    TODO
+    """
     if members is False and free_to_play is False:
         raise Exception("A world type must be selected!")
 
 
 # TODO
-def switch_worlds_logged_out():
+def switch_worlds_logged_out() -> None:
+    """
+    TODO
+    """
     pass
 
 
 def login_basic(
     username_file=start.config["main"]["username_file"],
     password_file=start.config["main"]["password_file"],
-    cred_sleep_range=(800, 5000),
-):
+    cred_sleep_range: tuple[int, int] = (800, 5000),
+) -> bool:
     """
     Performs a login without checking if the login was successful.
 
@@ -123,11 +131,11 @@ def login_basic(
 
 
 def login_full(
-    login_sleep_range=(500, 5000),
-    postlogin_sleep_range=(500, 5000),
+    login_sleep_range: tuple[int, int] = (500, 5000),
+    postlogin_sleep_range: tuple[int, int] = (500, 5000),
     username_file=start.config["main"]["username_file"],
     password_file=start.config["main"]["password_file"],
-):
+) -> bool:
     """
     Logs into the client using the credentials specified in the main
     config file. Waits until the login is successful before returning.
@@ -206,7 +214,7 @@ def login_full(
     raise Exception("Unable to login!")
 
 
-def logout():
+def logout() -> bool:
     """
     If the client is logged in, logs out.
 
@@ -295,7 +303,7 @@ def logout():
     raise Exception("Could not logout!")
 
 
-def logout_break_range():
+def logout_break_range() -> bool:
     """
     Triggers a random logout within a specific range of times, set
     by the user in the main config file. Additional configuration for
@@ -373,7 +381,7 @@ def logout_break_roll(
     chance,
     min_break_duration=int(start.config["main"]["min_break_duration"]),
     max_break_duration=int(start.config["main"]["max_break_duration"]),
-):
+) -> None:
     """
     Rolls for a chance to take a logout break.
 
@@ -433,7 +441,7 @@ def logout_break_roll(
         return
 
 
-def open_side_stone(side_stone):
+def open_side_stone(side_stone) -> bool:
     """
     Opens a side stone menu.
 
@@ -496,7 +504,7 @@ def open_side_stone(side_stone):
     raise Exception("Could not open side stone!")
 
 
-def check_skills():
+def check_skills() -> None:
     """
     Used to mimic human-like behavior. Checks the stats of a random
     skill.
@@ -507,7 +515,7 @@ def check_skills():
     misc.sleep_rand(1000, 7000)
 
 
-def human_behavior_rand(chance):
+def human_behavior_rand(chance) -> None:
     """
     Randomly chooses from a list of human behaviors if the roll passes.
     This is done to make the bot appear more human.
@@ -548,7 +556,7 @@ def human_behavior_rand(chance):
     return
 
 
-def drop_item(item, track=True, wait_chance=120, wait_range=(5000, 20000)):
+def drop_item(item, track=True, wait_chance=120, wait_range=(5000, 20000)) -> bool:
     """
     Drops all instances of the provided item from the inventory.
     The "Shift+Click" setting to drop items MUST be enabled in the OSRS
@@ -621,7 +629,7 @@ def drop_item(item, track=True, wait_chance=120, wait_range=(5000, 20000)):
 
 
 # TODO:
-def bank_settings_check(setting, value):
+def bank_settings_check(setting, value) -> bool:
     """
     Checks for specific bank window configuration settings.
 
@@ -671,7 +679,7 @@ def bank_settings_check(setting, value):
             return True
 
 
-def open_bank(direction):
+def open_bank(direction) -> bool:
     """
     Opens the bank, assuming the player is within 2 tiles of the booth.
 
@@ -730,7 +738,7 @@ def open_bank(direction):
     raise Exception("Unable to open bank!")
 
 
-def enter_bank_pin(pin=tuple(str(start.config["main"]["bank_pin"]))):
+def enter_bank_pin(pin=tuple(str(start.config["main"]["bank_pin"]))) -> bool:
     """
     Enters the user's bank PIN.
 
@@ -769,7 +777,7 @@ def enter_bank_pin(pin=tuple(str(start.config["main"]["bank_pin"]))):
 
 # TODO: This function may not even be necessary since we can CTRL+click
 #   to run.
-def enable_run():
+def enable_run() -> bool:
     """
     If run is turned off but energy is full, turns running on.
 
@@ -798,7 +806,7 @@ def enable_run():
 #   redefine "waypoint" to be "the coordinates that you click on the
 #   minimap to tell your character to walk to", and "destination" to be
 #   "the desired coordinates you want your character to be at".
-def travel(param_list, haystack_map, attempts=100):
+def travel(param_list, haystack_map, attempts=100) -> bool:
     """
     Clicks on the minimap until the player has arrived at the desired
     coordinates.
@@ -887,8 +895,8 @@ def travel(param_list, haystack_map, attempts=100):
             # Get center of minimap coordinates within client.
             # Absolute coordinates are used rather than using an image
             #   search to speed things up.
-            coords_client_x = vision.client[0] + 642
-            coords_client_y = vision.client[1] + 85
+            coords_client_x = vis.client[0] + 642
+            coords_client_y = vis.client[1] + 85
 
             # Figure out how far the waypoint is from the current location.
             waypoint_distance_x = waypoint[0] - coords_map_x
@@ -964,7 +972,7 @@ def travel(param_list, haystack_map, attempts=100):
     return True
 
 
-def ocv_find_location(haystack):
+def ocv_find_location(haystack) -> tuple[int, int, int, int]:
     """
     OpenCV helper function used by travel() to find the minimap within
     the haystack map.

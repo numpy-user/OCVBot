@@ -47,12 +47,14 @@ class Mouse:
 
     def __init__(
         self,
-        region,  # In the format of (left, top, width, height).
-        sleep_range=(0, 500, 0, 500),
-        move_duration_range=(50, 1500),
-        action_duration_range=(1, 100),
-        button="left",
-    ):
+        region: tuple[
+            int, int, int, int
+        ],  # In the format of (left, top, width, height).
+        sleep_range: tuple[int, int, int, int] = (0, 500, 0, 500),
+        move_duration_range: tuple[int, int] = (50, 1500),
+        action_duration_range: tuple[int, int] = (1, 100),
+        button: str = "left",
+    ) -> None:
 
         self.region = region
         self.sleep_range = sleep_range
@@ -60,7 +62,7 @@ class Mouse:
         self.action_duration_range = action_duration_range
         self.button = button
 
-    def click_coord(self, move_away=False):
+    def click_coord(self, move_away: bool = False) -> bool:
         """
         Clicks within the provided coordinates. If width and height are
         both 0, then this function will click in the exact same location
@@ -80,7 +82,7 @@ class Mouse:
             self.moverel()
         return True
 
-    def move_to(self):
+    def move_to(self) -> bool:
         """
         Moves the mouse pointer to the specified coordinates. Coordinates
         are based on the display's dimensions. Units are in pixels. Uses
@@ -98,7 +100,7 @@ class Mouse:
         hc.move((x_coord, y_coord), self.move_duration())
         return True
 
-    def moverel(self):
+    def moverel(self) -> bool:
         """
         Moves the mouse in a random direction, relative to its current
         position. Uses left/width to determinie the minimum and maximum
@@ -135,7 +137,7 @@ class Mouse:
         hc.move((x_destination, y_destination), self.move_duration())
         return True
 
-    def move_duration(self):
+    def move_duration(self) -> float:
         """
         Randomizes the amount of time the mouse cursor takes to move to
         a new location.
@@ -150,7 +152,7 @@ class Mouse:
         )
         return move_duration_var
 
-    def click(self, hold=False):
+    def click(self, hold: bool = False) -> bool:
         """
         Clicks the left or right mouse button, waiting both before and
         after for a randomized period of time.
@@ -205,16 +207,16 @@ class Keyboard:
 
     def __init__(
         self,
-        sleep_range=(0, 500, 0, 500),
-        action_duration_range=(1, 100),
-        log_keys=True,
+        sleep_range: tuple[int, int, int, int] = (0, 500, 0, 500),
+        action_duration_range: tuple[int, int] = (1, 100),
+        log_keys: bool = True,
     ):
 
         self.sleep_range = sleep_range
         self.action_duration_range = action_duration_range
         self.log = log_keys
 
-    def typewriter(self, message):
+    def typewriter(self, message: str) -> bool:
         """
         Types out the specified message with a randomized delay between
         each key press.
@@ -229,7 +231,7 @@ class Keyboard:
             self.keypress(key)
         return True
 
-    def keypress(self, key):
+    def keypress(self, key: str) -> bool:
         """
         Presses the specified key.
 

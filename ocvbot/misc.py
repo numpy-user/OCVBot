@@ -11,7 +11,7 @@ import time
 from ocvbot import startup as start
 
 
-def rand_seconds(min_seconds=0, max_seconds=100):
+def rand_seconds(min_seconds: int = 0, max_seconds: int = 100) -> float:
     """
     Gets a random integer between two values. Input arguments are in
     miliseconds but output is in seconds. For example, if this function
@@ -31,7 +31,7 @@ def rand_seconds(min_seconds=0, max_seconds=100):
     return randval
 
 
-def sleep_rand(sleep_min=0, sleep_max=100):
+def sleep_rand(sleep_min: int = 0, sleep_max: int = 100) -> bool:
     """
     Does nothing for a random period of time. Input arguments are in
     miliseconds.
@@ -49,7 +49,7 @@ def sleep_rand(sleep_min=0, sleep_max=100):
     return True
 
 
-def session_duration(human_readable=False):
+def session_duration(human_readable: bool = False) -> int:
     """
     Determines how many seconds the current session has been running.
     This timer is reset when the bot logs in or when the bot restarts.
@@ -77,8 +77,10 @@ def session_duration(human_readable=False):
 
 
 def sleep_rand_roll(
-    chance_range=(10, 20), sleep_range=(10000, 60000), second_chance_range=(10, 20)
-):
+    chance_range: tuple[int, int] = (10, 20),
+    sleep_range: tuple[int, int] = (10000, 60000),
+    second_chance_range: tuple[int, int] = (10, 20),
+) -> bool:
     """
     Roll for a chance to do nothing for the specified period of time.
 

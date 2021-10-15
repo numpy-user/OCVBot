@@ -11,7 +11,9 @@ import pyautogui as pag
 from ocvbot import input, misc, startup as start
 
 
-def haystack_locate(needle, haystack, grayscale=False, conf=0.95):
+def haystack_locate(
+    needle: str, haystack: str, grayscale: int = False, conf: float = 0.95
+):
     """
     Finds the coordinates of a needle image within a haystack image.
 
@@ -36,7 +38,11 @@ def haystack_locate(needle, haystack, grayscale=False, conf=0.95):
     return False
 
 
-def wait_for_needle_list(loops, needle_list, sleep_range):
+def wait_for_needle_list(
+    loops: int,
+    needle_list: list[tuple[str, tuple[int, int, int, int]]],
+    sleep_range: tuple[int, int],
+):
     """
     Works like vision.wait_for_needle(), except multiple needles can be
     searched for simultaneously.
@@ -112,13 +118,13 @@ class Vision:
 
     def __init__(
         self,
-        region,
-        needle,
-        loctype="regular",
-        conf=0.95,
-        loop_num=10,
-        loop_sleep_range=(0, 100),
-        grayscale=False,
+        region: tuple[int, int, int, int],
+        needle: str,
+        loctype: str = "regular",
+        conf: float = 0.95,
+        loop_num: int = 10,
+        loop_sleep_range: tuple[int, int] = (0, 100),
+        grayscale: bool = False,
     ):
         self.grayscale = grayscale
         self.region = region
@@ -175,7 +181,7 @@ class Vision:
 
         raise RuntimeError("Incorrect mlocate function parameters!")
 
-    def wait_for_needle(self, get_tuple=False):
+    def wait_for_needle(self, get_tuple: bool = False):
         """
         Repeatedly searches within the self.ltwh coordinates for the needle.
 
@@ -217,11 +223,11 @@ class Vision:
 
     def click_needle(
         self,
-        sleep_range=(50, 200, 50, 200),
-        move_duration_range=(50, 1500),
-        button="left",
-        move_away=False,
-    ):
+        sleep_range: tuple[int, int, int, int] = (50, 200, 50, 200),
+        move_duration_range: tuple[int, int] = (50, 1500),
+        button: str = "left",
+        move_away: bool = False,
+    ) -> bool:
         """
         Moves the mouse to the provided needle image and clicks on
         it.
@@ -272,7 +278,13 @@ class Vision:
 
 
 def orient(
-    region=(0, 0, start.DISPLAY_WIDTH, start.DISPLAY_HEIGHT), launch_client=False
+    region: tuple[int, int, int, int] = (
+        0,
+        0,
+        start.DISPLAY_WIDTH,
+        start.DISPLAY_HEIGHT,
+    ),
+    launch_client: bool = False,
 ):
     """
     Looks for an icon to orient the client. If it's found, use its
@@ -334,7 +346,6 @@ def orient(
             orient(region=region, launch_client=False)
         log.critical("Could not find client! %s", launch_client)
         raise Exception("Could not find client!")
-
     else:
         raise Exception("Could not find client!")
 

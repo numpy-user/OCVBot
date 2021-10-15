@@ -33,7 +33,7 @@ sys.path.insert(1, SCRIPTPATH)
 from ocvbot import skills, behavior, vision as vis, startup as start, misc
 
 
-def miner(scenario):
+def miner(scenario: str) -> None:
     """
     Script for mining rocks in a handful of locations. Banking support is
     limited.
@@ -146,7 +146,7 @@ def miner(scenario):
             behavior.logout_break_range()
 
 
-def spellcaster(scenario):
+def spellcaster(scenario: str) -> None:
     """
     Script for training magic, either with combat spells or alchemy.
 
@@ -221,7 +221,7 @@ def spellcaster(scenario):
         raise Exception("Scenario not supported!")
 
 
-def chef(item, location):
+def chef(item: str, location: str) -> None:
     """
     Cooks a given item at a given location.
 

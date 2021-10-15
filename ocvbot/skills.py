@@ -8,7 +8,7 @@ import logging as log
 from ocvbot import behavior, vision as vis, misc, startup as start, input
 
 
-def wait_for_level_up(wait_time):
+def wait_for_level_up(wait_time: int):
     """
     Waits the specified number of seconds for a level-up message to
     appear in the chat menu.
@@ -52,12 +52,12 @@ class Cooking:
 
     """
 
-    def __init__(self, item_inv, item_bank, heat_source):
+    def __init__(self, item_inv: str, item_bank: str, heat_source: str):
         self.item_inv = item_inv
         self.item_bank = item_bank
         self.heat_source = heat_source
 
-    def cook_item(self):
+    def cook_item(self) -> bool:
         """
         Cooks all instances of the given food in the player's inventory.
 
@@ -161,13 +161,13 @@ class Magic:
 
     def __init__(
         self,
-        spell,
-        target,
-        conf,
+        spell: str,
+        target: str,
+        conf: float,
         region,
-        inventory=False,
-        move_duration_range=(10, 1000),
-        logout=False,
+        inventory: bool = False,
+        move_duration_range: tuple[int, int] = (10, 1000),
+        logout: bool = False,
     ):
         self.spell = spell
         self.target = target
@@ -177,7 +177,7 @@ class Magic:
         self.move_duration_range = move_duration_range
         self.logout = logout
 
-    def _select_spell(self):
+    def _select_spell(self) -> bool:
         """
         Activate the desired spell.
 
@@ -204,7 +204,7 @@ class Magic:
                 return True
         return False
 
-    def _select_target(self):
+    def _select_target(self) -> bool:
         """
         Attempt to find the target to cast the spell on. Can be either a
         monster in the game world or an item in the inventory.
@@ -239,7 +239,7 @@ class Magic:
                 return True
         return False
 
-    def cast_spell(self):
+    def cast_spell(self) -> bool:
         """
         Cast a spell at a target.
 
@@ -426,7 +426,7 @@ class Mining:
                         log.info("Timed out waiting for mining to finish.")
         return True
 
-    def drop_inv_ore(self):
+    def drop_inv_ore(self) -> bool:
         """
         Drops ore and optionally gems from inventory.
 
@@ -452,3 +452,4 @@ class Mining:
             if drop_item_bool is True:
                 behavior.drop_item(item=str(path), track=False)
                 return True
+        return False
