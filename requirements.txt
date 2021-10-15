@@ -24,4 +24,5 @@ requests
 scikit-build
 setuptools
 snowballstemmer
+types-PyYAML
 wheel
