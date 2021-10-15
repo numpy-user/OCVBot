@@ -33,8 +33,7 @@ def wait_for_level_up(wait_time: int):
 
     if level_up is True:
         return True
-    else:
-        return False
+    return False
 
 
 class Cooking:
@@ -253,9 +252,8 @@ class Magic:
                 log.critical("Out of runes! Logging out in 10-20 seconds!")
                 misc.sleep_rand(10000, 20000)
                 behavior.logout()
-            else:
-                log.critical("All done!")
-                return False
+            log.critical("All done!")
+            return False
 
         target_selected = self._select_target()
         if target_selected is False:
@@ -263,9 +261,8 @@ class Magic:
                 log.critical("Unable to find target! Logging out in 10-20 seconds!")
                 misc.sleep_rand(10000, 20000)
                 behavior.logout()
-            else:
-                log.critical("All done!")
-                return False
+            log.critical("All done!")
+            return False
 
         # Wait for spell to be cast.
         misc.sleep_rand(

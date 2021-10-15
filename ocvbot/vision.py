@@ -161,9 +161,8 @@ class Vision:
             if needle_coords is not None:
                 log.debug("Found regular image %s, %s", needle, needle_coords)
                 return needle_coords
-            else:
-                log.debug("Cannot find regular image %s, conf=%s", needle, self.conf)
-                return False
+            log.debug("Cannot find regular image %s, conf=%s", needle, self.conf)
+            return False
 
         elif self.loctype == "center":
             needle_coords = pag.locateCenterOnScreen(
@@ -175,9 +174,8 @@ class Vision:
             if needle_coords is not None:
                 log.debug("Found center of image %s, %s", needle, needle_coords)
                 return needle_coords
-            else:
-                log.debug("Cannot find center of image %s, conf=%s", needle, self.conf)
-                return False
+            log.debug("Cannot find center of image %s, conf=%s", needle, self.conf)
+            return False
 
         raise RuntimeError("Incorrect mlocate function parameters!")
 
@@ -212,11 +210,9 @@ class Vision:
                 log.debug("Found %s after trying %s times.", self.needle, tries)
                 if get_tuple is True:
                     return needle_coords
-                else:
-                    return True
-            else:
-                log.debug("Cannot find %s, tried %s times.", self.needle, tries)
-                misc.sleep_rand(self.loop_sleep_range[0], self.loop_sleep_range[1])
+                return True
+            log.debug("Cannot find %s, tried %s times.", self.needle, tries)
+            misc.sleep_rand(self.loop_sleep_range[0], self.loop_sleep_range[1])
 
         log.debug("Timed out looking for %s", self.needle)
         return False
@@ -272,9 +268,7 @@ class Vision:
                     region=(25, 25, 100, 100), move_duration_range=(50, 200)
                 ).moverel()
             return True
-
-        else:
-            return False
+        return False
 
 
 def orient(
@@ -344,10 +338,8 @@ def orient(
         for _ in range(1, 10):
             misc.sleep_rand(8000, 15000)
             orient(region=region, launch_client=False)
-        log.critical("Could not find client! %s", launch_client)
-        raise Exception("Could not find client!")
-    else:
-        raise Exception("Could not find client!")
+    log.critical("Could not find client! %s", launch_client)
+    raise Exception("Could not find client!")
 
 
 # ----------------------------------------------------------------------

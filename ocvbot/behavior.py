@@ -651,6 +651,7 @@ def bank_settings_check(setting, value) -> bool:
     if value_already_set is True:
         log.debug("%s is already set to %s", setting, value)
         return True
+    return False
 
     # If not, try a total of 5 times to get the setting to the desired
     #   value.
@@ -677,6 +678,7 @@ def bank_settings_check(setting, value) -> bool:
         if value_set is True:
             log.debug("%s has been set to %s", setting, value)
             return True
+        return False
 
 
 def open_bank(direction) -> bool:

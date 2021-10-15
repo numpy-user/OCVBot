@@ -71,9 +71,8 @@ def session_duration(human_readable: bool = False) -> int:
 
     if human_readable is False:
         return elapsed_time_seconds
-    else:
-        elapsed_time_human_readable = datetime.timedelta(seconds=elapsed_time_seconds)
-        return elapsed_time_human_readable
+    elapsed_time_human_readable = datetime.timedelta(seconds=elapsed_time_seconds)
+    return elapsed_time_human_readable
 
 
 def sleep_rand_roll(
