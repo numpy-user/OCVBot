@@ -4,16 +4,16 @@ Contains non-skilling player behaviors.
 
 """
 import logging as log
+import pathlib
 import random as rand
 import sys
 import time
 
 import cv2
 import numpy as np
-import pathlib
 import pyautogui as pag
 
-from ocvbot import input, vision as vis, startup as start, vision, misc
+from ocvbot import input, vision as vis, startup as start, misc
 
 
 # TODO
@@ -66,9 +66,9 @@ def login_basic(
     """
     # Remove line breaks from credential files to make logging in more
     #   predictable.
-    username = open(username_file, "r").read()
+    username = open(username_file, "r", encoding="utf-8").read()
     username = str(username.replace("\n", ""))
-    password = open(password_file, "r").read()
+    password = open(password_file, "r", encoding="utf-8").read()
     password = str(password.replace("\n", ""))
 
     for _ in range(1, 3):
@@ -991,7 +991,7 @@ def ocv_find_location(haystack) -> tuple[int, int, int, int]:
         needle within the haystack.
 
     """
-    needle = pag.screenshot(region=vision.minimap_slice)
+    needle = pag.screenshot(region=vis.minimap_slice)
     needle = cv2.cvtColor(np.array(needle), cv2.COLOR_RGB2GRAY)
     w, h = needle.shape[::-1]
     result = cv2.matchTemplate(haystack, needle, cv2.TM_CCOEFF_NORMED)
