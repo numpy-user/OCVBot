@@ -213,7 +213,6 @@ class Magic:
             otherwise.
 
         """
-
         for _ in range(1, 5):
             target = vis.Vision(
                 needle=self.target, region=self.region, loop_num=10, conf=self.conf
@@ -296,7 +295,7 @@ class Mining:
 
     """
 
-    # Create a list of tuples to determine which items to drop
+    # Create a list of tuples to determine which items to drop.
     drop_items = [
         (
             bool(start.config["mining"]["drop_sapphire"]),
@@ -341,6 +340,8 @@ class Mining:
         """
         # TODO: Count the number of items in the inventory to make sure
         #   the function never receives an "inventory is already full" message.
+
+        # TODO: Break function into smaller pieces.
 
         # Make sure inventory is selected.
         behavior.open_side_stone("inventory")
