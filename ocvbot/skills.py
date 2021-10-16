@@ -27,7 +27,7 @@ def wait_for_level_up(wait_time: int):
         Returns False otherwise.
 
     """
-    log.info("Checking for level-up")
+    log.debug("Checking for level-up")
     level_up = vis.Vision(
         region=vis.chat_menu,
         needle="./needles/chat-menu/level-up.png",
@@ -69,6 +69,7 @@ class Cooking:
             other cases.
 
         """
+        log.info("Attempting to cook food")
         behavior.open_side_stone("inventory")
         # Select the raw food in the inventory.
         # Confidence must be higher than normal since raw food is very
@@ -77,7 +78,7 @@ class Cooking:
             region=vis.client, needle=self.item_inv, loop_num=3, conf=0.99
         ).click_needle()
         if item_selected is False:
-            log.error("Unable to find item!")
+            log.error("Unable to find item %s!", self.item_inv)
             return False
 
         # Select the range or fire.
@@ -89,7 +90,7 @@ class Cooking:
             conf=0.85,
         ).click_needle()
         if heat_source_selected is False:
-            log.error("Unable to find heat source!")
+            log.error("Unable to find heat source %s!", self.heat_source)
             return False
 
         misc.sleep_rand_roll(chance_range=(15, 35), sleep_range=(1000, 10000))
@@ -128,6 +129,7 @@ class Cooking:
                 loop_num=1,
             ).wait_for_needle()
             if cooking_done is True:
+                log.info("Cooking is done.")
                 break
 
         misc.sleep_rand_roll(chance_range=(15, 35), sleep_range=(20000, 120000))
@@ -252,19 +254,19 @@ class Magic:
         spell_selected = self._select_spell()
         if spell_selected is False:
             if self.logout is True:
-                log.critical("Out of runes! Logging out in 10-20 seconds!")
+                log.warning("Out of runes! Logging out in 10-20 seconds!")
                 misc.sleep_rand(10000, 20000)
                 behavior.logout()
-            log.critical("All done!")
+            log.warning("All done!")
             return False
 
         target_selected = self._select_target()
         if target_selected is False:
             if self.logout is True:
-                log.critical("Unable to find target! Logging out in 10-20 seconds!")
+                log.error("Unable to find target! Logging out in 10-20 seconds!")
                 misc.sleep_rand(10000, 20000)
                 behavior.logout()
-            log.critical("All done!")
+            log.warning("All done!")
             return False
 
         # Wait for spell to be cast.

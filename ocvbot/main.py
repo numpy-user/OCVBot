@@ -50,6 +50,7 @@ def miner(scenario: str) -> None:
         Raises an exception if an unsupported scenario is passed.
 
     """
+    log.info("Launching miner script with scenario %s.", scenario)
     # Determine if the player will be dropping the ore or banking it.
     # This var is forced to True in scenarios where banking is not
     #   supported.
@@ -159,6 +160,7 @@ def spellcaster(scenario: str) -> None:
         Raises an exception if an unsupported scenario is passed.
 
     """
+    log.info("Launching spellcaster script with scenario %s.", scenario)
     # TODO: Ensure spellbook side-stone is open before starting loop.
     if scenario == "curse-varrock-castle":
         spell = "./needles/side-stones/spellbook/curse.png"
@@ -231,6 +233,7 @@ def chef(item: str, location: str) -> None:
     Returns:
 
     """
+    log.info("Launching chef script with item %s and location %s.", item, location)
     # Must have staff of water equipped!
     # TODO: In Al Kharid, deal with the door to the house with the range
     #   possibly being shut.

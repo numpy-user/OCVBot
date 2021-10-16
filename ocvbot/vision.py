@@ -319,6 +319,7 @@ def orient(
         conf=0.8,
     ).wait_for_needle(get_tuple=True)
     if isinstance(logged_in, tuple) is True:
+        log.info("Client is logged in")
         return "logged_in", logged_in
 
     # If the client is not logged in, check if it's logged out.
@@ -330,6 +331,7 @@ def orient(
         conf=0.8,
     ).wait_for_needle(get_tuple=True)
     if isinstance(logged_out, tuple) is True:
+        log.info("Client is logged out")
         return "logged_out", logged_out
 
     if launch_client is True:

@@ -129,7 +129,7 @@ def login_basic(
                 input.Keyboard().keypress(key="enter")
                 return True
 
-    log.error("Could perform login!")
+    log.critical("Could perform login!")
     return False
 
 
@@ -161,6 +161,7 @@ def login_full(
         Returns True if the login was successful.
 
     """
+    log.info("Attempting to login.")
     for _ in range(1, 3):
 
         login = login_basic(username_file, password_file)
@@ -212,7 +213,7 @@ def login_full(
         ).wait_for_needle()
         if invalid_credentials is True:
             raise Exception("Invalid user credentials!")
-        log.error("Cannot find postlogin screen!")
+        log.critical("Cannot find postlogin screen!")
 
     raise Exception("Unable to login!")
 
@@ -233,6 +234,7 @@ def logout() -> bool:
         log.warning("Client already logged out!")
         return True
 
+    log.info("Attempting to logout.")
     open_side_stone("logout")
 
     logout_button_world_switcher = False
@@ -473,8 +475,7 @@ def open_side_stone(side_stone) -> bool:
     if stone_open is True:
         log.debug("Side stone already open.")
         return True
-    else:
-        log.debug("Opening side stone...")
+    log.debug("Opening side stone...")
 
     # Try a total of 5 times to open the desired side stone menu using
     #   the mouse.
@@ -531,7 +532,7 @@ def human_behavior_rand(chance) -> None:
 
     """
     roll = rand.randint(1, chance)
-    log.info("Human behavior rolled %s", roll)
+    log.debug("Human behavior rolled %s", roll)
     if roll == chance:
         log.info("Attempting to act human.")
         roll = rand.randint(1, 2)
@@ -708,6 +709,7 @@ def open_bank(direction) -> bool:
         return True
 
     # TODO: Deal with bank PINs.
+    log.info("Attempting to open bank.")
     for _ in range(1, 10):
         one_tile = vis.Vision(
             region=vis.game_screen,
