@@ -5,10 +5,9 @@
 
 # NOTE: Most values don't require quotes. This file follows standard YAML syntax.
 
-# General usage:
+#  Usage:
 #
 # 1. Set the value of `main.script`.
-#
 # 2. If `main.script` was set to `magic`, for example, edit the values of the
 #    `magic` section below accordingly.
 
@@ -17,7 +16,7 @@ main:
   # Available options:
   #   `magic`
   #   `mining`
-  #   `chef` -- TODO
+  #   `chef`
   script: magic
 
   # Path to your user credential files. This can be a relative
@@ -54,14 +53,9 @@ main:
 mining:
   # Available options:
   #   `lumbridge-mine`
-  #      Mines copper in Lumbridge Swamp.
-  #      Banking is NOT supported.
-  #      See `docs/client-configuration/mining-lumbridge-swamp`.
+  #      See `docs/scenarios/mining-copper-lumbridge-swamp`
   #   `varrock-east-mine`
-  #      Mines iron in Varrock East mine.
-  #      Banking supported. The user's bank PIN must have already been entered
-  #        before using the bank.
-  #      See `docs/client-configuration/mining-varrock-east`
+  #      See `docs/scenarios/mining-copper-varrock-east`
   location: varrock-east-mine
 
   # These settings control whether the mining script should drop precious
@@ -83,13 +77,9 @@ mining:
 magic:
   # Available options:
   #   `curse-varrock-castle`
-  #      Casts curse on the Monk of Zamorak in Varrock Castle.
-  #      NOTE: Your spellbook tab must be open before you start!
-  #      See `docs/client-configuration/magic-curse`.
+  #      See `docs/scenarios/magic-curse-varrock-castle`.
   #   `high-alchemy`
-  #      Casts High Alchemy on all noted items in the LEFT half of the
-  #        player's inventory. This means you should keep all your runes
-  #        and valuable items on the RIGHT half of your inventory.
+  #      See `docs/scenarios/magic-high-alchemy`.
   scenario: curse-varrock-castle
   # Whether to logout once alching has completed.
   logout: False
