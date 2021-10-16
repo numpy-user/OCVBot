@@ -26,7 +26,7 @@ def kill_feh() -> None:
 
     """
     for proc in psutil.process_iter():
-        if proc.name() == 'feh':
+        if proc.name() == "feh":
             proc.kill()
 
 
@@ -52,7 +52,18 @@ def feh(test_name, test_type, test_number, directory, interval=0.1) -> None:
     # Some waiting is required after opening images before template matching
     #   is reliable.
     time.sleep(interval)
-    test = sub.Popen(['feh', directory + 'test_' + test_name + '/' + test_type
-                      + '/test' + test_number + '/'])
+    test = sub.Popen(
+        [
+            "feh",
+            directory
+            + "test_"
+            + test_name
+            + "/"
+            + test_type
+            + "/test"
+            + test_number
+            + "/",
+        ]
+    )
     print("TEST IS ", test)
     time.sleep(interval)
