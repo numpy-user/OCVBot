@@ -8,8 +8,6 @@ import random as rand
 import time
 
 import pyautogui as pag
-
-# Import the config file.
 from ocvbot import config
 
 # Constants ------------------------------------------------------------

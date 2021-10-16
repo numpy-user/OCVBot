@@ -7,8 +7,9 @@ import logging as log
 import pathlib
 
 import pyautogui as pag
-
-from ocvbot import input, misc, startup as start
+from ocvbot import input
+from ocvbot import misc
+from ocvbot import startup as start
 
 
 def haystack_locate(

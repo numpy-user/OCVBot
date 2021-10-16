@@ -13,7 +13,10 @@ import cv2
 import numpy as np
 import pyautogui as pag
 
-from ocvbot import input, vision as vis, startup as start, misc
+from ocvbot import input
+from ocvbot import misc
+from ocvbot import startup as start
+from ocvbot import vision as vis
 
 
 # TODO

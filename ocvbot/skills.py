@@ -5,7 +5,11 @@ Contains all functions related to training skills.
 """
 import logging as log
 
-from ocvbot import behavior, vision as vis, misc, startup as start, input
+from ocvbot import behavior
+from ocvbot import input
+from ocvbot import misc
+from ocvbot import startup as start
+from ocvbot import vision as vis
 
 
 def wait_for_level_up(wait_time: int):

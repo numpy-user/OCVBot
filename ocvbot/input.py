@@ -8,7 +8,6 @@ import random as rand
 
 import pyautogui as pag
 import pyclick as pyc
-
 from ocvbot import misc
 
 # initialize HumanClicker object
