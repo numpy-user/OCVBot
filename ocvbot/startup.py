@@ -26,6 +26,10 @@ INV_HEIGHT = 262
 INV_HALF_WIDTH = round((INV_WIDTH / 2) + 5)
 INV_HALF_HEIGHT = round(INV_HEIGHT / 2)
 
+# The banking window, minus tabs and surrounding GUI elements.
+BANK_ITEMS_WINDOW_WIDTH = 375
+BANK_ITEMS_WINDOW_HEIGHT = 215
+
 # The player's inventory plus the top and bottom rows of side stones.
 SIDE_STONES_WIDTH = 249
 SIDE_STONES_HEIGHT = 366

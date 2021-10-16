@@ -255,7 +255,7 @@ def chef(item: str, location: str) -> None:
         # TODO: If item cannot be found in the bank, click the down arrow
         #   in the bank window until item is found.
         raw_food_withdraw = vis.Vision(
-            region=vis.game_screen, needle=item_bank, loop_num=3, conf=0.98
+            region=vis.bank_items_window, needle=item_bank, loop_num=3, conf=0.98
         ).click_needle()
         if raw_food_withdraw is False:
             raise Exception("Cannot find raw food in bank!")

@@ -412,6 +412,18 @@ game_screen = (
     start.GAME_SCREEN_HEIGHT,
 )
 
+# Banking window, minus the tabs at the top and other surrounding elements.
+# This is done to prevent the bot from attempting to withdrawal items by
+#   clicking on their tab icons
+bank_items_window_left = game_screen_left + 68
+bank_items_window_top = game_screen_top + 77
+bank_items_window = (
+    bank_items_window_left,
+    bank_items_window_top,
+    start.BANK_ITEMS_WINDOW_WIDTH,
+    start.BANK_ITEMS_WINDOW_HEIGHT,
+)
+
 # The player's inventory, plus the top and bottom "side stone" tabs that
 #   open all the different menus.
 side_stones_left = client_left + 516

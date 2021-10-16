@@ -200,6 +200,21 @@ def main() -> bool:
             + '" ocvbot_game_screen.png'
         )
 
+        log.info("Creating ocvbot_bank_items_window.png")
+        os.system(
+            "convert /tmp/haystack.tmp.png "
+            "-fill red "
+            '-draw "rectangle '
+            + str(vis.bank_items_window_left)
+            + " "
+            + str(vis.bank_items_window_top)
+            + " "
+            + str(vis.bank_items_window_left + start.BANK_ITEMS_WINDOW_WIDTH)
+            + " "
+            + str(vis.bank_items_window_top + start.BANK_ITEMS_WINDOW_HEIGHT)
+            + '" ocvbot_bank_items_window.png'
+        )
+
         log.info("Creating ocvbot_side_stones.png")
         os.system(
             "convert /tmp/haystack.tmp.png "
