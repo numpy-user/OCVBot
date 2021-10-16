@@ -28,4 +28,15 @@ tools/osrs.dev.sh
 **/credentials
 !**/credentials/README.md
 **/ocvbot/config.yaml
-**/tools/login_*.py
+
+ocvbot/inv_bottom_half.png
+ocvbot/ocvbot_bank_items_window.png
+ocvbot/ocvbot_chat_menu_recent.png
+ocvbot/ocvbot_client.png
+ocvbot/ocvbot_game_screen.png
+ocvbot/ocvbot_inv.png
+ocvbot/ocvbot_inv_left_half.png
+ocvbot/ocvbot_inv_right_half.png
+ocvbot/ocvbot_minimap.png
+ocvbot/ocvbot_minimap_slice.png
+ocvbot/ocvbot_side_stones.png
