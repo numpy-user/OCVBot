@@ -44,10 +44,22 @@ main:
   #   bot is being run.
   # Available options:
   #   `CRITICAL`
+  #      Logs for unrecoverable, catastrophic issues. Causes the bot to
+  #      immediately exit.
   #   `ERROR`
+  #      Logs for serious but recoverable issues that likely indicate a
+  #      problem with your configuration or the bot itself. Most issues
+  #      that cause ERROR-level logs will force the bot to logout as a
+  #      safety measure.
   #   `WARNING`
+  #      Logs for recoverable minor issues or important notifications that may
+  #      warrant further investigation.
   #   `INFO`
+  #      Logs for providing a general description of what the bot is attempting
+  #      to do. This is the recommended log level in most cases.
   #   `DEBUG`
+  #      Logs for developing new behaviors or for troubleshooting unexpected
+  #      behavior.
   log_level: INFO
 
 mining:
