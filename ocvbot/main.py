@@ -13,7 +13,7 @@ rigid scenarios to which the user must adhere. The `chef` script, for
 example, allows the user to specify both the item to be cooked as well as
 the location to use.
 
-See `/docs/client-configuration/` for the required client
+See `/docs/scenarios/` for the required client
 configuration settings in each scenario.
 
 """
@@ -42,9 +42,8 @@ def miner(scenario: str) -> None:
         `lumbridge-mine` = Mines copper in Lumbridge Swamp.
         `varrock-east-mine` = Mines iron in Varrock East mine. Banking
                               supported.
-        `al-kharid-mine` = Mines iron in Al Kharid mine.
 
-        See `/docs/client-configuration/` for the required client
+        See `/docs/scenarios/` for the required client
         configuration settings for each scenario.
 
     Raises:

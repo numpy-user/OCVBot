@@ -97,7 +97,11 @@ magic:
   min_cast_delay: 0
   max_cast_delay: 500
 
-# TODO
 chef:
+  # Available options:
+  #   `raw-anchovies`
   item: raw-anchovies
+  # Available options:
+  #   `al-kharid`
+  #      See `docs/scenarios/cooking-al-kharid`.
   location: al-kharid

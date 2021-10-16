@@ -51,8 +51,8 @@ cp "ocvbot/config.yaml.example" "ocvbot/config.yaml"
 
 7. Read and edit `ocvbot/config.yaml` with your desired configuration settings.
 
-8. Check `docs/client-configuration` for the proper client configuration
-   settings. Configurations in the `common/` directory are shared by all
+8. Check `docs/scenarios` for the proper client configuration
+   settings and information about each script. Configurations in the `common/` directory are shared by all
    scripts. Configurations in all other directories are unique to that script
    only.
 
@@ -62,7 +62,7 @@ cp "ocvbot/config.yaml.example" "ocvbot/config.yaml"
 ./tools/osrs.sh
 ```
 
-10. Adjust your client to match the screenshots in `docs/client-configuration`.
+10. Adjust your client to match the screenshots in `docs/scenarios`.
     Make sure your character is in the correct starting position before running
     the bot. Third-party clients like Runelite have not been tested.
 
