@@ -26,10 +26,10 @@ Optional positional arguments:
 """
 import logging as log
 import os
-import time
-import sys
-
 import pathlib
+import sys
+import time
+
 import pyautogui as pag
 
 # Ensure ocvbot files are added to sys.path.
@@ -60,7 +60,7 @@ else:
 
 def pngcrush() -> None:
     log.info("Compressing screenshot...")
-    os.system("pngcrush -s /tmp/haystack.tmp2.png /tmp/haystack.tmp.png 2>/dev/null")
+    os.system("pngcrush -ow ./haystack.tmp.png")
 
 
 def main() -> bool:
@@ -72,11 +72,10 @@ def main() -> bool:
     """
     log.info("Initializing...")
     # Clean up from any previous runs, otherwise the function will break.
-    for file in ("/tmp/haystack.tmp.png", "/tmp/haystack.tmp2.png"):
-        try:
-            os.remove(file)
-        except FileNotFoundError:
-            pass
+    try:
+        os.remove("./haystack.tmp.png")
+    except FileNotFoundError:
+        pass
 
     client_status = vis.orient()[0]
 
@@ -85,26 +84,26 @@ def main() -> bool:
         time.sleep(DELAY)
 
     if DEBUG is False:
-        pag.screenshot("/tmp/haystack.tmp2.png", region=vis.client)
+        pag.screenshot("./haystack.tmp.png", region=vis.client)
         pngcrush()
 
         if client_status == "logged_in":
             # If the client is logged in, censor the player's username
             #   by drawing a black rectangle over it with ImageMagick.
             os.system(
-                'convert /tmp/haystack.tmp.png -fill black -draw "rectangle 7 458 190 473" '
+                'convert ./haystack.tmp.png -fill black -draw "rectangle 7 458 190 473" '
                 '"$(pwd)/haystack_$(date +%Y-%m-%d_%H:%M:%S).png"'
             )
         elif client_status == "logged_out":
             os.system(
-                'mv -- "/tmp/haystack.tmp2.png" '
+                'mv -- "./haystack.tmp.png" '
                 '"$(pwd)/haystack_$(date +%Y-%m-%d_%H:%M:%S).png"'
             )
         else:
             raise Exception("Could not interpret client_status var!")
 
     else:
-        pag.screenshot("/tmp/haystack.tmp2.png", region=vis.display)
+        pag.screenshot("./haystack.tmp.png", region=vis.display)
         pngcrush()
 
         # Import all the coordinate spaces to overlay onto the screenshot.
@@ -112,7 +111,7 @@ def main() -> bool:
         #   overlap.
         log.info("Creating ocvbot_client.png")
         os.system(
-            "convert /tmp/haystack.tmp.png "
+            "convert ./haystack.tmp.png "
             "-fill red "
             '-draw "rectangle '
             + str(vis.client_left)
@@ -127,7 +126,7 @@ def main() -> bool:
 
         log.info("Creating ocvbot_inv.png")
         os.system(
-            "convert /tmp/haystack.tmp.png "
+            "convert ./haystack.tmp.png "
             "-fill red "
             '-draw "rectangle '
             + str(vis.inv_left)
@@ -142,7 +141,7 @@ def main() -> bool:
 
         log.info("Creating inv_bottom_half.png")
         os.system(
-            "convert /tmp/haystack.tmp.png "
+            "convert ./haystack.tmp.png "
             "-fill red "
             '-draw "rectangle '
             + str(vis.inv_bottom_left)
@@ -157,7 +156,7 @@ def main() -> bool:
 
         log.info("Creating ocvbot_inv_right_half.png")
         os.system(
-            "convert /tmp/haystack.tmp.png "
+            "convert ./haystack.tmp.png "
             "-fill red "
             '-draw "rectangle '
             + str(vis.inv_right_half_left)
@@ -172,7 +171,7 @@ def main() -> bool:
 
         log.info("Creating ocvbot_inv_left_half.png")
         os.system(
-            "convert /tmp/haystack.tmp.png "
+            "convert ./haystack.tmp.png "
             "-fill red "
             '-draw "rectangle '
             + str(vis.inv_left_half_left)
@@ -187,7 +186,7 @@ def main() -> bool:
 
         log.info("Creating ocvbot_game_screen.png")
         os.system(
-            "convert /tmp/haystack.tmp.png "
+            "convert ./haystack.tmp.png "
             "-fill red "
             '-draw "rectangle '
             + str(vis.game_screen_left)
@@ -202,7 +201,7 @@ def main() -> bool:
 
         log.info("Creating ocvbot_bank_items_window.png")
         os.system(
-            "convert /tmp/haystack.tmp.png "
+            "convert ./haystack.tmp.png "
             "-fill red "
             '-draw "rectangle '
             + str(vis.bank_items_window_left)
@@ -217,7 +216,7 @@ def main() -> bool:
 
         log.info("Creating ocvbot_side_stones.png")
         os.system(
-            "convert /tmp/haystack.tmp.png "
+            "convert ./haystack.tmp.png "
             "-fill red "
             '-draw "rectangle '
             + str(vis.side_stones_left)
@@ -232,7 +231,7 @@ def main() -> bool:
 
         log.info("Creating ocvbot_chat_menu.png")
         os.system(
-            "convert /tmp/haystack.tmp.png "
+            "convert ./haystack.tmp.png "
             "-fill red "
             '-draw "rectangle '
             + str(vis.chat_menu_left)
@@ -247,7 +246,7 @@ def main() -> bool:
 
         log.info("Creating ocvbot_chat_menu_recent.png")
         os.system(
-            "convert /tmp/haystack.tmp.png "
+            "convert ./haystack.tmp.png "
             "-fill red "
             '-draw "rectangle '
             + str(vis.chat_menu_recent_left)
@@ -262,7 +261,7 @@ def main() -> bool:
 
         log.info("Creating ocvbot_minimap.png")
         os.system(
-            "convert /tmp/haystack.tmp.png "
+            "convert ./haystack.tmp.png "
             "-fill red "
             '-draw "rectangle '
             + str(vis.minimap_left)
@@ -277,7 +276,7 @@ def main() -> bool:
 
         log.info("Creating ocvbot_minimap_slice.png")
         os.system(
-            "convert /tmp/haystack.tmp.png "
+            "convert ./haystack.tmp.png "
             "-fill red "
             '-draw "rectangle '
             + str(vis.minimap_slice_left)
