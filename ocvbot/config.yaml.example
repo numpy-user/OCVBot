@@ -62,6 +62,10 @@ main:
   #      behavior.
   log_level: INFO
 
+  # Whether to hold down CTRL when clicking on the minimap. This will cause
+  #   the player to run instead of walk.
+  ctrl_click_run: True
+
 mining:
   # Available options:
   #   `lumbridge-mine`

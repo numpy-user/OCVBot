@@ -960,13 +960,16 @@ def travel(param_list, haystack_map, attempts=100) -> bool:
             click_pos_x = abs(click_pos_x)
             # Holding down CTRL while clicking will cause character to
             #   run.
-            pag.keyDown("ctrl")
+
+            if start.config["main"]["ctrl_click_run"] is True:
+                pag.keyDown("ctrl")
             input.Mouse(
                 region=(click_pos_x, click_pos_y, 0, 0),
                 sleep_range=(50, 100, 100, 200),
                 move_duration_range=(0, 300),
             ).click_coord()
-            pag.keyUp("ctrl")
+            if start.config["main"]["ctrl_click_run"] is True:
+                pag.keyUp("ctrl")
             misc.sleep_rand((sleep_range[0] * 1000), (sleep_range[1] * 1000))
 
             if (
