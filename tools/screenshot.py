@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # coding=UTF-8
 """
 Simple screenshot tool for quickly capturing the OSRS client window.

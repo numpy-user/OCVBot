@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # coding=UTF-8
 """
 Quickly logs the user in. Pass a name for "user" on the command line
