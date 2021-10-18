@@ -1,6 +1,9 @@
 ## Setup
 
-**Make sure `ctrl_click_run` in your `config.yaml` is set to `False`**
+- Copy the feh config files in this directory into `~/.config/feh/`
+  ```bash
+  cp ./feh/* ~/.config/feh/
+  ```
 
 - Make sure `ctrl_click_run` in your `config.yaml` is set to `False`. This is
   required because feh can only have a single mouse binding set for the
