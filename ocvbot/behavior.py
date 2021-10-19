@@ -875,6 +875,7 @@ def travel(param_list, haystack_map, attempts=100) -> bool:
     # Loop through each waypoint.
     # TODO: Change param_list to a dictionary so parameter names can be
     #   seen when this function is called.
+    log.info("Travelling to location.")
     for params in param_list:
 
         # Break down the parameters for the current waypoint.

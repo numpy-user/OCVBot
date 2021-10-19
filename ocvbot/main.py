@@ -259,6 +259,7 @@ def chef(item: str, location: str) -> None:
         ).click_needle()
         if raw_food_withdraw is False:
             raise Exception("Cannot find raw food in bank!")
+        log.info("Withdrawing raw food.")
         # Wait for raw food to appear in inventory
         raw_food_in_inv = vis.Vision(
             region=vis.inv, needle=item_inv, loop_num=30, conf=0.99
@@ -278,6 +279,7 @@ def chef(item: str, location: str) -> None:
         # Deposit cooked food. Try multiple times if not successful on
         #   the first attempt.
         inv_full = True
+        log.info("Attempting to deposit cooked food.")
         for _ in range(1, 5):
             vis.Vision(
                 region=vis.game_screen,

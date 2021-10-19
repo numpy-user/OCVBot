@@ -69,7 +69,7 @@ class Cooking:
             other cases.
 
         """
-        log.info("Attempting to cook food")
+        log.info("Attempting to cook food.")
         behavior.open_side_stone("inventory")
         # Select the raw food in the inventory.
         # Confidence must be higher than normal since raw food is very
