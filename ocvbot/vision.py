@@ -345,6 +345,9 @@ def orient(
     raise Exception("Could not find client!")
 
 
+# TODO: add 'configure camera' function that clicks on compass, zooms in camera, and holds down up arrow
+#       only click on the compass if it isn't perfectly aligned
+
 # ----------------------------------------------------------------------
 # Setup the necessary region tuples for the Vision class and orient the client.
 # ----------------------------------------------------------------------
