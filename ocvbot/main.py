@@ -3,18 +3,14 @@
 Module for invoking main bot scripts.
 
 Most main scripts define a preset list of `scenarios` from which the user
-can choose from. Each scenario has a predetermined configuration that will
+must choose from. Each scenario has a predetermined configuration that will
 used for training that skill. For example, the `varrock-east-mine` scenario
 for the `miner` script is configured to only mine two specific iron rocks
 within Varrock East Mine.
 
-Some scripts, however, are a little more flexible and don't define any
-rigid scenarios to which the user must adhere. The `chef` script, for
-example, allows the user to specify both the item to be cooked as well as
-the location to use.
-
-See `/docs/scenarios/` for the required client
-configuration settings in each scenario.
+See `config.yaml.example` for more info.
+See `docs/scenarios/` for the required client configuration settings in
+each scenario.
 
 """
 import logging as log
