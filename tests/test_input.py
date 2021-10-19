@@ -1,7 +1,7 @@
 import pytest
 import pyautogui as pag
 
-from ocvbot import input
+from ocvbot import inputs
 
 
 move_to_params = (
@@ -23,4 +23,4 @@ def test_click_coord():
     top = 100
     width = 100
     height = 100
-    input.Mouse(left, top, width, height).click_coord()
+    inputs.Mouse(left, top, width, height).click_coord()

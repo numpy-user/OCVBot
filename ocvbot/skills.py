@@ -6,7 +6,7 @@ Contains all functions related to training skills.
 import logging as log
 
 from ocvbot import behavior
-from ocvbot import input
+from ocvbot import inputs
 from ocvbot import misc
 from ocvbot import startup as start
 from ocvbot import vision as vis
@@ -108,7 +108,7 @@ class Cooking:
             return False
 
         # Begin cooking food.
-        input.Keyboard().keypress(key="space")
+        inputs.Keyboard().keypress(key="space")
         misc.sleep_rand(3000, 5000)
 
         # Wait for either a level-up or for the player to stop cooking.

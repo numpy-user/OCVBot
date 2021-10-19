@@ -12,8 +12,7 @@ import time
 import cv2
 import numpy as np
 import pyautogui as pag
-
-from ocvbot import input
+from ocvbot import inputs
 from ocvbot import misc
 from ocvbot import startup as start
 from ocvbot import vision as vis
@@ -100,7 +99,7 @@ def login_basic(
 
             if credential_screen is True:
                 # Click to make sure the "Login" field is active.
-                input.Mouse(
+                inputs.Mouse(
                     region=(
                         vis.login_field_left,
                         vis.login_field_top,
@@ -110,11 +109,11 @@ def login_basic(
                 ).click_coord()
                 # Enter login field credentials.
                 misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
-                input.Keyboard(log_keys=False).typewriter(username)
+                inputs.Keyboard(log_keys=False).typewriter(username)
                 misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
 
                 # Click to make sure the "Password" field is active.
-                input.Mouse(
+                inputs.Mouse(
                     region=(
                         vis.pass_field_left,
                         vis.pass_field_top,
@@ -123,10 +122,10 @@ def login_basic(
                     )
                 ).click_coord()
                 # Enter password field credentials and login.
-                input.Keyboard(log_keys=False).typewriter(password)
+                inputs.Keyboard(log_keys=False).typewriter(password)
                 misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
 
-                input.Keyboard().keypress(key="enter")
+                inputs.Keyboard().keypress(key="enter")
                 return True
 
     log.critical("Could perform login!")
@@ -291,7 +290,7 @@ def logout() -> bool:
     #   and wait for the logout to complete.
     # If a logout is not detected after the first try, keep clicking
     #   on the location of the detected logout button and try again.
-    input.Mouse(region=logout_button).click_coord(move_away=True)
+    inputs.Mouse(region=logout_button).click_coord(move_away=True)
     for tries in range(5):
         logged_out = vis.Vision(
             region=vis.client,
@@ -304,7 +303,7 @@ def logout() -> bool:
             return True
         else:
             log.info("Unable to log out, trying again.")
-            input.Mouse(region=logout_button).click_coord(move_away=True)
+            inputs.Mouse(region=logout_button).click_coord(move_away=True)
 
     raise Exception("Could not logout!")
 
@@ -516,7 +515,7 @@ def check_skills() -> bool:
 
     """
     open_side_stone("skills")
-    input.Mouse(region=vis.inv).move_to()
+    inputs.Mouse(region=vis.inv).move_to()
     misc.sleep_rand(1000, 7000)
     return True
 
@@ -966,7 +965,7 @@ def travel(param_list, haystack_map, attempts=100) -> bool:
 
             if start.config["main"]["ctrl_click_run"] is True:
                 pag.keyDown("ctrl")
-            input.Mouse(
+            inputs.Mouse(
                 region=(click_pos_x, click_pos_y, 0, 0),
                 sleep_range=(50, 100, 100, 200),
                 move_duration_range=(0, 300),

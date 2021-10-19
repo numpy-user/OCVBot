@@ -14,10 +14,10 @@ import yaml
 SCRIPTPATH = str(pathlib.Path(__file__).parent.parent.absolute())
 sys.path.insert(1, SCRIPTPATH)
 
-from ocvbot import input, misc, vision as vis
+from ocvbot import inputs, misc, vision as vis
 
 # Focus the client.
-input.Mouse(region=vis.chat_menu).click_coord(move_away=True)
+inputs.Mouse(region=vis.chat_menu).click_coord(move_away=True)
 
 with open("../ocvbot/config.yaml", encoding="utf-8") as config:
     config = yaml.safe_load(config)
@@ -44,10 +44,10 @@ while True:
     key = rand.randint(1, 4)
     log.info("Hitting arrow key")
     if key == 1:
-        input.Keyboard().keypress("left")
+        inputs.Keyboard().keypress("left")
     elif key == 2:
-        input.Keyboard().keypress("right")
+        inputs.Keyboard().keypress("right")
     elif key == 3:
-        input.Keyboard().keypress("up")
+        inputs.Keyboard().keypress("up")
     elif key == 4:
-        input.Keyboard().keypress("down")
+        inputs.Keyboard().keypress("down")

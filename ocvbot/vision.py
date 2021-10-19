@@ -7,7 +7,7 @@ import logging as log
 import pathlib
 
 import pyautogui as pag
-from ocvbot import input
+from ocvbot import inputs
 from ocvbot import misc
 from ocvbot import startup as start
 
@@ -230,10 +230,10 @@ class Vision:
         it.
 
         Args:
-            sleep_range (tuple): Passed to the Mouse class in input.py,
+            sleep_range (tuple): Passed to the Mouse class in inputs.py,
                                  see its docstring for more info.
             move_duration_range (tuple): Passed to the Mouse class in
-                                         input.py, see its docstring for
+                                         inputs.py, see its docstring for
                                          more info.
             button (str): The mouse button to use when clicking on the
                           needle, default is `left`.
@@ -255,7 +255,7 @@ class Vision:
             # Randomize the location the mouse cursor will move to using
             #   the dimensions of needle image.
             # The mouse will click anywhere within the needle image.
-            input.Mouse(
+            inputs.Mouse(
                 region=needle_coords,
                 sleep_range=sleep_range,
                 move_duration_range=move_duration_range,
@@ -265,7 +265,7 @@ class Vision:
             log.debug("Clicking on %s", self.needle)
 
             if move_away is True:
-                input.Mouse(
+                inputs.Mouse(
                     region=(25, 25, 100, 100), move_duration_range=(50, 200)
                 ).moverel()
             return True
