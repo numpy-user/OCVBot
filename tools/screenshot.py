@@ -289,6 +289,10 @@ def main() -> bool:
             + str(vis.minimap_slice_top + start.MINIMAP_SLICE_HEIGHT)
             + '" ocvbot_minimap_slice.png'
         )
+    try:
+        os.remove("./haystack.tmp.png")
+    except FileNotFoundError:
+        pass
     return True
 
 
