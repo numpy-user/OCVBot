@@ -20,22 +20,22 @@ from ocvbot import vision as vis
 
 
 # TODO
-def switch_worlds_logged_in(
-    members: bool = False, free_to_play: bool = True, safe: bool = True
-) -> None:
-    """
-    TODO
-    """
-    if members is False and free_to_play is False:
-        raise Exception("A world type must be selected!")
+#  def switch_worlds_logged_in(
+#      members: bool = False, free_to_play: bool = True, safe: bool = True
+#  ) -> None:
+#      """
+#      TODO
+#      """
+#      if members is False and free_to_play is False:
+#          raise Exception("A world type must be selected!")
 
 
 # TODO
-def switch_worlds_logged_out() -> None:
-    """
-    TODO
-    """
-    pass
+#  def switch_worlds_logged_out() -> None:
+#      """
+#      TODO
+#      """
+#      pass
 
 
 def login_basic(
