@@ -595,7 +595,7 @@ def drop_item(item, track=True, wait_chance=120, wait_range=(5000, 20000)) -> bo
         return False
 
     log.info("Dropping all instances of %s", item)
-    for tries in range(40):
+    for _ in range(40):
 
         pag.keyDown("shift")
         # Alternate between searching for the item in left half and the
