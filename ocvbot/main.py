@@ -328,18 +328,24 @@ def test():
 
 script = start.config["main"]["script"]
 
-if script == "mining":
-    miner(start.config[script]["location"])
-    sys.exit(0)
 
-elif script == "magic":
-    spellcaster(start.config[script]["scenario"])
-    sys.exit(0)
+def main():
+    if script == "mining":
+        miner(start.config[script]["location"])
+        sys.exit(0)
 
-elif script == "chef":
-    chef(start.config[script]["item"], start.config[script]["location"])
-    sys.exit(0)
+    elif script == "magic":
+        spellcaster(start.config[script]["scenario"])
+        sys.exit(0)
 
-elif script == "test":
-    test()
-    sys.exit(0)
+    elif script == "chef":
+        chef(
+            item=start.config[script]["item"],
+            location=start.config[script]["location"],
+            loops=1000,
+        )
+        sys.exit(0)
+
+
+if __name__ == "__main__":
+    main()
