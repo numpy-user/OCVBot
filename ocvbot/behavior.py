@@ -194,6 +194,7 @@ def login_full(
                 start.start_time = time.time()
                 # Make sure client camera is oriented correctly after
                 #   logging in.
+                # TODO: move this to a 'configure_camera' function
                 pag.keyDown("Up")
                 misc.sleep_rand(3000, 7000)
                 pag.keyUp("Up")
