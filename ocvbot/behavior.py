@@ -509,7 +509,7 @@ def open_side_stone(side_stone) -> bool:
     raise Exception("Could not open side stone!")
 
 
-def check_skills() -> None:
+def check_skills() -> bool:
     """
     Used to mimic human-like behavior. Checks the stats of a random
     skill.
@@ -518,6 +518,7 @@ def check_skills() -> None:
     open_side_stone("skills")
     input.Mouse(region=vis.inv).move_to()
     misc.sleep_rand(1000, 7000)
+    return True
 
 
 def human_behavior_rand(chance) -> None:
