@@ -258,6 +258,7 @@ def chef(item: str, location: str, loops: int) -> bool:
             raise Exception("Cannot find raw food in bank!")
         log.info("Withdrawing raw food.")
         # Wait for raw food to appear in inventory
+        # TODO: make a withdrawal_item banking function.
         raw_food_in_inv = vis.Vision(
             region=vis.inv, needle=item_inv, loop_num=30, conf=0.99
         ).wait_for_needle()
@@ -275,6 +276,7 @@ def chef(item: str, location: str, loops: int) -> bool:
         misc.sleep_rand_roll(chance_range=(10, 20), sleep_range=(100, 10000))
         # Deposit cooked food. Try multiple times if not successful on
         #   the first attempt.
+        # TODO: make a deposit_item banking function.
         inv_full = True
         log.info("Attempting to deposit cooked food.")
         for _ in range(1, 5):
