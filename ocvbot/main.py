@@ -218,13 +218,14 @@ def spellcaster(scenario: str) -> None:
         raise Exception("Scenario not supported!")
 
 
-def chef(item: str, location: str) -> None:
+def chef(item: str, location: str, loops: int) -> bool:
     """
     Cooks a given item at a given location.
 
     Args:
         item:
         location:
+        loops: The number of iterations to run.
 
     Returns:
 
@@ -244,7 +245,7 @@ def chef(item: str, location: str) -> None:
     # Assumes starting location is the bank.
     behavior.open_bank("west")
 
-    for _ in range(1000):
+    for _ in range(loops):
         # Withdraw raw food from bank.
         # Conf is higher than default because raw food looks very
         #   similar to cooked food.
@@ -297,6 +298,7 @@ def chef(item: str, location: str) -> None:
                 break
         if inv_full is True:
             raise Exception("Could not empty inventory!")
+    return True
 
 
 def test():
