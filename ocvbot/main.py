@@ -26,7 +26,7 @@ os.chdir(os.path.dirname(__file__))
 SCRIPTPATH = str(pathlib.Path(__file__).parent.parent.absolute())
 sys.path.insert(1, SCRIPTPATH)
 
-from ocvbot import skills, behavior, vision as vis, startup as start, misc
+from ocvbot import skills, behavior, vision as vis, startup as start, misc, banking
 
 
 def miner(scenario: str) -> None:
@@ -125,7 +125,7 @@ def miner(scenario: str) -> None:
 
             behavior.travel(bank_from_mine, haystack_map)
             behavior.open_side_stone("inventory")
-            behavior.open_bank("south")
+            banking.open_bank("south")
             vis.Vision(region=vis.inv, needle=mining.ore).click_needle()
             for item in mining.drop_items:
                 vis.Vision(region=vis.inv, needle=item[1], loop_num=1).click_needle()
@@ -243,7 +243,7 @@ def chef(item: str, location: str, loops: int) -> bool:
     heat_source = "./needles/game-screen/al-kharid/range.png"
 
     # Assumes starting location is the bank.
-    behavior.open_bank("west")
+    banking.open_bank("west")
 
     for _ in range(loops):
         # Withdraw raw food from bank.
@@ -272,7 +272,7 @@ def chef(item: str, location: str, loops: int) -> bool:
         # Go back to bank.
         behavior.travel(bank_coords, haystack_map)
         # Open bank window.
-        behavior.open_bank("west")
+        banking.open_bank("west")
         misc.sleep_rand_roll(chance_range=(10, 20), sleep_range=(100, 10000))
         # Deposit cooked food. Try multiple times if not successful on
         #   the first attempt.

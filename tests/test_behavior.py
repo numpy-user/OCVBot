@@ -21,7 +21,7 @@ log.basicConfig(
 # Provide an image for the client to orient itself. Currently any imports
 #   from ocvbot require an image to match first, or they will fail.
 common.feh("open_side_stone", "pass", "01", image_directory)
-from ocvbot import behavior
+from ocvbot import behavior, banking
 
 # ----------------------------------------------------------------------
 # PARAMETERS ###########################################################
@@ -162,7 +162,7 @@ def test_logout_fail(params) -> None:
 def test_open_bank_pass(params):
     direction, test_number = params
     common.feh("open_bank", "pass", test_number, image_directory)
-    result = behavior.open_bank(direction)
+    result = banking.open_bank(direction)
     assert result is True
 
 
@@ -173,5 +173,5 @@ def test_open_bank_pass(params):
 def test_bank_settings_check(params):
     setting, value, test_number = params
     common.feh("bank_settings_check", "pass", test_number, image_directory)
-    result = behavior.bank_settings_check(setting, value)
+    result = banking.bank_settings_check(setting, value)
     assert result is True
