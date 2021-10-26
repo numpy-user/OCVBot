@@ -244,67 +244,28 @@ def chef(item: str, location: str, loops: int) -> bool:
 
     # Assumes starting location is the bank.
     banking.open_bank("west")
+    banking.bank_settings_check("quantity", "all")
 
     for _ in range(loops):
         # Withdraw raw food from bank.
         # Conf is higher than default because raw food looks very
         #   similar to cooked food.
-        # TODO: If item cannot be found in the bank, click the down arrow
-        #   in the bank window until item is found.
-        raw_food_withdraw = vis.Vision(
-            region=vis.bank_items_window, needle=item_bank, loop_num=3, conf=0.98
-        ).click_needle()
-        if raw_food_withdraw is False:
-            raise Exception("Cannot find raw food in bank!")
+        banking.withdrawal_item(item_bank=item_bank, item_inv=item_inv, conf=0.98)
         log.info("Withdrawing raw food.")
-        # Wait for raw food to appear in inventory
-        # TODO: make a withdrawal_item banking function.
-        raw_food_in_inv = vis.Vision(
-            region=vis.inv, needle=item_inv, loop_num=30, conf=0.99
-        ).wait_for_needle()
         misc.sleep_rand_roll(chance_range=(10, 20), sleep_range=(100, 10000))
-        if raw_food_in_inv is False:
-            raise Exception("Cannot find items in inventory!")
         # Go to range.
         behavior.travel(range_coords, haystack_map)
         # Cook food.
         skills.Cooking(item_inv, item_bank, heat_source).cook_item()
-        # Go back to bank.
+        # Go back to bank and deposit cooked food.
         behavior.travel(bank_coords, haystack_map)
-        # Open bank window.
         banking.open_bank("west")
         misc.sleep_rand_roll(chance_range=(10, 20), sleep_range=(100, 10000))
-        # Deposit cooked food. Try multiple times if not successful on
-        #   the first attempt.
-        # TODO: make a deposit_item banking function.
-        inv_full = True
-        log.info("Attempting to deposit cooked food.")
-        for _ in range(1, 5):
-            vis.Vision(
-                region=vis.game_screen,
-                needle="./needles/bank/deposit-inventory.png",
-                loop_num=3,
-            ).click_needle()
-            misc.sleep_rand(500, 1000)
-            misc.sleep_rand_roll(chance_range=(10, 20), sleep_range=(100, 10000))
-            # Make sure inventory is empty.
-            inv_full = vis.Vision(
-                region=vis.inv,
-                needle=item_inv,
-                loop_sleep_range=(100, 300),
-                loop_num=3,
-                conf=0.8,
-            ).wait_for_needle()
-            # Only continue if the inventory is empty.
-            if inv_full is False:
-                break
-        if inv_full is True:
-            raise Exception("Could not empty inventory!")
+        banking.deposit_inventory()
     return True
 
 
 def test():
-    behavior.Travel(
         path=[
             {
                 "destination": (107, 152),
