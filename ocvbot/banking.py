@@ -190,6 +190,8 @@ def withdrawal_item(
 
     """
     log.info("Attempting to withdrawal item: %s", item_bank)
+    # Ensure the correct quantity is withdrawn.
+    bank_settings_check("quantity", quantity)
 
     # Try multiple times to withdrawal the item.
     for _ in range(1, 3):
