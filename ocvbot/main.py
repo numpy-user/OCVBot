@@ -266,15 +266,7 @@ def chef(item: str, location: str, loops: int) -> bool:
 
 
 def test():
-        path=[
-            {
-                "destination": (107, 152),
-                "waypoint_tolerance": 2,
-                "destination_tolerance": (5, 5),
-                "haystack_map": "./haystacks/al-kharid.png",
-            }
-        ]
-    ).travel_path()
+    banking.deposit_inventory()
 
 
 # TODO: Add basic firemaking script that starts at a bank booth and
@@ -305,6 +297,9 @@ def main():
             location=start.config[script]["location"],
             loops=1000,
         )
+        sys.exit(0)
+    elif script == "test":
+        test()
         sys.exit(0)
 
 
