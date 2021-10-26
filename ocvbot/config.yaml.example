@@ -66,6 +66,9 @@ main:
   #   the player to run instead of walk.
   ctrl_click_run: True
 
+  # Whether the player has a bank pin or not.
+  bank_pin: False
+
 mining:
   # Available options:
   #   `lumbridge-mine`
