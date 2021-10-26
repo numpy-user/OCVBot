@@ -47,55 +47,48 @@ def bank_settings_check(setting: str, value: str) -> bool:
     for _ in range(1, 5):
         vis.Vision(
             region=vis.game_screen,
-            needle="./needles/bank/settings/"
-            + setting
-            + "/"
-            + value
-            + "-unset.png",
+            needle="./needles/bank/settings/" + setting + "/" + value + "-unset.png",
             loop_num=1,
         ).click_needle(move_away=True)
 
         value_set = vis.Vision(
             region=vis.game_screen,
-            needle="./needles/bank/settings/"
-            + setting
-            + "/"
-            + value
-            + "-set.png",
+            needle="./needles/bank/settings/" + setting + "/" + value + "-set.png",
             loop_num=5,
         ).wait_for_needle()
         if value_set is True:
             log.info("Bank setting %s has been set to %s", setting, value)
             return True
+
     log.warning("Bank setting %s was unable to be set to %s!", setting, value)
     return False
 
 
 def open_bank(direction) -> bool:
     """
-    Opens the bank, assuming the player is within 2 tiles of the booth.
+    Opens the bank. Assumes the player is within 2 empty tiles of a bank booth.
 
     Args:
-        direction (str): The direction of the bank booth. Must be `north`,
-                         `south`, `east`, or `west`.
+        direction (str): The cardinal direction of the bank booth relative to
+                         the player.  Must be `north`, `south`, `east`, or
+                         `west`.
 
-    Raises:
-        Raises an exception if the bank could not be opened.
+    Examples:
+        open_bank("west")
 
     Returns:
-        Returns True if bank was opened successfully.
+        Returns True if bank was opened successfully or is already open,
+        returns False otherwise
 
     """
-    # Check if bank is already open.
     bank_open = vis.Vision(
         region=vis.game_screen, needle="./needles/buttons/close.png", loop_num=1
     ).wait_for_needle()
     if bank_open is True:
-        log.info("Bank already open!")
+        log.info("Bank window is already open.")
         return True
 
-    # TODO: Deal with bank PINs.
-    log.info("Attempting to open bank.")
+    log.info("Attempting to open bank window.")
     for _ in range(1, 10):
         one_tile = vis.Vision(
             region=vis.game_screen,
@@ -121,32 +114,35 @@ def open_bank(direction) -> bool:
             ).wait_for_needle()
             if bank_open is True:
                 return True
-            # else:
-            # pin = enter_bank_pin()
-            # if pin is True:
-            # return True
-
         misc.sleep_rand(1000, 3000)
 
-    raise Exception("Unable to open bank!")
+    log.warning("Unable to open bank!")
+    return False
 
 
-def enter_bank_pin(pin=tuple(str(start.config["main"]["bank_pin"]))) -> bool:
+# TODO
+def enter_bank_pin(pin=(start.config["main"]["bank_pin"])) -> bool:
     """
-    Enters the user's bank PIN.
+    Enters the user's bank PIN. Assumes the bank window is open.
 
     Args:
         pin (tuple): A 4-tuple of the player's PIN.
 
+    Examples:
+        enter_bank_pin(pin=1234)
+
     Returns:
+        Returns True if the bank PIN was successfully entered or PIN
+        window could not be found, returns False if PIN was incorrect
 
     """
+    pin = tuple(str(pin))
     # Confirm that the bank PIN screen is actually present.
     bank_pin_screen = vis.Vision(
         region=vis.game_screen, needle="./needles/.png", loop_num=1
     ).wait_for_needle(get_tuple=False)
     if bank_pin_screen is False:
-        return False
+        return True
 
     # Loop through the different PIN screens for each of the 4 digits.
     for pin_ordinal in range(1, 4):
@@ -172,29 +168,35 @@ def withdrawal_item(
     item_bank: str, item_inv: str, conf: float = 0.95, quantity: str = "all"
 ) -> bool:
     """
-    Withdrawals an item from the bank.
+    Withdrawals an item from the bank. Assumes the bank window is open and
+    the item to withdrawal is visible.
 
     Args:
         item_bank (str): Filepath to an image of the item to withdrawal as it
                          appears in the bank window.
         item_inv (str): Filepath to an image of the item to withdrawal as it
                         appears in the player's inventory.
-        conf (float): See the `conf` arg of the vision.Vision object. Default is
+        conf (float): See the `conf` arg of the vision.Vision class. Default is
                       0.95
         quantity (str): The number of items to withdrawal. Available
                         options are `1`, `5`, `10`, or `all`. Default is `all`.
+
+    Examples:
+        withdrawal_item(item_bank="./needles/items/raw-anchovies-bank.png",
+                        item_inv="./needles/items/raw-anchovies.png",
+                        conf=0.98)
 
     Returns:
         Returns True if the item was successfully withdrawn from bank,
         returns False otherwise.
 
     """
-    log.info("Attempting to withdrawal item: %s", item_bank)
     # Ensure the correct quantity is withdrawn.
     bank_settings_check("quantity", quantity)
 
     # Try multiple times to withdrawal the item.
-    for _ in range(1, 3):
+    log.info("Attempting to withdrawal item: %s", item_bank)
+    for _ in range(1, 5):
         vis.Vision(
             region=vis.bank_items_window, needle=item_bank, loop_num=3, conf=conf
         ).click_needle()
@@ -205,20 +207,22 @@ def withdrawal_item(
         ).wait_for_needle()
         if item_in_inventory is True:
             return True
-    log.warning("Could not withdrawal item: %s", item_bank)
+
+    log.warning("Could not withdrawal item: %s!", item_bank)
     return False
 
 
 def deposit_inventory():
     """
-    Deposits entire inventory into the bank.
+    Deposits entire inventory into the bank. Assumes the bank window is
+    open.
 
     Returns:
-        Returns True if the item was successfully deposited into the bank,
-        returns False otherwise.
+        Returns True if the inventory was successfully deposited into
+        the bank, returns False otherwise.
 
     """
-    log.info("Depositing inventory")
+    log.info("Depositing inventory.")
     for _ in range(1, 5):
         vis.Vision(
             region=vis.game_screen,
@@ -226,7 +230,6 @@ def deposit_inventory():
             loop_num=3,
         ).click_needle()
         misc.sleep_rand(500, 1000)
-        misc.sleep_rand_roll(chance_range=(10, 20), sleep_range=(100, 10000))
 
         # Wait until the inventory is empty.
         inv_empty = vis.Vision(
@@ -236,8 +239,8 @@ def deposit_inventory():
             conf=0.9,
             loop_num=10,
         ).wait_for_needle()
-        # Only continue if the inventory is empty.
         if inv_empty is True:
             return True
+
     log.warning("Unable to deposit inventory!")
     return False
