@@ -12,33 +12,6 @@ from ocvbot import misc
 from ocvbot import startup as start
 
 
-def haystack_locate(
-    needle: str, haystack: str, grayscale: int = False, conf: float = 0.95
-):
-    """
-    Finds the coordinates of a needle image within a haystack image.
-
-    Args:
-        needle (file): Filepath to the needle image.
-        haystack (file): Filepath to the haystack image.
-        grayscale (bool): Whether to use grayscale matching to increase
-                          speed, default is false.
-        conf (float): Similarity required to match needle to haystack,
-                      expressed as a decimal <= 1, default is 0.95.
-
-    """
-    # Make sure file path is OS-agnostic.
-    needle = str(pathlib.Path(needle))
-
-    target_image = pag.locate(needle, haystack, confidence=conf, grayscale=grayscale)
-    if target_image is not None:
-        log.debug("Found center of %s, %s", needle, target_image)
-        return target_image
-
-    log.debug("Cannot find center of %s, conf=%s", needle, conf)
-    return False
-
-
 def wait_for_needle_list(
     loops: int,
     needle_list: list[tuple[str, tuple[int, int, int, int]]],
