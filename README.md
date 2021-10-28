@@ -11,7 +11,7 @@ The OSRS Computer Vision bot
   durations, and session durations.
 - If you have a question about how the program works, please open an issue.
 
-![Chef in Al Kharid](./docs/gifs/chef-al-kharid.gif)
+![Example GIF](./docs/gifs/alchemy.gif)
 
 ## INSTALLATION
 
