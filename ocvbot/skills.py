@@ -314,7 +314,7 @@ class Mining:
         (bool(start.config["mining"]["drop_ruby"]), "./needles/items/uncut-ruby.png"),
         (
             bool(start.config["mining"]["drop_diamond"]),
-            "./needles/items/uncut-diamong.png",
+            "./needles/items/uncut-diamond.png",
         ),
         (
             bool(start.config["mining"]["drop_clue_geode"]),
