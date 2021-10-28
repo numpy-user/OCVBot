@@ -102,6 +102,13 @@ magic:
   scenario: curse-varrock-castle
   # Whether to logout once alching has completed.
   logout: False
+  # Availabe options:
+  #   `bank-note`
+  #      For alching any noted item.
+  #   {ITEM_NAME}
+  #      Replace {ITEM_NAME} with the file name (excluding extension) of the
+  #      item to alch. Available options are in `needles/items/`.
+  alch_item_type: runite-bolts
   # Minimum and maximum number of miliseconds to wait after casting each spell.
   min_cast_delay: 0
   max_cast_delay: 500
