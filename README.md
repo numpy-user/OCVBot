@@ -10,8 +10,11 @@ The OSRS Computer Vision bot
   possible. This includes randomized mouse movements, click coordinates, wait
   durations, and session durations.
 - If you have a question about how the program works, please open an issue.
-
-![Example GIF](./docs/gifs/alchemy.gif)
+- Alchemy:
+![Alchemy GIF](./docs/gifs/alchemy.gif)
+- Banking and navigation:
+![Chef GIF](./docs/gifs/chef-al-kharid.gif)
+- For a full list of behaviors, see `docs/scenarios/`
 
 ## INSTALLATION
 
