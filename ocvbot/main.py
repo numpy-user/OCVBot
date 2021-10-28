@@ -301,6 +301,9 @@ def main():
     elif script == "test":
         test()
         sys.exit(0)
+    else:
+        log.critical("Unknown value provided for 'script' key in config file!")
+        raise RuntimeError("Unknown value provided for 'script' key in config file!")
 
 
 if __name__ == "__main__":
