@@ -24,7 +24,7 @@ cd ~
 git clone --depth 1 https://github.com/takelley1/OCVBot.git
 ```
 
-2. Create and enter a Python virtual environment.
+2. Create and activate a Python virtual environment.
 ```bash
 cd OCVBot
 python3 -m venv ocvbot_venv
@@ -78,7 +78,8 @@ python3 ./ocvbot/main.py
 
 - To stop the bot, use CTRL-C on the terminal window running the bot.
 - To exit the virtual environment, run `deactivate`.
-> NOTE: You must activate the virtual environment every time you wish to run the bot!
+> NOTE: You must activate the Python virtual environment every time you wish to run the bot!
+> Run `cd ~/OCVBot && source ocvbot_venv/bin/activate`
 
 ## CONFIGURATION
 
