@@ -244,7 +244,6 @@ def chef(item: str, location: str, loops: int) -> bool:
 
     # Assumes starting location is the bank.
     banking.open_bank("west")
-    banking.bank_settings_check("quantity", "all")
 
     for _ in range(loops):
         # Withdraw raw food from bank.
