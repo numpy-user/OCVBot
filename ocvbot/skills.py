@@ -87,7 +87,7 @@ class Cooking:
             needle=self.heat_source,
             loop_num=3,
             loop_sleep_range=(500, 1000),
-            conf=0.85,
+            conf=0.80,
         ).click_needle()
         if heat_source_selected is False:
             log.error("Unable to find heat source %s!", self.heat_source)
