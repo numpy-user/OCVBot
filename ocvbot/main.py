@@ -162,8 +162,8 @@ def spellcaster(scenario: str) -> None:
         spell = "./needles/side-stones/spellbook/curse.png"
         target = "./needles/game-screen/varrock/monk-of-zamorak.png"
         haystack_map = "./haystacks/varrock-castle.png"
+        behavior.travel([((75, 128), 1, (4, 4), (5, 10))], haystack_map)
         for _ in range(10000):
-            behavior.travel([((75, 128), 1, (4, 4), (5, 10))], haystack_map)
             skills.Magic(
                 spell=spell,
                 target=target,
