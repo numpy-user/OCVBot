@@ -17,6 +17,7 @@ main:
   #   `magic`
   #   `mining`
   #   `chef`
+  #   `smithing`
   script: magic
 
   # Path to your user credential files. This can be a relative
@@ -121,3 +122,16 @@ chef:
   #   `al-kharid`
   #      See `docs/scenarios/cooking-al-kharid`.
   location: al-kharid
+
+smithing:
+  # Available options:
+  #   `iron-bar`
+  bar: iron-bar
+  # Available options:
+  #   `iron-axe` - 1 bar
+  #   `iron-scimitar` - 2 bars
+  #   `iron-warhammer` - 3 bars
+  #   `iron-platebody` - 5 bars
+  smith: iron-platebody
+  # The number of bars required to smith a single of the above item
+  bars_per_item: 5
