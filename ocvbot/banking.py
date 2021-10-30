@@ -120,6 +120,48 @@ def open_bank(direction) -> bool:
     return False
 
 
+def close_bank() -> bool:
+    """
+    Closes the bank window if it is open.
+
+    Returns:
+        Returns True if the bank window was closed, or the bank window
+        isn't open.
+        Returns False if the bank window could not be closed.
+
+    """
+    # Check if the bank window is open.
+    bank_open = vis.Vision(
+        region=vis.game_screen,
+        needle="./needles/buttons/close.png",
+        loop_num=5,
+    ).wait_for_needle()
+    if bank_open is False:
+        log.info("Bank window is not open")
+        return True
+
+    # Attempt to close the bank window.
+    for _ in range(5):
+        vis.Vision(
+            region=vis.game_screen,
+            needle="./needles/buttons/close.png",
+            loop_num=5,
+        ).click_needle(move_away=True)
+
+        # Make sure the bank window has been closed.
+        bank_open = vis.Vision(
+            region=vis.game_screen,
+            needle="./needles/buttons/close.png",
+            loop_num=3,
+        ).wait_for_needle()
+        if bank_open is False:
+            log.info("Bank window has been closed")
+            return True
+
+    log.warning("Bank window could not be closed!")
+    return False
+
+
 # TODO
 def enter_bank_pin(pin=(start.config["main"]["bank_pin"])) -> bool:
     """
