@@ -246,7 +246,6 @@ def chef(item: str, location: str, loops: int) -> bool:
     banking.open_bank("west")
 
     for _ in range(loops):
-        # Withdraw raw food from bank.
         # Conf is higher than default because raw food looks very
         #   similar to cooked food.
         banking.withdrawal_item(item_bank=item_bank, item_inv=item_inv, conf=0.98)
