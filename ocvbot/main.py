@@ -26,7 +26,12 @@ os.chdir(os.path.dirname(__file__))
 SCRIPTPATH = str(pathlib.Path(__file__).parent.parent.absolute())
 sys.path.insert(1, SCRIPTPATH)
 
-from ocvbot import skills, behavior, vision as vis, startup as start, misc, banking
+from ocvbot import banking
+from ocvbot import behavior
+from ocvbot import misc
+from ocvbot import skills
+from ocvbot import startup as start
+from ocvbot import vision as vis
 
 
 def miner(scenario: str) -> None:
