@@ -294,15 +294,18 @@ def smither(bar: str, smith: str, bars_per_item: int):
     anvil_coords = [((98, 132), 1, (3, 3), (8, 10))]
 
     # Determine which needle to use by bars per item.
-    # For example, if we smith a full inventory of platebodys (5 bars per item),
-    # we'll have 2 bars remaining once we reach the end.
-    # We then know we're done smithing if we cant find 3 bars in our inventory.
+    # For example, if we smith a full inventory of platebodies (5 bars per item),
+    #   we'll have 2 bars remaining once we reach the end. We then know we're
+    #   done smithing if we can't find 3 bars in our inventory.
     if bars_per_item == 5:
         uncompleted_inv = inv_3_remaining
     elif bars_per_item == 2:
         uncompleted_inv = inv_2_remaining
-    elif bars_per_item == 3 or bars_per_item == 1:
+    elif bars_per_item in (1, 3):
         uncompleted_inv = inv_1_remaining
+    else:
+        log.critical("Unsupported value of bars_per_item!")
+        raise RuntimeError("Unsupported value of bars_per_item!")
 
     smithing = skills.Smithing(smith, anvil, uncompleted_inv)
 
