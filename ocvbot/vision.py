@@ -194,7 +194,7 @@ class Vision:
     def click_needle(
         self,
         sleep_range: tuple[int, int, int, int] = (50, 200, 50, 200),
-        move_duration_range: tuple[int, int] = (50, 1500),
+        move_duration_range: tuple[int, int] = (1, 50),
         button: str = "left",
         move_away: bool = False,
     ) -> bool:

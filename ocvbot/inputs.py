@@ -50,7 +50,7 @@ class Mouse:
             int, int, int, int
         ],  # In the format of (left, top, width, height).
         sleep_range: tuple[int, int, int, int] = (0, 500, 0, 500),
-        move_duration_range: tuple[int, int] = (50, 1500),
+        move_duration_range: tuple[int, int] = (1, 50),
         action_duration_range: tuple[int, int] = (1, 100),
         button: str = "left",
     ) -> None:
