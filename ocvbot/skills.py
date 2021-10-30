@@ -458,6 +458,8 @@ class Mining:
                 return True
         return False
 
+
+
 class Smithing:
     """
     Class for all functions related to training the Smithing skill.
@@ -467,7 +469,7 @@ class Smithing:
                              "-bank.png" items can be used here.
         anvil (file): Filepath to the anvil to use.
         uncompleted_inv (file): Filepath to the uncompleted inventory needle. We
-                                know we're done smithing when this needle can't 
+                                know we're done smithing when this needle can't
                                 be found.
     """
 
@@ -496,7 +498,7 @@ class Smithing:
         if anvil_clicked is False:
             log.error("Unable to find anvil %s!", self.anvil)
             return False
-        
+
         smith_menu_open = vis.Vision(
             region=vis.client,
             needle="./needles/buttons/close.png",
@@ -506,7 +508,7 @@ class Smithing:
         misc.sleep_rand_roll(chance_range=(20, 35), sleep_range=(1000, 6000))
 
         if smith_menu_open is False:
-            log.error('Timed out waiting for smithing menu.')
+            log.error("Timed out waiting for smithing menu.")
             return False
 
         return True
@@ -544,9 +546,7 @@ class Smithing:
             misc.sleep_rand(1000, 3000)
 
             smithing = vis.Vision(
-                region=vis.inv_bottom,
-                needle=self.uncompleted_inv,
-                conf=0.9
+                region=vis.inv_bottom, needle=self.uncompleted_inv, conf=0.9
             ).find_needle()
 
             if smithing is False:

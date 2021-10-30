@@ -309,16 +309,14 @@ def smither(bar: str, smith: str, bars_per_item: int):
         client_status = vis.orient()
         if client_status[0] == "logged_out":
             behavior.login_full()
-            
+
         # Assumes starting location is Varrock west bank.
         banking.open_bank("east")
         banking.deposit_inventory()
 
         # Ensure we have bars in the bank
         have_bars = vis.Vision(
-            region=vis.game_screen,
-            needle=bar,
-            conf=0.9999
+            region=vis.game_screen, needle=bar, conf=0.9999
         ).find_needle()
 
         # Stop script if we don't
@@ -326,7 +324,9 @@ def smither(bar: str, smith: str, bars_per_item: int):
             log.info("Out of bars, stopping script.")
             break
 
-        withdrew_hammer = banking.withdrawal_item(item_bank=hammer_bank, item_inv=hammer_inv, quantity="1")
+        withdrew_hammer = banking.withdrawal_item(
+            item_bank=hammer_bank, item_inv=hammer_inv, quantity="1"
+        )
         if withdrew_hammer is False:
             log.error("Unable to withdrawal hammer!")
             break
@@ -337,11 +337,8 @@ def smither(bar: str, smith: str, bars_per_item: int):
             break
 
         # Check if we withdrew a full inventory of bars
-        full_inv = vis.Vision(
-            region=vis.inv,
-            needle=inv_full
-        ).wait_for_needle()
-        
+        full_inv = vis.Vision(region=vis.inv, needle=inv_full).wait_for_needle()
+
         # Stop script if we didn't
         if full_inv is False:
             log.info("Out of bars, stopping script.")
@@ -386,10 +383,10 @@ def main():
         sys.exit(0)
     elif script == "smithing":
         smither(
-               bar=start.config[script]["bar"],
-               smith=start.config[script]["smith"],
-               bars_per_item=start.config[script]["bars_per_item"]
-            )
+            bar=start.config[script]["bar"],
+            smith=start.config[script]["smith"],
+            bars_per_item=start.config[script]["bars_per_item"],
+        )
         sys.exit(0)
     else:
         log.critical("Unknown value provided for 'script' key in config file!")

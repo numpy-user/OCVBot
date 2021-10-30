@@ -62,8 +62,8 @@ class Vision:
 
     Args:
         region (tuple): A 4-tuple containing the Left, Top, Width, and
-                      Height of the region in which to look for the
-                      needle.
+                        Height of the region in which to look for the
+                        needle.
         needle (file): The image to search within the (ltwh) coordinates
                        for. Must be a filepath.
         loctype (str): Whether to return the needle's (ltwh) coordinates
