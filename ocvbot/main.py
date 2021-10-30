@@ -268,7 +268,7 @@ def chef(item: str, location: str, loops: int) -> bool:
     return True
 
 
-def smither(bar: str, item: str, bars_per_item: int):
+def smither(bar: str, item: str):
 
 
     haystack_map = "./haystacks/varrock-west-bank.png"
@@ -297,15 +297,15 @@ def smither(bar: str, item: str, bars_per_item: int):
     # For example, if we smith a full inventory of platebodies (5 bars per item),
     #   we'll have 2 bars remaining once we reach the end. We then know we're
     #   done smithing if we can't find 3 bars in our inventory.
-    if bars_per_item == 5:
+    if "platebody" in item:  # 5 bars required, 3 will be remaining.
         uncompleted_inv = inv_3_remaining
-    elif bars_per_item == 2:
+    elif "scimitar" in item:  # 2 bars required, 2 will be remaining.
         uncompleted_inv = inv_2_remaining
-    elif bars_per_item in (1, 3):
+    elif "axe" in item or "warhammer" in item:  # 3 bars required, 1 will be remaining.
         uncompleted_inv = inv_1_remaining
     else:
-        log.critical("Unsupported value of bars_per_item!")
-        raise RuntimeError("Unsupported value of bars_per_item!")
+        log.critical("Unsupported value of item!")
+        raise RuntimeError("Unsupported value of item!")
 
     smithing = skills.Smithing(
         item_in_menu=item, anvil=anvil, uncompleted_inv=uncompleted_inv
@@ -394,7 +394,6 @@ def main():
         smither(
             bar=start.config[script]["bar"],
             item=start.config[script]["item"],
-            bars_per_item=start.config[script]["bars_per_item"],
         )
         sys.exit(0)
     elif script == "test":
