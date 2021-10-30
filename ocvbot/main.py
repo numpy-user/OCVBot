@@ -268,9 +268,9 @@ def chef(item: str, location: str, loops: int) -> bool:
     return True
 
 
+def smither(bar: str, item: str, bars_per_item: int):
 
 
-def smither(bar: str, smith: str, bars_per_item: int):
     haystack_map = "./haystacks/varrock-west-bank.png"
 
     # These are used to figure out when we're done smithing.
@@ -284,7 +284,7 @@ def smither(bar: str, smith: str, bars_per_item: int):
     # We can use banked versions of the smith item because the smithing menu
     # has the same background as the bank menu
     bar = "./needles/items/" + bar + ".png"
-    smith = "./needles/items/" + smith + "-bank.png"
+    item = "./needles/items/" + item + "-bank.png"
     anvil = "./needles/game-screen/varrock/anvil.png"
 
     hammer_inv = "./needles/items/hammer.png"
@@ -307,7 +307,9 @@ def smither(bar: str, smith: str, bars_per_item: int):
         log.critical("Unsupported value of bars_per_item!")
         raise RuntimeError("Unsupported value of bars_per_item!")
 
-    smithing = skills.Smithing(smith, anvil, uncompleted_inv)
+    smithing = skills.Smithing(
+        item_in_menu=item, anvil=anvil, uncompleted_inv=uncompleted_inv
+    )
 
     while True:
 
@@ -391,7 +393,7 @@ def main():
     elif script == "smithing":
         smither(
             bar=start.config[script]["bar"],
-            smith=start.config[script]["smith"],
+            item=start.config[script]["item"],
             bars_per_item=start.config[script]["bars_per_item"],
         )
         sys.exit(0)
