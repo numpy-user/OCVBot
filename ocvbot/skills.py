@@ -457,3 +457,103 @@ class Mining:
                 behavior.drop_item(item=str(path), track=False)
                 return True
         return False
+
+class Smithing:
+    """
+    Class for all functions related to training the Smithing skill.
+
+    Args:
+        item_in_menu (file): Filepath to the item to select in the smithing menu.
+                             "-bank.png" items can be used here.
+        anvil (file): Filepath to the anvil to use.
+        uncompleted_inv (file): Filepath to the uncompleted inventory needle. We
+                                know we're done smithing when this needle can't 
+                                be found.
+    """
+
+    def __init__(self, item_in_menu: str, anvil: str, uncompleted_inv: str):
+        self.item_in_menu = item_in_menu
+        self.anvil = anvil
+        self.uncompleted_inv = uncompleted_inv
+
+    def click_anvil(self) -> bool:
+        """
+        Clicks the given anvil.
+
+        Returns:
+            Returns True once the smithing menu appears.
+        """
+        log.info("Attempting to click anvil.")
+
+        anvil_clicked = vis.Vision(
+            region=vis.game_screen,
+            needle=self.anvil,
+            loop_num=3,
+            loop_sleep_range=(500, 1000),
+            conf=0.85,
+        ).click_needle()
+
+        if anvil_clicked is False:
+            log.error("Unable to find anvil %s!", self.anvil)
+            return False
+        
+        smith_menu_open = vis.Vision(
+            region=vis.client,
+            needle="./needles/buttons/close.png",
+            loop_num=30,
+        ).wait_for_needle()
+
+        misc.sleep_rand_roll(chance_range=(20, 35), sleep_range=(1000, 6000))
+
+        if smith_menu_open is False:
+            log.error('Timed out waiting for smithing menu.')
+            return False
+
+        return True
+
+    def smith_items(self) -> bool:
+        """
+        Smiths an inventory of the given item.
+
+        Returns:
+            Returns True once done smithing.
+        """
+        clicked_anvil = self.click_anvil()
+
+        if clicked_anvil is False:
+            return self.smith_items()
+
+        log.info("Attempting to select item to smith.")
+
+        menu_clicked = vis.Vision(
+            region=vis.game_screen,
+            needle=self.item_in_menu,
+            loop_num=3,
+            loop_sleep_range=(500, 1000),
+            conf=0.85,
+        ).click_needle()
+
+        if menu_clicked is False:
+            log.error("Unable to click menu item %s!", self.item_in_menu)
+            return False
+
+        log.info("Smithing...")
+
+        # Wait for either a level-up or for the uncompleted_inv needle to not be found.
+        for _ in range(1, 60):
+            misc.sleep_rand(1000, 3000)
+
+            smithing = vis.Vision(
+                region=vis.inv_bottom,
+                needle=self.uncompleted_inv,
+                conf=0.9
+            ).find_needle()
+
+            if smithing is False:
+                log.info("Done smithing.")
+                break
+
+            level_up = wait_for_level_up(1)
+            # If the player levels-up while smithing, restart.
+            if level_up is True:
+                return self.smith_items()

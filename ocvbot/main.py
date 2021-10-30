@@ -267,6 +267,91 @@ def test():
     banking.deposit_inventory()
 
 
+def smither(bar: str, smith: str, bars_per_item: int):
+    haystack_map = "./haystacks/varrock-west-bank.png"
+
+    # These are used to figure out when we're done smithing.
+    # Smithing items that take multiple bars may lead to 1 or 2 bars remaining.
+    inv_3_remaining = "./needles/side-stones/inventory/iron-bars-3.png"
+    inv_2_remaining = "./needles/side-stones/inventory/iron-bars-2.png"
+    inv_1_remaining = "./needles/items/iron-bar.png"
+
+    inv_full = "./needles/side-stones/inventory/iron-bars-full.png"
+
+    # We can use banked versions of the smith item because the smithing menu
+    # has the same background as the bank menu
+    bar = "./needles/items/" + bar + ".png"
+    smith = "./needles/items/" + smith + "-bank.png"
+    anvil = "./needles/game-screen/varrock/anvil.png"
+
+    hammer_inv = "./needles/items/hammer.png"
+    hammer_bank = "./needles/items/hammer-bank.png"
+
+    bank_coords = [((88, 95), 1, (4, 7), (8, 10))]
+    anvil_coords = [((98, 132), 1, (3, 3), (8, 10))]
+
+    # Determine which needle to use by bars per item.
+    # For example, if we smith a full inventory of platebodys (5 bars per item),
+    # we'll have 2 bars remaining once we reach the end.
+    # We then know we're done smithing if we cant find 3 bars in our inventory.
+    if bars_per_item == 5:
+        uncompleted_inv = inv_3_remaining
+    elif bars_per_item == 2:
+        uncompleted_inv = inv_2_remaining
+    elif bars_per_item == 3 or bars_per_item == 1:
+        uncompleted_inv = inv_1_remaining
+
+    smithing = skills.Smithing(smith, anvil, uncompleted_inv)
+
+    while True:
+
+        # Ensure the client is logged in.
+        client_status = vis.orient()
+        if client_status[0] == "logged_out":
+            behavior.login_full()
+            
+        # Assumes starting location is Varrock west bank.
+        banking.open_bank("east")
+        banking.deposit_inventory()
+
+        # Ensure we have bars in the bank
+        have_bars = vis.Vision(
+            region=vis.game_screen,
+            needle=bar,
+            conf=0.9999
+        ).find_needle()
+
+        # Stop script if we don't
+        if have_bars is False:
+            log.info("Out of bars, stopping script.")
+            break
+
+        withdrew_hammer = banking.withdrawal_item(item_bank=hammer_bank, item_inv=hammer_inv, quantity="1")
+        if withdrew_hammer is False:
+            log.error("Unable to withdrawal hammer!")
+            break
+
+        withdrew_bars = banking.withdrawal_item(item_bank=bar, item_inv=bar)
+        if withdrew_bars is False:
+            log.error("Unable to withdrawal bars!")
+            break
+
+        # Check if we withdrew a full inventory of bars
+        full_inv = vis.Vision(
+            region=vis.inv,
+            needle=inv_full
+        ).wait_for_needle()
+        
+        # Stop script if we didn't
+        if full_inv is False:
+            log.info("Out of bars, stopping script.")
+            break
+
+        behavior.travel(anvil_coords, haystack_map)
+        smithing.smith_items()
+        behavior.travel(bank_coords, haystack_map)
+
+
 # TODO: Add basic firemaking script that starts at a bank booth and
 #   creates 27 fires, all in a straight line, then returns to the booth.
 
@@ -298,6 +383,13 @@ def main():
         sys.exit(0)
     elif script == "test":
         test()
+        sys.exit(0)
+    elif script == "smithing":
+        smither(
+               bar=start.config[script]["bar"],
+               smith=start.config[script]["smith"],
+               bars_per_item=start.config[script]["bars_per_item"]
+            )
         sys.exit(0)
     else:
         log.critical("Unknown value provided for 'script' key in config file!")
