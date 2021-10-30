@@ -263,8 +263,6 @@ def chef(item: str, location: str, loops: int) -> bool:
     return True
 
 
-def test():
-    banking.deposit_inventory()
 
 
 def smither(bar: str, smith: str, bars_per_item: int):
@@ -349,6 +347,10 @@ def smither(bar: str, smith: str, bars_per_item: int):
         behavior.travel(bank_coords, haystack_map)
 
 
+def test():
+    banking.deposit_inventory()
+
+
 # TODO: Add basic firemaking script that starts at a bank booth and
 #   creates 27 fires, all in a straight line, then returns to the booth.
 
@@ -378,15 +380,15 @@ def main():
             loops=1000,
         )
         sys.exit(0)
-    elif script == "test":
-        test()
-        sys.exit(0)
     elif script == "smithing":
         smither(
             bar=start.config[script]["bar"],
             smith=start.config[script]["smith"],
             bars_per_item=start.config[script]["bars_per_item"],
         )
+        sys.exit(0)
+    elif script == "test":
+        test()
         sys.exit(0)
     else:
         log.critical("Unknown value provided for 'script' key in config file!")
