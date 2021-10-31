@@ -311,10 +311,6 @@ def smither(bar: str, item: str, loops: int):
         item_in_menu=item, anvil=anvil, uncompleted_inv=uncompleted_inv
     )
 
-        # Ensure the client is logged in.
-        client_status = vis.orient()
-        if client_status[0] == "logged_out":
-            behavior.login_full()
     for _ in range(loops):
 
         # Assumes starting location is Varrock west bank.
