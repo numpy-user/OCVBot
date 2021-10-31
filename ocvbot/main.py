@@ -268,7 +268,7 @@ def chef(item: str, location: str, loops: int) -> bool:
     return True
 
 
-def smither(bar: str, item: str, loops: int):
+def smith(bar: str, item: str, loops: int):
 
 
     haystack_map = "./haystacks/varrock-west-bank.png"
@@ -386,7 +386,7 @@ def main():
         )
         sys.exit(0)
     elif script == "smithing":
-        smither(
+        smith(
             bar=start.config[script]["bar"],
             item=start.config[script]["item"],
             loops=1000
