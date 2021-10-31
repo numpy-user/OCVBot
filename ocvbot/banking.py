@@ -52,7 +52,7 @@ def bank_settings_check(setting: str, value: str) -> bool:
         return True
 
     # If not, try to bring the setting to the desired value.
-    for _ in range(1, 5):
+    for _ in range(5):
         vis.Vision(
             region=vis.game_screen,
             needle="./needles/bank/settings/" + setting + "/" + value + "-unset.png",
@@ -246,7 +246,7 @@ def withdrawal_item(
 
     # Try multiple times to withdrawal the item.
     log.info("Attempting to withdrawal item: %s", item_bank)
-    for _ in range(1, 5):
+    for _ in range(5):
         vis.Vision(
             region=vis.bank_items_window, needle=item_bank, loop_num=3, conf=conf
         ).click_needle()

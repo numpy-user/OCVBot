@@ -483,7 +483,7 @@ def open_side_stone(side_stone) -> bool:
 
     # Try a total of 5 times to open the desired side stone menu using
     #   the mouse.
-    for tries in range(1, 5):
+    for tries in range(5):
         # Move mouse out of the way after clicking so the function can
         #   tell if the stone is open.
         vis.Vision(
