@@ -9,6 +9,7 @@ import logging as log
 import os
 
 import psutil
+import pytest
 
 import common
 
@@ -66,14 +67,6 @@ login_fail_params = (
     "02",  # Client is already logged in.
 )
 
-open_bank_params = (
-    ("south", "01"),  # 1 tile south.
-    ("south", "02"),  # 2 tiles south.
-    ("west", "03"),  # 1 tile west.
-    ("west", "04"),  # 2 tiles west.
-)
-
-bank_settings_check_params = ("quantity", "all", "01")
 
 drop_item_pass_params = (("iron_ore.png", "01"),)
 
@@ -153,25 +146,3 @@ def test_logout_fail(params) -> None:
 #          common.kill_feh()
 
 # CHECK_SKILLS ---------------------------------------------------------
-
-
-# OPEN_BANK ------------------------------------------------------------
-
-
-@pytest.mark.parametrize("params", open_bank_params)
-def test_open_bank_pass(params):
-    direction, test_number = params
-    common.feh("open_bank", "pass", test_number, image_directory)
-    result = banking.open_bank(direction)
-    assert result is True
-
-
-# BANK_SETTINGS_CHECK --------------------------------------------------
-
-
-@pytest.mark.parametrize("params", bank_settings_check_params)
-def test_bank_settings_check(params):
-    setting, value, test_number = params
-    common.feh("bank_settings_check", "pass", test_number, image_directory)
-    result = banking.bank_settings_check(setting, value)
-    assert result is True
