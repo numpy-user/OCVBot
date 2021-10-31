@@ -235,6 +235,16 @@ def chef(item: str, location: str, loops: int) -> bool:
     Returns:
 
     """
+    if location == "al-kharid":
+        bank_coords = [((91, 207), 3, (4, 7), (3, 9))]
+        range_coords = [((107, 152), 1, (5, 5), (8, 12))]
+        heat_source = "./needles/game-screen/al-kharid/range.png"
+        # Assumes starting location is the bank.
+        banking.open_bank("west")
+    else:
+        log.critical("Unsupported value for location!")
+        raise RuntimeError("Unsupported value for location!")
+
     log.info("Launching chef script with item %s and location %s.", item, location)
     # Must have staff of water equipped!
     # TODO: In Al Kharid, deal with the door to the house with the range
@@ -242,13 +252,6 @@ def chef(item: str, location: str, loops: int) -> bool:
     haystack_map = "./haystacks/" + location + ".png"
     item_inv = "./needles/items/" + item + ".png"
     item_bank = "./needles/items/" + item + "-bank.png"
-
-    bank_coords = [((91, 207), 3, (4, 7), (3, 9))]
-    range_coords = [((107, 152), 1, (5, 5), (8, 12))]
-    heat_source = "./needles/game-screen/al-kharid/range.png"
-
-    # Assumes starting location is the bank.
-    banking.open_bank("west")
 
     for _ in range(loops):
         # Conf is higher than default because raw food looks very
