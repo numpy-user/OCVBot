@@ -128,10 +128,8 @@ smithing:
   #   `iron-bar`
   bar: iron-bar
   # Available options:
-  #   `iron-axe` - 1 bar
-  #   `iron-scimitar` - 2 bars
-  #   `iron-warhammer` - 3 bars
-  #   `iron-platebody` - 5 bars
+  #   `iron-axe`
+  #   `iron-scimitar`
+  #   `iron-warhammer`
+  #   `iron-platebody`
   item: iron-platebody
-  # The number of bars required to smith a single of the above item
-  bars_per_item: 5
