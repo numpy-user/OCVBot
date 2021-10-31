@@ -1,3 +1,9 @@
+"""
+Unit tests for the inputs.py module.
+
+Linux only. Requires feh.
+
+"""
 import pytest
 import pyautogui as pag
 
