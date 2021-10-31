@@ -12,6 +12,7 @@ import time
 import cv2
 import numpy as np
 import pyautogui as pag
+from ocvbot import banking
 from ocvbot import inputs
 from ocvbot import misc
 from ocvbot import startup as start
@@ -35,6 +36,8 @@ from ocvbot import vision as vis
 #      TODO
 #      """
 #      pass
+
+# TODO: Add a count_item_in_inventory() function.
 
 
 def login_basic(
@@ -235,6 +238,7 @@ def logout() -> bool:
         return True
 
     log.info("Attempting to logout.")
+    banking.close_bank()
     open_side_stone("logout")
 
     logout_button_world_switcher = False
