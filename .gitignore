@@ -22,21 +22,23 @@ bin/test/build
 bin/test/dist
 tests/haystacks/locations/old
 tests/haystacks/unsorted
-tools/osrs.dev.sh
 
 # User files
 **/credentials
 !**/credentials/README.md
 **/ocvbot/config.yaml
 
-ocvbot/inv_bottom_half.png
-ocvbot/ocvbot_bank_items_window.png
-ocvbot/ocvbot_chat_menu_recent.png
-ocvbot/ocvbot_client.png
-ocvbot/ocvbot_game_screen.png
-ocvbot/ocvbot_inv.png
-ocvbot/ocvbot_inv_left_half.png
-ocvbot/ocvbot_inv_right_half.png
-ocvbot/ocvbot_minimap.png
-ocvbot/ocvbot_minimap_slice.png
-ocvbot/ocvbot_side_stones.png
+# Temporary and debug files
+**/*backup.png
+**/*haystack.tmp.png
+**/*inv_bottom_half.png
+**/*ocvbot_bank_items_window.png
+**/*ocvbot_chat_menu_recent.png
+**/*ocvbot_client.png
+**/*ocvbot_game_screen.png
+**/*ocvbot_inv.png
+**/*ocvbot_inv_left_half.png
+**/*ocvbot_inv_right_half.png
+**/*ocvbot_minimap.png
+**/*ocvbot_minimap_slice.png
+**/*ocvbot_side_stones.png
