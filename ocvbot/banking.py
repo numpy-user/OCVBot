@@ -286,3 +286,6 @@ def deposit_inventory():
 
     log.warning("Unable to deposit inventory!")
     return False
+
+
+# TODO: add search_for_item() function.
