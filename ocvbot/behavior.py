@@ -471,6 +471,8 @@ def open_side_stone(side_stone) -> bool:
     side_stone_open = "./needles/side-stones/open/" + side_stone + ".png"
     side_stone_closed = "./needles/side-stones/closed/" + side_stone + ".png"
 
+    banking.close_bank()
+
     # Some side stones need a higher than default confidence to determine
     #   if they're open.
     stone_open = vis.Vision(
@@ -504,11 +506,6 @@ def open_side_stone(side_stone) -> bool:
         if stone_open is True:
             log.info("Opened side stone after %s tries.", tries)
             return True
-        # Make sure the bank window isn't open, which would block
-        #   access to the side stones.
-        vis.Vision(
-            region=vis.game_screen, needle="./needles/buttons/close.png", loop_num=1
-        ).click_needle()
     raise Exception("Could not open side stone!")
 
 
