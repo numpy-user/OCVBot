@@ -459,7 +459,6 @@ class Mining:
         return False
 
 
-
 class Smithing:
     """
     Class for all functions related to training the Smithing skill.
@@ -467,7 +466,7 @@ class Smithing:
     Args:
         item_in_menu (file): Filepath to the item to select in the smithing menu.
                              "-bank.png" items can be used here.
-        anvil (file): Filepath to the anvil to use.
+        anvil (file): Filepath to the anvil to use, as it appears in the game world.
         uncompleted_inv (file): Filepath to the uncompleted inventory needle. We
                                 know we're done smithing when this needle can't
                                 be found.
@@ -521,9 +520,9 @@ class Smithing:
             Returns True once done smithing.
         """
         clicked_anvil = self.click_anvil()
-
         if clicked_anvil is False:
-            return self.smith_items()
+            log.error("Unable to find anvil %s!", self.anvil)
+            return False
 
         log.info("Attempting to select item to smith.")
 
@@ -534,7 +533,6 @@ class Smithing:
             loop_sleep_range=(500, 1000),
             conf=0.85,
         ).click_needle()
-
         if menu_clicked is False:
             log.error("Unable to click menu item %s!", self.item_in_menu)
             return False
@@ -551,9 +549,10 @@ class Smithing:
 
             if smithing is False:
                 log.info("Done smithing.")
-                break
+                return True
 
-            level_up = wait_for_level_up(1)
             # If the player levels-up while smithing, restart.
-            if level_up is True:
-                return self.smith_items()
+            if wait_for_level_up(1) is True:
+                self.smith_items()
+
+        return False
