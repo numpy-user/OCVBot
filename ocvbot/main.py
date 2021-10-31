@@ -268,7 +268,7 @@ def chef(item: str, location: str, loops: int) -> bool:
     return True
 
 
-def smither(bar: str, item: str):
+def smither(bar: str, item: str, loops: int):
 
 
     haystack_map = "./haystacks/varrock-west-bank.png"
@@ -311,12 +311,11 @@ def smither(bar: str, item: str):
         item_in_menu=item, anvil=anvil, uncompleted_inv=uncompleted_inv
     )
 
-    while True:
-
         # Ensure the client is logged in.
         client_status = vis.orient()
         if client_status[0] == "logged_out":
             behavior.login_full()
+    for _ in range(loops):
 
         # Assumes starting location is Varrock west bank.
         banking.open_bank("east")
@@ -394,6 +393,7 @@ def main():
         smither(
             bar=start.config[script]["bar"],
             item=start.config[script]["item"],
+            loops=1000
         )
         sys.exit(0)
     elif script == "test":
