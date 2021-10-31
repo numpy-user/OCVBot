@@ -133,3 +133,7 @@ smithing:
   #   `iron-warhammer`
   #   `iron-platebody`
   item: iron-platebody
+  # Available options:
+  #   `varrock`
+  #      See `docs/scenarios/smithing-varrock`.
+  location: varrock

@@ -268,10 +268,19 @@ def chef(item: str, location: str, loops: int) -> bool:
     return True
 
 
-def smith(bar: str, item: str, loops: int):
+def smith(bar: str, item: str, location: str, loops: int):
+    """
+    Script for training smithing at an anvil.
 
-
-    haystack_map = "./haystacks/varrock-west-bank.png"
+    """
+    if location == "varrock":
+        haystack_map = "./haystacks/varrock-west-bank.png"
+        bank_coords = [((88, 95), 1, (4, 7), (8, 10))]
+        anvil_coords = [((98, 132), 1, (3, 3), (8, 10))]
+        anvil = "./needles/game-screen/varrock/anvil.png"
+    else:
+        log.critical("Unsupported value for location!")
+        raise RuntimeError("Unsupported value for location!")
 
     # These are used to figure out when we're done smithing.
     # Smithing items that take multiple bars may lead to 1 or 2 bars remaining.
@@ -282,18 +291,13 @@ def smith(bar: str, item: str, loops: int):
     inv_full = "./needles/side-stones/inventory/iron-bars-full.png"
 
     # We can use banked versions of the smith item because the smithing menu
-    # has the same background as the bank menu
+    #   has the same background as the bank menu.
     bar = "./needles/items/" + bar + ".png"
     item = "./needles/items/" + item + "-bank.png"
-    anvil = "./needles/game-screen/varrock/anvil.png"
-
     hammer_inv = "./needles/items/hammer.png"
     hammer_bank = "./needles/items/hammer-bank.png"
 
-    bank_coords = [((88, 95), 1, (4, 7), (8, 10))]
-    anvil_coords = [((98, 132), 1, (3, 3), (8, 10))]
-
-    # Determine which needle to use by bars per item.
+    # Determine which needle to use based on the item to smith.
     # For example, if we smith a full inventory of platebodies (5 bars per item),
     #   we'll have 2 bars remaining once we reach the end. We then know we're
     #   done smithing if we can't find 3 bars in our inventory.
@@ -313,15 +317,14 @@ def smith(bar: str, item: str, loops: int):
 
     for _ in range(loops):
 
-        # Assumes starting location is Varrock west bank.
-        banking.open_bank("east")
+        if location == "varrock":
+            banking.open_bank("east")
         banking.deposit_inventory()
 
         # Ensure we have bars in the bank
         have_bars = vis.Vision(
             region=vis.game_screen, needle=bar, conf=0.9999
         ).find_needle()
-
         # Stop script if we don't
         if have_bars is False:
             log.info("Out of bars, stopping script.")
@@ -333,13 +336,12 @@ def smith(bar: str, item: str, loops: int):
         if withdrew_hammer is False:
             log.error("Unable to withdrawal hammer!")
             break
-
         withdrew_bars = banking.withdrawal_item(item_bank=bar, item_inv=bar)
         if withdrew_bars is False:
             log.error("Unable to withdrawal bars!")
             break
 
-        # Check if we withdrew a full inventory of bars
+        # Check if we withdrew a full inventory of bars.
         full_inv = vis.Vision(region=vis.inv, needle=inv_full).wait_for_needle()
 
         # Stop script if we didn't
@@ -350,6 +352,8 @@ def smith(bar: str, item: str, loops: int):
         behavior.travel(anvil_coords, haystack_map)
         smithing.smith_items()
         behavior.travel(bank_coords, haystack_map)
+
+    return True
 
 
 def test():
@@ -389,7 +393,8 @@ def main():
         smith(
             bar=start.config[script]["bar"],
             item=start.config[script]["item"],
-            loops=1000
+            location=start.config[script]["location"],
+            loops=1000,
         )
         sys.exit(0)
     elif script == "test":
