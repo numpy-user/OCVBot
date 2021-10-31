@@ -31,6 +31,14 @@ def bank_settings_check(setting: str, value: str) -> bool:
         Returns False otherwise.
 
     """
+    if setting == "quantity":
+        if value not in ("1", "5", "10", "all"):
+            log.error("Unsupported value for quantity setting!")
+            return False
+    else:
+        log.error("Unsupported bank setting!")
+        return False
+
     log.debug("Checking if bank setting %s is set to %s", setting, value)
 
     # Check if the setting is already at the desired value.
