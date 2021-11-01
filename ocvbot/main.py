@@ -377,6 +377,10 @@ script = start.config["main"]["script"]
 
 
 def main():
+    """
+    Calls the main botting script defined in the config file.
+
+    """
     if script == "mining":
         miner(start.config[script]["location"])
 
