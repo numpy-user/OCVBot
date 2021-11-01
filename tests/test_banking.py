@@ -92,3 +92,16 @@ def test_bank_settings_check_fail(params):
     common.feh("bank_settings_check", "fail", test_number, image_directory)
     result = banking.bank_settings_check(setting, value)
     assert result is False
+
+
+# DEPOSIT_INVENTORY -------------------------------------------------------------------------------
+
+deposit_inventory_pass_params = (("01"),)
+
+
+@pytest.mark.parametrize("params", deposit_inventory_pass_params)
+def test_deposit_inventory_pass(params):
+    test_number = params
+    common.feh("deposit_inventory", "pass", test_number, image_directory)
+    result = banking.deposit_inventory()
+    assert result is True
