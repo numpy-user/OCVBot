@@ -379,11 +379,9 @@ script = start.config["main"]["script"]
 def main():
     if script == "mining":
         miner(start.config[script]["location"])
-        sys.exit(0)
 
     elif script == "magic":
         spellcaster(start.config[script]["scenario"])
-        sys.exit(0)
 
     elif script == "chef":
         chef(
@@ -391,7 +389,7 @@ def main():
             location=start.config[script]["location"],
             loops=1000,
         )
-        sys.exit(0)
+
     elif script == "smithing":
         smith(
             bar=start.config[script]["bar"],
@@ -399,13 +397,15 @@ def main():
             location=start.config[script]["location"],
             loops=1000,
         )
-        sys.exit(0)
+
     elif script == "test":
         test()
-        sys.exit(0)
+
     else:
         log.critical("Unknown value provided for 'script' key in config file!")
         raise RuntimeError("Unknown value provided for 'script' key in config file!")
+
+    sys.exit(0)
 
 
 if __name__ == "__main__":
