@@ -24,9 +24,8 @@ log.basicConfig(
 common.feh("orient", "pass", "01", image_directory)
 from ocvbot import banking
 
-# ----------------------------------------------------------------------
-# PARAMETERS ###########################################################
-# ----------------------------------------------------------------------
+
+# OPEN_BANK ------------------------------------------------------------
 
 open_bank_pass_params = (
     ("south", "01"),  # 1 tile south.
@@ -35,20 +34,6 @@ open_bank_pass_params = (
     ("west", "04"),  # 2 tiles west.
 )
 
-close_bank_pass_params = ("01",)
-close_bank_fail_params = ("01",)
-
-bank_settings_check_pass_params = (
-    ("quantity", "all", "01"),
-    ("quantity", "1", "02"),
-)
-
-# ----------------------------------------------------------------------
-# TESTS ################################################################
-# ----------------------------------------------------------------------
-
-
-# OPEN_BANK ------------------------------------------------------------
 
 @pytest.mark.parametrize("params", open_bank_pass_params)
 def test_open_bank_pass(params):
@@ -60,12 +45,19 @@ def test_open_bank_pass(params):
 
 # CLOSE BANK -----------------------------------------------------------
 
+close_bank_pass_params = ("01",)
+
+
 @pytest.mark.parametrize("params", close_bank_pass_params)
 def test_close_bank_pass(params) -> None:
     test_number = params
     common.feh("close_bank", "pass", test_number, image_directory)
     result = banking.close_bank()
     assert result is True
+
+
+close_bank_fail_params = ("01",)
+
 
 @pytest.mark.parametrize("params", close_bank_fail_params)
 def test_close_bank_fail(params) -> None:
@@ -77,9 +69,26 @@ def test_close_bank_fail(params) -> None:
 
 # BANK_SETTINGS_CHECK --------------------------------------------------
 
+bank_settings_check_pass_params = (
+    ("quantity", "all", "01"),
+    ("quantity", "1", "02"),
+)
+
+
 @pytest.mark.parametrize("params", bank_settings_check_pass_params)
-def test_bank_settings_check(params):
+def test_bank_settings_check_pass(params):
     setting, value, test_number = params
     common.feh("bank_settings_check", "pass", test_number, image_directory)
     result = banking.bank_settings_check(setting, value)
     assert result is True
+
+
+bank_settings_check_fail_params = (("note", "all", "01"),)
+
+
+@pytest.mark.parametrize("params", bank_settings_check_fail_params)
+def test_bank_settings_check_fail(params):
+    setting, value, test_number = params
+    common.feh("bank_settings_check", "fail", test_number, image_directory)
+    result = banking.bank_settings_check(setting, value)
+    assert result is False

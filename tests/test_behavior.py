@@ -21,15 +21,15 @@ log.basicConfig(
 
 # Provide an image for the client to orient itself. Currently any imports
 #   from ocvbot require an image to match first, or they will fail.
-
-# ----------------------------------------------------------------------
-# PARAMETERS ###########################################################
-# ----------------------------------------------------------------------
 common.feh("orient", "pass", "01", image_directory)
 from ocvbot import behavior
 
 # Pass in parameters as a tuple. The first item in the tuple is the side
 #   stone to open, the second is so feh() knows which test album to open.
+# Test passing conditions, then test failing conditions.
+
+# OPEN SIDE STONE ------------------------------------------------------
+
 open_side_stone_pass_params = (
     ("attacks", "01"),
     ("skills", "02"),
@@ -40,42 +40,6 @@ open_side_stone_pass_params = (
     ("spellbook", "07"),
     ("logout", "08"),
 )
-# Test passing conditions, then test failing conditions.
-open_side_stone_fail_params = (
-    ("settings", "01"),
-    ("logout", "02"),
-)
-
-logout_pass_params = (
-    "01",  # Standard logout.
-    "02",  # Logout button doesn't work the first time.
-    "03",  # World switcher open.
-    "04",  # World switcher logout button doesn't work the first time.
-    "05",  # Logout button is highlighted already.
-    "06",  # Already logged out
-)
-
-logout_fail_params = ("01",)  # Unable to find the logout button.
-
-login_pass_params = (
-    "01",  # Standard login.
-    "02",  # Login in which "Ok" button is missed.
-)
-
-login_fail_params = (
-    "01",  # Invalid user credentials.
-    "02",  # Client is already logged in.
-)
-
-
-drop_item_pass_params = (("iron_ore.png", "01"),)
-
-# ----------------------------------------------------------------------
-# TESTS ################################################################
-# ----------------------------------------------------------------------
-
-
-# OPEN SIDE STONE ------------------------------------------------------
 
 
 @pytest.mark.parametrize("params", open_side_stone_pass_params)
@@ -84,6 +48,12 @@ def test_open_side_stone_pass(params) -> None:
     common.feh("open_side_stone", "pass", test_number, image_directory)
     result = behavior.open_side_stone(side_stone)
     assert result is True
+
+
+open_side_stone_fail_params = (
+    ("settings", "01"),
+    ("logout", "02"),
+)
 
 
 @pytest.mark.parametrize("params", open_side_stone_fail_params)
@@ -97,6 +67,13 @@ def test_open_side_stone_fail(params) -> None:
 
 # LOGOUT ---------------------------------------------------------------
 
+logout_pass_params = (
+    "01",  # Logout button doesn't work the first time.
+    "02",  # World switcher open.
+    "03",  # Logout button is highlighted already.
+    "04",  # Already logged out
+)
+
 
 @pytest.mark.parametrize("params", logout_pass_params)
 def test_logout_pass(params) -> None:
@@ -104,6 +81,9 @@ def test_logout_pass(params) -> None:
     common.feh("logout", "pass", test_number, image_directory)
     result = behavior.logout()
     assert result is True
+
+
+logout_fail_params = ("01",)  # Unable to find the logout button.
 
 
 @pytest.mark.parametrize("params", logout_fail_params)
