@@ -16,7 +16,7 @@ main:
   # Available options:
   #   `magic`
   #   `mining`
-  #   `chef`
+  #   `cooking`
   #   `smithing`
   script: magic
 
@@ -114,7 +114,7 @@ magic:
   min_cast_delay: 0
   max_cast_delay: 500
 
-chef:
+cooking:
   # Available options:
   #   `raw-anchovies`
   item: raw-anchovies

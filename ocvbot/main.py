@@ -387,7 +387,7 @@ def main():
     elif script == "magic":
         spellcaster(start.config[script]["scenario"])
 
-    elif script == "chef":
+    elif script == "cooking":
         chef(
             item=start.config[script]["item"],
             location=start.config[script]["location"],
