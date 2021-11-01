@@ -11,6 +11,7 @@
 # 2. If `main.script` was set to `magic`, for example, edit the values of the
 #    `magic` section below accordingly.
 
+# MAIN -----------------------------------------------------------------------------------
 main:
   # Determines which script to run.
   # Available options:
@@ -70,6 +71,7 @@ main:
   # Whether the player has a bank pin or not.
   bank_pin: False
 
+# MINING ---------------------------------------------------------------------------------
 mining:
   # Available options:
   #   `lumbridge-mine`
@@ -94,6 +96,7 @@ mining:
   # This option is ignored for locations that don't support banking.
   drop_ore: False
 
+# MAGIC ----------------------------------------------------------------------------------
 magic:
   # Available options:
   #   `curse-varrock-castle`
@@ -114,6 +117,7 @@ magic:
   min_cast_delay: 0
   max_cast_delay: 500
 
+# COOKING --------------------------------------------------------------------------------
 cooking:
   # Available options:
   #   `raw-anchovies`
@@ -123,6 +127,7 @@ cooking:
   #      See `docs/scenarios/cooking-al-kharid`.
   location: al-kharid
 
+# SMITHING -------------------------------------------------------------------------------
 smithing:
   # Available options:
   #   `iron-bar`
