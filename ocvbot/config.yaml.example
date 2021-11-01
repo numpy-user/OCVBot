@@ -109,7 +109,7 @@ magic:
   #   {ITEM_NAME}
   #      Replace {ITEM_NAME} with the file name (excluding extension) of the
   #      item to alch. Available options are in `needles/items/`.
-  alch_item_type: runite-bolts
+  alch_item_type: bank-note
   # Minimum and maximum number of miliseconds to wait after casting each spell.
   min_cast_delay: 0
   max_cast_delay: 500
