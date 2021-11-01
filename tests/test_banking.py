@@ -21,7 +21,7 @@ log.basicConfig(
 
 # Provide an image for the client to orient itself. Currently any imports
 #   from ocvbot require an image to match first, or they will fail.
-common.feh("close_bank", "pass", "01", image_directory)
+common.feh("orient", "pass", "01", image_directory)
 from ocvbot import banking
 
 # ----------------------------------------------------------------------

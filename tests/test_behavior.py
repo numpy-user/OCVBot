@@ -21,12 +21,12 @@ log.basicConfig(
 
 # Provide an image for the client to orient itself. Currently any imports
 #   from ocvbot require an image to match first, or they will fail.
-common.feh("open_side_stone", "pass", "01", image_directory)
-from ocvbot import behavior, banking
 
 # ----------------------------------------------------------------------
 # PARAMETERS ###########################################################
 # ----------------------------------------------------------------------
+common.feh("orient", "pass", "01", image_directory)
+from ocvbot import behavior
 
 # Pass in parameters as a tuple. The first item in the tuple is the side
 #   stone to open, the second is so feh() knows which test album to open.
