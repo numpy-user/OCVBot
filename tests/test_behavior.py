@@ -28,7 +28,7 @@ from ocvbot import behavior
 #   stone to open, the second is so feh() knows which test album to open.
 # Test passing conditions, then test failing conditions.
 
-# OPEN SIDE STONE ------------------------------------------------------
+# OPEN SIDE STONE ---------------------------------------------------------------------------------
 
 open_side_stone_pass_params = (
     ("attacks", "01"),
@@ -65,7 +65,7 @@ def test_open_side_stone_fail(params) -> None:
         common.kill_feh()
 
 
-# LOGOUT ---------------------------------------------------------------
+# LOGOUT ------------------------------------------------------------------------------------------
 
 logout_pass_params = (
     "01",  # Logout button doesn't work the first time.
@@ -95,7 +95,7 @@ def test_logout_fail(params) -> None:
         common.kill_feh()
 
 
-# LOGIN ----------------------------------------------------------------
+# LOGIN -------------------------------------------------------------------------------------------
 
 
 # BROKEN
@@ -125,4 +125,4 @@ def test_logout_fail(params) -> None:
 #          )
 #          common.kill_feh()
 
-# CHECK_SKILLS ---------------------------------------------------------
+# CHECK_SKILLS ------------------------------------------------------------------------------------

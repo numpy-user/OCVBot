@@ -24,7 +24,7 @@ common.feh("orient", "pass", "01", image_directory)
 from ocvbot import main
 
 
-# CHEF ------------------------------------------------------
+# CHEF --------------------------------------------------------------------------------------------
 
 chef_pass_params = (("raw-anchovies", "al-kharid", "01"),)
 
@@ -37,7 +37,7 @@ def test_chef_pass(params) -> None:
     assert result is True
 
 
-# SMITH -----------------------------------------------------
+# SMITH -------------------------------------------------------------------------------------------
 
 smith_pass_params = (("iron-bar", "iron-platebody", "varrock", "01"),)
 

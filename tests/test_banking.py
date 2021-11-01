@@ -25,7 +25,7 @@ common.feh("orient", "pass", "01", image_directory)
 from ocvbot import banking
 
 
-# OPEN_BANK ------------------------------------------------------------
+# OPEN_BANK ---------------------------------------------------------------------------------------
 
 open_bank_pass_params = (
     ("south", "01"),  # 1 tile south.
@@ -43,7 +43,7 @@ def test_open_bank_pass(params):
     assert result is True
 
 
-# CLOSE BANK -----------------------------------------------------------
+# CLOSE BANK --------------------------------------------------------------------------------------
 
 close_bank_pass_params = ("01",)
 
@@ -67,7 +67,7 @@ def test_close_bank_fail(params) -> None:
     assert result is False
 
 
-# BANK_SETTINGS_CHECK --------------------------------------------------
+# BANK_SETTINGS_CHECK -----------------------------------------------------------------------------
 
 bank_settings_check_pass_params = (
     ("quantity", "all", "01"),
