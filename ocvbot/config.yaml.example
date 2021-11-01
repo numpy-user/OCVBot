@@ -69,6 +69,7 @@ main:
   ctrl_click_run: True
 
   # Whether the player has a bank pin or not.
+  # This option is currently unused.
   bank_pin: False
 
 # MINING ---------------------------------------------------------------------------------
