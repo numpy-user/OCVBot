@@ -154,7 +154,7 @@ class Vision:
             log.debug("Cannot find center of image %s, conf=%s", needle, self.conf)
             return False
 
-        raise RuntimeError("Incorrect mlocate function parameters!")
+        raise RuntimeError("self.loctype must be 'regular' or 'center', got '%s'", self.loctype)
 
     # TODO: Add examples of usage.
     def wait_for_needle(self, get_tuple: bool = False):
@@ -176,8 +176,6 @@ class Vision:
             Returns False if needle was not found.
 
         """
-        # log.debug('Looking for %s', + self.needle)
-
         # Add 1 to self.loop_num because if loop_num=1, it won't loop at
         #   all.
         for tries in range(1, (self.loop_num + 1)):
