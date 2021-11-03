@@ -78,13 +78,13 @@ class Vision:
         conf (float): The confidence value required to match the needle
                       successfully, expressed as a decimal <= 1. This is
                       used by PyAutoGUI, default is 0.95.
-        loop_num (int): The number of times wait_for_image() will search
+        loop_num (int): The number of times wait_for_needle() will search
                         the given coordinates for the needle, default is
                         10.
         loop_sleep_range (tuple): A 2-tuple containing the minimum and
                                   maximum number of miliseconds to wait
                                   between image-search loops. Used by
-                                  the wait_for_image() method, default
+                                  the wait_for_needle() method, default
                                   is (0, 100).
         grayscale (bool): Converts the haystack to grayscale before
                           searching within it. Speeds up searching by
@@ -98,7 +98,9 @@ class Vision:
         needle: str,
         loctype: str = "regular",
         conf: float = 0.95,
+        # TODO: Move to a parameter of wait_for_needle().
         loop_num: int = 10,
+        # TODO: Move to a parameter of wait_for_needle().
         loop_sleep_range: tuple[int, int] = (0, 100),
         grayscale: bool = False,
     ):
@@ -203,7 +205,8 @@ class Vision:
     ) -> bool:
         """
         Moves the mouse to the provided needle image and clicks on
-        it.
+        it. Automatically randomizes the location the mouse cursor
+        will click to based on the dimensions of the needle image.
 
         Args:
             sleep_range (tuple): Passed to the Mouse class in inputs.py,
@@ -271,6 +274,7 @@ class Vision:
             needles_coords_list = list(needles_coords)
             number_of_needles = len(needles_coords_list)
             return number_of_needles
+            
         # If no needles can be found, then the number of needles is 0.
         except ImageNotFoundException:
             return 0
