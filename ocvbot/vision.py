@@ -217,8 +217,8 @@ class Vision:
                           needle, default is `left`.
             move_away (bool): Whether to move the mouse out of the way
                               after clicking on the needle. Useful when
-                              mlocate() needs to determine the status
-                              of a button that the mouse just clicked.
+                              we needs to determine the status of a button
+                              that the mouse just clicked.
 
         Returns:
             Returns True if the needle was clicked on successfully,
