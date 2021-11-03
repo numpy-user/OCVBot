@@ -8,10 +8,14 @@ usage() {
 Censors OSRS screen elements. This is used for creating screenshots for testing
   that are extremely small.  A backup.png file is created automatically.
 
+  -b   Censor the primary bank window, excluding tabs and settings.
   -g   Censor the game screen.
   -c   Censor the chat menu.
   -i   Censor the side stones and inventory.
   -m   Censor the action orbs and minimap.
+  -s   Censor the bank settings at the bottom of the bank window.
+  -t   Censor the bank tabs at the top of the bank window.
+
   -h   Print this help message.
 
 Examples:
@@ -25,16 +29,22 @@ EOF
 if ! hash 2>/dev/null convert; then echo "Missing ImageMagick!" && exit 1; fi
 if ! hash 2>/dev/null pngcrush; then echo "Missing pngcrush!" && exit 1; fi
 
+bank_window=0
 game=0
 chat=0
 inv=0
 map=0
-while getopts ":gcimh" opt; do
+bank_settings=0
+bank_tabs=0
+while getopts ":bgcimhst" opt; do
     case "${opt}" in
+    b) bank_window=1 ;;
     g) game=1 ;;
     c) chat=1 ;;
     i) inv=1 ;;
     m) map=1 ;;
+    s) bank_settings=1 ;;
+    t) bank_tabs=1 ;;
     h) usage ;;
     *) usage ;;
     esac
@@ -79,6 +89,30 @@ if [[ "${map}" -eq 1 ]]; then
     convert "${1}" \
         -fill black \
         -draw "rectangle 517 0 765 169" \
+        "${1}"
+fi
+
+# Censors the primary bank window, excluding tabs and settings.
+if [[ "${bank_window}" -eq 1 ]]; then
+    convert "${1}" \
+        -fill black \
+        -draw "rectangle 0 82 516 295" \
+        "${1}"
+fi
+
+# Censors the bank settings.
+if [[ "${bank_settings}" -eq 1 ]]; then
+    convert "${1}" \
+        -fill black \
+        -draw "rectangle 0 295 516 340" \
+        "${1}"
+fi
+
+# Censors the bank tabs.
+if [[ "${bank_tabs}" -eq 1 ]]; then
+    convert "${1}" \
+        -fill black \
+        -draw "rectangle 0 37 516 82" \
         "${1}"
 fi
 
