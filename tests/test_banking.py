@@ -1,6 +1,6 @@
 # coding=UTF-8
 """
-Unit tests for the behavior.py module.
+Unit tests for the banking.py module.
 
 Linux only. Requires feh.
 
@@ -21,7 +21,7 @@ log.basicConfig(
 
 # Provide an image for the client to orient itself. Currently any imports
 #   from ocvbot require an image to match first, or they will fail.
-common.feh("orient", "pass", "01", image_directory)
+common.feh("orient", "pass", "01", ((os.path.dirname(__file__)) + "/test_vision/"))
 from ocvbot import banking
 
 

@@ -21,7 +21,7 @@ log.basicConfig(
 
 # Provide an image for the client to orient itself. Currently any imports
 #   from ocvbot require an image to match first, or they will fail.
-common.feh("orient", "pass", "01", image_directory)
+common.feh("orient", "pass", "01", ((os.path.dirname(__file__)) + "/test_vision/"))
 from ocvbot import behavior
 
 # Pass in parameters as a tuple. The first item in the tuple is the side

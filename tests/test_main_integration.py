@@ -1,6 +1,6 @@
 # coding=UTF-8
 """
-Integration tests for the primary scenarios in main.py.
+Integration tests for the scenarios in main.py.
 
 Linux only. Requires feh.
 
@@ -20,7 +20,7 @@ log.basicConfig(
 
 # Provide an image for the client to orient itself. Currently any imports
 #   from ocvbot require an image to match first, or they will fail.
-common.feh("orient", "pass", "01", image_directory)
+common.feh("orient", "pass", "01", ((os.path.dirname(__file__)) + "/test_vision/"))
 from ocvbot import main
 
 
