@@ -12,6 +12,7 @@ from ocvbot import misc
 from ocvbot import startup as start
 
 
+# TODO
 def wait_for_needle_list(
     loops: int,
     needle_list: list[tuple[str, tuple[int, int, int, int]]],
@@ -54,6 +55,7 @@ def wait_for_needle_list(
     return False
 
 
+# TODO: Add examples of usage.
 class Vision:
     """
     Contains methods for locating images on the display.
@@ -108,6 +110,7 @@ class Vision:
         self.loop_num = loop_num
         self.loop_sleep_range = loop_sleep_range
 
+    # TODO: Add examples of usage.
     def find_needle(self):
         """
         Searches within the self.ltwh coordinates for self.needle.
@@ -153,6 +156,7 @@ class Vision:
 
         raise RuntimeError("Incorrect mlocate function parameters!")
 
+    # TODO: Add examples of usage.
     def wait_for_needle(self, get_tuple: bool = False):
         """
         Repeatedly searches within the self.ltwh coordinates for the needle.
@@ -191,6 +195,7 @@ class Vision:
         log.debug("Timed out looking for %s", self.needle)
         return False
 
+    # TODO: Add examples of usage.
     def click_needle(
         self,
         sleep_range: tuple[int, int, int, int] = (50, 200, 50, 200),
@@ -244,7 +249,8 @@ class Vision:
             return True
         return False
 
-
+# TODO: Add examples of usage.
+# TODO: Break out an "is_logged_in" function.
 def orient(
     region: tuple[int, int, int, int] = (
         0,
@@ -325,6 +331,7 @@ def orient(
 # Setup the necessary region tuples for the Vision class and orient the client.
 # ----------------------------------------------------------------------
 
+# TODO: Call these functions from main.py instead.
 display = (0, 0, start.DISPLAY_WIDTH, start.DISPLAY_HEIGHT)
 (client_status, anchor) = orient(region=display)
 (client_left, client_top) = anchor
@@ -347,6 +354,9 @@ elif client_status == "logged_out":
 
 # The fixed-width Java game client.
 client = (client_left, client_top, start.CLIENT_WIDTH, start.CLIENT_HEIGHT)
+
+# TODO: Break these regions out into a separate file.
+# TODO: Add screenshots with highlighted regions in docs/
 
 # The player's inventory.
 inv_left = client_left + 548
