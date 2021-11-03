@@ -1,3 +1,4 @@
+# coding=UTF-8
 """
 Unit tests for the inputs.py module.
 
