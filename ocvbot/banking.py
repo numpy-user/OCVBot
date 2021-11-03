@@ -97,7 +97,7 @@ def open_bank(direction) -> bool:
         return True
 
     log.info("Attempting to open bank window.")
-    for _ in range(1, 10):
+    for _ in range(5):
         one_tile = vis.Vision(
             region=vis.game_screen,
             needle="./needles/game-screen/bank/bank-booth-" + direction + "-1-tile.png",
@@ -118,7 +118,7 @@ def open_bank(direction) -> bool:
             bank_open = vis.Vision(
                 region=vis.game_screen,
                 needle="./needles/buttons/close.png",
-                loop_num=30,
+                loop_num=10,
             ).wait_for_needle()
             if bank_open is True:
                 return True
@@ -142,7 +142,7 @@ def close_bank() -> bool:
     bank_open = vis.Vision(
         region=vis.game_screen,
         needle="./needles/buttons/close.png",
-        loop_num=5,
+        loop_num=2,
     ).wait_for_needle()
     if bank_open is False:
         log.info("Bank window is not open")
@@ -253,7 +253,7 @@ def withdrawal_item(
 
         # Wait for item to appear in inventory.
         item_in_inventory = vis.Vision(
-            region=vis.inv, needle=item_inv, loop_num=25, conf=conf
+            region=vis.inv, needle=item_inv, loop_num=15, conf=conf
         ).wait_for_needle()
         if item_in_inventory is True:
             return True
@@ -273,13 +273,12 @@ def deposit_inventory():
 
     """
     log.info("Depositing inventory.")
-    for _ in range(1, 5):
+    for _ in range(5):
         vis.Vision(
             region=vis.game_screen,
             needle="./needles/bank/deposit-inventory.png",
             loop_num=3,
         ).click_needle()
-        misc.sleep_rand(500, 1000)
 
         # Wait until the inventory is empty.
         inv_empty = vis.Vision(
