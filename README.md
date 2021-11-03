@@ -18,6 +18,8 @@ The OSRS Computer Vision bot
 
 ## INSTALLATION
 
+- Requires Python 3.9+
+
 1. Clone this repository into your home directory.
 ```bash
 cd ~
