@@ -247,6 +247,34 @@ class Vision:
             return True
         return False
 
+    def count_needles(self):
+        """
+        Counts the number of needles found within the region specified.
+
+        Examples:
+            Count the number of iron bars in the player's inventory:
+            vision.Vision(region=vis.inv, needle="./needles/items/iron-bar.png").count_needles()
+
+        Returns:
+            Returns an int.
+        """
+        # Make sure file path is OS-agnostic.
+        needle = str(pathlib.Path(self.needle))
+
+        try:
+            needles_coords = pag.locateAllOnScreen(
+                needle,
+                confidence=self.conf,
+                grayscale=self.grayscale,
+                region=self.region,
+                )
+            needles_coords_list = list(needles_coords)
+            number_of_needles = len(needles_coords_list)
+            return number_of_needles
+        # If no needles can be found, then the number of needles is 0.
+        except ImageNotFoundException:
+            return 0
+
 # TODO: Add examples of usage.
 # TODO: Break out an "is_logged_in" function.
 def orient(
