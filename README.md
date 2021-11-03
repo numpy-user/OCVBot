@@ -59,9 +59,7 @@ cp "ocvbot/config.yaml.example" "ocvbot/config.yaml"
 7. Read and edit `ocvbot/config.yaml` with your desired configuration settings.
 
 8. Check `docs/scenarios` for the proper client configuration
-   settings and information about each script. Configurations in the `common/` directory are shared by all
-   scripts. Configurations in all other directories are unique to that script
-   only.
+   settings and information about each script.
 
 9. Launch the OldSchool Runescape client. A wrapper script is provided in
    this repository.

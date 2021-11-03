@@ -12,6 +12,7 @@ from ocvbot import misc
 from ocvbot import startup as start
 
 
+# TODO
 def wait_for_needle_list(
     loops: int,
     needle_list: list[tuple[str, tuple[int, int, int, int]]],
@@ -54,6 +55,7 @@ def wait_for_needle_list(
     return False
 
 
+# TODO: Add examples of usage.
 class Vision:
     """
     Contains methods for locating images on the display.
@@ -76,13 +78,13 @@ class Vision:
         conf (float): The confidence value required to match the needle
                       successfully, expressed as a decimal <= 1. This is
                       used by PyAutoGUI, default is 0.95.
-        loop_num (int): The number of times wait_for_image() will search
+        loop_num (int): The number of times wait_for_needle() will search
                         the given coordinates for the needle, default is
                         10.
         loop_sleep_range (tuple): A 2-tuple containing the minimum and
                                   maximum number of miliseconds to wait
                                   between image-search loops. Used by
-                                  the wait_for_image() method, default
+                                  the wait_for_needle() method, default
                                   is (0, 100).
         grayscale (bool): Converts the haystack to grayscale before
                           searching within it. Speeds up searching by
@@ -96,7 +98,9 @@ class Vision:
         needle: str,
         loctype: str = "regular",
         conf: float = 0.95,
+        # TODO: Move to a parameter of wait_for_needle().
         loop_num: int = 10,
+        # TODO: Move to a parameter of wait_for_needle().
         loop_sleep_range: tuple[int, int] = (0, 100),
         grayscale: bool = False,
     ):
@@ -108,6 +112,7 @@ class Vision:
         self.loop_num = loop_num
         self.loop_sleep_range = loop_sleep_range
 
+    # TODO: Add examples of usage.
     def find_needle(self):
         """
         Searches within the self.ltwh coordinates for self.needle.
@@ -151,8 +156,9 @@ class Vision:
             log.debug("Cannot find center of image %s, conf=%s", needle, self.conf)
             return False
 
-        raise RuntimeError("Incorrect mlocate function parameters!")
+        raise RuntimeError("self.loctype must be 'regular' or 'center', got '%s'", self.loctype)
 
+    # TODO: Add examples of usage.
     def wait_for_needle(self, get_tuple: bool = False):
         """
         Repeatedly searches within the self.ltwh coordinates for the needle.
@@ -172,8 +178,6 @@ class Vision:
             Returns False if needle was not found.
 
         """
-        # log.debug('Looking for %s', + self.needle)
-
         # Add 1 to self.loop_num because if loop_num=1, it won't loop at
         #   all.
         for tries in range(1, (self.loop_num + 1)):
@@ -191,6 +195,7 @@ class Vision:
         log.debug("Timed out looking for %s", self.needle)
         return False
 
+    # TODO: Add examples of usage.
     def click_needle(
         self,
         sleep_range: tuple[int, int, int, int] = (50, 200, 50, 200),
@@ -200,7 +205,8 @@ class Vision:
     ) -> bool:
         """
         Moves the mouse to the provided needle image and clicks on
-        it.
+        it. Automatically randomizes the location the mouse cursor
+        will click to based on the dimensions of the needle image.
 
         Args:
             sleep_range (tuple): Passed to the Mouse class in inputs.py,
@@ -212,8 +218,8 @@ class Vision:
                           needle, default is `left`.
             move_away (bool): Whether to move the mouse out of the way
                               after clicking on the needle. Useful when
-                              mlocate() needs to determine the status
-                              of a button that the mouse just clicked.
+                              we needs to determine the status of a button
+                              that the mouse just clicked.
 
         Returns:
             Returns True if the needle was clicked on successfully,
@@ -244,7 +250,37 @@ class Vision:
             return True
         return False
 
+    def count_needles(self):
+        """
+        Counts the number of needles found within the region specified.
 
+        Examples:
+            Count the number of iron bars in the player's inventory:
+            vision.Vision(region=vis.inv, needle="./needles/items/iron-bar.png").count_needles()
+
+        Returns:
+            Returns an int.
+        """
+        # Make sure file path is OS-agnostic.
+        needle = str(pathlib.Path(self.needle))
+
+        try:
+            needles_coords = pag.locateAllOnScreen(
+                needle,
+                confidence=self.conf,
+                grayscale=self.grayscale,
+                region=self.region,
+                )
+            needles_coords_list = list(needles_coords)
+            number_of_needles = len(needles_coords_list)
+            return number_of_needles
+            
+        # If no needles can be found, then the number of needles is 0.
+        except ImageNotFoundException:
+            return 0
+
+# TODO: Add examples of usage.
+# TODO: Break out an "is_logged_in" function.
 def orient(
     region: tuple[int, int, int, int] = (
         0,
@@ -325,6 +361,7 @@ def orient(
 # Setup the necessary region tuples for the Vision class and orient the client.
 # ----------------------------------------------------------------------
 
+# TODO: Call these functions from main.py instead.
 display = (0, 0, start.DISPLAY_WIDTH, start.DISPLAY_HEIGHT)
 (client_status, anchor) = orient(region=display)
 (client_left, client_top) = anchor
@@ -347,6 +384,9 @@ elif client_status == "logged_out":
 
 # The fixed-width Java game client.
 client = (client_left, client_top, start.CLIENT_WIDTH, start.CLIENT_HEIGHT)
+
+# TODO: Break these regions out into a separate file.
+# TODO: Add screenshots with highlighted regions in docs/
 
 # The player's inventory.
 inv_left = client_left + 548
