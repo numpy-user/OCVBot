@@ -8,7 +8,6 @@ Linux only. Requires feh.
 import logging as log
 import os
 
-import psutil
 import pytest
 
 import common
@@ -24,17 +23,14 @@ log.basicConfig(
 common.feh("orient", "pass", "01", ((os.path.dirname(__file__)) + "/test_vision/"))
 from ocvbot import behavior
 
-# Pass in parameters as a tuple. The first item in the tuple is the side
-#   stone to open, the second is so feh() knows which test album to open.
-# Test passing conditions, then test failing conditions.
-
 # LOGOUT ------------------------------------------------------------------------------------------
 
 logout_pass_params = (
-    "01",  # Logout button doesn't work the first time.
-    "02",  # World switcher open.
-    "03",  # Logout button is highlighted already.
+    "01",  # Logout tab is already open.
+    "02",  # Logout tab is already open, button highlighted.
+    "03",  # Logout tab is already open, world switcher open.
     "04",  # Already logged out
+    "05",  # Attack tab is open, switching tabs doesn't work at first.
 )
 
 
