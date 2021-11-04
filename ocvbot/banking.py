@@ -2,7 +2,11 @@
 """
 Functions for interacting with the banking window.
 
-Used for opening the bank, withdrawing items, and depositing items.
+Used for:
+  - opening the bank
+  - closing the bank
+  - withdrawing items
+  - depositing items
 
 """
 import logging as log
@@ -10,6 +14,8 @@ import logging as log
 from ocvbot import misc
 from ocvbot import startup as start
 from ocvbot import vision as vis
+
+# TODO: add search_for_item() function.
 
 
 def bank_settings_check(setting: str, value: str) -> bool:
@@ -72,6 +78,125 @@ def bank_settings_check(setting: str, value: str) -> bool:
     return False
 
 
+def close_bank() -> bool:
+    """
+    Closes the bank window if it is open.
+
+    Returns:
+        Returns True if the bank window was closed, or the bank window
+        isn't open.
+        Returns False if the bank window could not be closed.
+
+    """
+    # Check if the bank window is open.
+    bank_open = vis.Vision(
+        region=vis.game_screen,
+        needle="./needles/buttons/close.png",
+        loop_num=2,
+    ).wait_for_needle()
+    if bank_open is False:
+        log.info("Bank window is not open")
+        return True
+
+    # Attempt to close the bank window.
+    for _ in range(5):
+        vis.Vision(
+            region=vis.game_screen,
+            needle="./needles/buttons/close.png",
+            loop_num=5,
+        ).click_needle(move_away=True)
+
+        # Make sure the bank window has been closed.
+        bank_open = vis.Vision(
+            region=vis.game_screen,
+            needle="./needles/buttons/close.png",
+            loop_num=3,
+        ).wait_for_needle()
+        if bank_open is False:
+            log.info("Bank window has been closed")
+            return True
+
+    log.warning("Bank window could not be closed!")
+    return False
+
+
+def deposit_inventory():
+    """
+    Deposits entire inventory into the bank. Assumes the bank window is
+    open.
+
+    Returns:
+        Returns True if the inventory was successfully deposited into
+        the bank, returns False otherwise.
+
+    """
+    log.info("Depositing inventory.")
+    for _ in range(5):
+        vis.Vision(
+            region=vis.game_screen,
+            needle="./needles/bank/deposit-inventory.png",
+            loop_num=3,
+        ).click_needle()
+
+        # Wait until the inventory is empty.
+        inv_empty = vis.Vision(
+            region=vis.inv,
+            needle="./needles/side-stones/inventory/empty-inventory.png",
+            loop_sleep_range=(100, 300),
+            conf=0.9,
+            loop_num=10,
+        ).wait_for_needle()
+        if inv_empty is True:
+            return True
+
+    log.warning("Unable to deposit inventory!")
+    return False
+
+
+# TODO
+def enter_bank_pin(pin=(start.config["main"]["bank_pin"])) -> bool:
+    """
+    Enters the user's bank PIN. Assumes the bank window is open.
+
+    Args:
+        pin (tuple): A 4-tuple of the player's PIN.
+
+    Examples:
+        enter_bank_pin(pin=1234)
+
+    Returns:
+        Returns True if the bank PIN was successfully entered or PIN
+        window could not be found, returns False if PIN was incorrect
+
+    """
+    pin = tuple(str(pin))
+    # Confirm that the bank PIN screen is actually present.
+    bank_pin_screen = vis.Vision(
+        region=vis.game_screen, needle="./needles/.png", loop_num=1
+    ).wait_for_needle(get_tuple=False)
+    if bank_pin_screen is False:
+        return True
+
+    # Loop through the different PIN screens for each of the 4 digits.
+    for pin_ordinal in range(1, 4):
+
+        # Wait for the first/second/third/fourth PIN prompt screen to
+        #   appear.
+        pin_ordinal_prompt = vis.Vision(
+            region=vis.game_screen, needle="./needles/" + str(pin_ordinal), loop_num=1
+        ).wait_for_needle(get_tuple=False)
+
+        # Enter the first/second/third/fourth digit of the PIN.
+        if pin_ordinal_prompt is True:
+            # TODO:
+            enter_digit = vis.Vision(
+                region=vis.game_screen,
+                needle="./needles/" + pin[pin_ordinal],
+                loop_num=1,
+            ).click_needle()
+    return True
+
+
 def open_bank(direction) -> bool:
     """
     Opens the bank. Assumes the player is within 2 empty tiles of a bank booth.
@@ -128,92 +253,6 @@ def open_bank(direction) -> bool:
     return False
 
 
-def close_bank() -> bool:
-    """
-    Closes the bank window if it is open.
-
-    Returns:
-        Returns True if the bank window was closed, or the bank window
-        isn't open.
-        Returns False if the bank window could not be closed.
-
-    """
-    # Check if the bank window is open.
-    bank_open = vis.Vision(
-        region=vis.game_screen,
-        needle="./needles/buttons/close.png",
-        loop_num=2,
-    ).wait_for_needle()
-    if bank_open is False:
-        log.info("Bank window is not open")
-        return True
-
-    # Attempt to close the bank window.
-    for _ in range(5):
-        vis.Vision(
-            region=vis.game_screen,
-            needle="./needles/buttons/close.png",
-            loop_num=5,
-        ).click_needle(move_away=True)
-
-        # Make sure the bank window has been closed.
-        bank_open = vis.Vision(
-            region=vis.game_screen,
-            needle="./needles/buttons/close.png",
-            loop_num=3,
-        ).wait_for_needle()
-        if bank_open is False:
-            log.info("Bank window has been closed")
-            return True
-
-    log.warning("Bank window could not be closed!")
-    return False
-
-
-# TODO
-def enter_bank_pin(pin=(start.config["main"]["bank_pin"])) -> bool:
-    """
-    Enters the user's bank PIN. Assumes the bank window is open.
-
-    Args:
-        pin (tuple): A 4-tuple of the player's PIN.
-
-    Examples:
-        enter_bank_pin(pin=1234)
-
-    Returns:
-        Returns True if the bank PIN was successfully entered or PIN
-        window could not be found, returns False if PIN was incorrect
-
-    """
-    pin = tuple(str(pin))
-    # Confirm that the bank PIN screen is actually present.
-    bank_pin_screen = vis.Vision(
-        region=vis.game_screen, needle="./needles/.png", loop_num=1
-    ).wait_for_needle(get_tuple=False)
-    if bank_pin_screen is False:
-        return True
-
-    # Loop through the different PIN screens for each of the 4 digits.
-    for pin_ordinal in range(1, 4):
-
-        # Wait for the first/second/third/fourth PIN prompt screen to
-        #   appear.
-        pin_ordinal_prompt = vis.Vision(
-            region=vis.game_screen, needle="./needles/" + str(pin_ordinal), loop_num=1
-        ).wait_for_needle(get_tuple=False)
-
-        # Enter the first/second/third/fourth digit of the PIN.
-        if pin_ordinal_prompt is True:
-            # TODO:
-            enter_digit = vis.Vision(
-                region=vis.game_screen,
-                needle="./needles/" + pin[pin_ordinal],
-                loop_num=1,
-            ).click_needle()
-    return True
-
-
 def withdrawal_item(
     item_bank: str, item_inv: str, conf: float = 0.95, quantity: str = "all"
 ) -> bool:
@@ -242,7 +281,9 @@ def withdrawal_item(
 
     """
     # Ensure the correct quantity is withdrawn.
-    bank_settings_check("quantity", quantity)
+    quantity_set = bank_settings_check("quantity", quantity)
+    if quantity_set is False:
+        return False
 
     # Try multiple times to withdrawal the item.
     log.info("Attempting to withdrawal item: %s", item_bank)
@@ -260,39 +301,3 @@ def withdrawal_item(
 
     log.warning("Could not withdrawal item: %s!", item_bank)
     return False
-
-
-def deposit_inventory():
-    """
-    Deposits entire inventory into the bank. Assumes the bank window is
-    open.
-
-    Returns:
-        Returns True if the inventory was successfully deposited into
-        the bank, returns False otherwise.
-
-    """
-    log.info("Depositing inventory.")
-    for _ in range(5):
-        vis.Vision(
-            region=vis.game_screen,
-            needle="./needles/bank/deposit-inventory.png",
-            loop_num=3,
-        ).click_needle()
-
-        # Wait until the inventory is empty.
-        inv_empty = vis.Vision(
-            region=vis.inv,
-            needle="./needles/side-stones/inventory/empty-inventory.png",
-            loop_sleep_range=(100, 300),
-            conf=0.9,
-            loop_num=10,
-        ).wait_for_needle()
-        if inv_empty is True:
-            return True
-
-    log.warning("Unable to deposit inventory!")
-    return False
-
-
-# TODO: add search_for_item() function.
