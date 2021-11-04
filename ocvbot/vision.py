@@ -202,6 +202,7 @@ class Vision:
         move_duration_range: tuple[int, int] = (1, 50),
         button: str = "left",
         move_away: bool = False,
+        number_of_clicks: int = 1,
     ) -> bool:
         """
         Moves the mouse to the provided needle image and clicks on
@@ -220,6 +221,9 @@ class Vision:
                               after clicking on the needle. Useful when
                               we needs to determine the status of a button
                               that the mouse just clicked.
+            number_of_clicks (int): Passed to the click_coord() function of the
+                                    Mouse class, see its docstring for more
+                                    info. Default is 1.
 
         Returns:
             Returns True if the needle was clicked on successfully,
@@ -239,7 +243,7 @@ class Vision:
                 sleep_range=sleep_range,
                 move_duration_range=move_duration_range,
                 button=button,
-            ).click_coord()
+            ).click_coord(number_of_clicks=number_of_clicks)
 
             log.debug("Clicking on %s", self.needle)
 
