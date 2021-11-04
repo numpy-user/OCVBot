@@ -11,6 +11,7 @@ Used for:
 """
 import logging as log
 
+from ocvbot import interface
 from ocvbot import misc
 from ocvbot import startup as start
 from ocvbot import vision as vis
@@ -32,50 +33,33 @@ def bank_settings_check(setting: str, value: str) -> bool:
     Examples:
         bank_settings_check("quantity", "all")
 
+    Raises:
+        Raises an exception if the setting could not be set.
+
     Returns:
         Returns True if the value was successfully set or was already set.
-        Returns False otherwise.
 
     """
     if setting == "quantity":
         if value not in ("1", "5", "10", "all"):
-            log.error("Unsupported value for quantity setting!")
-            return False
+            raise Exception("Unsupported value for quantity setting: ", value)
     else:
-        log.error("Unsupported bank setting!")
-        return False
+        raise Exception("Unsupported bank setting: ", setting)
 
-    log.debug("Checking if bank setting %s is set to %s", setting, value)
+    setting_unset = "./needles/bank/settings/" + setting + "/" + value + "-unset.png"
+    setting_set = "./needles/bank/settings/" + setting + "/" + value + "-set.png"
 
-    # Check if the setting is already at the desired value.
-    value_already_set = vis.Vision(
-        region=vis.game_screen,
-        needle="./needles/bank/settings/" + setting + "/" + value + "-set.png",
-        loop_num=1,
-    ).wait_for_needle()
-    if value_already_set is True:
-        log.debug("Bank setting %s is already set to %s", setting, value)
-        return True
-
-    # If not, try to bring the setting to the desired value.
-    for _ in range(5):
-        vis.Vision(
-            region=vis.game_screen,
-            needle="./needles/bank/settings/" + setting + "/" + value + "-unset.png",
-            loop_num=1,
-        ).click_needle(move_away=True)
-
-        value_set = vis.Vision(
-            region=vis.game_screen,
-            needle="./needles/bank/settings/" + setting + "/" + value + "-set.png",
-            loop_num=5,
-        ).wait_for_needle()
-        if value_set is True:
-            log.info("Bank setting %s has been set to %s", setting, value)
-            return True
-
-    log.warning("Bank setting %s was unable to be set to %s!", setting, value)
-    return False
+    try:
+        log.debug("Checking if bank setting %s is set to %s", setting, value)
+        interface.enable_button(
+            button_disabled=setting_unset,
+            button_disabled_region=vis.game_screen,
+            button_enabled=setting_set,
+            button_enabled_region=vis.game_screen,
+        )
+    except Exception as error:
+        raise Exception("Could set bank setting!") from error
+    return True
 
 
 def close_bank() -> bool:
