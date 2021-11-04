@@ -74,11 +74,11 @@ def test_open_side_stone_pass(params) -> None:
     common.feh("open_side_stone", "pass", test_number, image_directory)
     result = behavior.open_side_stone(side_stone)
     assert result is True
+    common.kill_feh()
 
 
 open_side_stone_fail_params = (
     ("settings", "01"),
-    ("logout", "02"),
 )
 
 
