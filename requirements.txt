@@ -14,3 +14,4 @@ recommonmark
 scikit-build
 types-PyYAML
 wheel
+beautifulsoup4

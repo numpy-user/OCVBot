@@ -1,0 +1,1654 @@
+{
+    "301": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 1,
+        "column": 1
+    },
+    "302": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 2,
+        "column": 1
+    },
+    "303": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 3,
+        "column": 1
+    },
+    "304": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 4,
+        "column": 1
+    },
+    "305": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 5,
+        "column": 1
+    },
+    "306": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 6,
+        "column": 1
+    },
+    "307": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 7,
+        "column": 1
+    },
+    "308": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 8,
+        "column": 1
+    },
+    "309": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 9,
+        "column": 1
+    },
+    "310": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 10,
+        "column": 1
+    },
+    "311": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 11,
+        "column": 1
+    },
+    "312": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 12,
+        "column": 1
+    },
+    "313": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 13,
+        "column": 1
+    },
+    "314": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 14,
+        "column": 1
+    },
+    "315": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 15,
+        "column": 1
+    },
+    "316": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 16,
+        "column": 1
+    },
+    "317": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 17,
+        "column": 1
+    },
+    "318": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 18,
+        "column": 1
+    },
+    "319": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 19,
+        "column": 1
+    },
+    "320": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 20,
+        "column": 1
+    },
+    "321": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 21,
+        "column": 1
+    },
+    "322": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 22,
+        "column": 1
+    },
+    "323": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 23,
+        "column": 1
+    },
+    "324": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 24,
+        "column": 1
+    },
+    "325": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 1,
+        "column": 2
+    },
+    "326": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 2,
+        "column": 2
+    },
+    "327": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 3,
+        "column": 2
+    },
+    "328": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 4,
+        "column": 2
+    },
+    "329": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 5,
+        "column": 2
+    },
+    "330": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 6,
+        "column": 2
+    },
+    "331": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 7,
+        "column": 2
+    },
+    "332": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 8,
+        "column": 2
+    },
+    "333": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 9,
+        "column": 2
+    },
+    "334": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 10,
+        "column": 2
+    },
+    "335": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 11,
+        "column": 2
+    },
+    "336": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 12,
+        "column": 2
+    },
+    "337": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 13,
+        "column": 2
+    },
+    "338": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 14,
+        "column": 2
+    },
+    "339": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 15,
+        "column": 2
+    },
+    "340": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 16,
+        "column": 2
+    },
+    "341": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 17,
+        "column": 2
+    },
+    "342": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 18,
+        "column": 2
+    },
+    "343": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 19,
+        "column": 2
+    },
+    "344": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 20,
+        "column": 2
+    },
+    "345": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 21,
+        "column": 2
+    },
+    "346": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 22,
+        "column": 2
+    },
+    "347": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 23,
+        "column": 2
+    },
+    "348": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 24,
+        "column": 2
+    },
+    "349": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "2000",
+        "row": 1,
+        "column": 3
+    },
+    "350": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 2,
+        "column": 3
+    },
+    "351": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 3,
+        "column": 3
+    },
+    "352": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 4,
+        "column": 3
+    },
+    "353": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "1250",
+        "row": 5,
+        "column": 3
+    },
+    "354": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 6,
+        "column": 3
+    },
+    "355": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 7,
+        "column": 3
+    },
+    "356": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 8,
+        "column": 3
+    },
+    "357": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 9,
+        "column": 3
+    },
+    "358": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 10,
+        "column": 3
+    },
+    "359": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 11,
+        "column": 3
+    },
+    "360": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 12,
+        "column": 3
+    },
+    "361": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "2000",
+        "row": 13,
+        "column": 3
+    },
+    "362": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 14,
+        "column": 3
+    },
+    "363": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "2200",
+        "row": 15,
+        "column": 3
+    },
+    "364": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "1250",
+        "row": 16,
+        "column": 3
+    },
+    "365": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 17,
+        "column": 3
+    },
+    "366": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "1500",
+        "row": 18,
+        "column": 3
+    },
+    "367": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 19,
+        "column": 3
+    },
+    "368": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 20,
+        "column": 3
+    },
+    "369": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 21,
+        "column": 3
+    },
+    "370": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 22,
+        "column": 3
+    },
+    "371": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 23,
+        "column": 3
+    },
+    "372": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "750",
+        "row": 24,
+        "column": 3
+    },
+    "373": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "1750",
+        "row": 1,
+        "column": 4
+    },
+    "374": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 2,
+        "column": 4
+    },
+    "375": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 3,
+        "column": 4
+    },
+    "376": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 4,
+        "column": 4
+    },
+    "377": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 5,
+        "column": 4
+    },
+    "378": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 6,
+        "column": 4
+    },
+    "379": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 7,
+        "column": 4
+    },
+    "380": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 8,
+        "column": 4
+    },
+    "381": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "500",
+        "row": 9,
+        "column": 4
+    },
+    "382": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 10,
+        "column": 4
+    },
+    "383": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 11,
+        "column": 4
+    },
+    "384": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 12,
+        "column": 4
+    },
+    "386": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 13,
+        "column": 4
+    },
+    "387": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 14,
+        "column": 4
+    },
+    "388": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 15,
+        "column": 4
+    },
+    "389": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 16,
+        "column": 4
+    },
+    "390": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 17,
+        "column": 4
+    },
+    "391": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "1750",
+        "row": 18,
+        "column": 4
+    },
+    "392": {
+        "members_only": true,
+        "pvp": true,
+        "total_level_requirement": "None",
+        "row": 19,
+        "column": 4
+    },
+    "393": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "750",
+        "row": 20,
+        "column": 4
+    },
+    "394": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 21,
+        "column": 4
+    },
+    "395": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 22,
+        "column": 4
+    },
+    "396": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "2000",
+        "row": 23,
+        "column": 4
+    },
+    "397": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 24,
+        "column": 4
+    },
+    "398": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 1,
+        "column": 5
+    },
+    "399": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 2,
+        "column": 5
+    },
+    "413": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "500",
+        "row": 3,
+        "column": 5
+    },
+    "414": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "750",
+        "row": 4,
+        "column": 5
+    },
+    "415": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "2200",
+        "row": 5,
+        "column": 5
+    },
+    "416": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "1500",
+        "row": 6,
+        "column": 5
+    },
+    "417": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 7,
+        "column": 5
+    },
+    "418": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 8,
+        "column": 5
+    },
+    "419": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "500",
+        "row": 9,
+        "column": 5
+    },
+    "420": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "1500",
+        "row": 10,
+        "column": 5
+    },
+    "421": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 11,
+        "column": 5
+    },
+    "422": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 12,
+        "column": 5
+    },
+    "424": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 13,
+        "column": 5
+    },
+    "425": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 14,
+        "column": 5
+    },
+    "426": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 15,
+        "column": 5
+    },
+    "427": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "500",
+        "row": 16,
+        "column": 5
+    },
+    "428": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "2000",
+        "row": 17,
+        "column": 5
+    },
+    "429": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "1250",
+        "row": 18,
+        "column": 5
+    },
+    "430": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 19,
+        "column": 5
+    },
+    "431": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 20,
+        "column": 5
+    },
+    "432": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "750",
+        "row": 21,
+        "column": 5
+    },
+    "433": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 22,
+        "column": 5
+    },
+    "434": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 23,
+        "column": 5
+    },
+    "435": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 24,
+        "column": 5
+    },
+    "436": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 1,
+        "column": 6
+    },
+    "437": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 2,
+        "column": 6
+    },
+    "443": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 3,
+        "column": 6
+    },
+    "444": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 4,
+        "column": 6
+    },
+    "445": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 5,
+        "column": 6
+    },
+    "446": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 6,
+        "column": 6
+    },
+    "447": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "1250",
+        "row": 7,
+        "column": 6
+    },
+    "448": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "1500",
+        "row": 8,
+        "column": 6
+    },
+    "449": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "1750",
+        "row": 9,
+        "column": 6
+    },
+    "450": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "2200",
+        "row": 10,
+        "column": 6
+    },
+    "451": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 11,
+        "column": 6
+    },
+    "452": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 12,
+        "column": 6
+    },
+    "453": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 13,
+        "column": 6
+    },
+    "454": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 14,
+        "column": 6
+    },
+    "455": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 15,
+        "column": 6
+    },
+    "456": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 16,
+        "column": 6
+    },
+    "463": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 17,
+        "column": 6
+    },
+    "464": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 18,
+        "column": 6
+    },
+    "465": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 19,
+        "column": 6
+    },
+    "466": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 20,
+        "column": 6
+    },
+    "467": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "1750",
+        "row": 21,
+        "column": 6
+    },
+    "468": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "500",
+        "row": 22,
+        "column": 6
+    },
+    "469": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 23,
+        "column": 6
+    },
+    "470": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 24,
+        "column": 6
+    },
+    "471": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 1,
+        "column": 7
+    },
+    "472": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 2,
+        "column": 7
+    },
+    "473": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 3,
+        "column": 7
+    },
+    "474": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 4,
+        "column": 7
+    },
+    "475": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 5,
+        "column": 7
+    },
+    "476": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 6,
+        "column": 7
+    },
+    "477": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 7,
+        "column": 7
+    },
+    "478": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 8,
+        "column": 7
+    },
+    "479": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 9,
+        "column": 7
+    },
+    "480": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 10,
+        "column": 7
+    },
+    "481": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 11,
+        "column": 7
+    },
+    "482": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 12,
+        "column": 7
+    },
+    "483": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 13,
+        "column": 7
+    },
+    "484": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 14,
+        "column": 7
+    },
+    "485": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 15,
+        "column": 7
+    },
+    "486": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 16,
+        "column": 7
+    },
+    "487": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 17,
+        "column": 7
+    },
+    "488": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 18,
+        "column": 7
+    },
+    "489": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 19,
+        "column": 7
+    },
+    "490": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 20,
+        "column": 7
+    },
+    "491": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 21,
+        "column": 7
+    },
+    "492": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 22,
+        "column": 7
+    },
+    "493": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 23,
+        "column": 7
+    },
+    "494": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 24,
+        "column": 7
+    },
+    "495": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 1,
+        "column": 8
+    },
+    "496": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 2,
+        "column": 8
+    },
+    "497": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 3,
+        "column": 8
+    },
+    "498": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 4,
+        "column": 8
+    },
+    "499": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 5,
+        "column": 8
+    },
+    "500": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 6,
+        "column": 8
+    },
+    "501": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 7,
+        "column": 8
+    },
+    "505": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 8,
+        "column": 8
+    },
+    "506": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 9,
+        "column": 8
+    },
+    "507": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 10,
+        "column": 8
+    },
+    "508": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 11,
+        "column": 8
+    },
+    "509": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 12,
+        "column": 8
+    },
+    "510": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 13,
+        "column": 8
+    },
+    "511": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 14,
+        "column": 8
+    },
+    "512": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 15,
+        "column": 8
+    },
+    "513": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 16,
+        "column": 8
+    },
+    "514": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 17,
+        "column": 8
+    },
+    "515": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 18,
+        "column": 8
+    },
+    "516": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 19,
+        "column": 8
+    },
+    "517": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 20,
+        "column": 8
+    },
+    "518": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 21,
+        "column": 8
+    },
+    "519": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 22,
+        "column": 8
+    },
+    "520": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 23,
+        "column": 8
+    },
+    "521": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 24,
+        "column": 8
+    },
+    "522": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 1,
+        "column": 9
+    },
+    "523": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 2,
+        "column": 9
+    },
+    "524": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 3,
+        "column": 9
+    },
+    "525": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 4,
+        "column": 9
+    },
+    "526": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "2200",
+        "row": 5,
+        "column": 9
+    },
+    "527": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "2000",
+        "row": 6,
+        "column": 9
+    },
+    "528": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "1500",
+        "row": 7,
+        "column": 9
+    },
+    "529": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "1250",
+        "row": 8,
+        "column": 9
+    },
+    "530": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "750",
+        "row": 9,
+        "column": 9
+    },
+    "531": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 10,
+        "column": 9
+    },
+    "532": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 11,
+        "column": 9
+    },
+    "533": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 12,
+        "column": 9
+    },
+    "534": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 13,
+        "column": 9
+    },
+    "535": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 14,
+        "column": 9
+    },
+    "536": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 15,
+        "column": 9
+    },
+    "537": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 16,
+        "column": 9
+    },
+    "539": {
+        "members_only": true,
+        "pvp": true,
+        "total_level_requirement": "None",
+        "row": 17,
+        "column": 9
+    },
+    "542": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 18,
+        "column": 9
+    },
+    "543": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 19,
+        "column": 9
+    },
+    "544": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 20,
+        "column": 9
+    },
+    "545": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 21,
+        "column": 9
+    },
+    "546": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 22,
+        "column": 9
+    },
+    "547": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 23,
+        "column": 9
+    },
+    "548": {
+        "members_only": true,
+        "pvp": true,
+        "total_level_requirement": "None",
+        "row": 24,
+        "column": 9
+    },
+    "552": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 1,
+        "column": 10
+    },
+    "553": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 2,
+        "column": 10
+    },
+    "554": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 3,
+        "column": 10
+    },
+    "555": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 4,
+        "column": 10
+    },
+    "556": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 5,
+        "column": 10
+    },
+    "557": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 6,
+        "column": 10
+    },
+    "559": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 7,
+        "column": 10
+    },
+    "562": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 8,
+        "column": 10
+    },
+    "563": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 9,
+        "column": 10
+    },
+    "564": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 10,
+        "column": 10
+    },
+    "565": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 11,
+        "column": 10
+    },
+    "566": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 12,
+        "column": 10
+    },
+    "567": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 13,
+        "column": 10
+    },
+    "571": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 14,
+        "column": 10
+    },
+    "573": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 15,
+        "column": 10
+    },
+    "574": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 16,
+        "column": 10
+    },
+    "575": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 17,
+        "column": 10
+    },
+    "576": {
+        "members_only": false,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 18,
+        "column": 10
+    },
+    "577": {
+        "members_only": false,
+        "pvp": true,
+        "total_level_requirement": "None",
+        "row": 19,
+        "column": 10
+    },
+    "581": {
+        "members_only": true,
+        "pvp": false,
+        "total_level_requirement": "None",
+        "row": 20,
+        "column": 10
+    }
+}
