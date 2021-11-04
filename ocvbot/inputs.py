@@ -61,7 +61,7 @@ class Mouse:
         self.action_duration_range = action_duration_range
         self.button = button
 
-    def click_coord(self, move_away: bool = False) -> bool:
+    def click_coord(self, move_away: bool = False, number_of_clicks: int = 1) -> bool:
         """
         Clicks within the provided coordinates. If width and height are
         both 0, then this function will click in the exact same location
@@ -71,10 +71,13 @@ class Mouse:
             move_away (bool): Whether to move the mouse cursor a short
                               distance away from the coordinates that
                               were just clicked on, default is False.
+            number_of_clicks (int): The number of times to click the
+                                    coordinates.
 
         """
         self.move_to()
-        self.click()
+        for _ in range(1, number_of_clicks)
+            self.click()
         if move_away is True:
             self.region = (15, 15, 100, 100)
             self.move_duration_range = (0, 500)
