@@ -25,13 +25,13 @@ def enable_button(
     Args:
         button_disabled (str): Filepath to an image of the disabled version
                                of the button.
-        button_disabled_region (str): Vision region to use to search for the
-                                      button_disabled image (e.g. `vis.inv` or
-                                      `vis.side_stones` or `vis.game_screen`.)
+        button_disabled_region (tuple): Vision region to use to search for the
+                                        button_disabled image (e.g. `vis.inv` or
+                                        `vis.side_stones` or `vis.game_screen`.)
         button_enabled (str): Filepath to an image of the enabled version of
                               the button.
-        button_enabled_region (str): Vision region to use to search for the
-                                     button_enabled image.
+        button_enabled_region (tuple): Vision region to use to search for the
+                                       button_enabled image.
         conf (float): Confidence required to match button images. See the `conf`
                       arg in the docstring of the `Vision` class for more info.
                       Default is `0.95`.
@@ -39,12 +39,12 @@ def enable_button(
     Examples:
         Open a side stone:
             enable_button("./needles/side-stones/attacks-deselected.png",
-                          "vis.side_stones",
+                          vis.side_stones,
                           "./needles/side-stones/attacks-selected.png",
-                          "vis.side_stones")
+                          vis.side_stones)
         Logout of the game client:
-            enable_button("./needles/buttons/logout.png", "vis.inv",
-                          "./needles/login-menu/orient.png", "vis.game_screen")
+            enable_button("./needles/buttons/logout.png", vis.inv,
+                          "./needles/login-menu/orient.png", vis.game_screen)
 
     Returns:
         Returns True if the button was enabled or was already enabled.
