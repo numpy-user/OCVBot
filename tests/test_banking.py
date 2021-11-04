@@ -26,10 +26,7 @@ from ocvbot import banking
 
 # BANK_SETTINGS_CHECK -----------------------------------------------------------------------------
 
-bank_settings_check_pass_params = (
-    ("quantity", "all", "01"),
-    ("quantity", "1", "02"),
-)
+bank_settings_check_pass_params = (("quantity", "all", "01"),)
 
 
 @pytest.mark.parametrize("params", bank_settings_check_pass_params)
