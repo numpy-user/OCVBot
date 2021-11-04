@@ -5,20 +5,22 @@ switches, and various other game interface elements.
 
 """
 import logging as log
+
 from ocvbot import vision as vis
+
 
 def enable_button(
     button_disabled: str,
-    button_disabled_region: str,
+    button_disabled_region: tuple[int, int, int, int],
     button_enabled: str,
-    button_enabled_region: str,
-    conf: float = 0.95
-    ) -> bool:
+    button_enabled_region: tuple[int, int, int, int],
+    conf: float = 0.95,
+):
     """
     Enables a button in the interface. Tries multiple times to ensure the
     button has been enabled. Assumes the button's "enabled" state looks
     different from its "disabled" state.
-    
+
     More generically, this function can also be used to confirm certain actions
     have taken place (see second example).
 
@@ -54,9 +56,8 @@ def enable_button(
         attempts.
 
     """
-
     # Try multiple times to enable the button.
-    for tries in range(5):
+    for _ in range(5):
 
         button_enabled_needle = vis.Vision(
             region=button_enabled_region, needle=button_enabled, loop_num=1, conf=conf
@@ -74,4 +75,4 @@ def enable_button(
             loop_num=3,
         ).click_needle(sleep_range=(0, 100, 0, 100), move_away=True)
 
-    raise Exception("Could not enable button %s", button_enabled)
+    raise Exception("Could not enable button ", button_enabled)
