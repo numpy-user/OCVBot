@@ -12,10 +12,11 @@ import time
 import cv2
 import numpy as np
 import pyautogui as pag
-from ocvbot import banking, startup, interface
+from ocvbot import banking
 from ocvbot import inputs
 from ocvbot import interface
 from ocvbot import misc
+from ocvbot import startup
 from ocvbot import startup as start
 from ocvbot import vision as vis
 
@@ -51,10 +52,12 @@ def switch_worlds_logged_out(world: str, attempts=5) -> bool:
     ).wait_for_needle()
 
     if world_filter is False:
-        enabled_filter = interface.enable_button("needles/login-menu/world-filter-disabled.png",
-              vis.client,
-              "needles/login-menu/world-filter-enabled.png",
-              vis.client)
+        enabled_filter = interface.enable_button(
+            "needles/login-menu/world-filter-disabled.png",
+            vis.client,
+            "needles/login-menu/world-filter-enabled.png",
+            vis.client,
+        )
         if enabled_filter is False:
             return False
 
