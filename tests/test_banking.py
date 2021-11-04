@@ -106,3 +106,24 @@ def test_deposit_inventory_pass(params):
     common.feh("deposit_inventory", "pass", test_number, image_directory)
     result = banking.deposit_inventory()
     assert result is True
+
+
+# WITHDRAWAL_ITEM ---------------------------------------------------------------------------------
+
+withdrawal_item_pass_params = (
+    (
+        "./needles/items/raw-anchovies-bank.png",
+        "./needles/items/raw-anchovies.png",
+        0.99,
+        "all",
+        "01",
+    ),
+)
+
+
+@pytest.mark.parametrize("params", withdrawal_item_pass_params)
+def test_withdrawal_item_pass(params):
+    item_bank, item_inv, conf, quantity, test_number = params
+    common.feh("withdrawal_item", "pass", test_number, image_directory)
+    result = banking.withdrawal_item(item_bank, item_inv, conf, quantity)
+    assert result is True
