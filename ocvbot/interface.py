@@ -58,10 +58,10 @@ def enable_button(
     # Try multiple times to enable the button.
     for tries in range(5):
 
-        button_enabled = vis.Vision(
+        button_enabled_needle = vis.Vision(
             region=button_enabled_region, needle=button_enabled, loop_num=1, conf=conf
         ).wait_for_needle()
-        if button_enabled is True:
+        if button_enabled_needle is True:
             log.debug("Button %s is enabled", button_enabled)
             return True
 
