@@ -19,25 +19,134 @@ from ocvbot import startup as start
 from ocvbot import vision as vis
 
 
-# TODO
-#  def switch_worlds_logged_in(
-#      members: bool = False, free_to_play: bool = True, safe: bool = True
-#  ) -> None:
-#      """
-#      TODO
-#      """
-#      if members is False and free_to_play is False:
-#          raise Exception("A world type must be selected!")
+# TODO: Break out into inventory.py or side_stones.py.
+# TODO: Add switch_worlds_logged_in()
+# TODO: Add switch_worlds_logged_out()
 
 
-# TODO
-#  def switch_worlds_logged_out() -> None:
-#      """
-#      TODO
-#      """
-#      pass
+def check_skills() -> bool:
+    """
+    Used to mimic human-like behavior. Checks the stats of a random
+    skill.
 
-# TODO: Add a count_item_in_inventory() function.
+    """
+    open_side_stone("skills")
+    inputs.Mouse(region=vis.inv).move_to()
+    misc.sleep_rand(1000, 7000)
+    return True
+
+
+def drop_item(item, track=True, wait_chance=120, wait_range=(5000, 20000)) -> bool:
+    """
+    Drops all instances of the provided item from the inventory.
+    The "Shift+Click" setting to drop items MUST be enabled in the OSRS
+    client.
+
+    Args:
+       item (file): Filepath to an image of the item to drop, as it
+                    appears in the player's inventory.
+       track (bool): Keep track of the number of items dropped in a
+                     global variable, default is True.
+       wait_chance (int): Chance to wait randomly while dropping item,
+                          see wait_rand()'s docstring for more info,
+                          default is 50.
+       wait_range (tuple): A 2-tuple of the minimum number of miliseconds
+                           to wait and the maximum number of miliseconds
+                           to wait if a wait is triggered, default is
+                           (5000, 20000).
+    """
+    # TODO: Create four objects, one for each quadrant of the inventory
+    #   and rotate dropping items randomly among each quadrant to make
+    #   item-dropping more randomized.
+
+    # Make sure the inventory tab is selected in the main menu.
+    log.debug("Making sure inventory is selected")
+    open_side_stone("inventory")
+
+    item_remains = vis.Vision(region=vis.inv, loop_num=1, needle=item).wait_for_needle()
+    if item_remains is False:
+        log.info("Could not find %s", item)
+        return False
+
+    log.info("Dropping all instances of %s", item)
+    for _ in range(40):
+
+        pag.keyDown("shift")
+        # Alternate between searching for the item in left half and the
+        #   right half of the player's inventory. This helps reduce the
+        #   chances the bot will click on the same item twice.
+        item_on_right = vis.Vision(
+            region=vis.inv_right_half, needle=item, loop_num=1
+        ).click_needle(sleep_range=(10, 50, 50, 300), move_duration_range=(50, 800))
+        # TODO: This "track" parameter is for stats. implement stats!
+        if item_on_right is True and track is True:
+            start.items_gathered += 1
+
+        item_on_left = vis.Vision(
+            region=vis.inv_left_half, needle=item, loop_num=1
+        ).click_needle(sleep_range=(10, 50, 50, 300), move_duration_range=(50, 800))
+        if item_on_left is True and track is True:
+            start.items_gathered += 1
+
+        # Search the entire inventory to check if the item is still
+        #   there.
+        item_remains = vis.Vision(
+            region=vis.inv, loop_num=1, needle=item
+        ).wait_for_needle()
+
+        # Chance to briefly wait while dropping items.
+        misc.sleep_rand_roll(
+            chance_range=(wait_chance - 10, wait_chance + 10),
+            sleep_range=(wait_range[0], wait_range[1]),
+        )
+
+        pag.keyUp("shift")
+        if item_remains is False:
+            return True
+
+    log.error("Tried dropping item too many times!")
+    return False
+
+
+def human_behavior_rand(chance) -> None:
+    """
+    Randomly chooses from a list of human behaviors if the roll passes.
+    This is done to make the bot appear more human.
+
+    Args:
+        chance (int): The number that must be rolled for a random
+                      behavior to be triggered. For example, if this
+                      parameter is 25, then there is a 1 in 25 chance
+                      for the roll to pass.
+
+    """
+    roll = rand.randint(1, chance)
+    log.debug("Human behavior rolled %s", roll)
+    if roll == chance:
+        log.info("Attempting to act human.")
+        roll = rand.randint(1, 2)
+        if roll == 1:
+            check_skills()
+        elif roll == 2:
+            roll = rand.randint(1, 8)
+            if roll == 1:
+                open_side_stone("attacks")
+            elif roll == 2:
+                open_side_stone("quests")
+            elif roll == 3:
+                open_side_stone("equipment")
+            elif roll == 4:
+                open_side_stone("prayers")
+            elif roll == 5:
+                open_side_stone("spellbook")
+            elif roll == 6:
+                open_side_stone("music")
+            elif roll == 7:
+                open_side_stone("friends")
+            elif roll == 8:
+                open_side_stone("settings")
+        return
+    return
 
 
 def login_basic(
@@ -471,7 +580,8 @@ def open_side_stone(side_stone) -> bool:
     side_stone_open = "./needles/side-stones/open/" + side_stone + ".png"
     side_stone_closed = "./needles/side-stones/closed/" + side_stone + ".png"
 
-    banking.close_bank()
+    if banking.close_bank() is False:
+        return False
 
     # Some side stones need a higher than default confidence to determine
     #   if they're open.
@@ -507,131 +617,6 @@ def open_side_stone(side_stone) -> bool:
             log.info("Opened side stone after %s tries.", tries)
             return True
     raise Exception("Could not open side stone!")
-
-
-def check_skills() -> bool:
-    """
-    Used to mimic human-like behavior. Checks the stats of a random
-    skill.
-
-    """
-    open_side_stone("skills")
-    inputs.Mouse(region=vis.inv).move_to()
-    misc.sleep_rand(1000, 7000)
-    return True
-
-
-def human_behavior_rand(chance) -> None:
-    """
-    Randomly chooses from a list of human behaviors if the roll passes.
-    This is done to make the bot appear more human.
-
-    Args:
-        chance (int): The number that must be rolled for a random
-                      behavior to be triggered. For example, if this
-                      parameter is 25, then there is a 1 in 25 chance
-                      for the roll to pass.
-
-    """
-    roll = rand.randint(1, chance)
-    log.debug("Human behavior rolled %s", roll)
-    if roll == chance:
-        log.info("Attempting to act human.")
-        roll = rand.randint(1, 2)
-        if roll == 1:
-            check_skills()
-        elif roll == 2:
-            roll = rand.randint(1, 8)
-            if roll == 1:
-                open_side_stone("attacks")
-            elif roll == 2:
-                open_side_stone("quests")
-            elif roll == 3:
-                open_side_stone("equipment")
-            elif roll == 4:
-                open_side_stone("prayers")
-            elif roll == 5:
-                open_side_stone("spellbook")
-            elif roll == 6:
-                open_side_stone("music")
-            elif roll == 7:
-                open_side_stone("friends")
-            elif roll == 8:
-                open_side_stone("settings")
-        return
-    return
-
-
-def drop_item(item, track=True, wait_chance=120, wait_range=(5000, 20000)) -> bool:
-    """
-    Drops all instances of the provided item from the inventory.
-    The "Shift+Click" setting to drop items MUST be enabled in the OSRS
-    client.
-
-    Args:
-       item (file): Filepath to an image of the item to drop, as it
-                    appears in the player's inventory.
-       track (bool): Keep track of the number of items dropped in a
-                     global variable, default is True.
-       wait_chance (int): Chance to wait randomly while dropping item,
-                          see wait_rand()'s docstring for more info,
-                          default is 50.
-       wait_range (tuple): A 2-tuple of the minimum number of miliseconds
-                           to wait and the maximum number of miliseconds
-                           to wait if a wait is triggered, default is
-                           (5000, 20000).
-    """
-    # TODO: Create four objects, one for each quadrant of the inventory
-    #   and rotate dropping items randomly among each quadrant to make
-    #   item-dropping more randomized.
-
-    # Make sure the inventory tab is selected in the main menu.
-    log.debug("Making sure inventory is selected")
-    open_side_stone("inventory")
-
-    item_remains = vis.Vision(region=vis.inv, loop_num=1, needle=item).wait_for_needle()
-    if item_remains is False:
-        log.info("Could not find %s", item)
-        return False
-
-    log.info("Dropping all instances of %s", item)
-    for _ in range(40):
-
-        pag.keyDown("shift")
-        # Alternate between searching for the item in left half and the
-        #   right half of the player's inventory. This helps reduce the
-        #   chances the bot will click on the same item twice.
-        item_on_right = vis.Vision(
-            region=vis.inv_right_half, needle=item, loop_num=1
-        ).click_needle(sleep_range=(10, 50, 50, 300), move_duration_range=(50, 800))
-        # TODO: This "track" parameter is for stats. implement stats!
-        if item_on_right is True and track is True:
-            start.items_gathered += 1
-
-        item_on_left = vis.Vision(
-            region=vis.inv_left_half, needle=item, loop_num=1
-        ).click_needle(sleep_range=(10, 50, 50, 300), move_duration_range=(50, 800))
-        if item_on_left is True and track is True:
-            start.items_gathered += 1
-
-        # Search the entire inventory to check if the item is still
-        #   there.
-        item_remains = vis.Vision(
-            region=vis.inv, loop_num=1, needle=item
-        ).wait_for_needle()
-
-        # Chance to briefly wait while dropping items.
-        misc.sleep_rand_roll(
-            chance_range=(wait_chance - 10, wait_chance + 10),
-            sleep_range=(wait_range[0], wait_range[1]),
-        )
-
-        pag.keyUp("shift")
-        if item_remains is False:
-            return True
-
-    log.error("Tried dropping item too many times!")
-    return False
 
 
 # TODO: Update the terminology used in this function. Make sure to
