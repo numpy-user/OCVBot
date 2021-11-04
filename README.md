@@ -1,6 +1,6 @@
-# OCVbot
+# OCVBot
 
-The OSRS Computer Vision bot
+The OSRS Computer Vision Bot
 
 - This bot is an image bot, meaning it interacts with the game client the same
   way a human does: by looking for specific images or patterns and responding
