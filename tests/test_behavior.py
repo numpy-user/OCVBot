@@ -92,9 +92,7 @@ def test_open_side_stone_pass(params) -> None:
     common.kill_feh()
 
 
-open_side_stone_fail_params = (
-    ("settings", "01"),
-)
+open_side_stone_fail_params = (("settings", "01"),)
 
 
 @pytest.mark.parametrize("params", open_side_stone_fail_params)
