@@ -35,6 +35,7 @@ def test_chef_pass(params) -> None:
     common.feh("chef", "pass", test_number, image_directory)
     result = main.chef(item=item, location=location, loops=1)
     assert result is True
+    common.kill_feh()
 
 
 # SMITH -------------------------------------------------------------------------------------------
@@ -48,3 +49,4 @@ def test_smith_pass(params) -> None:
     common.feh("smith", "pass", test_number, image_directory)
     result = main.smith(bar=bar, item=item, location=location, loops=1)
     assert result is True
+    common.kill_feh()

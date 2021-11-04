@@ -40,6 +40,7 @@ def test_logout_pass(params) -> None:
     common.feh("logout", "pass", test_number, image_directory)
     result = behavior.logout()
     assert result is True
+    common.kill_feh()
 
 
 logout_fail_params = ("01",)  # Unable to find the logout button.

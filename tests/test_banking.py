@@ -46,6 +46,7 @@ def test_bank_settings_check_fail(params):
     common.feh("bank_settings_check", "fail", test_number, image_directory)
     result = banking.bank_settings_check(setting, value)
     assert result is False
+    common.kill_feh()
 
 
 # CLOSE BANK --------------------------------------------------------------------------------------
@@ -59,6 +60,7 @@ def test_close_bank_pass(params) -> None:
     common.feh("close_bank", "pass", test_number, image_directory)
     result = banking.close_bank()
     assert result is True
+    common.kill_feh()
 
 
 close_bank_fail_params = ("01",)
@@ -70,6 +72,7 @@ def test_close_bank_fail(params) -> None:
     common.feh("close_bank", "fail", test_number, image_directory)
     result = banking.close_bank()
     assert result is False
+    common.kill_feh()
 
 
 # DEPOSIT_INVENTORY -------------------------------------------------------------------------------
@@ -83,6 +86,7 @@ def test_deposit_inventory_pass(params):
     common.feh("deposit_inventory", "pass", test_number, image_directory)
     result = banking.deposit_inventory()
     assert result is True
+    common.kill_feh()
 
 
 # OPEN_BANK ---------------------------------------------------------------------------------------
@@ -102,6 +106,7 @@ def test_open_bank_pass(params):
     common.feh("open_bank", "pass", test_number, image_directory)
     result = banking.open_bank(direction)
     assert result is True
+    common.kill_feh()
 
 
 # WITHDRAWAL_ITEM ---------------------------------------------------------------------------------
@@ -123,3 +128,4 @@ def test_withdrawal_item_pass(params):
     common.feh("withdrawal_item", "pass", test_number, image_directory)
     result = banking.withdrawal_item(item_bank, item_inv, conf, quantity)
     assert result is True
+    common.kill_feh()

@@ -40,3 +40,4 @@ def test_count_needles_pass(params) -> None:
     common.feh("count_needles", "pass", test_number, image_directory)
     result = vis.Vision(region=vis.inv, needle=needle_path, conf=0.988).count_needles()
     assert result == correct_number_of_needles
+    common.kill_feh()
