@@ -26,11 +26,17 @@ from ocvbot import vision as vis
 
 # COUNT_NEEDLES -----------------------------------------------------------------------------------
 
-count_needles_pass_params = (("01"),)
+count_needles_pass_params = (
+    ("./needles/items/iron-bar.png", 27, "01"),
+    ("./needles/items/raw-anchovies.png", 8, "02"),
+    ("./needles/items/raw-anchovies.png", 0, "03"),
+    ("./needles/items/raw-anchovies.png", 18, "04"),
+)
+
 
 @pytest.mark.parametrize("params", count_needles_pass_params)
 def test_count_needles_pass(params) -> None:
-    test_number = params
+    needle_path, correct_number_of_needles, test_number = params
     common.feh("count_needles", "pass", test_number, image_directory)
-    result = vis.Vision(region=vis.inv, needle="./needles/items/iron-bar.png").count_needles()
-    assert result == 27
+    result = vis.Vision(region=vis.inv, needle=needle_path, conf=0.988).count_needles()
+    assert result == correct_number_of_needles
