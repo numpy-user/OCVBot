@@ -32,6 +32,7 @@ open_bank_pass_params = (
     ("south", "02"),  # 2 tiles south.
     ("west", "03"),  # 1 tile west.
     ("west", "04"),  # 2 tiles west.
+    ("east", "05"),  # 1 tile east.
 )
 
 
