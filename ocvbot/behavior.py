@@ -14,6 +14,7 @@ import numpy as np
 import pyautogui as pag
 from ocvbot import banking
 from ocvbot import inputs
+from ocvbot import interface
 from ocvbot import misc
 from ocvbot import startup as start
 from ocvbot import vision as vis
@@ -581,43 +582,19 @@ def open_side_stone(side_stone) -> bool:
     side_stone_open = "./needles/side-stones/open/" + side_stone + ".png"
     side_stone_closed = "./needles/side-stones/closed/" + side_stone + ".png"
 
-    if banking.close_bank() is False:
-        return False
-
-    # Some side stones need a higher than default confidence to determine
-    #   if they're open.
-    stone_open = vis.Vision(
-        region=vis.side_stones, needle=side_stone_open, loop_num=1, conf=0.98
-    ).wait_for_needle()
-    if stone_open is True:
-        log.debug("Side stone already open.")
-        return True
-    log.debug("Opening side stone...")
-
-    # Try a total of 5 times to open the desired side stone menu using
-    #   the mouse.
-    for tries in range(5):
-        # Move mouse out of the way after clicking so the function can
-        #   tell if the stone is open.
-        vis.Vision(
-            region=vis.side_stones,
-            needle=side_stone_closed,
-            loop_num=3,
-            loop_sleep_range=(100, 300),
-        ).click_needle(sleep_range=(0, 200, 0, 200), move_away=True)
-
-        stone_open = vis.Vision(
-            region=vis.side_stones,
-            needle=side_stone_open,
-            loop_num=3,
+    try:
+        banking.close_bank()
+        log.debug("Ensuring side stone %s is open", side_stone)
+        interface.enable_button(
+            button_disabled=side_stone_closed,
+            button_disabled_region=vis.side_stones,
+            button_enabled=side_stone_open,
+            button_enabled_region=vis.side_stones,
             conf=0.98,
-            loop_sleep_range=(100, 200),
-        ).wait_for_needle()
-
-        if stone_open is True:
-            log.info("Opened side stone after %s tries.", tries)
-            return True
-    raise Exception("Could not open side stone!")
+        )
+    except Exception as error:
+        raise Exception("Could not open side stone!") from error
+    return True
 
 
 # TODO: Update the terminology used in this function. Make sure to
