@@ -120,7 +120,7 @@ def close_bank() -> bool:
     return False
 
 
-def deposit_inventory():
+def deposit_inventory() -> bool:
     """
     Deposits entire inventory into the bank. Assumes the bank window is
     open.
