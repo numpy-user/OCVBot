@@ -28,6 +28,36 @@ from ocvbot import behavior
 #   stone to open, the second is so feh() knows which test album to open.
 # Test passing conditions, then test failing conditions.
 
+# LOGOUT ------------------------------------------------------------------------------------------
+
+logout_pass_params = (
+    "01",  # Logout button doesn't work the first time.
+    "02",  # World switcher open.
+    "03",  # Logout button is highlighted already.
+    "04",  # Already logged out
+)
+
+
+@pytest.mark.parametrize("params", logout_pass_params)
+def test_logout_pass(params) -> None:
+    test_number = params
+    common.feh("logout", "pass", test_number, image_directory)
+    result = behavior.logout()
+    assert result is True
+
+
+logout_fail_params = ("01",)  # Unable to find the logout button.
+
+
+@pytest.mark.parametrize("params", logout_fail_params)
+def test_logout_fail(params) -> None:
+    test_number = params
+    common.feh("logout", "fail", test_number, image_directory)
+    with pytest.raises(Exception, match=".*"):
+        behavior.logout()
+        common.kill_feh()
+
+
 # OPEN SIDE STONE ---------------------------------------------------------------------------------
 
 open_side_stone_pass_params = (
@@ -63,66 +93,3 @@ def test_open_side_stone_fail(params) -> None:
     with pytest.raises(Exception, match="Could not open side stone!"):
         behavior.open_side_stone(side_stone)
         common.kill_feh()
-
-
-# LOGOUT ------------------------------------------------------------------------------------------
-
-logout_pass_params = (
-    "01",  # Logout button doesn't work the first time.
-    "02",  # World switcher open.
-    "03",  # Logout button is highlighted already.
-    "04",  # Already logged out
-)
-
-
-@pytest.mark.parametrize("params", logout_pass_params)
-def test_logout_pass(params) -> None:
-    test_number = params
-    common.feh("logout", "pass", test_number, image_directory)
-    result = behavior.logout()
-    assert result is True
-
-
-logout_fail_params = ("01",)  # Unable to find the logout button.
-
-
-@pytest.mark.parametrize("params", logout_fail_params)
-def test_logout_fail(params) -> None:
-    test_number = params
-    common.feh("logout", "fail", test_number, image_directory)
-    with pytest.raises(Exception, match=".*"):
-        behavior.logout()
-        common.kill_feh()
-
-
-# LOGIN -------------------------------------------------------------------------------------------
-
-
-# BROKEN
-#  @pytest.mark.parametrize("params", login_pass_params)
-#  def test_login_pass(params) -> None:
-#      test_number = params
-#      common.feh("login", "pass", test_number, image_directory)
-#      import os
-
-#      os.system("pwd")
-#      result = behavior.login_full(
-#          username_file=(image_directory + "./test_login/sampleu.txt"),
-#          password_file=(image_directory + "./test_login/samplep.txt"),
-#      )
-#      assert result is True
-
-
-# BROKEN
-#  @pytest.mark.parametrize("params", login_fail_params)
-#  def test_login_fail(params) -> None:
-#      test_number = params
-#      common.feh("login", "fail", test_number, image_directory)
-#      with pytest.raises(Exception, match=".*"):
-#          behavior.login_full(
-#              username_file=(image_directory + "./test_login/sampleu.txt"),
-#              password_file=(image_directory + "./test_login/samplep.txt"),
-#          )
-#          common.kill_feh()
-
-# CHECK_SKILLS ------------------------------------------------------------------------------------
