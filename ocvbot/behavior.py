@@ -12,7 +12,7 @@ import time
 import cv2
 import numpy as np
 import pyautogui as pag
-from ocvbot import banking
+from ocvbot import banking, startup, interface
 from ocvbot import inputs
 from ocvbot import interface
 from ocvbot import misc
@@ -21,9 +21,80 @@ from ocvbot import vision as vis
 
 
 # TODO: Move login and world-switcher functions to login_menu.py.
-  # TODO: Add switch_worlds_logged_out()
+# TODO: Add switch_worlds_logged_out()
 # TODO: Break out into inventory.py or side_stones.py.
 # TODO: Add switch_worlds_logged_in()
+
+
+def switch_worlds_logged_out(world: str, attempts=5) -> bool:
+    MAX_COLUMNS = 7
+    X_OFFSET = 93
+    Y_OFFSET = 19
+
+    # Get world's row and col
+    world_info = startup.worlds[world]
+    column = world_info["column"]
+    row = world_info["row"]
+
+    # Click world switch button
+    switcher_clicked = vis.Vision(
+        region=vis.client, needle="needles/login-menu/world-switcher-logged-out.png"
+    ).click_needle()
+
+    if switcher_clicked is False:
+        log.error("Unable to find world switcher!")
+        return False
+
+    # Wait for green world filter button, fails if filter is not set correctly
+    world_filter = vis.Vision(
+        region=vis.client, needle="needles/login-menu/world-filter-enabled.png"
+    ).wait_for_needle()
+
+    if world_filter is False:
+        enabled_filter = interface.enable_button("needles/login-menu/world-filter-disabled.png",
+              vis.client,
+              "needles/login-menu/world-filter-enabled.png",
+              vis.client)
+        if enabled_filter is False:
+            return False
+
+    # If the world is off screen
+    if column > MAX_COLUMNS:
+        # Click next page until the world is on screen
+        times_to_click = column % MAX_COLUMNS
+        next_page_button = vis.Vision(
+            region=vis.client, needle="needles/login-menu/next-page.png"
+        ).click_needle(number_of_clicks=times_to_click)
+
+        if next_page_button is False:
+            log.error("Unable to find next page button!")
+            return False
+
+        # Set the world's col to max, it'll always be in the last col
+        # after it's visible
+        col = MAX_COLUMNS
+
+    # Coordinates for the first world
+    first_world_x = vis.client_left + 110
+    first_world_y = vis.client_top + 43
+
+    # Apply offsets using the first world as a base
+    x = first_world_x + ((col - 1) * X_OFFSET)
+    y = first_world_y + ((row - 1) * Y_OFFSET)
+
+    # Click a random spot in the world's button
+    for _ in range(attempts):
+        inputs.Mouse(region=(x, y, 32, 6), move_duration_range=(50, 200)).click_coord()
+
+        # Wait for login screen
+        login_screen = vis.Vision(
+            region=vis.client, needle="needles/login-menu/orient-logged-out.png"
+        ).wait_for_needle()
+        if login_screen is True:
+            return True
+
+    log.error("Timed out waiting for login screen!")
+    return False
 
 
 def check_skills() -> bool:
