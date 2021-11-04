@@ -634,35 +634,6 @@ def drop_item(item, track=True, wait_chance=120, wait_range=(5000, 20000)) -> bo
     return False
 
 
-# TODO:
-
-
-# TODO: This function may not even be necessary since we can CTRL+click
-#   to run.
-def enable_run() -> bool:
-    """
-    If run is turned off but energy is full, turns running on.
-
-    """
-    # TODO: Turn run on when over 75%.
-    for _ in range(1, 5):
-        run_full_off = vis.Vision(
-            region=vis.client, needle="./needles/buttons/run-full-off.png", loop_num=1
-        ).click_needle(move_away=True)
-        if run_full_off is True:
-            misc.sleep_rand(300, 1000)
-            run_full_on = vis.Vision(
-                region=vis.client,
-                needle="./needles/buttons/run-full-on.png",
-                loop_num=1,
-            ).wait_for_needle()
-            if run_full_on is True:
-                return True
-        else:
-            return False
-    log.error("Unable to turn on running!")
-
-
 # TODO: Update the terminology used in this function. Make sure to
 #   distinguish between "waypoint" and "destination". Probably going to
 #   redefine "waypoint" to be "the coordinates that you click on the
