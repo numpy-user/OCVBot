@@ -76,7 +76,7 @@ class Mouse:
 
         """
         self.move_to()
-        for _ in range(number_of_clicks)
+        for _ in range(number_of_clicks):
             self.click()
         if move_away is True:
             self.region = (15, 15, 100, 100)
