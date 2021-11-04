@@ -57,8 +57,8 @@ def test_logout_fail(params) -> None:
 # OPEN SIDE STONE ---------------------------------------------------------------------------------
 
 open_side_stone_pass_params = (
-    ("attacks", "01"),
-    ("skills", "02"),
+    ("attacks", "01"),  # Bank window must be closed first, stone already open.
+    ("skills", "02"),  # Must try multiple times to open stone.
     ("quests", "03"),
     ("inventory", "04"),
     ("equipment", "05"),
