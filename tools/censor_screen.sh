@@ -3,12 +3,14 @@
 usage() {
     cat <<EOF
 
-./censor_screen.sh [OPTIONS] {FILE}
+./censor_screen.sh {OPTIONS} {FILE}
 
 Censors OSRS screen elements. This is used for creating screenshots for testing
-  that are extremely small.  A backup.png file is created automatically.
+  that are extremely small. A backup.png file is created automatically.
+  Assumes the image provided is an OSRS screenshot with dimensions of 765x503.
+  Compresses censored image with pngcrush afterwards.
 
-  -b   Censor the primary bank window, excluding tabs and settings.
+  -b   Censor the primary bank window, excluding bank tabs and settings.
   -g   Censor the game screen.
   -c   Censor the chat menu.
   -i   Censor the inventory.
@@ -20,8 +22,9 @@ Censors OSRS screen elements. This is used for creating screenshots for testing
   -h   Print this help message.
 
 Examples:
-  censor_screen.sh -gc image_01.png   = Censor the game screen and chat menu.
-  censor_screen.sh -i image_02.png    = Censor the side stones and inventory.
+  censor_screen.sh -gcm image_01.png = Censor game screen, chat menu, and minimap.
+  censor_screen.sh -i image_02.png = Censor the inventory.
+  censor_screen.sh -tS myscreenshot.png = Censor bank tabs and bank settings.
 
 EOF
     exit 1
@@ -134,4 +137,6 @@ if [[ "${bank_tabs}" -eq 1 ]]; then
         "${1}"
 fi
 
+# Compress image with pngcrush.
+# -ow = Overwrite image.
 pngcrush -ow "${1}"
