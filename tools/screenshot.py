@@ -68,14 +68,20 @@ def censor_username(filename: str) -> None:
         log.warning("ImageMagick not present!")
 
 
-def main() -> None:
+def main(region: tuple[int, int, int, int] = vis.client) -> str:
+    """
+    Takes a screenshot of the OSRS client window.
+
+    Returns:
+        Returns the filepath to the screenshot.
+    """
     if DELAY > 0:
         log.info("Waiting %s seconds ...", DELAY)
         time.sleep(DELAY)
 
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     file_name = str("osrs_" + timestamp + ".png")
-    pag.screenshot(file_name, region=vis.client)
+    pag.screenshot(file_name, region=region)
 
     # Determine if we're logged in or logged out.
     client_status = vis.orient()[0]
@@ -86,7 +92,9 @@ def main() -> None:
         censor_username(file_name)
     pngcrush(file_name)
     # Move the file into the current dir.
-    os.rename(file_name, (current_dir + "/" + file_name))
+    new_file_name = current_dir + "/" + file_name
+    os.rename(file_name, new_file_name)
+    return new_file_name
 
 
 if __name__ == "__main__":
