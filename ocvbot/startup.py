@@ -62,8 +62,8 @@ MINIMAP_HEIGHT = 151
 
 # The largest area of the minimap, centered on the player, that can be
 #   used to determine the player's location for the travel() function.
-MINIMAP_SLICE_WIDTH = 110
-MINIMAP_SLICE_HEIGHT = 73
+MINIMAP_SLICE_WIDTH = 85
+MINIMAP_SLICE_HEIGHT = 85
 
 # TODO: Finish implementing stats.
 # Stats ----------------------------------------------------------------

@@ -500,8 +500,8 @@ minimap_top = client_top + 11
 minimap = (minimap_left, minimap_top, start.MINIMAP_WIDTH, start.MINIMAP_HEIGHT)
 
 # The current minimap "slice" for locating the player on the world map.
-minimap_slice_left = client_left + 590
-minimap_slice_top = client_top + 51
+minimap_slice_left = client_left + 599
+minimap_slice_top = client_top + 43
 minimap_slice = (
     minimap_slice_left,
     minimap_slice_top,
