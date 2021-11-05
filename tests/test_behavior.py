@@ -37,6 +37,20 @@ def test_check_skills_pass(params) -> None:
     common.kill_feh()
 
 
+# DROP_ITEM ---------------------------------------------------------------------------------------
+
+drop_item_pass_params = (("./needles/items/iron-ore.png", "01"),)
+
+
+@pytest.mark.parametrize("params", drop_item_pass_params)
+def test_drop_item_pass(params) -> None:
+    item, test_number = params
+    common.feh("drop_item", "pass", test_number, image_directory)
+    result = behavior.drop_item(item=item, shift_click=False)
+    assert result is True
+    common.kill_feh()
+
+
 # LOGOUT ------------------------------------------------------------------------------------------
 
 logout_pass_params = (
