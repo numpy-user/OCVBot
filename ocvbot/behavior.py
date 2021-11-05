@@ -147,7 +147,6 @@ def drop_item(
     #   item-dropping more randomized.
 
     # Make sure the inventory tab is selected in the main menu.
-    log.debug("Making sure inventory is selected")
     open_side_stone("inventory")
 
     item_remains = vis.Vision(region=vis.inv, loop_num=1, needle=item).wait_for_needle()
@@ -165,14 +164,14 @@ def drop_item(
         #   chances the bot will click on the same item twice.
         item_on_right = vis.Vision(
             region=vis.inv_right_half, needle=item, loop_num=1
-        ).click_needle(sleep_range=(10, 50, 50, 300), move_duration_range=(50, 800))
+        ).click_needle(sleep_range=(10, 50, 10, 50))
         # TODO: This "track" parameter is for stats. implement stats!
         if item_on_right is True and track is True:
             start.items_gathered += 1
 
         item_on_left = vis.Vision(
             region=vis.inv_left_half, needle=item, loop_num=1
-        ).click_needle(sleep_range=(10, 50, 50, 300), move_duration_range=(50, 800))
+        ).click_needle(sleep_range=(10, 50, 10, 50))
         if item_on_left is True and track is True:
             start.items_gathered += 1
 
