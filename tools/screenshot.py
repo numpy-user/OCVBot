@@ -5,8 +5,8 @@ Simple screenshot tool for quickly capturing the OSRS client window.
 Compresses screenshot with pngcrush if it's available.
 Automatically censors player's username with ImageMagick if it's available.
 
-Produces an image with the name format of
-`haystack_$(date +%Y-%m-%d_%H:%M:%S).png` in the `ocvbot` directory.
+Produces an image in the format of `osrs_$(date +%Y-%m-%d_%H-%M-%S).png`
+in the current directory.
 
 Syntax:
     python3 screnshot.py [DELAY]
@@ -51,11 +51,13 @@ elif ARGUMENTS == 2:
 else:
     raise Exception("Unsupported arguments!")
 
+
 def pngcrush(filename: str) -> None:
     try:
         subprocess.call(["pngcrush", "-ow ", filename])
     except FileNotFoundError:
         log.warning("pngcrush not present!")
+
 
 def censor_username(filename: str) -> None:
     try:
@@ -65,13 +67,14 @@ def censor_username(filename: str) -> None:
     except FileNotFoundError:
         log.warning("ImageMagick not present!")
 
+
 def main() -> None:
     if DELAY > 0:
         log.info("Waiting %s seconds ...", DELAY)
         time.sleep(DELAY)
 
-    timestamp = datetime.datetime.now().strftime("%m-%d-%Y_%H:%M:%S")
-    file_name = str("haystack_" + timestamp + ".png")
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    file_name = str("osrs_" + timestamp + ".png")
     pag.screenshot(file_name, region=vis.client)
 
     # Determine if we're logged in or logged out.
@@ -83,7 +86,8 @@ def main() -> None:
         censor_username(file_name)
     pngcrush(file_name)
     # Move the file into the current dir.
-    os.rename(file_name, (current_dir + file_name))
+    os.rename(file_name, (current_dir + "/" + file_name))
+
 
 if __name__ == "__main__":
     main()
