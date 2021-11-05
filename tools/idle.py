@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # coding=UTF-8
 """
 Keeps the OSRS client logged in by randomly pressing an arrow key every
@@ -18,7 +19,7 @@ from ocvbot import misc
 from ocvbot import vision as vis
 
 
-main() -> None:
+def main() -> None:
     # Focus the client by clicking a random spot on the chat menu.
     inputs.Mouse(region=vis.chat_menu).click_coord()
 
@@ -29,7 +30,7 @@ main() -> None:
         # 5 min = 300000 miliseconds.
         misc.sleep_rand(100000, 299000)
         roll = rand.randint(1, 4)
-        
+
         if roll == 1:
             key = "left"
         elif roll == 2:
@@ -41,6 +42,7 @@ main() -> None:
 
         log.info("Pressing key %s to remain logged in", key)
         inputs.Keyboard().keypress(key)
+
 
 if __name__ == "__main__":
     main()
