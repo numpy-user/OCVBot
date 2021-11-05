@@ -156,7 +156,9 @@ class Vision:
             log.debug("Cannot find center of image %s, conf=%s", needle, self.conf)
             return False
 
-        raise RuntimeError("self.loctype must be 'regular' or 'center', got '%s'", self.loctype)
+        raise RuntimeError(
+            "self.loctype must be 'regular' or 'center', got '%s'", self.loctype
+        )
 
     # TODO: Add examples of usage.
     def wait_for_needle(self, get_tuple: bool = False):
@@ -274,14 +276,15 @@ class Vision:
                 confidence=self.conf,
                 grayscale=self.grayscale,
                 region=self.region,
-                )
+            )
             needles_coords_list = list(needles_coords)
             number_of_needles = len(needles_coords_list)
             return number_of_needles
-            
+
         # If no needles can be found, then the number of needles is 0.
         except ImageNotFoundException:
             return 0
+
 
 # TODO: Add examples of usage.
 # TODO: Break out an "is_logged_in" function.
