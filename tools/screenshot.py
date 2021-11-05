@@ -60,8 +60,8 @@ def pngcrush(filename: str) -> None:
 def censor_username(filename: str) -> None:
     try:
         subprocess.call(
-                (["convert", filename, "-fill black", '-draw "rectangle 7 458 190 473"'])
-            )
+            (["convert", filename, "-fill black", '-draw "rectangle 7 458 190 473"'])
+        )
     except FileNotFoundError:
         log.warning("ImageMagick not present!")
 
