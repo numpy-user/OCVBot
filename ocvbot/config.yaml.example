@@ -65,7 +65,8 @@ main:
   log_level: INFO
 
   # Whether to hold down CTRL when clicking on the minimap. This will cause
-  #   the player to run instead of walk.
+  #   the player to run instead of walk. This must be set to False if running
+  #   the test suite with PyTest and feh.
   ctrl_click_run: True
 
   # Whether the player has a bank pin or not.
