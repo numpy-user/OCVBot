@@ -3,10 +3,10 @@
 Sets global variables and constants.
 
 """
+import json
 import logging as log
 import random as rand
 import time
-import json
 
 import pyautogui as pag
 from ocvbot import config
@@ -136,5 +136,5 @@ log.info(
 # The current number of sessions that have been completed.
 session_num = 0
 
-with open('worlds.json') as f:
+with open("worlds.json") as f:
     worlds = json.load(f)
