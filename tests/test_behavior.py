@@ -23,6 +23,34 @@ log.basicConfig(
 common.feh("orient", "pass", "01", ((os.path.dirname(__file__)) + "/test_vision/"))
 from ocvbot import behavior
 
+# CHECK_SKILLS ------------------------------------------------------------------------------------
+
+check_skills_pass_params = ("01",)
+
+
+@pytest.mark.parametrize("params", check_skills_pass_params)
+def test_check_skills_pass(params) -> None:
+    test_number = params
+    common.feh("check_skills", "pass", test_number, image_directory)
+    result = behavior.check_skills()
+    assert result is True
+    common.kill_feh()
+
+
+# DROP_ITEM ---------------------------------------------------------------------------------------
+
+drop_item_pass_params = (("./needles/items/iron-ore.png", "01"),)
+
+
+@pytest.mark.parametrize("params", drop_item_pass_params)
+def test_drop_item_pass(params) -> None:
+    item, test_number = params
+    common.feh("drop_item", "pass", test_number, image_directory)
+    result = behavior.drop_item(item=item, shift_click=False)
+    assert result is True
+    common.kill_feh()
+
+
 # LOGOUT ------------------------------------------------------------------------------------------
 
 logout_pass_params = (
@@ -78,9 +106,7 @@ def test_open_side_stone_pass(params) -> None:
     common.kill_feh()
 
 
-open_side_stone_fail_params = (
-    ("settings", "01"),
-)
+open_side_stone_fail_params = (("settings", "01"),)
 
 
 @pytest.mark.parametrize("params", open_side_stone_fail_params)

@@ -12,10 +12,11 @@ import time
 import cv2
 import numpy as np
 import pyautogui as pag
-from ocvbot import banking, startup, interface
+from ocvbot import banking
 from ocvbot import inputs
 from ocvbot import interface
 from ocvbot import misc
+from ocvbot import startup
 from ocvbot import startup as start
 from ocvbot import vision as vis
 
@@ -51,10 +52,12 @@ def switch_worlds_logged_out(world: str, attempts=5) -> bool:
     ).wait_for_needle()
 
     if world_filter is False:
-        enabled_filter = interface.enable_button("needles/login-menu/world-filter-disabled.png",
-              vis.client,
-              "needles/login-menu/world-filter-enabled.png",
-              vis.client)
+        enabled_filter = interface.enable_button(
+            "needles/login-menu/world-filter-disabled.png",
+            vis.client,
+            "needles/login-menu/world-filter-enabled.png",
+            vis.client,
+        )
         if enabled_filter is False:
             return False
 
@@ -109,7 +112,13 @@ def check_skills() -> bool:
     return True
 
 
-def drop_item(item, track=True, wait_chance=120, wait_range=(5000, 20000)) -> bool:
+def drop_item(
+    item,
+    track: bool = True,
+    wait_chance: int = 120,
+    wait_range: tuple[int, int] = (5000, 20000),
+    shift_click: bool = True,
+) -> bool:
     """
     Drops all instances of the provided item from the inventory.
     The "Shift+Click" setting to drop items MUST be enabled in the OSRS
@@ -127,13 +136,17 @@ def drop_item(item, track=True, wait_chance=120, wait_range=(5000, 20000)) -> bo
                            to wait and the maximum number of miliseconds
                            to wait if a wait is triggered, default is
                            (5000, 20000).
+       shift_click (bool): Whether to hold down Shift before clicking the
+                           item. This arg only exists because it must be
+                           disabled when running unit tests with PyTest and
+                           feh -- don't change it unless you know what
+                           you're doing. Default is True.
     """
     # TODO: Create four objects, one for each quadrant of the inventory
     #   and rotate dropping items randomly among each quadrant to make
     #   item-dropping more randomized.
 
     # Make sure the inventory tab is selected in the main menu.
-    log.debug("Making sure inventory is selected")
     open_side_stone("inventory")
 
     item_remains = vis.Vision(region=vis.inv, loop_num=1, needle=item).wait_for_needle()
@@ -144,20 +157,21 @@ def drop_item(item, track=True, wait_chance=120, wait_range=(5000, 20000)) -> bo
     log.info("Dropping all instances of %s", item)
     for _ in range(40):
 
-        pag.keyDown("shift")
+        if shift_click:
+            pag.keyDown("shift")
         # Alternate between searching for the item in left half and the
         #   right half of the player's inventory. This helps reduce the
         #   chances the bot will click on the same item twice.
         item_on_right = vis.Vision(
             region=vis.inv_right_half, needle=item, loop_num=1
-        ).click_needle(sleep_range=(10, 50, 50, 300), move_duration_range=(50, 800))
+        ).click_needle(sleep_range=(10, 50, 10, 50))
         # TODO: This "track" parameter is for stats. implement stats!
         if item_on_right is True and track is True:
             start.items_gathered += 1
 
         item_on_left = vis.Vision(
             region=vis.inv_left_half, needle=item, loop_num=1
-        ).click_needle(sleep_range=(10, 50, 50, 300), move_duration_range=(50, 800))
+        ).click_needle(sleep_range=(10, 50, 10, 50))
         if item_on_left is True and track is True:
             start.items_gathered += 1
 
@@ -173,7 +187,8 @@ def drop_item(item, track=True, wait_chance=120, wait_range=(5000, 20000)) -> bo
             sleep_range=(wait_range[0], wait_range[1]),
         )
 
-        pag.keyUp("shift")
+        if shift_click:
+            pag.keyUp("shift")
         if item_remains is False:
             return True
 
