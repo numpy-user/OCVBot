@@ -142,3 +142,22 @@ def test_withdrawal_item_pass(params):
     assert result is None
     common.kill_feh()
 
+
+withdrawal_item_fail_params = (
+    (
+        "./needles/items/raw-anchovies-bank.png",
+        "./needles/items/raw-anchovies.png",
+        0.99,
+        "all",
+        "01",
+    ),
+)
+
+
+@pytest.mark.parametrize("params", withdrawal_item_fail_params)
+def test_withdrawal_item_fail(params) -> None:
+    item_bank, item_inv, conf, quantity, test_number = params
+    common.feh("withdrawal_item", "fail", test_number, image_directory)
+    with pytest.raises(Exception, match="Could not withdrawal item"):
+        banking.withdrawal_item(item_bank, item_inv, conf, quantity)
+    common.kill_feh()
