@@ -261,7 +261,7 @@ def chef(item: str, location: str, loops: int) -> bool:
     for _ in range(loops):
         # Conf is higher than default because raw food looks very
         #   similar to cooked food.
-        banking.withdrawal_item(item_bank=item_bank, item_inv=item_inv, conf=0.98)
+        banking.withdrawal_item(item_bank=item_bank, item_inv=item_inv, conf=0.99)
         log.info("Withdrawing raw food.")
         misc.sleep_rand_roll(chance_range=(10, 20), sleep_range=(100, 10000))
         # Go to range.
@@ -348,11 +348,10 @@ def smith(bar: str, item: str, location: str, loops: int):
         misc.sleep_rand_roll()
 
         # Check if we withdrew a full inventory of bars.
-        full_inv = vis.Vision(region=vis.inv, needle=inv_full).wait_for_needle()
-
+        bars_in_inventory = vis.Vision(region=vis.inv, needle=bar).count_needles()
         # Stop script if we didn't
-        if full_inv is False:
-            log.info("Out of bars, stopping script.")
+        if bars_in_inventory != 27:
+            log.warning("Out of bars, stopping script.")
             break
 
         behavior.travel(anvil_coords, haystack_map)
