@@ -186,7 +186,7 @@ class Magic:
             Returns True if spell was activated, False if otherwise.
 
         """
-        for _ in range(1, 5):
+        for _ in range(5):
             spell_available = vis.Vision(
                 needle=self.spell, region=vis.inv, loop_num=30
             ).click_needle(

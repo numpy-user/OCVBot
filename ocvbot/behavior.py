@@ -704,7 +704,7 @@ def travel(param_list, haystack_map, attempts=100) -> bool:
         1 = Issued "walk" or "run" commands will vary by 1 coordinate
             when travelling to the waypoint.
         (4, 4) = The player will have arrived at the waypoint when they're
-                 within 4 coordinates of the waypoit's coordinates.
+                 within 4 coordinates of the waypoint's coordinates.
         (5, 10) = The function will wait between 5 and 10 seconds between
                   each "walk" or "run" command.
         150 = The function will issue a total of 150 "walk" or "run"
