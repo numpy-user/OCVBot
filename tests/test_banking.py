@@ -26,7 +26,13 @@ from ocvbot import banking
 
 # BANK_SETTINGS_CHECK -----------------------------------------------------------------------------
 
-bank_settings_check_pass_params = (("quantity", "all", "01"),)
+bank_settings_check_pass_params = (
+    ("quantity", "all", "01"),
+    ("quantity", "all", "02"),
+    ("quantity", "1", "03"),
+    ("quantity", "5", "04"),
+    ("quantity", "10", "05"),
+)
 
 
 @pytest.mark.parametrize("params", bank_settings_check_pass_params)
@@ -34,18 +40,18 @@ def test_bank_settings_check_pass(params):
     setting, value, test_number = params
     common.feh("bank_settings_check", "pass", test_number, image_directory)
     result = banking.bank_settings_check(setting, value)
-    assert result is True
+    assert result is None
 
 
-bank_settings_check_fail_params = (("note", "all", "01"),)
+bank_settings_check_fail_params = (("note", "all", "00"),)
 
 
 @pytest.mark.parametrize("params", bank_settings_check_fail_params)
 def test_bank_settings_check_fail(params):
     setting, value, test_number = params
     common.feh("bank_settings_check", "fail", test_number, image_directory)
-    result = banking.bank_settings_check(setting, value)
-    assert result is False
+    with pytest.raises(Exception, match="Could not set bank setting|Unsupported"):
+        banking.bank_settings_check(setting, value)
     common.kill_feh()
 
 
