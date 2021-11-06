@@ -221,14 +221,10 @@ class Magic:
                 ),
                 move_duration_range=self.move_duration_range,
             )
-
             if target is False:
                 # Make sure the inventory is active when casting on items.
                 if self.inventory is True:
                     behavior.open_side_stone("inventory")
-                if vis.orient()[0] == "logged_out":
-                    behavior.login_full()
-                misc.sleep_rand(1000, 3000)
             else:
                 return
         raise Exception("Could not find target!")
