@@ -155,9 +155,6 @@ class Magic:
                                      will take while moving to the spell
                                      icon and the target, default is
                                      (10, 1000).
-        logout (bool): Whether to logout once out of runes or the
-                       target cannot be found, default is False.
-
     """
 
     def __init__(
@@ -168,7 +165,6 @@ class Magic:
         region,
         inventory: bool = False,
         move_duration_range: tuple[int, int] = (10, 1000),
-        logout: bool = False,
     ):
         self.spell = spell
         self.target = target
@@ -176,7 +172,6 @@ class Magic:
         self.region = region
         self.inventory = inventory
         self.move_duration_range = move_duration_range
-        self.logout = logout
 
     def _select_spell(self) -> bool:
         """
@@ -246,23 +241,6 @@ class Magic:
             Returns True if spell was cast, False if otherwise.
 
         """
-        spell_selected = self._select_spell()
-        if spell_selected is False:
-            if self.logout is True:
-                log.warning("Out of runes! Logging out in 10-20 seconds!")
-                misc.sleep_rand(10000, 20000)
-                behavior.logout()
-            log.warning("All done!")
-            return False
-
-        target_selected = self._select_target()
-        if target_selected is False:
-            if self.logout is True:
-                log.error("Unable to find target! Logging out in 10-20 seconds!")
-                misc.sleep_rand(10000, 20000)
-                behavior.logout()
-            log.warning("All done!")
-            return False
 
         # Wait for spell to be cast.
         misc.sleep_rand(
@@ -271,11 +249,6 @@ class Magic:
         )
         # Roll for random wait.
         misc.sleep_rand_roll(chance_range=(100, 400))
-
-        if self.logout is True:
-            # Roll for logout after the configured period of time.
-            behavior.logout_break_range()
-
         return True
 
 
