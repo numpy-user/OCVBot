@@ -244,7 +244,6 @@ class Magic:
             int(start.config["magic"]["min_cast_delay"]),
             int(start.config["magic"]["max_cast_delay"]),
         )
-        return
 
 
 class Mining:
