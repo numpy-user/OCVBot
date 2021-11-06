@@ -244,8 +244,6 @@ class Magic:
             int(start.config["magic"]["min_cast_delay"]),
             int(start.config["magic"]["max_cast_delay"]),
         )
-        # Roll for random wait.
-        misc.sleep_rand_roll(chance_range=(100, 400))
         return
 
 
