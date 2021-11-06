@@ -226,7 +226,7 @@ def spellcaster(scenario: str, loops: int = 10000) -> None:
         raise Exception("Scenario not supported!")
 
 
-def chef(item: str, location: str, loops: int) -> bool:
+def chef(item: str, location: str, loops: int = 10000) -> bool:
     """
     Cooks a given item at a given location.
 
@@ -235,6 +235,8 @@ def chef(item: str, location: str, loops: int) -> bool:
                     the available options.
         location (str): See the `cooking` section of `config.yaml.example` for
                        the available options.
+        loops (int): Number of loops to run the given scenario. Changing this
+                     is only useful for testing purposes. Default is 10000.
 
     Returns:
 
@@ -275,7 +277,7 @@ def chef(item: str, location: str, loops: int) -> bool:
     return True
 
 
-def smith(bar: str, item: str, location: str, loops: int):
+def smith(bar: str, item: str, location: str, loops: int = 10000):
     """
     Smiths bars at an anvil.
 
@@ -284,6 +286,9 @@ def smith(bar: str, item: str, location: str, loops: int):
                    the available options.
         location (str): See the `smithing` section of `config.yaml.example` for
                        the available options.
+        loops (int): Number of loops to run the given scenario. Changing this
+                     is only useful for testing purposes. Default is 10000.
+
     """
     if location == "varrock":
         haystack_map = "./haystacks/varrock-west-bank.png"
@@ -400,7 +405,6 @@ def main():
         chef(
             item=start.config[script]["item"],
             location=start.config[script]["location"],
-            loops=1000,
         )
 
     elif script == "smithing":
@@ -408,7 +412,6 @@ def main():
             bar=start.config[script]["bar"],
             item=start.config[script]["item"],
             location=start.config[script]["location"],
-            loops=1000,
         )
 
     elif script == "test":
