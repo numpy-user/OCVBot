@@ -152,9 +152,38 @@ def miner(scenario: str) -> None:
             behavior.logout_break_range()
 
 
+def alchemist(alch_item_type, loops: int = 10000) -> None:
+    """
+    Script for training high alchemy.
+
+    Args:
+        alch_item_type (str): See the `magic` section of `config.yaml.example`
+                              for the available options.
+        loops (int): Number of loops to run the given scenario. Changing this
+                     is only useful for testing purposes. Default is 10000.
+
+    """
+    spell = "./needles/side-stones/spellbook/high-alchemy.png"
+    if alch_item_type == "bank-note":
+        target = "./needles/items/bank-note.png"
+    else:
+        target = "./needles/items/" + alch_item_type + ".png"
+
+    behavior.open_side_stone("spellbook")
+    for _ in range(loops):
+        skills.Magic(
+            spell=spell,
+            target=target,
+            inventory=True,
+            conf=0.5,
+            region=vis.inv_left_half,
+            move_duration_range=(0, 200),
+        ).cast_spell()
+
+
 def spellcaster(scenario: str, loops: int = 10000) -> None:
     """
-    Script for training magic, either with combat spells or alchemy.
+    Script for training magic with combat spells.
 
     Args:
         scenario (str): See the `magic` section of `config.yaml.example` for
@@ -168,45 +197,22 @@ def spellcaster(scenario: str, loops: int = 10000) -> None:
     """
     log.info("Launching spellcaster script with scenario %s.", scenario)
 
-    behavior.open_side_stone("spellbook")
     if scenario == "curse-varrock-castle":
         spell = "./needles/side-stones/spellbook/curse.png"
         target = "./needles/game-screen/varrock/monk-of-zamorak.png"
         haystack_map = "./haystacks/varrock-castle.png"
         behavior.travel([((75, 128), 1, (4, 4), (5, 10))], haystack_map)
-        for _ in range(loops):
-            skills.Magic(
-                spell=spell,
-                target=target,
-                logout=True,
-                conf=0.75,
-                region=vis.game_screen,
-            ).cast_spell()
-
-    elif scenario == "high-alchemy":
-        spell = "./needles/side-stones/spellbook/high-alchemy.png"
-        item = start.config["magic"]["alch_item_type"]
-        if item == "bank-note":
-            target = "./needles/items/bank-note.png"
-        else:
-            target = "./needles/items/" + item + ".png"
-        for _ in range(loops):
-            spell_cast = skills.Magic(
-                spell=spell,
-                target=target,
-                inventory=True,
-                logout=False,
-                conf=0.5,
-                region=vis.inv_left_half,
-                move_duration_range=(0, 200),
-            ).cast_spell()
-            if spell_cast is False:
-                if start.config["magic"]["logout"] is True:
-                    behavior.logout()
-                sys.exit(0)
-        behavior.logout()
     else:
         raise Exception("Scenario not supported!")
+
+    behavior.open_side_stone("spellbook")
+    for _ in range(loops):
+        skills.Magic(
+            spell=spell,
+            target=target,
+            conf=0.75,
+            region=vis.game_screen,
+        ).cast_spell()
 
 
 def chef(item: str, location: str, loops: int = 10000) -> bool:
@@ -382,7 +388,10 @@ def main():
         miner(start.config[script]["location"])
 
     elif script == "magic":
-        spellcaster(start.config[script]["scenario"])
+        if start.config[script]["scenario"] == "high-alchemy":
+            alchemist(start.config[script]["alch_item_type"])
+        else:
+            spellcaster(start.config[script]["scenario"])
 
     elif script == "cooking":
         chef(
