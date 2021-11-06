@@ -99,6 +99,10 @@ def sleep_rand_roll(
                                      triggered.
 
     """
+
+    if start.config["main"]["random_waits"] is False:
+        return True
+
     chance = rand.randint(chance_range[0], chance_range[1])
     roll = rand.randint(1, chance)
     if roll == chance:

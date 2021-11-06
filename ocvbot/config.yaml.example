@@ -69,6 +69,9 @@ main:
   #   the test suite with PyTest and feh.
   ctrl_click_run: True
 
+  # Whether to randomly sleep for short periods of time while running the bot.
+  random_waits: True
+
   # Whether the player has a bank pin or not.
   # This option is currently unused.
   bank_pin: False

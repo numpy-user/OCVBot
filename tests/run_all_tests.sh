@@ -26,7 +26,8 @@ cp -f -- "${config_file}" "${config_file_backup}"
 
 # Edit the config file.
 sed -i \
-    's/ctrl_click_run:.*/ctrl_click_run: False/' \
+    -e 's/ctrl_click_run:.*/ctrl_click_run: False/' \
+    -e 's/random_waits:.*/random_waits: False/' \
     "${config_file}"
 
 # Run the test suite.
