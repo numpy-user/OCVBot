@@ -466,16 +466,22 @@ class Smithing:
     Args:
         item_in_menu (file): Filepath to the item to select in the smithing menu.
                              "-bank.png" items can be used here.
+        bar_type (file): Filepath to the bar to use, as it appears in the inventory.
+        bars_required (int): The number of bars required to smith the desired item.
         anvil (file): Filepath to the anvil to use, as it appears in the game world.
         uncompleted_inv (file): Filepath to the uncompleted inventory needle. We
                                 know we're done smithing when this needle can't
                                 be found.
     """
 
-    def __init__(self, item_in_menu: str, anvil: str, uncompleted_inv: str):
+    def __init__(self, item_in_menu: str, bar_type: str, bars_required: int, anvil: str):
         self.item_in_menu = item_in_menu
+        self.bar_type = bar_type
+        self.bars_required = bars_required
         self.anvil = anvil
-        self.uncompleted_inv = uncompleted_inv
+
+        if self.bars_required > 5:
+            raise Exception("The value of bars_required must be <= 5!")
 
     def click_anvil(self) -> bool:
         """
@@ -539,15 +545,25 @@ class Smithing:
 
         log.info("Smithing...")
 
-        # Wait for either a level-up or for the uncompleted_inv needle to not be found.
+        # Wait for either a level-up or for smithing to finish.
         for _ in range(1, 60):
             misc.sleep_rand(1000, 3000)
 
-            smithing = vis.Vision(
-                region=vis.inv_bottom, needle=self.uncompleted_inv, conf=0.9
-            ).find_needle()
+            # Based the number of bars we need to smith the current item, we'll
+            #   end up with a different number of bars leftover.
+            if self.bars_required == 5:
+                bars_leftover = 2
+            elif self.bars_required == 2:
+                bars_leftover = 1
+            else:
+                bars_leftover = 0
 
-            if smithing is False:
+            # We're done smithing when the number of bars in our inventory is
+            #   equal to bars_leftover.
+            bars_remaining = vis.Vision(
+                region=vis.inv, needle=self.bar_type, conf=0.9
+            ).count_needles()
+            if bars_remaining <= bars_leftover:
                 log.info("Done smithing.")
                 return True
 

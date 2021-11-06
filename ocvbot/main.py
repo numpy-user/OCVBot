@@ -290,14 +290,6 @@ def smith(bar: str, item: str, location: str, loops: int):
         log.critical("Unsupported value for location!")
         raise RuntimeError("Unsupported value for location!")
 
-    # These are used to figure out when we're done smithing.
-    # Smithing items that take multiple bars may lead to 1 or 2 bars remaining.
-    inv_3_remaining = "./needles/side-stones/inventory/iron-bars-3.png"
-    inv_2_remaining = "./needles/side-stones/inventory/iron-bars-2.png"
-    inv_1_remaining = "./needles/items/iron-bar.png"
-
-    inv_full = "./needles/side-stones/inventory/iron-bars-full.png"
-
     # We can use banked versions of the smith item because the smithing menu
     #   has the same background as the bank menu.
     bar = "./needles/items/" + bar + ".png"
@@ -305,23 +297,26 @@ def smith(bar: str, item: str, location: str, loops: int):
     hammer_inv = "./needles/items/hammer.png"
     hammer_bank = "./needles/items/hammer-bank.png"
 
-    # Determine which needle to use based on the item to smith.
-    # For example, if we smith a full inventory of platebodies (5 bars per item),
-    #   we'll have 2 bars remaining once we reach the end. We then know we're
-    #   done smithing if we can't find 3 bars in our inventory.
-    if "platebody" in item:  # 5 bars required, 3 will be remaining.
-        uncompleted_inv = inv_3_remaining
-    elif "scimitar" in item:  # 2 bars required, 2 will be remaining.
-        uncompleted_inv = inv_2_remaining
-    elif "axe" in item or "warhammer" in item:  # 3 bars required, 1 will be remaining.
-        uncompleted_inv = inv_1_remaining
+    # Determine how many bars are needed to smith the given item.
+    if "platebody" in item:
+        bars_required = 5
+    elif "scimitar" in item:
+        bars_required = 2
+    elif "axe" in item or "warhammer" in item:
+        bars_required = 3
     else:
         log.critical("Unsupported value of item!")
         raise RuntimeError("Unsupported value of item!")
 
     smithing = skills.Smithing(
-        item_in_menu=item, anvil=anvil, uncompleted_inv=uncompleted_inv
+        item_in_menu=item,
+        bar_type=bar,
+        bars_required=bars_required,
+        anvil=anvil,
     )
+
+    if behavior.open_side_stone("inventory") is False:
+        return False
 
     for _ in range(loops):
 
