@@ -237,7 +237,7 @@ def withdrawal_item(
             button_disabled_region=vis.bank_items_window,
             button_enabled=item_inv,
             button_enabled_region=vis.inv,
-            attempts=10,
+            loop_num=10,
             conf=conf,
         )
     except Exception as error:
