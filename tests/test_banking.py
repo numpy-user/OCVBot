@@ -89,6 +89,18 @@ def test_deposit_inventory_pass(params):
     common.kill_feh()
 
 
+deposit_inventory_fail_params = (("01"),)
+
+
+@pytest.mark.parametrize("params", deposit_inventory_fail_params)
+def test_deposit_inventory_fail(params) -> None:
+    test_number = params
+    common.feh("deposit_inventory", "fail", test_number, image_directory)
+    with pytest.raises(Exception, match="Could not deposit inventory"):
+        banking.deposit_inventory()
+        common.kill_feh()
+
+
 # OPEN_BANK ---------------------------------------------------------------------------------------
 
 open_bank_pass_params = (
