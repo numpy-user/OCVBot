@@ -139,5 +139,6 @@ def test_withdrawal_item_pass(params):
     item_bank, item_inv, conf, quantity, test_number = params
     common.feh("withdrawal_item", "pass", test_number, image_directory)
     result = banking.withdrawal_item(item_bank, item_inv, conf, quantity)
-    assert result is True
+    assert result is None
     common.kill_feh()
+

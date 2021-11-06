@@ -206,7 +206,7 @@ def open_bank(direction) -> bool:
 
 def withdrawal_item(
     item_bank: str, item_inv: str, conf: float = 0.95, quantity: str = "all"
-) -> bool:
+) -> None:
     """
     Withdrawals an item from the bank. Assumes the bank window is open and
     the item to withdrawal is visible.
@@ -231,24 +231,17 @@ def withdrawal_item(
         returns False otherwise.
 
     """
-    # Ensure the correct quantity is withdrawn.
-    quantity_set = bank_settings_check("quantity", quantity)
-    if quantity_set is False:
-        return False
-
-    # Try multiple times to withdrawal the item.
     log.info("Attempting to withdrawal item: %s", item_bank)
-    for _ in range(5):
-        vis.Vision(
-            region=vis.bank_items_window, needle=item_bank, loop_num=3, conf=conf
-        ).click_needle()
-
-        # Wait for item to appear in inventory.
-        item_in_inventory = vis.Vision(
-            region=vis.inv, needle=item_inv, loop_num=15, conf=conf
-        ).wait_for_needle()
-        if item_in_inventory is True:
-            return True
-
-    log.warning("Could not withdrawal item: %s!", item_bank)
-    return False
+    try:
+        # Ensure the correct quantity is withdrawn.
+        bank_settings_check("quantity", quantity)
+        interface.enable_button(
+            button_disabled=item_bank,
+            button_disabled_region=vis.bank_items_window,
+            button_enabled=item_inv,
+            button_enabled_region=vis.inv,
+            attempts=10,
+            conf=conf
+        )
+    except Exception as error:
+        raise Exception("Could not withdrawal item!") from error
