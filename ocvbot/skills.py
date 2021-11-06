@@ -177,8 +177,8 @@ class Magic:
         """
         Activate the desired spell.
 
-        Returns:
-            Returns True if spell was activated, False if otherwise.
+        Raises:
+            Raises an exception if the spell could not be found.
 
         """
         for _ in range(5):
@@ -204,9 +204,8 @@ class Magic:
         Attempt to find the target to cast the spell on. Can be either a
         monster in the game world or an item in the inventory.
 
-        Returns:
-            Returns True if target was found and selected, False if
-            otherwise.
+        Raises:
+            Raises an exception if the target could not be found.
 
         """
         for _ in range(1, 5):
@@ -234,7 +233,7 @@ class Magic:
         Cast a spell at a target.
 
         Returns:
-            Returns True if spell was cast, False if otherwise.
+            Returns once spell has been cast.
 
         """
         self._select_spell()
