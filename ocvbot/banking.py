@@ -16,7 +16,9 @@ from ocvbot import misc
 from ocvbot import startup as start
 from ocvbot import vision as vis
 
-# TODO: add search_for_item() function.
+# TODO: Add search_for_item() function.
+# TODO: bank_settings_check(): Add option to disable setting item placeholders.
+# TODO: Finish enter_bank_pin() function.
 
 
 def bank_settings_check(setting: str, value: str) -> bool:
@@ -104,7 +106,6 @@ def deposit_inventory() -> None:
         raise Exception("Could not deposit inventory!") from error
 
 
-# TODO
 def enter_bank_pin(pin=(start.config["main"]["bank_pin"])) -> bool:
     """
     Enters the user's bank PIN. Assumes the bank window is open.
@@ -139,7 +140,6 @@ def enter_bank_pin(pin=(start.config["main"]["bank_pin"])) -> bool:
 
         # Enter the first/second/third/fourth digit of the PIN.
         if pin_ordinal_prompt is True:
-            # TODO:
             enter_digit = vis.Vision(
                 region=vis.game_screen,
                 needle="./needles/" + pin[pin_ordinal],

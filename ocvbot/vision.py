@@ -369,6 +369,7 @@ def orient(
 # ----------------------------------------------------------------------
 
 # TODO: Call these functions from main.py instead.
+# TODO: Allow importing vision.py without running orient().
 display = (0, 0, start.DISPLAY_WIDTH, start.DISPLAY_HEIGHT)
 (client_status, anchor) = orient(region=display)
 (client_left, client_top) = anchor

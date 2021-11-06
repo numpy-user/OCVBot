@@ -22,7 +22,6 @@ from ocvbot import vision as vis
 
 
 # TODO: Move login and world-switcher functions to login_menu.py.
-# TODO: Add switch_worlds_logged_out()
 # TODO: Break out into inventory.py or side_stones.py.
 # TODO: Add switch_worlds_logged_in()
 

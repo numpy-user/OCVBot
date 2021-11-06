@@ -18,6 +18,9 @@ import os
 import pathlib
 import sys
 
+# Global TODOs:
+# TODO: Transition to use proper exceptions rather than checking for a False return value.
+
 # Make sure the program's working directory is the directory in which
 #   this file is located.
 os.chdir(os.path.dirname(__file__))
@@ -51,6 +54,8 @@ def miner(scenario: str) -> None:
         Raises an exception if an unsupported scenario is passed.
 
     """
+    # TODO: Function is too large. Refactor.
+
     log.info("Launching miner script with scenario %s.", scenario)
     # Determine if the player will be dropping the ore or banking it.
     # This var is forced to True in scenarios where banking is not
