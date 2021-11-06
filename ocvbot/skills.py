@@ -173,7 +173,7 @@ class Magic:
         self.inventory = inventory
         self.move_duration_range = move_duration_range
 
-    def _select_spell(self) -> bool:
+    def _select_spell(self) -> None:
         """
         Activate the desired spell.
 
@@ -196,10 +196,10 @@ class Magic:
             if spell_available is False:
                 behavior.open_side_stone("spellbook")
             else:
-                return True
-        return False
+                return
+        raise Exception("Could not select spell!")
 
-    def _select_target(self) -> bool:
+    def _select_target(self) -> None:
         """
         Attempt to find the target to cast the spell on. Can be either a
         monster in the game world or an item in the inventory.
@@ -230,10 +230,10 @@ class Magic:
                     behavior.login_full()
                 misc.sleep_rand(1000, 3000)
             else:
-                return True
-        return False
+                return
+        raise Exception("Could not find target!")
 
-    def cast_spell(self) -> bool:
+    def cast_spell(self) -> None:
         """
         Cast a spell at a target.
 
@@ -241,6 +241,8 @@ class Magic:
             Returns True if spell was cast, False if otherwise.
 
         """
+        self._select_spell()
+        self._select_target()
 
         # Wait for spell to be cast.
         misc.sleep_rand(
@@ -249,7 +251,7 @@ class Magic:
         )
         # Roll for random wait.
         misc.sleep_rand_roll(chance_range=(100, 400))
-        return True
+        return
 
 
 class Mining:
