@@ -72,7 +72,7 @@ def test_close_bank_fail(params) -> None:
     common.feh("close_bank", "fail", test_number, image_directory)
     with pytest.raises(Exception, match="Could not close bank window"):
         banking.close_bank()
-        common.kill_feh()
+    common.kill_feh()
 
 
 # DEPOSIT_INVENTORY -------------------------------------------------------------------------------
@@ -98,7 +98,7 @@ def test_deposit_inventory_fail(params) -> None:
     common.feh("deposit_inventory", "fail", test_number, image_directory)
     with pytest.raises(Exception, match="Could not deposit inventory"):
         banking.deposit_inventory()
-        common.kill_feh()
+    common.kill_feh()
 
 
 # OPEN_BANK ---------------------------------------------------------------------------------------
