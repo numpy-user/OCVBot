@@ -242,7 +242,7 @@ def chef(item: str, location: str, loops: int) -> bool:
     """
     if location == "al-kharid":
         bank_coords = [((91, 207), 3, (4, 7), (3, 9))]
-        range_coords = [((107, 152), 1, (5, 5), (8, 12))]
+        range_coords = [((103, 148), 1, (5, 5), (8, 12))]
         heat_source = "./needles/game-screen/al-kharid/range.png"
         # Assumes starting location is the bank.
         banking.open_bank("west")
@@ -283,8 +283,8 @@ def smith(bar: str, item: str, location: str, loops: int):
     """
     if location == "varrock":
         haystack_map = "./haystacks/varrock-west-bank.png"
-        bank_coords = [((88, 95), 1, (4, 7), (8, 10))]
-        anvil_coords = [((98, 132), 1, (3, 3), (8, 10))]
+        bank_coords = [((88, 93), 1, (4, 5), (7, 9))]
+        anvil_coords = [((98, 130), 1, (3, 3), (7, 9))]
         anvil = "./needles/game-screen/varrock/anvil.png"
     else:
         log.critical("Unsupported value for location!")
