@@ -179,6 +179,7 @@ def alchemist(alch_item_type, loops: int = 10000) -> None:
             region=vis.inv_left_half,
             move_duration_range=(0, 200),
         ).cast_spell()
+        misc.sleep_rand_roll(chance_range=(10, 20), sleep_range=(100, 10000))
 
 
 def spellcaster(scenario: str, loops: int = 10000) -> None:
@@ -213,6 +214,7 @@ def spellcaster(scenario: str, loops: int = 10000) -> None:
             conf=0.75,
             region=vis.game_screen,
         ).cast_spell()
+        misc.sleep_rand_roll(chance_range=(10, 20), sleep_range=(100, 10000))
 
 
 def chef(item: str, location: str, loops: int = 10000) -> bool:
