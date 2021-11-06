@@ -74,6 +74,7 @@ def test_close_bank_fail(params) -> None:
         banking.close_bank()
         common.kill_feh()
 
+
 # DEPOSIT_INVENTORY -------------------------------------------------------------------------------
 
 deposit_inventory_pass_params = (("01"),)
@@ -84,7 +85,7 @@ def test_deposit_inventory_pass(params):
     test_number = params
     common.feh("deposit_inventory", "pass", test_number, image_directory)
     result = banking.deposit_inventory()
-    assert result is True
+    assert result is None
     common.kill_feh()
 
 

@@ -84,37 +84,24 @@ def close_bank():
         raise Exception("Could not close bank window!") from error
 
 
-def deposit_inventory() -> bool:
+def deposit_inventory() -> None:
     """
     Deposits entire inventory into the bank. Assumes the bank window is
-    open.
+    open and the "deposit inventory" button is visible.
 
-    Returns:
-        Returns True if the inventory was successfully deposited into
-        the bank, returns False otherwise.
+    Raises:
+        Raises an exception if the inventory could not be deposited.
 
     """
-    log.info("Depositing inventory.")
-    for _ in range(5):
-        vis.Vision(
-            region=vis.game_screen,
-            needle="./needles/bank/deposit-inventory.png",
-            loop_num=3,
-        ).click_needle()
-
-        # Wait until the inventory is empty.
-        inv_empty = vis.Vision(
-            region=vis.inv,
-            needle="./needles/side-stones/inventory/empty-inventory.png",
-            loop_sleep_range=(100, 300),
-            conf=0.9,
-            loop_num=10,
-        ).wait_for_needle()
-        if inv_empty is True:
-            return True
-
-    log.warning("Unable to deposit inventory!")
-    return False
+    try:
+        interface.enable_button(
+            button_disabled="./needles/bank/deposit-inventory.png",
+            button_disabled_region=vis.game_screen,
+            button_enabled="./needles/side-stones/inventory/empty-inventory.png",
+            button_enabled_region=vis.inv,
+        )
+    except Exception as error:
+        raise Exception("Could not deposit inventory!") from error
 
 
 # TODO
