@@ -12,7 +12,7 @@ import pytest
 
 import common
 
-image_directory = (os.path.dirname(__file__)) + "/test_main_integration/"
+image_directory = (os.path.dirname(__file__)) + "/test_main/"
 
 log.basicConfig(
     format="%(asctime)s %(filename)s.%(funcName)s - %(message)s", level="INFO"
@@ -45,8 +45,8 @@ smith_pass_params = (("iron-bar", "iron-platebody", "varrock", "01"),)
 
 @pytest.mark.parametrize("params", smith_pass_params)
 def test_smith_pass(params) -> None:
-    bar, item, location, test_number = params
+    bar_type, item, location, test_number = params
     common.feh("smith", "pass", test_number, image_directory)
-    result = main.smith(bar=bar, item=item, location=location, loops=1)
+    result = main.smith(bar=bar_type, item=item, location=location, loops=1)
     assert result is True
     common.kill_feh()
