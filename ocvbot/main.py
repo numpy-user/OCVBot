@@ -284,7 +284,7 @@ def smith(bar: str, item: str, location: str, loops: int = 10000):
     if location == "varrock":
         haystack_map = "./haystacks/varrock-west-bank.png"
         bank_coords = [((88, 93), 1, (4, 5), (7, 9))]
-        anvil_coords = [((98, 130), 1, (3, 3), (7, 9))]
+        anvil_coords = [((97, 130), 1, (3, 3), (7, 9))]
         anvil = "./needles/game-screen/varrock/anvil.png"
     else:
         log.critical("Unsupported value for location!")
