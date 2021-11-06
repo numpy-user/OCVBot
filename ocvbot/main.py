@@ -152,7 +152,7 @@ def miner(scenario: str) -> None:
             behavior.logout_break_range()
 
 
-def spellcaster(scenario: str) -> None:
+def spellcaster(scenario: str, loops: int = 10000) -> None:
     """
     Script for training magic, either with combat spells or alchemy.
 
@@ -161,6 +161,8 @@ def spellcaster(scenario: str) -> None:
                                  in varrock castle.
         `high-alchemy` = Casts high alchemy on all noted items within the
                          left half of the player's inventory.
+        loops (int): Number of loops to run the given scenario. Changing this
+                     is only useful for testing purposes. Default is 10000.
 
     Raises:
         Raises an exception if an unsupported scenario is passed.
@@ -173,7 +175,7 @@ def spellcaster(scenario: str) -> None:
         target = "./needles/game-screen/varrock/monk-of-zamorak.png"
         haystack_map = "./haystacks/varrock-castle.png"
         behavior.travel([((75, 128), 1, (4, 4), (5, 10))], haystack_map)
-        for _ in range(10000):
+        for _ in range(loops):
             skills.Magic(
                 spell=spell,
                 target=target,
@@ -192,7 +194,7 @@ def spellcaster(scenario: str) -> None:
         else:
             target = "./needles/items/" + item + ".png"
         behavior.open_side_stone("spellbook")
-        for _ in range(10000):
+        for _ in range(loops):
             spell_cast = skills.Magic(
                 spell=spell,
                 target=target,
