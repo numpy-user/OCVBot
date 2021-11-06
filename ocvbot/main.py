@@ -323,6 +323,7 @@ def smith(bar: str, item: str, location: str, loops: int):
         if location == "varrock":
             banking.open_bank("east")
         banking.deposit_inventory()
+        misc.sleep_rand_roll()
 
         # Ensure we have bars in the bank
         have_bars = vis.Vision(
@@ -339,10 +340,12 @@ def smith(bar: str, item: str, location: str, loops: int):
         if withdrew_hammer is False:
             log.error("Unable to withdrawal hammer!")
             break
+        misc.sleep_rand_roll()
         withdrew_bars = banking.withdrawal_item(item_bank=bar, item_inv=bar)
         if withdrew_bars is False:
             log.error("Unable to withdrawal bars!")
             break
+        misc.sleep_rand_roll()
 
         # Check if we withdrew a full inventory of bars.
         full_inv = vis.Vision(region=vis.inv, needle=inv_full).wait_for_needle()
@@ -353,8 +356,11 @@ def smith(bar: str, item: str, location: str, loops: int):
             break
 
         behavior.travel(anvil_coords, haystack_map)
+        misc.sleep_rand_roll()
         smithing.smith_items()
+        misc.sleep_rand_roll()
         behavior.travel(bank_coords, haystack_map)
+        misc.sleep_rand_roll()
 
     return True
 
