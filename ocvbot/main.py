@@ -204,23 +204,6 @@ def spellcaster(scenario: str, loops: int = 10000) -> None:
                 if start.config["magic"]["logout"] is True:
                     behavior.logout()
                 sys.exit(0)
-                #  check inv for nature runes
-                #  if nature runes = 0
-                #      open inv
-                #      get cash stack
-                #      purchase nature runes equal to 10% cash stack
-
-                #  check inv for alched item
-                #  if item = 0
-                #      open inv
-                #      get cash stack
-                #      search for item on GE to get price
-                #      determine how many of that item can be bought
-                #      buy that many nature runes
-                #      get new cash stack
-                #      buy item
-            misc.sleep_rand_roll(chance_range=(10, 30), sleep_range=(0, 3000))
-
         behavior.logout()
     else:
         raise Exception("Scenario not supported!")
