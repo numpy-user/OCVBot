@@ -21,32 +21,30 @@ from ocvbot import vision as vis
 # TODO: Finish enter_bank_pin() function.
 
 
-def bank_settings_check(setting: str, value: str) -> bool:
+def bank_settings_check(setting: str, value: str) -> None:
     """
     Checks for specific bank window configuration settings.
     Currently only the `quantity` setting is supported.
 
     Args:
         setting (str): The setting you wish to configure.
-            quantity = Sets the value of the `quantity` setting. Available values
-                       are `1`, `5`, `10`, and `all`.
+            quantity = Sets the value of the `quantity` setting. Available
+                       values are `1`, `5`, `10`, and `all`.
         value (str): The value you wish the setting to have.
 
     Examples:
         bank_settings_check("quantity", "all")
 
     Raises:
-        Raises an exception if the setting could not be set.
-
-    Returns:
-        Returns True if the value was successfully set or was already set.
+        Raises an exception if the setting could not be set, or the setting is
+        not supported.
 
     """
     if setting == "quantity":
         if value not in ("1", "5", "10", "all"):
             raise Exception("Unsupported value for quantity setting: ", value)
     else:
-        raise Exception("Unsupported bank setting: ", setting)
+        raise Exception("Unsupported setting: ", setting)
 
     setting_unset = "./needles/bank/settings/" + setting + "/" + value + "-unset.png"
     setting_set = "./needles/bank/settings/" + setting + "/" + value + "-set.png"
@@ -60,8 +58,7 @@ def bank_settings_check(setting: str, value: str) -> bool:
             button_enabled_region=vis.game_screen,
         )
     except Exception as error:
-        raise Exception("Could set bank setting!") from error
-    return True
+        raise Exception("Could not set bank setting!") from error
 
 
 def close_bank():
@@ -241,7 +238,7 @@ def withdrawal_item(
             button_enabled=item_inv,
             button_enabled_region=vis.inv,
             attempts=10,
-            conf=conf
+            conf=conf,
         )
     except Exception as error:
         raise Exception("Could not withdrawal item!") from error
