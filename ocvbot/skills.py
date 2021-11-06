@@ -208,9 +208,9 @@ class Magic:
             Raises an exception if the target could not be found.
 
         """
-        for _ in range(1, 5):
+        for _ in range(5):
             target = vis.Vision(
-                needle=self.target, region=self.region, loop_num=10, conf=self.conf
+                needle=self.target, region=self.region, loop_num=5, conf=self.conf
             ).click_needle(
                 sleep_range=(
                     10,
