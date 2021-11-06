@@ -167,7 +167,8 @@ def spellcaster(scenario: str, loops: int = 10000) -> None:
 
     """
     log.info("Launching spellcaster script with scenario %s.", scenario)
-    # TODO: Ensure spellbook side-stone is open before starting loop.
+
+    behavior.open_side_stone("spellbook")
     if scenario == "curse-varrock-castle":
         spell = "./needles/side-stones/spellbook/curse.png"
         target = "./needles/game-screen/varrock/monk-of-zamorak.png"
@@ -189,7 +190,6 @@ def spellcaster(scenario: str, loops: int = 10000) -> None:
             target = "./needles/items/bank-note.png"
         else:
             target = "./needles/items/" + item + ".png"
-        behavior.open_side_stone("spellbook")
         for _ in range(loops):
             spell_cast = skills.Magic(
                 spell=spell,
