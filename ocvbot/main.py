@@ -293,8 +293,6 @@ def smith(bar: str, item: str, location: str, loops: int = 10000):
     #   has the same background as the bank menu.
     bar = "./needles/items/" + bar + ".png"
     item = "./needles/items/" + item + "-bank.png"
-    hammer_inv = "./needles/items/hammer.png"
-    hammer_bank = "./needles/items/hammer-bank.png"
 
     # Determine how many bars are needed to smith the given item.
     if "platebody" in item:
@@ -304,62 +302,49 @@ def smith(bar: str, item: str, location: str, loops: int = 10000):
     elif "axe" in item or "warhammer" in item:
         bars_required = 3
     else:
-
-    smithing = skills.Smithing(
-        item_in_menu=item,
-        bar_type=bar,
-        bars_required=bars_required,
-        anvil=anvil,
-    )
-
-    if behavior.open_side_stone("inventory") is False:
-        return False
         raise Exception("Unsupported value of item!")
 
+    behavior.open_side_stone("inventory")
     for _ in range(loops):
-
         if location == "varrock":
             banking.open_bank("east")
         banking.deposit_inventory()
-        misc.sleep_rand_roll()
+        misc.sleep_rand_roll(chance_range=(20, 30))
 
-        # Ensure we have bars in the bank
+        # Ensure we have bars in the bank.
         have_bars = vis.Vision(
             region=vis.game_screen, needle=bar, conf=0.9999
         ).find_needle()
         # Stop script if we don't
         if have_bars is False:
             log.info("Out of bars, stopping script.")
-            break
+            return
 
-        withdrew_hammer = banking.withdrawal_item(
-            item_bank=hammer_bank, item_inv=hammer_inv, quantity="1"
+        banking.withdrawal_item(
+            item_bank="./needles/items/hammer-bank.png",
+            item_inv="./needles/items/hammer.png",
+            quantity="1",
         )
-        if withdrew_hammer is False:
-            log.error("Unable to withdrawal hammer!")
-            break
-        misc.sleep_rand_roll()
-        withdrew_bars = banking.withdrawal_item(item_bank=bar, item_inv=bar)
-        if withdrew_bars is False:
-            log.error("Unable to withdrawal bars!")
-            break
-        misc.sleep_rand_roll()
+        misc.sleep_rand_roll(chance_range=(20, 30))
+        banking.withdrawal_item(item_bank=bar, item_inv=bar)
+        misc.sleep_rand_roll(chance_range=(20, 30))
 
-        # Check if we withdrew a full inventory of bars.
+        # Check if we withdrew a full inventory of bars. Stop script if we didn't
         bars_in_inventory = vis.Vision(region=vis.inv, needle=bar).count_needles()
-        # Stop script if we didn't
         if bars_in_inventory != 27:
             log.warning("Out of bars, stopping script.")
-            break
+            return
 
         behavior.travel(anvil_coords, haystack_map)
-        misc.sleep_rand_roll()
-        smithing.smith_items()
-        misc.sleep_rand_roll()
+        skills.Smithing(
+            item_in_menu=item,
+            bar_type=bar,
+            bars_required=bars_required,
+            anvil=anvil,
+        ).smith_items()
+        misc.sleep_rand_roll(chance_range=(20, 30))
         behavior.travel(bank_coords, haystack_map)
-        misc.sleep_rand_roll()
-
-    return True
+        misc.sleep_rand_roll(chance_range=(20, 30))
 
 
 def test():
