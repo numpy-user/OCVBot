@@ -15,9 +15,9 @@ def enable_button(
     button_enabled: str,
     button_enabled_region: tuple[int, int, int, int],
     conf: float = 0.95,
-    loop_num: int = 1,
+    loop_num: int = 5,
     attempts: int = 5,
-    invert_match: bool = False
+    invert_match: bool = False,
 ):
     """
     Enables a button in the interface. Tries multiple times to ensure the
@@ -40,12 +40,12 @@ def enable_button(
         conf (float): Confidence required to match button images. See the `conf`
                       arg in the docstring of the `Vision` class for more info.
                       Default is `0.95`.
-        loop_num (int): Number of times to search button_enabled_region for
-                        button_enabled. Default is 1.
+        loop_num (int): Number of times to search button_enabled after clicking
+                        button_disabled. Default is 5.
         attempts (int): Number of times the function will try clicking on
                         button_disabled. Default is 5.
         invert_match (bool): Setting this to True will cause the function to
-                             check for the absence of button_enabled, instead
+                             check for the absence of button_enabled instead
                              of its presence (see example #3). Default is False.
 
     Examples:
@@ -54,9 +54,11 @@ def enable_button(
                           vis.side_stones,
                           "./needles/side-stones/attacks-selected.png",
                           vis.side_stones)
+
         Logout of the game client:
             enable_button("./needles/buttons/logout.png", vis.inv,
                           "./needles/login-menu/orient.png", vis.game_screen)
+
         Close the bank window. Since the "close" button disappears after
         clicking on it, we must invert the match:
             enable_button("./needles/buttons/close.png", vis.game_screen,
@@ -67,26 +69,27 @@ def enable_button(
         Returns True if the button was enabled or was already enabled.
 
     Raises:
-        Raises an exception if the button could not be enabled after multiple
-        attempts.
+        Raises an exception if the button could not be enabled.
 
     """
+    # Check if the button has already been enabled first.
+    button_is_enabled = vis.Vision(
+        region=button_enabled_region, needle=button_enabled, loop_num=1, conf=conf
+    ).wait_for_needle()
+    if invert_match is False:
+        if button_is_enabled is True:
+            log.debug("Button %s was already enabled", button_enabled)
+            return True
+    elif invert_match is True:
+        if button_is_enabled is False:
+            log.debug("Button %s was already enabled (invert_match)", button_enabled)
+            return True
+
     # Try multiple times to enable the button.
     for _ in range(attempts):
 
-        button_enabled_needle = vis.Vision(
-            region=button_enabled_region, needle=button_enabled, loop_num=loop_num, conf=conf
-        ).wait_for_needle()
-        if invert_match is False:
-            if button_enabled_needle is True:
-                log.debug("Button %s is enabled", button_enabled)
-                return True
-        elif invert_match is True:
-            if button_enabled_needle is False:
-                log.debug("Button %s is enabled (invert_match)", button_enabled)
-                return True
-
         log.debug("Attempting to enable button %s", button_enabled)
+
         # Move mouse out of the way after clicking so the function can
         #   tell if the button is enabled.
         vis.Vision(
@@ -95,4 +98,20 @@ def enable_button(
             loop_num=3,
         ).click_needle(sleep_range=(0, 100, 0, 100), move_away=True)
 
-    raise Exception("Could not enable button ", button_enabled)
+        # See if the button has been enabled.
+        button_is_enabled = vis.Vision(
+            region=button_enabled_region,
+            needle=button_enabled,
+            loop_num=loop_num,
+            conf=conf,
+        ).wait_for_needle()
+        if invert_match is False:
+            if button_is_enabled is True:
+                log.debug("Button %s has been enabled", button_enabled)
+                return True
+        elif invert_match is True:
+            if button_is_enabled is False:
+                log.debug("Button %s has been enabled (invert_match)", button_enabled)
+                return True
+
+    raise Exception("Could not enable button!", button_enabled)
