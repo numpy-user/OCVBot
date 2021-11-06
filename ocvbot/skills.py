@@ -93,8 +93,6 @@ class Cooking:
             log.error("Unable to find heat source %s!", self.heat_source)
             return False
 
-        misc.sleep_rand_roll(chance_range=(15, 35), sleep_range=(1000, 10000))
-
         # Wait for the "how many of this item do you want to cook" chat
         #   menu to appear.
         do_x_screen = vis.Vision(
@@ -131,8 +129,6 @@ class Cooking:
             if cooking_done is True:
                 log.info("Cooking is done.")
                 break
-
-        misc.sleep_rand_roll(chance_range=(15, 35), sleep_range=(20000, 120000))
         return True
 
 
@@ -204,7 +200,6 @@ class Magic:
             )
             if spell_available is False:
                 behavior.open_side_stone("spellbook")
-                misc.sleep_rand(100, 300)
             else:
                 return True
         return False
