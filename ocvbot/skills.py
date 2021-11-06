@@ -162,7 +162,7 @@ class Magic:
         spell: str,
         target: str,
         conf: float,
-        region,
+        region: tuple[int, int, int, int],
         inventory: bool = False,
         move_duration_range: tuple[int, int] = (10, 1000),
     ):
