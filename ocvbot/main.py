@@ -156,11 +156,9 @@ def spellcaster(scenario: str, loops: int = 10000) -> None:
     """
     Script for training magic, either with combat spells or alchemy.
 
-    Supported scenarios:
-        `curse-varrock-castle` = Casts curse against the Monk of Zamorak
-                                 in varrock castle.
-        `high-alchemy` = Casts high alchemy on all noted items within the
-                         left half of the player's inventory.
+    Args:
+        scenario (str): See the `magic` section of `config.yaml.example` for
+                        the available options.
         loops (int): Number of loops to run the given scenario. Changing this
                      is only useful for testing purposes. Default is 10000.
 
@@ -184,8 +182,6 @@ def spellcaster(scenario: str, loops: int = 10000) -> None:
                 region=vis.game_screen,
             ).cast_spell()
 
-    # Casts high-level alchemy on all noted items in the left half of the
-    #   player's inventory.
     elif scenario == "high-alchemy":
         spell = "./needles/side-stones/spellbook/high-alchemy.png"
         item = start.config["magic"]["alch_item_type"]
@@ -235,9 +231,10 @@ def chef(item: str, location: str, loops: int) -> bool:
     Cooks a given item at a given location.
 
     Args:
-        item:
-        location:
-        loops: The number of iterations to run.
+        item (str): See the `cooking` section of `config.yaml.example` for
+                    the available options.
+        location (str): See the `cooking` section of `config.yaml.example` for
+                       the available options.
 
     Returns:
 
@@ -280,8 +277,13 @@ def chef(item: str, location: str, loops: int) -> bool:
 
 def smith(bar: str, item: str, location: str, loops: int):
     """
-    Script for training smithing at an anvil.
+    Smiths bars at an anvil.
 
+    Args:
+        bar (str): See the `smithing` section of `config.yaml.example` for
+                   the available options.
+        location (str): See the `smithing` section of `config.yaml.example` for
+                       the available options.
     """
     if location == "varrock":
         haystack_map = "./haystacks/varrock-west-bank.png"
