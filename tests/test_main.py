@@ -82,3 +82,17 @@ def test_alchemist_fail(params) -> None:
     with pytest.raises(Exception, match="Could not find target"):
         main.alchemist(alch_item_type=alch_item_type, loops=1)
     common.kill_feh()
+
+
+# SPELLCASTER -------------------------------------------------------------------------------------
+
+spellcaster_pass_params = (("curse-varrock-castle", "01"),)
+
+
+@pytest.mark.parametrize("params", spellcaster_pass_params)
+def test_spellcaster_pass(params) -> None:
+    scenario, test_number = params
+    common.feh("spellcaster", "pass", test_number, image_directory)
+    result = main.spellcaster(scenario=scenario, loops=1)
+    assert result is None
+    common.kill_feh()
