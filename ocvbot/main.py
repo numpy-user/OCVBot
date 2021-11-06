@@ -287,8 +287,7 @@ def smith(bar: str, item: str, location: str, loops: int = 10000):
         anvil_coords = [((97, 130), 1, (3, 3), (7, 9))]
         anvil = "./needles/game-screen/varrock/anvil.png"
     else:
-        log.critical("Unsupported value for location!")
-        raise RuntimeError("Unsupported value for location!")
+        raise Exception("Unsupported value for location!")
 
     # We can use banked versions of the smith item because the smithing menu
     #   has the same background as the bank menu.
@@ -305,8 +304,6 @@ def smith(bar: str, item: str, location: str, loops: int = 10000):
     elif "axe" in item or "warhammer" in item:
         bars_required = 3
     else:
-        log.critical("Unsupported value of item!")
-        raise RuntimeError("Unsupported value of item!")
 
     smithing = skills.Smithing(
         item_in_menu=item,
@@ -317,6 +314,7 @@ def smith(bar: str, item: str, location: str, loops: int = 10000):
 
     if behavior.open_side_stone("inventory") is False:
         return False
+        raise Exception("Unsupported value of item!")
 
     for _ in range(loops):
 
