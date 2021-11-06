@@ -109,8 +109,6 @@ magic:
   #   `high-alchemy`
   #      See `docs/scenarios/magic-high-alchemy`.
   scenario: curse-varrock-castle
-  # Whether to logout once alching has completed.
-  logout: False
   # Availabe options:
   #   `bank-note`
   #      For alching any noted item.
