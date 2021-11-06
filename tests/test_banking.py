@@ -59,7 +59,7 @@ def test_close_bank_pass(params) -> None:
     test_number = params
     common.feh("close_bank", "pass", test_number, image_directory)
     result = banking.close_bank()
-    assert result is True
+    assert result is None
     common.kill_feh()
 
 
@@ -70,10 +70,9 @@ close_bank_fail_params = ("01",)
 def test_close_bank_fail(params) -> None:
     test_number = params
     common.feh("close_bank", "fail", test_number, image_directory)
-    result = banking.close_bank()
-    assert result is False
-    common.kill_feh()
-
+    with pytest.raises(Exception, match="Could not close bank window"):
+        banking.close_bank()
+        common.kill_feh()
 
 # DEPOSIT_INVENTORY -------------------------------------------------------------------------------
 
