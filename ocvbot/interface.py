@@ -15,7 +15,9 @@ def enable_button(
     button_enabled: str,
     button_enabled_region: tuple[int, int, int, int],
     conf: float = 0.95,
-    invert_match: bool = False,
+    loop_num: int = 1,
+    attempts: int = 5,
+    invert_match: bool = False
 ):
     """
     Enables a button in the interface. Tries multiple times to ensure the
@@ -38,6 +40,10 @@ def enable_button(
         conf (float): Confidence required to match button images. See the `conf`
                       arg in the docstring of the `Vision` class for more info.
                       Default is `0.95`.
+        loop_num (int): Number of times to search button_enabled_region for
+                        button_enabled. Default is 1.
+        attempts (int): Number of times the function will try clicking on
+                        button_disabled. Default is 5.
         invert_match (bool): Setting this to True will cause the function to
                              check for the absence of button_enabled, instead
                              of its presence (see example #3). Default is False.
@@ -53,8 +59,8 @@ def enable_button(
                           "./needles/login-menu/orient.png", vis.game_screen)
         Close the bank window. Since the "close" button disappears after
         clicking on it, we must invert the match:
-            enable_button("./needles/bank/close.png", vis.game_screen,
-                          "./needles/bank/close.png", vis.game_screen,
+            enable_button("./needles/buttons/close.png", vis.game_screen,
+                          "./needles/buttons/close.png", vis.game_screen,
                           0.95, True)
 
     Returns:
@@ -66,10 +72,10 @@ def enable_button(
 
     """
     # Try multiple times to enable the button.
-    for _ in range(5):
+    for _ in range(attempts):
 
         button_enabled_needle = vis.Vision(
-            region=button_enabled_region, needle=button_enabled, loop_num=1, conf=conf
+            region=button_enabled_region, needle=button_enabled, loop_num=loop_num, conf=conf
         ).wait_for_needle()
         if invert_match is False:
             if button_enabled_needle is True:
