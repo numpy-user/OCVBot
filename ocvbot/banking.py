@@ -30,10 +30,13 @@ def bank_settings_check(setting: str, value: str) -> None:
         setting (str): The setting you wish to configure.
             quantity = Sets the value of the `quantity` setting. Available
                        values are `1`, `5`, `10`, and `all`.
+            placeholder = Sets the value of the `placeholder` setting.
+                          Available values are `set` and `unset`.
         value (str): The value you wish the setting to have.
 
     Examples:
         bank_settings_check("quantity", "all")
+        bank_settings_check("placeholder", "unset")
 
     Raises:
         Raises an exception if the setting could not be set, or the setting is
@@ -43,11 +46,23 @@ def bank_settings_check(setting: str, value: str) -> None:
     if setting == "quantity":
         if value not in ("1", "5", "10", "all"):
             raise Exception("Unsupported value for quantity setting: ", value)
+        setting_unset = (
+            "./needles/bank/settings/" + setting + "/" + value + "-unset.png"
+        )
+        setting_set = "./needles/bank/settings/" + setting + "/" + value + "-set.png"
+
+    elif setting == "placeholder":
+        if value == "set":
+            setting_unset = "./needles/bank/settings/placeholder/placeholder-unset.png"
+            setting_set = "./needles/bank/settings/placeholder/placeholder-set.png"
+        elif value == "unset":
+            setting_unset = "./needles/bank/settings/placeholder/placeholder-set.png"
+            setting_set = "./needles/bank/settings/placeholder/placeholder-unset.png"
+        else:
+            raise Exception("Unsupported value for placeholder setting: ", value)
+
     else:
         raise Exception("Unsupported setting: ", setting)
-
-    setting_unset = "./needles/bank/settings/" + setting + "/" + value + "-unset.png"
-    setting_set = "./needles/bank/settings/" + setting + "/" + value + "-set.png"
 
     try:
         log.debug("Checking if bank setting %s is set to %s", setting, value)
@@ -231,7 +246,11 @@ def withdrawal_item(
     log.info("Attempting to withdrawal item: %s", item_bank)
     try:
         # Ensure the correct quantity is withdrawn.
-        bank_settings_check("quantity", quantity)
+        bank_settings_check("quantity", str(quantity))
+        # Make sure no placeholders are left behind, as this makes image
+        #   matching much more difficult -- placeholders look very similar
+        #   to regular "real" items.
+        bank_settings_check("placeholder", "unset")
         interface.enable_button(
             button_disabled=item_bank,
             button_disabled_region=vis.bank_items_window,
