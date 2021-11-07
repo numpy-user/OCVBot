@@ -138,9 +138,9 @@ class Vision:
                 region=self.region,
             )
             if needle_coords is not None:
-                log.debug("Found regular image %s, %s", needle, needle_coords)
+                #  log.debug("Found regular image %s, %s", needle, needle_coords)
                 return needle_coords
-            log.debug("Cannot find regular image %s, conf=%s", needle, self.conf)
+            #  log.debug("Cannot find regular image %s, conf=%s", needle, self.conf)
             return False
 
         elif self.loctype == "center":
@@ -151,9 +151,9 @@ class Vision:
                 region=self.region,
             )
             if needle_coords is not None:
-                log.debug("Found center of image %s, %s", needle, needle_coords)
+                #  log.debug("Found center of image %s, %s", needle, needle_coords)
                 return needle_coords
-            log.debug("Cannot find center of image %s, conf=%s", needle, self.conf)
+            #  log.debug("Cannot find center of image %s, conf=%s", needle, self.conf)
             return False
 
         raise RuntimeError(
