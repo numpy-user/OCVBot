@@ -643,6 +643,7 @@ def logout_break_roll(
             )
 
             time.sleep(wait_time_seconds)
+            login_full()
     else:
         return
 
