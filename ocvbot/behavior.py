@@ -153,7 +153,8 @@ def drop_item(
         log.info("Could not find %s", item)
         return False
 
-    log.info("Dropping all instances of %s", item)
+    number_of_items = vis.Vision(region=vis.inv, needle=item).count_needles()
+    log.info("Dropping %s instances of %s", number_of_items, item)
     for _ in range(40):
 
         if shift_click:
@@ -601,7 +602,7 @@ def logout_break_roll(
 
     """
     logout_roll = rand.randint(1, chance)
-    log.info("Logout roll was %s", logout_roll)
+    log.info("Logout roll was %s, needed %s", logout_roll, chance)
 
     if logout_roll == chance:
         log.info("Random logout called.")
