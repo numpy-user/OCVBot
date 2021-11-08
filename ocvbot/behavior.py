@@ -627,20 +627,7 @@ def logout_break_roll(
 
             # Convert back to human-readable format for logging.
             wait_time_minutes = wait_time_seconds / 60
-            current_time = time.time()
-            # Determine the time the break will be done.
-            stop_time = current_time + (current_time + wait_time_seconds)
-            # Convert from Epoch seconds to tuple for a human-readable
-            #   format.
-            stop_time_human = time.localtime(stop_time)
-
-            log.info(
-                "Sleeping for %s minutes. Break will be over at %s:%s:%s",
-                round(wait_time_minutes),
-                stop_time_human[3],
-                stop_time_human[4],
-                stop_time_human[5],
-            )
+            log.info("Sleeping for %s minutes.", round(wait_time_minutes))
 
             time.sleep(wait_time_seconds)
             login_full()
