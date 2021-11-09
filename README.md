@@ -30,7 +30,7 @@ git clone --depth 1 https://github.com/takelley1/OCVBot.git
 ```bash
 cd OCVBot
 python3 -m venv ocvbot_venv
-source ocvbot_venv/bin/activate
+source ./ocvbot_venv/bin/activate
 ```
 
 3. Install OCVBot's Python dependencies into your virtual environment.
@@ -41,43 +41,43 @@ pip3 install -r requirements.txt
 4. Create a file in the `credentials` directory called `username.txt` and add
    your account's username to it.
 ```bash
-echo "ThisIsMyUsername" > credentials/username.txt
+echo "ThisIsMyUsername" > ./ocvbot/credentials/username.txt
 ```
 
 5. Create another file in the `credentials` directory called `password.txt` and
    and your account's password to it. Accounts with 2-factor authentication are
    not supported.
 ```bash
-echo "ThisIsMySuperSecretPassword" > credentials/password.txt
+echo "ThisIsMySuperSecretPassword" > ./ocvbot/credentials/password.txt
 ```
 
-6. Copy `ocvbot/config.yaml.example` to `ocvbot/config.yaml`.
+6. In the `ocvbot` directory, copy `config.yaml.example` to `config.yaml`.
 ```bash
-cp "ocvbot/config.yaml.example" "ocvbot/config.yaml"
+cp ./ocvbot/config.yaml.example ./ocvbot/config.yaml
 ```
 
-7. Read and edit `ocvbot/config.yaml` with your desired configuration settings.
+7. Read and edit `config.yaml` with your desired configuration settings.
 
 8. Check `docs/scenarios` for the proper client configuration
    settings and information about each script.
 
 9. Launch the OldSchool Runescape client. A wrapper script is provided in
-   this repository.
+   the `tools` directory.
 ```bash
 ./tools/osrs.sh
 ```
 
 10. Adjust your client to match the screenshots in `docs/scenarios`.
     Make sure your character is in the correct starting position before running
-    the bot. Third-party clients like Runelite have not been tested.
-
+    the bot.
+    
 11. Start the bot.
 ```
 python3 ./ocvbot/main.py
 ```
 
 - To stop the bot, use CTRL-C on the terminal window running the bot.
-- To exit the virtual environment, run `deactivate`.
+- To exit the Python virtual environment, run `deactivate`.
 > NOTE: You must activate the Python virtual environment every time you wish to run the bot!
 > Run `cd ~/OCVBot && source ocvbot_venv/bin/activate`
 
