@@ -1,0 +1,2 @@
+- Mines barronite ore in the Camdozaal mine.
+- Banking is NOT supported.

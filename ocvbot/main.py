@@ -120,6 +120,21 @@ def miner(scenario: str, loops: int = 10000) -> None:
             drop_clue_geode=drop_clue_geode_config,
         )
 
+    elif scenario == "camdozaal-mine":
+        drop_ore_config = True  # Banking not supported.
+        ore = "./needles/items/barronite-deposit.png"
+        mining = skills.Mining(
+            rocks=[
+                (prefix + "east-full.png", prefix + "east-empty.png"),
+                (prefix + "west-full.png", prefix + "west-empty.png"),
+            ],
+            ore=ore,
+            drop_sapphire=drop_sapphire_config,
+            drop_emerald=drop_emerald_config,
+            drop_ruby=drop_ruby_config,
+            drop_diamond=drop_diamond_config,
+            drop_clue_geode=drop_clue_geode_config,
+        )
     else:
         raise Exception("Scenario not supported!")
 
