@@ -16,6 +16,7 @@ each scenario.
 import logging as log
 import os
 import pathlib
+import random as rand
 import sys
 
 # Global TODOs:
@@ -181,6 +182,10 @@ def alchemist(alch_item_type, loops: int = 10000) -> None:
         ).cast_spell()
         misc.sleep_rand_roll(chance_range=(10, 20), sleep_range=(100, 10000))
 
+        # Every once in a while, print the amount of time the bot has been running.
+        if rand.randint(1, 50) == 50:
+            misc.session_duration(human_readable=True)
+
 
 def spellcaster(scenario: str, loops: int = 10000) -> None:
     """
@@ -215,6 +220,10 @@ def spellcaster(scenario: str, loops: int = 10000) -> None:
             region=vis.game_screen,
         ).cast_spell()
         misc.sleep_rand_roll(chance_range=(10, 20), sleep_range=(100, 10000))
+
+        # Every once in a while, print the amount of time the bot has been running.
+        if rand.randint(1, 50) == 50:
+            misc.session_duration(human_readable=True)
 
 
 def chef(item: str, location: str, loops: int = 10000) -> bool:
@@ -265,6 +274,7 @@ def chef(item: str, location: str, loops: int = 10000) -> bool:
         banking.open_bank("west")
         misc.sleep_rand_roll(chance_range=(10, 20), sleep_range=(100, 10000))
         banking.deposit_inventory()
+        misc.session_duration(human_readable=True)
     return True
 
 
@@ -344,6 +354,7 @@ def smith(bar: str, item: str, location: str, loops: int = 10000):
         ).smith_items()
         misc.sleep_rand_roll(chance_range=(20, 30))
         behavior.travel(bank_coords, haystack_map)
+        misc.session_duration(human_readable=True)
         misc.sleep_rand_roll(chance_range=(20, 30))
 
 
