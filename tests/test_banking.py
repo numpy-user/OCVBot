@@ -109,6 +109,20 @@ def test_deposit_inventory_fail(params) -> None:
     common.kill_feh()
 
 
+# DEPOSIT_ITEM ------------------------------------------------------------------------------------
+
+deposit_item_pass_params = (("./needles/items/raw-anchovies.png", "all", "01"),)
+
+
+@pytest.mark.parametrize("params", deposit_item_pass_params)
+def test_deposit_item_pass(params):
+    item, quantity, test_number = params
+    common.feh("deposit_item", "pass", test_number, image_directory)
+    result = banking.deposit_item(item, quantity)
+    assert result is None
+    common.kill_feh()
+
+
 # OPEN_BANK ---------------------------------------------------------------------------------------
 
 open_bank_pass_params = (

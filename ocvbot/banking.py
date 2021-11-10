@@ -118,6 +118,72 @@ def deposit_inventory() -> None:
         raise Exception("Could not deposit inventory!") from error
 
 
+def deposit_item(item, quantity) -> None:
+    """
+    Deposits the given item into the bank. Assumes the bank window is
+    open.
+
+    Args:
+        item (str): Filepath to an image of the item to deposit as it
+                    appears in the player's inventory.
+        quantity (str): Quantity of the item to deposit. Available
+                        values are `1`, `5`, `10`, and `all`.
+
+    Returns:
+        Returns when item was successfully deposited into bank, or there were
+        no items of that type in the inventory to begin with.
+
+    Raises:
+        Raises a ValueError if `quantity` doesn't match the available values.
+
+        Raises an Exception if the item could not be deposited.
+
+    """
+    # Count the initial number of the given item in the inventory.
+    initial_number_of_items = vis.Vision(region=vis.inv, needle=item).count_needles()
+    # If there are no matching items in the inventory to begin with, return.
+    if initial_number_of_items == 0:
+        log.debug("No items of type %s to deposit", item)
+        return
+
+    # Determine the number of of items that should be removed from the inventory.
+    if quantity == "1":
+        items_to_deposit = 1
+    elif quantity == "5":
+        items_to_deposit = 5
+    elif quantity == "10":
+        items_to_deposit = 10
+    elif quantity == "all":
+        items_to_deposit = initial_number_of_items
+    else:
+        raise ValueError("Unsupported value for quantity argument!")
+
+    log.info("Attempting to deposit %s of item %s", quantity, item)
+
+    # Make sure the correct quantity is deposited.
+    bank_settings_check("quantity", str(quantity))
+
+    # Try clicking on the item multiple times.
+    for _ in range(5):
+        vis.Vision(
+            region=vis.inv,
+            needle=item,
+            loop_num=3,
+        ).click_needle(sleep_range=(0, 100, 0, 100), move_away=True)
+
+        # Loop and wait until the item has been deposited.
+        for _ in range(10):
+            misc.sleep_rand(200, 700)
+            final_number_of_items = vis.Vision(
+                region=vis.inv, needle=item
+            ).count_needles()
+            if (initial_number_of_items - items_to_deposit) == final_number_of_items:
+                log.debug("Deposited item %s", item)
+                return
+
+    raise Exception("Could not deposit items!")
+
+
 def enter_bank_pin(pin=(start.config["main"]["bank_pin"])) -> bool:
     """
     Enters the user's bank PIN. Assumes the bank window is open.
