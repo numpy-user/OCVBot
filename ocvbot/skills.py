@@ -251,174 +251,214 @@ class Mining:
     Class for all activities related to training the Mining skill.
 
     Args:
-        rocks (list): A list containing an arbitrary number of 2-tuples.
-                       Each tuple must contain two filepaths:
-                       The first filepath must be a needle of the
-                       rock in its "full" state. The second filepath
-                       must be a needle of the same rock in its "empty"
-                       state.
+        rocks (list): A list containing an arbitrary number of 2-tuples. Each
+                      tuple must contain two filepaths: The first filepath
+                      must be a needle of the rock in its "full" state. The
+                      second filepath must be a needle of the same rock in its
+                      "empty" state.
         ore (file): Filepath to a needle of the item icon of the ore
                     being mined, as it appears in the player's
                     inventory.
 
+        drop_sapphire (bool): Whether to drop mined sapphires. Ignored if
+                              banking is enabled.
+        drop_emerald (bool): Whether to drop mined emeralds. Ignore if
+                             banking is enabled.
+        drop_ruby (bool): Whether to drop mined rubies. Ignore if
+                          banking is enabled.
+        drop_diamond (bool): Whether to drop mined diamonds. Ignore if
+                             banking is enabled.
+        drop_clue_geode (bool): Whether to drop mined clue geodes. Ignore if
+                                banking is enabled.
+
+    Example:
+            skills.Mining(
+                rocks=[
+                    ("./needles/game-screen/camdozaal-mine/west-full",
+                     "./needles/game-screen/camdozaal-mine/west-empty"),
+                    ("./needles/game-screen/camdozaal-mine/east-full",
+                     "./needles/game-screen/camdozaal-mine/east-empty"),
+                ],
+                ore="./needles/items/barronite-deposit.png",
+                drop_sapphire=True
+                drop_emerald=True
+                drop_ruby=True
+                drop_diamond=False
+                drop_clue_geode=False
+            )
     """
 
-    # Create a list of tuples to determine which items to drop.
-    drop_items = [
-        (
-            bool(start.config["mining"]["drop_sapphire"]),
-            "./needles/items/uncut-sapphire.png",
-        ),
-        (
-            bool(start.config["mining"]["drop_emerald"]),
-            "./needles/items/uncut-emerald.png",
-        ),
-        (bool(start.config["mining"]["drop_ruby"]), "./needles/items/uncut-ruby.png"),
-        (
-            bool(start.config["mining"]["drop_diamond"]),
-            "./needles/items/uncut-diamond.png",
-        ),
-        (
-            bool(start.config["mining"]["drop_clue_geode"]),
-            "./needles/items/clue-geode.png",
-        ),
-    ]
-
-    def __init__(self, rocks, ore, position=None, conf=(0.8, 0.85)):
+    def __init__(
+        self,
+        rocks: list,
+        ore: str,
+        drop_sapphire: bool,
+        drop_emerald: bool,
+        drop_ruby: bool,
+        drop_diamond: bool,
+        drop_clue_geode: bool,
+        conf: float = 0.85,
+    ):
         self.rocks = rocks
         self.ore = ore
-        self.position = position
+        self.drop_sapphire = drop_sapphire
+        self.drop_emerald = drop_emerald
+        self.drop_ruby = drop_ruby
+        self.drop_diamond = drop_diamond
+        self.drop_clue_geode = drop_clue_geode
         self.conf = conf
 
-        if position is not None:
-            behavior.travel(position[0], position[1])
-
-    def mine_rocks(self):
+    def _is_inventory_full(self) -> bool:
         """
-        Mines the provided rocks until inventory is full.
-
-        This function alternates mining among the rocks that were provided
-        (it can mine one rock, two rocks, or many rocks at once).
-        All rocks must be of the same ore type.
+        Helper function to determine if the player's inventory is full. Looks
+        for a "your inventory is too full to hold any more resources" chat
+        message.
 
         Returns:
-            Returns True if a full inventory of ore was mined and banked or
-            dropped, or if script timed out looking for ore.
-
+          Returns True if the player's inventory is full,
+          returns False otherwise.
         """
-        # TODO: Count the number of items in the inventory to make sure
-        #   the function never receives an "inventory is already full" message.
+        log.debug("Checking for full inventory.")
+        inventory_full = vis.Vision(
+            region=vis.chat_menu,
+            loop_num=3,
+            needle="./needles/chat-menu/mining-inventory-full.png",
+            conf=0.85,
+        ).wait_for_needle()
+        if inventory_full is True:
+            return True
+        log.debug("Inventory is not full.")
+        return False
 
-        # TODO: Break function into smaller pieces.
-
-        # Make sure inventory is selected.
-        behavior.open_side_stone("inventory")
-
-        for tries in range(100):
-
-            for rock_needle in self.rocks:
-                # Unpack each tuple in the rocks[] list to obtain the "full"
-                #   and "empty" versions of each ore.
-                (full_rock_needle, empty_rock_needle) = rock_needle
-
-                log.debug("Searching for ore %s...", tries)
-
-                # If current rock is full, begin mining it.
-                # Move the mouse away from the rock so it doesn't
-                #   interfere with matching the needle.
-                rock_full = vis.Vision(
-                    region=vis.game_screen,
-                    loop_num=1,
-                    needle=full_rock_needle,
-                    conf=self.conf[0],
-                ).click_needle(
-                    sleep_range=(
-                        0,
-                        100,
-                        0,
-                        100,
-                    ),
-                    move_duration_range=(0, 500),
-                    move_away=True,
-                )
-
-                if rock_full is True:
-                    log.info("Waiting for mining to start.")
-                    misc.sleep_rand_roll(chance_range=(1, 200))
-
-                    # Once the rock has been clicked on, wait for mining to
-                    #   start by monitoring chat messages.
-                    mining_started = vis.Vision(
-                        region=vis.chat_menu_recent,
-                        loop_num=5,
-                        conf=0.9,
-                        needle="./needles/chat-menu/mining-started.png",
-                        loop_sleep_range=(100, 200),
-                    ).wait_for_needle()
-
-                    # If mining hasn't started after looping has finished,
-                    #   check to see if the inventory is full.
-                    if mining_started is False:
-                        log.debug("Timed out waiting for mining to start.")
-
-                        inv_full = vis.Vision(
-                            region=vis.chat_menu,
-                            loop_num=1,
-                            needle="./needles/chat-menu/mining-inventory-full.png",
-                        ).wait_for_needle()
-
-                        # If the inventory is full, empty the ore and
-                        #   return.
-                        if inv_full is True:
-                            return "inventory-full"
-
-                    log.debug("Mining started.")
-
-                    # Wait until the rock is empty by waiting for the
-                    #   "empty" version of the rock_needle tuple.
-                    rock_empty = vis.Vision(
-                        region=vis.game_screen,
-                        loop_num=35,
-                        conf=self.conf[1],
-                        needle=empty_rock_needle,
-                        loop_sleep_range=(100, 200),
-                    ).wait_for_needle()
-
-                    if rock_empty is True:
-                        log.info("Rock is empty.")
-                        log.debug("%s empty.", rock_needle)
-                        behavior.human_behavior_rand(chance=100)
-                    else:
-                        log.info("Timed out waiting for mining to finish.")
-        return True
-
-    def drop_inv_ore(self) -> bool:
+    def _mine_rock(self, rock_full, rock_empty) -> None:
         """
-        Drops ore and optionally gems from inventory.
+        Helper function to mine a given rock until it's been depleted.
+
+        Raises:
+          Raises start.RockEmpty if the given rock is already depleted.
+
+          Raises start.InventoryFull if the player's inventory is too full to
+          mine the rock.
+
+          Raises start.TimeoutException if it took too long to mine the rock.
+        """
+        # If rock is full, begin mining it.
+        # Move the mouse away from the rock so it doesn't interfere with
+        #   matching the needle.
+        rock_full_click = vis.Vision(
+            region=vis.game_screen,
+            loop_num=1,
+            needle=rock_full,
+            conf=self.conf,
+        ).click_needle(move_away=True)
+
+        if rock_full_click is False:
+            raise start.RockEmpty("Rock is already empty!")
+
+        if self._is_inventory_full() is True:
+            raise start.InventoryFull("Inventory is full!")
+
+        # Wait until the rock is empty.
+        rock_empty = vis.Vision(
+            region=vis.game_screen,
+            loop_num=50,
+            conf=self.conf,
+            needle=rock_empty,
+            loop_sleep_range=(100, 600),
+        ).wait_for_needle()
+        if rock_empty is True:
+            log.info("Rock has been mined.")
+            return
+        # If a timeout has occured, check if the inventory is full.
+        if self._is_inventory_full() is True:
+            raise start.InventoryFull("Inventory is full!")
+        raise start.TimeoutException("Timeout waiting for rock to be mined!")
+
+    def mine_multiple_rocks(self) -> None:
+        """
+        Main function used in the Mining class to mine multiple rocks in
+        sequence. This function alternates mining among the rocks that were
+        provided. All rocks must be of the same ore type.
 
         Returns:
-            Returns True if ore has been dropped.
+            Returns once an attempt has been made to mine all the rocks given.
+
+        Raises:
+          Raises start.InventoryFull if the player's inventory is too full to
+          mine the rock.
+
+          Raises start.TimeoutException if it took too long to mine the rock.
 
         """
+        for rocks in self.rocks:
+            # Unpack each tuple in the rocks[] list to obtain the "full"
+            #   and "empty" versions of each ore.
+            (rock_full, rock_empty) = rocks
+            try:
+                self._mine_rock(rock_full, rock_empty)
+            except start.RockEmpty:
+                pass
+            except start.InventoryFull as error:
+                raise error
+            except start.TimeoutException as error:
+                raise error
+
+    def drop_inv_ore(self) -> None:
+        """
+        Drops mined ore ore and other mined items from inventory.
+
+        Returns:
+            Returns if ore and/or other mined items were successfully dropped.
+
+        Raises:
+            Raises start.InefficientUseOfInventory when the number of free
+            inventory spaces available would result in inefficient or overly
+            arduous gameplay.
+
+            Raises Exception if no ore could be found in the inventory to drop.
+        """
+        # Raise an error if we have <=5 ores in the inventory, as it's very
+        #   inefficient to mine with an inventory so small.
+        ores_in_inventory = vis.Vision(region=vis.inv, needle=self.ore).count_needles()
+        if ores_in_inventory <= 5:
+            raise start.InefficientUseOfInventory(
+                "Free inventory too small! Must have at least 5 free spaces!"
+            )
+
         ore_dropped = behavior.drop_item(item=self.ore)
-
         if ore_dropped is False:
-            behavior.logout()
-            # This runtime error will occur if the
-            #   player's inventory is full, but they
-            #   don't have any ore to drop.
-            raise Exception("Could not find ore to drop!")
+            raise Exception("Could not find any ore to drop!")
 
-        # Iterate through the other items that could
-        #   be dropped. If any of them is true, drop that item.
-        # The for loop is iterating over a tuple of tuples.
-        for item in self.drop_items:
-            # Unpack the tuple
+        # Iterate through the other items that could be dropped. If any of them
+        #   is true, drop that item.
+        non_ore_items = [
+            (
+                self.drop_sapphire,
+                "./needles/items/uncut-sapphire.png",
+            ),
+            (
+                self.drop_emerald,
+                "./needles/items/uncut-emerald.png",
+            ),
+            (
+                self.drop_ruby,
+                "./needles/items/uncut-ruby.png",
+            ),
+            (
+                self.drop_diamond,
+                "./needles/items/uncut-diamond.png",
+            ),
+            (
+                self.drop_clue_geode,
+                "./needles/items/clue-geode.png",
+            ),
+        ]
+        for item in non_ore_items:
             (drop_item_bool, path) = item
             if drop_item_bool is True:
-                behavior.drop_item(item=str(path), track=False)
-                return True
-        return False
+                behavior.drop_item(item=str(path))
+                return
+        return
 
 
 class Smithing:
@@ -436,7 +476,9 @@ class Smithing:
                                 be found.
     """
 
-    def __init__(self, item_in_menu: str, bar_type: str, bars_required: int, anvil: str):
+    def __init__(
+        self, item_in_menu: str, bar_type: str, bars_required: int, anvil: str
+    ):
         self.item_in_menu = item_in_menu
         self.bar_type = bar_type
         self.bars_required = bars_required

@@ -38,7 +38,7 @@ from ocvbot import startup as start
 from ocvbot import vision as vis
 
 
-def miner(scenario: str) -> None:
+def miner(scenario: str, loops: int = 10000) -> None:
     """
     Script for mining rocks in a handful of locations. Banking support is
     limited.
@@ -56,101 +56,110 @@ def miner(scenario: str) -> None:
 
     """
     # TODO: Function is too large. Refactor.
-
     log.info("Launching miner script with scenario %s.", scenario)
-    # Determine if the player will be dropping the ore or banking it.
-    # This var is forced to True in scenarios where banking is not
-    #   supported.
-    drop_ore = start.config["mining"]["drop_ore"]
     # Make the path to the rock needles shorter.
     prefix = "./needles/game-screen/" + scenario + "/"
     haystack_map = "./haystacks/" + scenario + ".png"
 
-    # Set initial waypoint coordinates.
+    # Read the config file to get argument values.
+    drop_sapphire_config = start.config["mining"]["drop_sapphire"]
+    drop_emerald_config = start.config["mining"]["drop_emerald"]
+    drop_ruby_config = start.config["mining"]["drop_ruby"]
+    drop_diamond_config = start.config["mining"]["drop_diamond"]
+    drop_clue_geode_config = start.config["mining"]["drop_clue_geode"]
+    # Determine if the player will be dropping the ore or banking it.
+    # This var is forced to True in scenarios where banking is not
+    #   supported.
+    drop_ore_config = start.config["mining"]["drop_ore"]
+
     bank_from_mine = None
     mine_from_bank = None
 
-    while True:
+    # CONFIGURE SCENARIO PARAMETERS ---------------------------------------------------------------
 
-        # Ensure the client is logged in.
-        client_status = vis.orient()
-        if client_status[0] == "logged_out":
-            behavior.login_full()
+    if scenario == "varrock-east-mine":
+        ore = "./needles/items/iron-ore.png"
+        mining = skills.Mining(
+            rocks=[
+                (prefix + "north-full2.png", prefix + "north-empty.png"),
+                (prefix + "west-full.png", prefix + "west-empty.png"),
+            ],
+            ore=ore,
+            drop_sapphire=drop_sapphire_config,
+            drop_emerald=drop_emerald_config,
+            drop_ruby=drop_ruby_config,
+            drop_diamond=drop_diamond_config,
+            drop_clue_geode=drop_clue_geode_config,
+        )
 
-        if scenario == "varrock-east-mine":
-            mining = skills.Mining(
-                rocks=[
-                    (prefix + "north-full2.png", prefix + "north-empty.png"),
-                    (prefix + "west-full.png", prefix + "west-empty.png"),
-                ],
-                ore="./needles/items/iron-ore.png",
-                position=(
-                    [((240, 399), 1, (4, 4), (5, 10))],
-                    "./haystacks/varrock-east-mine.png",
-                ),
-            )
+        bank_from_mine = [
+            ((253, 181), 5, (35, 35), (1, 6)),
+            ((112, 158), 5, (20, 20), (1, 6)),
+            ((108, 194), 1, (10, 4), (3, 8)),
+        ]
 
-            bank_from_mine = [
-                ((253, 181), 5, (35, 35), (1, 6)),
-                ((112, 158), 5, (20, 20), (1, 6)),
-                ((108, 194), 1, (10, 4), (3, 8)),
-            ]
+        mine_from_bank = [
+            ((240, 161), 5, (35, 35), (1, 6)),
+            ((262, 365), 5, (25, 25), (1, 6)),
+            ((240, 399), 1, (4, 4), (3, 8)),
+        ]
 
-            mine_from_bank = [
-                ((240, 161), 5, (35, 35), (1, 6)),
-                ((262, 365), 5, (25, 25), (1, 6)),
-                ((240, 399), 1, (4, 4), (3, 8)),
-            ]
+    elif scenario == "lumbridge-mine":
+        drop_ore_config = True  # Banking not supported.
+        ore = "./needles/items/copper-ore.png"
+        mining = skills.Mining(
+            rocks=[
+                (prefix + "east-full.png", prefix + "east-empty.png"),
+                (prefix + "south-full.png", prefix + "south-empty.png"),
+            ],
+            ore=ore,
+            drop_sapphire=drop_sapphire_config,
+            drop_emerald=drop_emerald_config,
+            drop_ruby=drop_ruby_config,
+            drop_diamond=drop_diamond_config,
+            drop_clue_geode=drop_clue_geode_config,
+        )
 
-        elif scenario == "lumbridge-mine":
-            drop_ore = True  # Banking not supported.
-            mining = skills.Mining(
-                rocks=[
-                    (prefix + "east-full.png", prefix + "east-empty.png"),
-                    (prefix + "south-full.png", prefix + "south-empty.png"),
-                ],
-                ore="./needles/items/copper-ore.png",
-            )
+    else:
+        raise Exception("Scenario not supported!")
 
-        elif scenario == "al-kharid-mine":
-            drop_ore = True  # Banking not supported.
-            mining = skills.Mining(
-                rocks=[
-                    (prefix + "north-full.png", prefix + "north-empty.png"),
-                    (prefix + "west-full.png", prefix + "west-empty.png"),
-                    (prefix + "south-full.png", prefix + "south-empty.png"),
-                ],
-                ore="./needles/items/iron-ore.png",
-                conf=(0.95, 0.95),
-            )
-        else:
-            raise Exception("Scenario not supported!")
+    # MAIN FUNCTION LOOP --------------------------------------------------------------------------
 
-        if mining.mine_rocks() == "inventory-full":
-
-            elapsed_time = misc.session_duration(human_readable=True)
-            log.info("Script has been running for %s (HH:MM:SS)", elapsed_time)
-
-            if drop_ore is True:
+    for _ in range(loops):
+        try:
+            mining.mine_multiple_rocks()
+            misc.sleep_rand_roll(chance_range=(90, 100))
+        except start.TimeoutException:
+            misc.sleep_rand_roll()
+        except start.InventoryFull:
+            misc.sleep_rand_roll()
+            if drop_ore_config is True:
                 mining.drop_inv_ore()
+            else:
+                behavior.travel(bank_from_mine, haystack_map)
+                banking.open_bank("south")
+                misc.sleep_rand_roll()
 
-            behavior.travel(bank_from_mine, haystack_map)
-            behavior.open_side_stone("inventory")
-            banking.open_bank("south")
-            vis.Vision(region=vis.inv, needle=mining.ore).click_needle()
-            for item in mining.drop_items:
-                vis.Vision(region=vis.inv, needle=item[1], loop_num=1).click_needle()
-            # TODO: Instead of waiting a hard-coded period of time,
-            #   wait until the item can no longer be found in the
-            #   player's inventory.
-            misc.sleep_rand(500, 3000)
-            # Mining spot from bank.
-            behavior.travel(mine_from_bank, haystack_map)
-            misc.sleep_rand(300, 800)
+                # Deposit all possible mined items.
+                for item in [
+                    ore,
+                    "./needles/items/uncut-sapphire.png",
+                    "./needles/items/uncut-emerald.png",
+                    "./needles/items/uncut-ruby.png",
+                    "./needles/items/uncut-diamond.png",
+                    "./needles/items/clue-geode.png",
+                ]:
+                    banking.deposit_item(item=item, quantity="all")
 
-        else:
-            # Roll for randomized actions when the script returns.
+                behavior.travel(mine_from_bank, haystack_map)
+                misc.sleep_rand_roll()
+            # Roll for randomized actions when the inventory is full.
             behavior.logout_break_range()
+
+            misc.session_duration(human_readable=True)
+        # Logout when anything else unexpected occurs.
+        except (Exception, start.InefficientUseOfInventory):
+            behavior.logout()
 
 
 def alchemist(alch_item_type, loops: int = 10000) -> None:
