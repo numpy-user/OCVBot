@@ -72,6 +72,7 @@ def session_duration(human_readable: bool = False) -> int:
     if human_readable is False:
         return elapsed_time_seconds
     elapsed_time_human_readable = datetime.timedelta(seconds=elapsed_time_seconds)
+    log.info("Bot has been running for %s (H:MM:SS)", elapsed_time_human_readable)
     return elapsed_time_human_readable
 
 
