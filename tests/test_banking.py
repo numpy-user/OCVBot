@@ -22,7 +22,7 @@ log.basicConfig(
 #   from ocvbot require an image to match first, or they will fail.
 common.feh("orient", "pass", "01", ((os.path.dirname(__file__)) + "/test_vision/"))
 from ocvbot import banking
-
+from ocvbot import startup as start
 
 # BANK_SETTINGS_CHECK -----------------------------------------------------------------------------
 
@@ -111,7 +111,13 @@ def test_deposit_inventory_fail(params) -> None:
 
 # DEPOSIT_ITEM ------------------------------------------------------------------------------------
 
-deposit_item_pass_params = (("./needles/items/raw-anchovies.png", "all", "01"),)
+deposit_item_pass_params = (
+    ("./needles/items/raw-anchovies.png", "all", "01"),
+    ("./needles/items/iron-ore.png", "10", "02"),
+    ("./needles/items/iron-ore.png", "5", "03"),
+    ("./needles/items/iron-ore.png", "1", "04"),
+    ("./needles/items/iron-ore.png", "1", "05"),  # No items to deposit.
+)
 
 
 @pytest.mark.parametrize("params", deposit_item_pass_params)
@@ -120,6 +126,18 @@ def test_deposit_item_pass(params):
     common.feh("deposit_item", "pass", test_number, image_directory)
     result = banking.deposit_item(item, quantity)
     assert result is None
+    common.kill_feh()
+
+
+deposit_item_fail_params = (("./needles/items/iron-ore.png", "10", "01"),)
+
+
+@pytest.mark.parametrize("params", deposit_item_fail_params)
+def test_deposit_item_fail(params) -> None:
+    item, quantity, test_number = params
+    common.feh("deposit_item", "fail", test_number, image_directory)
+    with pytest.raises(start.BankingError, match="Deposited too many items"):
+        banking.deposit_item(item, quantity)
     common.kill_feh()
 
 
