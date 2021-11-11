@@ -142,6 +142,11 @@ with open("worlds.json") as f:
 
 # Define custom exception types. ------------------------------------------------------------------
 
+class BankingError(Exception):
+    # Raised when an unexpected or unrecoverable situation occurs in the
+    #   banking window.
+    pass
+
 class RockEmpty(Exception):
     # Raised by skills.Miner when the given rock is empty.
     pass
