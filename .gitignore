@@ -16,12 +16,12 @@ ocvbot/package-lock.json
 /haystacks
 NOTES.md
 Project.xml
-bin/main/build
-bin/main/dist
-bin/test/build
-bin/test/dist
+
+tests/haystacks/locations/cooking-al-kharid
 tests/haystacks/locations/old
 tests/haystacks/unsorted
+tests/haystacks/user-interface
+tests/haystacks/user-interface/maps/world
 
 # User files
 **/credentials
@@ -31,14 +31,15 @@ tests/haystacks/unsorted
 # Temporary and debug files
 **/*backup.png
 **/*haystack.tmp.png
-**/*inv_bottom_half.png
 **/*ocvbot_bank_items_window.png
 **/*ocvbot_chat_menu_recent.png
 **/*ocvbot_client.png
 **/*ocvbot_game_screen.png
 **/*ocvbot_inv.png
+**/*ocvbot_inv_bottom_half.png
 **/*ocvbot_inv_left_half.png
 **/*ocvbot_inv_right_half.png
 **/*ocvbot_minimap.png
 **/*ocvbot_minimap_slice.png
 **/*ocvbot_side_stones.png
+**/*osrs_20*.png
