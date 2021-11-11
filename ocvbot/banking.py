@@ -136,7 +136,8 @@ def deposit_item(item, quantity) -> None:
     Raises:
         Raises a ValueError if `quantity` doesn't match the available values.
 
-        Raises an Exception if the item could not be deposited.
+        Raises a BankingError if too many items were deposited by mistake.
+        Raises a BankingError if the item could not be deposited.
 
     """
     # Count the initial number of the given item in the inventory.
@@ -157,6 +158,7 @@ def deposit_item(item, quantity) -> None:
         items_to_deposit = initial_number_of_items
     else:
         raise ValueError("Unsupported value for quantity argument!")
+    desired_number_of_items = initial_number_of_items - items_to_deposit
 
     log.info("Attempting to deposit %s of item %s", quantity, item)
 
@@ -177,11 +179,13 @@ def deposit_item(item, quantity) -> None:
             final_number_of_items = vis.Vision(
                 region=vis.inv, needle=item
             ).count_needles()
-            if (initial_number_of_items - items_to_deposit) == final_number_of_items:
+            if desired_number_of_items == final_number_of_items:
                 log.debug("Deposited item %s", item)
                 return
+            if desired_number_of_items > final_number_of_items:
+                raise start.BankingError("Deposited too many items!")
 
-    raise Exception("Could not deposit items!")
+    raise start.BankingError("Could not deposit items!")
 
 
 def enter_bank_pin(pin=(start.config["main"]["bank_pin"])) -> bool:
