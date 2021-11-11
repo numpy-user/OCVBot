@@ -37,6 +37,7 @@ sys.path.insert(1, SCRIPTPATH)
 # Importing ocvbot modules changes the current dir to the directory the files are in.
 from ocvbot import vision as vis, startup as start
 
+vis.init()
 log.basicConfig(
     format="%(asctime)s -- %(filename)s.%(funcName)s - %(message)s", level="INFO"
 )

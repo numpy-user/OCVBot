@@ -364,151 +364,187 @@ def orient(
 # TODO: add 'configure camera' function that clicks on compass, zooms in camera, and holds down up arrow
 #       only click on the compass if it isn't perfectly aligned
 
-# ----------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
 # Setup the necessary region tuples for the Vision class and orient the client.
-# ----------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
 
-# TODO: Call these functions from main.py instead.
-# TODO: Allow importing vision.py without running orient().
-display = (0, 0, start.DISPLAY_WIDTH, start.DISPLAY_HEIGHT)
-(client_status, anchor) = orient(region=display)
-(client_left, client_top) = anchor
+# Set initial values for vision regions.
+client = (0, 0, 0, 0)
+inv = (0, 0, 0, 0)
+inv_bottom = (0, 0, 0, 0)
+inv_right_half = (0, 0, 0, 0)
+inv_left_half = (0, 0, 0, 0)
+game_screen = (0, 0, 0, 0)
+bank_items_window = (0, 0, 0, 0)
+side_stones = (0, 0, 0, 0)
+chat_menu = (0, 0, 0, 0)
+chat_menu_recent = (0, 0, 0, 0)
+login_field = (0, 0, 0, 0)
+pass_field = (0, 0, 0, 0)
+minimap = (0, 0, 0, 0)
+minimap_slice = (0, 0, 0, 0)
 
-if client_status == "logged_in":
-    client_left -= 735
-    client_top -= 21
-elif client_status == "logged_out":
-    client_left -= 183
-    client_top -= 59
 
-# Each of these tuples contains coordinates for the "region" parameter
-#   of PyAutoGUI's Locate() functions. These tuples are used by methods
-#   in the Vision class to look for needles within the specified set of
-#   coordinates, rather than within the entire display's coordinates,
-#   which is much faster.
+def init() -> None:
+    """
+    Locates the client and sets the value of the vision regions.
+    This function MUST be run before OCVBot can do anything else.
+    """
+    display = (0, 0, start.DISPLAY_WIDTH, start.DISPLAY_HEIGHT)
+    (client_status, anchor) = orient(region=display)
+    (client_left, client_top) = anchor
 
-# All coordinates are in a (left, top, width, height) format, to match
-#   PyAutoGUI.
+    if client_status == "logged_in":
+        client_left -= 735
+        client_top -= 21
+    elif client_status == "logged_out":
+        client_left -= 183
+        client_top -= 59
 
-# The fixed-width Java game client.
-client = (client_left, client_top, start.CLIENT_WIDTH, start.CLIENT_HEIGHT)
+    # Each of these tuples contains coordinates for the "region" parameter
+    #   of PyAutoGUI's Locate() functions. These tuples are used by methods
+    #   in the Vision class to look for needles within the specified set of
+    #   coordinates, rather than within the entire display's coordinates,
+    #   which is much faster.
 
-# TODO: Break these regions out into a separate file.
-# TODO: Add screenshots with highlighted regions in docs/
+    # All coordinates are in a (left, top, width, height) format, to match
+    #   PyAutoGUI.
 
-# The player's inventory.
-inv_left = client_left + 548
-inv_top = client_top + 205
-inv = (inv_left, inv_top, start.INV_WIDTH, start.INV_HEIGHT)
+    # The fixed-width game client.
+    global client
+    client = (client_left, client_top, start.CLIENT_WIDTH, start.CLIENT_HEIGHT)
 
-# Bottom half of the player's inventory.
-inv_bottom_left = inv_left
-inv_bottom_top = inv_top + start.INV_HALF_HEIGHT
-inv_bottom = (inv_bottom_left, inv_bottom_top, start.INV_WIDTH, start.INV_HALF_HEIGHT)
+    # The player's inventory.
+    inv_left = client_left + 548
+    inv_top = client_top + 205
+    global inv
+    inv = (inv_left, inv_top, start.INV_WIDTH, start.INV_HEIGHT)
 
-# Right half of the player's inventory.
-inv_right_half_left = (inv_left + start.INV_HALF_WIDTH) - 5
-inv_right_half_top = inv_top
-inv_right_half = (
-    inv_right_half_left,
-    inv_right_half_top,
-    start.INV_HALF_WIDTH,
-    start.INV_HEIGHT,
-)
+    # Bottom half of the player's inventory.
+    inv_bottom_left = inv_left
+    inv_bottom_top = inv_top + start.INV_HALF_HEIGHT
+    global inv_bottom
+    inv_bottom = (
+        inv_bottom_left,
+        inv_bottom_top,
+        start.INV_WIDTH,
+        start.INV_HALF_HEIGHT,
+    )
 
-# Left half of the player's inventory.
-inv_left_half_left = inv_left
-inv_left_half_top = inv_top
-inv_left_half = (
-    inv_left_half_left,
-    inv_left_half_top,
-    start.INV_HALF_WIDTH,
-    start.INV_HEIGHT,
-)
+    # Right half of the player's inventory.
+    inv_right_half_left = (inv_left + start.INV_HALF_WIDTH) - 5
+    inv_right_half_top = inv_top
+    global inv_right_half
+    inv_right_half = (
+        inv_right_half_left,
+        inv_right_half_top,
+        start.INV_HALF_WIDTH,
+        start.INV_HEIGHT,
+    )
 
-# Gameplay screen.
-game_screen_left = client_left + 4
-game_screen_top = client_top + 4
-game_screen = (
-    game_screen_left,
-    game_screen_top,
-    start.GAME_SCREEN_WIDTH,
-    start.GAME_SCREEN_HEIGHT,
-)
+    # Left half of the player's inventory.
+    inv_left_half_left = inv_left
+    inv_left_half_top = inv_top
+    global inv_left_half
+    inv_left_half = (
+        inv_left_half_left,
+        inv_left_half_top,
+        start.INV_HALF_WIDTH,
+        start.INV_HEIGHT,
+    )
 
-# Banking window, minus the tabs at the top and other surrounding elements.
-# This is done to prevent the bot from attempting to withdrawal items by
-#   clicking on their tab icons
-bank_items_window_left = game_screen_left + 68
-bank_items_window_top = game_screen_top + 77
-bank_items_window = (
-    bank_items_window_left,
-    bank_items_window_top,
-    start.BANK_ITEMS_WINDOW_WIDTH,
-    start.BANK_ITEMS_WINDOW_HEIGHT,
-)
+    # Gameplay screen.
+    game_screen_left = client_left + 4
+    game_screen_top = client_top + 4
+    global game_screen
+    game_screen = (
+        game_screen_left,
+        game_screen_top,
+        start.GAME_SCREEN_WIDTH,
+        start.GAME_SCREEN_HEIGHT,
+    )
 
-# The player's inventory, plus the top and bottom "side stone" tabs that
-#   open all the different menus.
-side_stones_left = client_left + 516
-side_stones_top = client_top + 166
-side_stones = (
-    side_stones_left,
-    side_stones_top,
-    start.SIDE_STONES_WIDTH,
-    start.SIDE_STONES_HEIGHT,
-)
+    # Banking window, minus the tabs at the top and other surrounding elements.
+    # This is done to prevent the bot from attempting to withdrawal items by
+    #   clicking on their tab icons
+    bank_items_window_left = game_screen_left + 68
+    bank_items_window_top = game_screen_top + 77
+    global bank_items_window
+    bank_items_window = (
+        bank_items_window_left,
+        bank_items_window_top,
+        start.BANK_ITEMS_WINDOW_WIDTH,
+        start.BANK_ITEMS_WINDOW_HEIGHT,
+    )
 
-# Chat menu.
-chat_menu_left = client_left + 7
-chat_menu_top = client_top + 345
-chat_menu = (
-    chat_menu_left,
-    chat_menu_top,
-    start.CHAT_MENU_WIDTH,
-    start.CHAT_MENU_HEIGHT,
-)
+    # The player's inventory, plus the top and bottom "side stone" tabs that
+    #   open all the different menus.
+    side_stones_left = client_left + 516
+    side_stones_top = client_top + 166
+    global side_stones
+    side_stones = (
+        side_stones_left,
+        side_stones_top,
+        start.SIDE_STONES_WIDTH,
+        start.SIDE_STONES_HEIGHT,
+    )
 
-# The most recent chat message.
-chat_menu_recent_left = chat_menu_left - 3
-chat_menu_recent_top = chat_menu_top + 98
-chat_menu_recent = (
-    chat_menu_recent_left,
-    chat_menu_recent_top,
-    start.CHAT_MENU_RECENT_WIDTH,
-    start.CHAT_MENU_RECENT_HEIGHT,
-)
+    # Chat menu.
+    chat_menu_left = client_left + 7
+    chat_menu_top = client_top + 345
+    global chat_menu
+    chat_menu = (
+        chat_menu_left,
+        chat_menu_top,
+        start.CHAT_MENU_WIDTH,
+        start.CHAT_MENU_HEIGHT,
+    )
 
-# The text input fields on the login menu.
-login_field_left = client_left + 273
-login_field_top = client_top + 242
-login_field = (
-    login_field_left,
-    login_field_top,
-    start.LOGIN_FIELD_WIDTH,
-    start.LOGIN_FIELD_HEIGHT,
-)
+    # The most recent chat message.
+    chat_menu_recent_left = chat_menu_left - 3
+    chat_menu_recent_top = chat_menu_top + 98
+    global chat_menu_recent
+    chat_menu_recent = (
+        chat_menu_recent_left,
+        chat_menu_recent_top,
+        start.CHAT_MENU_RECENT_WIDTH,
+        start.CHAT_MENU_RECENT_HEIGHT,
+    )
 
-pass_field_left = client_left + 275
-pass_field_top = client_top + 258
-pass_field = (
-    pass_field_left,
-    pass_field_top,
-    start.LOGIN_FIELD_WIDTH,
-    start.LOGIN_FIELD_HEIGHT,
-)
+    # The text input fields on the login menu.
+    login_field_left = client_left + 273
+    login_field_top = client_top + 242
+    global login_field
+    login_field = (
+        login_field_left,
+        login_field_top,
+        start.LOGIN_FIELD_WIDTH,
+        start.LOGIN_FIELD_HEIGHT,
+    )
 
-# The entire minimap.
-minimap_left = client_left + 571
-minimap_top = client_top + 11
-minimap = (minimap_left, minimap_top, start.MINIMAP_WIDTH, start.MINIMAP_HEIGHT)
+    pass_field_left = client_left + 275
+    pass_field_top = client_top + 258
+    global pass_field
+    pass_field = (
+        pass_field_left,
+        pass_field_top,
+        start.LOGIN_FIELD_WIDTH,
+        start.LOGIN_FIELD_HEIGHT,
+    )
 
-# The current minimap "slice" for locating the player on the world map.
-minimap_slice_left = client_left + 599
-minimap_slice_top = client_top + 43
-minimap_slice = (
-    minimap_slice_left,
-    minimap_slice_top,
-    start.MINIMAP_SLICE_WIDTH,
-    start.MINIMAP_SLICE_HEIGHT,
-)
+    # The entire minimap.
+    minimap_left = client_left + 571
+    minimap_top = client_top + 11
+    global minimap
+    minimap = (minimap_left, minimap_top, start.MINIMAP_WIDTH, start.MINIMAP_HEIGHT)
+
+    # The current minimap "slice" for locating the player on the world map.
+    minimap_slice_left = client_left + 599
+    minimap_slice_top = client_top + 43
+    global minimap_slice
+    minimap_slice = (
+        minimap_slice_left,
+        minimap_slice_top,
+        start.MINIMAP_SLICE_WIDTH,
+        start.MINIMAP_SLICE_HEIGHT,
+    )

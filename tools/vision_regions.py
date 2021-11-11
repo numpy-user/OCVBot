@@ -20,6 +20,8 @@ sys.path.insert(1, SCRIPTPATH)
 
 from ocvbot import vision as vis, startup as start
 
+vis.init()
+
 log.basicConfig(
     format="%(asctime)s -- %(filename)s.%(funcName)s - %(message)s", level="INFO"
 )

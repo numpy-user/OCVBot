@@ -24,8 +24,10 @@ import sys
 SCRIPTPATH = str(pathlib.Path(__file__).parent.parent.absolute())
 sys.path.insert(1, SCRIPTPATH)
 
+from ocvbot import vision as vis
 from ocvbot import behavior as behav
 
+vis.init()
 user = sys.argv[1]
 
 

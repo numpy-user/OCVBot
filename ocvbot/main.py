@@ -404,6 +404,8 @@ def main():
     Calls the main botting script defined in the config file.
 
     """
+    vis.init()
+
     if script == "mining":
         miner(start.config[script]["location"])
 

@@ -18,6 +18,7 @@ from ocvbot import inputs
 from ocvbot import misc
 from ocvbot import vision as vis
 
+vis.init()
 
 def main() -> None:
     # Focus the client by clicking a random spot on the chat menu.

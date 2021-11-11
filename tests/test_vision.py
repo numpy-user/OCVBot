@@ -12,6 +12,7 @@ import psutil
 import pytest
 
 import common
+from ocvbot import vision as vis
 
 image_directory = (os.path.dirname(__file__)) + "/test_vision/"
 
@@ -19,10 +20,10 @@ log.basicConfig(
     format="%(asctime)s %(filename)s.%(funcName)s - %(message)s", level="DEBUG"
 )
 
-# Provide an image for the client to orient itself. Currently any imports
-#   from ocvbot require an image to match first, or they will fail.
+# Provide an image for the client to orient itself, then initialize the
+#   vision regions.
 common.feh("orient", "pass", "01", ((os.path.dirname(__file__)) + "/test_vision/"))
-from ocvbot import vision as vis
+vis.init()
 
 # COUNT_NEEDLES -----------------------------------------------------------------------------------
 

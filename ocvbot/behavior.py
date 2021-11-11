@@ -299,28 +299,14 @@ def login_basic(
 
             if credential_screen is True:
                 # Click to make sure the "Login" field is active.
-                inputs.Mouse(
-                    region=(
-                        vis.login_field_left,
-                        vis.login_field_top,
-                        start.LOGIN_FIELD_WIDTH,
-                        start.LOGIN_FIELD_HEIGHT,
-                    )
-                ).click_coord()
+                inputs.Mouse(region=(vis.login_field)).click_coord()
                 # Enter login field credentials.
                 misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
                 inputs.Keyboard(log_keys=False).typewriter(username)
                 misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
 
                 # Click to make sure the "Password" field is active.
-                inputs.Mouse(
-                    region=(
-                        vis.pass_field_left,
-                        vis.pass_field_top,
-                        start.LOGIN_FIELD_WIDTH,
-                        start.LOGIN_FIELD_HEIGHT,
-                    )
-                ).click_coord()
+                inputs.Mouse(region=(vis.pass_field)).click_coord()
                 # Enter password field credentials and login.
                 inputs.Keyboard(log_keys=False).typewriter(password)
                 misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
@@ -369,7 +355,7 @@ def login_full(
 
         misc.sleep_rand(login_sleep_range[0], login_sleep_range[1])
         postlogin_screen_button = vis.Vision(
-            region=vis.display,
+            region=vis.client,
             needle="./needles/login-menu/orient-postlogin.png",
             conf=0.8,
             loop_num=10,
@@ -382,7 +368,7 @@ def login_full(
             # Wait for the orient function to return true in order to
             #    confirm the login.
             logged_in = vis.Vision(
-                region=vis.display,
+                region=vis.client,
                 needle="./needles/minimap/orient.png",
                 loop_num=50,
                 loop_sleep_range=(1000, 2000),
@@ -407,7 +393,7 @@ def login_full(
 
         # TODO: Add additional checks to other login messages.
         invalid_credentials = vis.Vision(
-            region=vis.display,
+            region=vis.client,
             needle="./needles/login-menu/invalid-credentials.png",
             loop_num=1,
         ).wait_for_needle()
