@@ -31,6 +31,7 @@ bank_settings_check_pass_params = (
     ("quantity", "10", "05"),
     ("placeholder", "unset", "06"),
     ("placeholder", "set", "07"),
+    ("placeholder", "unset", "08"),  # Placeholder already unset.
 )
 
 
