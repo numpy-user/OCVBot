@@ -202,7 +202,7 @@ def test_open_bank_pass(params):
     direction, test_number = params
     init_tests.feh("open_bank", "pass", test_number, image_directory)
     result = banking.open_bank(direction)
-    assert result is True
+    assert result is None
     init_tests.kill_feh()
 
 

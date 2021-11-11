@@ -230,7 +230,7 @@ def enter_bank_pin(pin=(start.config["main"]["bank_pin"])) -> bool:
     return True
 
 
-def open_bank(direction) -> bool:
+def open_bank(direction) -> None:
     """
     Opens the bank. Assumes the player is within 2 empty tiles of a bank booth.
 
@@ -243,16 +243,23 @@ def open_bank(direction) -> bool:
         open_bank("west")
 
     Returns:
-        Returns True if bank was opened successfully or is already open,
-        returns False otherwise
+        Returns if bank was opened successfully or is already open.
+
+    Raises:
+        Raises a ValueError if an invalid direction is given.
+
+        Raises an Exception if the bank could not be opened.
 
     """
+    if direction not in ("north", "south", "east", "west"):
+        raise ValueError("Must provide a cardinal direction to open bank!")
+
     bank_open = vis.Vision(
         region=vis.GAME_SCREEN, needle="./needles/buttons/close.png", loop_num=1
     ).wait_for_needle()
     if bank_open is True:
         log.info("Bank window is already open.")
-        return True
+        return
 
     log.info("Attempting to open bank window.")
     for _ in range(5):
@@ -279,11 +286,10 @@ def open_bank(direction) -> bool:
                 loop_num=10,
             ).wait_for_needle()
             if bank_open is True:
-                return True
+                return
         misc.sleep_rand(1000, 3000)
 
-    log.warning("Unable to open bank!")
-    return False
+    raise Exception("Unable to open bank window!")
 
 
 def withdrawal_item(
