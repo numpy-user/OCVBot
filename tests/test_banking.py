@@ -130,10 +130,10 @@ def test_deposit_inventory_fail(params) -> None:
 # DEPOSIT_ITEM ------------------------------------------------------------------------------------
 
 deposit_item_pass_params = (
-    ("./needles/items/raw-anchovies.png", "all", "01"),
-    ("./needles/items/iron-ore.png", "10", "02"),
-    ("./needles/items/iron-ore.png", "5", "03"),
-    ("./needles/items/iron-ore.png", "1", "04"),
+    ("./needles/items/raw-anchovies.png", "all", "01"),  # Must try 2 times.
+    ("./needles/items/iron-ore.png", "10", "02"),  # Must set quantity first.
+    ("./needles/items/iron-ore.png", "5", "03"),  # Must set quantity first.
+    ("./needles/items/iron-ore.png", "1", "04"),  # Must set quantity first.
     ("./needles/items/iron-ore.png", "1", "05"),  # No items to deposit.
 )
 
@@ -147,14 +147,41 @@ def test_deposit_item_pass(params):
     init_tests.kill_feh()
 
 
-deposit_item_fail_params = (("./needles/items/iron-ore.png", "10", "01"),)
+# Deposit too many times.
+deposit_item_fail_01_params = (("./needles/items/iron-ore.png", "10", "01"),)
 
 
-@pytest.mark.parametrize("params", deposit_item_fail_params)
-def test_deposit_item_fail(params) -> None:
+@pytest.mark.parametrize("params", deposit_item_fail_01_params)
+def test_deposit_item_fail_01(params) -> None:
     item, quantity, test_number = params
     init_tests.feh("deposit_item", "fail", test_number, image_directory)
     with pytest.raises(start.BankingError, match="Deposited too many items"):
+        banking.deposit_item(item, quantity)
+    init_tests.kill_feh()
+
+
+# Deposit unsupported quantity.
+deposit_item_fail_02_params = (("./needles/items/iron-ore.png", "100", "02"),)
+
+
+@pytest.mark.parametrize("params", deposit_item_fail_02_params)
+def test_deposit_item_fail_02(params) -> None:
+    item, quantity, test_number = params
+    init_tests.feh("deposit_item", "fail", test_number, image_directory)
+    with pytest.raises(ValueError, match="Unsupported value for quantity"):
+        banking.deposit_item(item, quantity)
+    init_tests.kill_feh()
+
+
+# Try too many times.
+deposit_item_fail_03_params = (("./needles/items/iron-ore.png", "all", "03"),)
+
+
+@pytest.mark.parametrize("params", deposit_item_fail_03_params)
+def test_deposit_item_fail_03(params) -> None:
+    item, quantity, test_number = params
+    init_tests.feh("deposit_item", "fail", test_number, image_directory)
+    with pytest.raises(start.BankingError, match="Could not deposit items"):
         banking.deposit_item(item, quantity)
     init_tests.kill_feh()
 
