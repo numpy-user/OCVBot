@@ -43,14 +43,31 @@ def test_bank_settings_check_pass(params):
     assert result is None
 
 
-bank_settings_check_fail_params = (("note", "all", "00"),)
+# Test unsupported function arguments.
+bank_settings_check_fail_01_params = (
+    ("note", "all"),  # Try setting a non-existent setting.
+    ("quantity", "100"),  # Try setting a non-existent value.
+    ("placeholder", "enabled"),  # Try setting a non-existent value.
+)
 
 
-@pytest.mark.parametrize("params", bank_settings_check_fail_params)
-def test_bank_settings_check_fail(params):
+@pytest.mark.parametrize("params", bank_settings_check_fail_01_params)
+def test_bank_settings_check_fail_01(params):
+    setting, value = params
+    with pytest.raises(Exception, match="Unsupported"):
+        banking.bank_settings_check(setting, value)
+    init_tests.kill_feh()
+
+
+# Test failure due to too many attempts.
+bank_settings_check_fail_02_params = (("quantity", "10", "01"),)  # Try too many times.
+
+
+@pytest.mark.parametrize("params", bank_settings_check_fail_02_params)
+def test_bank_settings_check_fail_02(params) -> None:
     setting, value, test_number = params
     init_tests.feh("bank_settings_check", "fail", test_number, image_directory)
-    with pytest.raises(Exception, match="Could not set bank setting|Unsupported"):
+    with pytest.raises(Exception, match="Could not set bank setting"):
         banking.bank_settings_check(setting, value)
     init_tests.kill_feh()
 
