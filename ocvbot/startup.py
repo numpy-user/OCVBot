@@ -149,8 +149,6 @@ class BankingError(Exception):
      banking window.
     """
 
-    pass
-
 
 class InefficientUseOfInventory(Exception):
     """
@@ -159,8 +157,6 @@ class InefficientUseOfInventory(Exception):
      raised when attempting to drop-mine with only 4 free inventory spaces.
     """
 
-    pass
-
 
 class InventoryFull(Exception):
     """
@@ -168,20 +164,14 @@ class InventoryFull(Exception):
      action.
     """
 
-    pass
-
 
 class RockEmpty(Exception):
     """
     Raised by skills.Miner when the given rock is empty.
     """
 
-    pass
-
 
 class TimeoutException(Exception):
     """
     Raised whenever an action takes longer than expected and times out.
     """
-
-    pass
