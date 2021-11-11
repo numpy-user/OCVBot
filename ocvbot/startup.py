@@ -143,28 +143,38 @@ with open("worlds.json") as f:
 # Define custom exception types. ------------------------------------------------------------------
 
 class BankingError(Exception):
-    # Raised when an unexpected or unrecoverable situation occurs in the
-    #   banking window.
+    """
+    Raised when an unexpected or unrecoverable situation occurs in the
+     banking window.
+    """
     pass
 
 class RockEmpty(Exception):
-    # Raised by skills.Miner when the given rock is empty.
+    """
+    Raised by skills.Miner when the given rock is empty.
+    """
     pass
 
 
 class InventoryFull(Exception):
-    # Raised whenever the player's inventory is too full to perform the desired
-    #   action.
+    """
+    Raised whenever the player's inventory is too full to perform the desired
+     action.
+    """
     pass
 
 
 class InefficientUseOfInventory(Exception):
-    # Raised when the number of free inventory spaces available would result in
-    #   inefficient or overly arduous gameplay. For example, this exception is
-    #   raised when attempting to drop-mine with only 4 free inventory spaces.
+    """
+    Raised when the number of free inventory spaces available would result in
+     inefficient or overly arduous gameplay. For example, this exception is
+     raised when attempting to drop-mine with only 4 free inventory spaces.
+    """
     pass
 
 
 class TimeoutException(Exception):
-    # Raised whenever an action takes longer than expected and times out.
+    """
+    Raised whenever an action takes longer than expected and times out.
+    """
     pass
