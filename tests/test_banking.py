@@ -24,13 +24,13 @@ image_directory = (os.path.dirname(__file__)) + "/test_banking/"
 # BANK_SETTINGS_CHECK -----------------------------------------------------------------------------
 
 bank_settings_check_pass_params = (
-    ("quantity", "all", "01"),
-    ("quantity", "all", "02"),
-    ("quantity", "1", "03"),
-    ("quantity", "5", "04"),
-    ("quantity", "10", "05"),
-    ("placeholder", "unset", "06"),
-    ("placeholder", "set", "07"),
+    ("quantity", "all", "01"),  # Set quantity, must try 2 times.
+    ("quantity", "all", "02"),  # Quantity already set.
+    ("quantity", "1", "03"),  # Set quantity.
+    ("quantity", "5", "04"),  # Set quantity.
+    ("quantity", "10", "05"),  # Set quantity, must try 2 times.
+    ("placeholder", "unset", "06"),  # Set placeholder.
+    ("placeholder", "set", "07"),  # Unset placeholder, must try 2 times.
     ("placeholder", "unset", "08"),  # Placeholder already unset.
 )
 
