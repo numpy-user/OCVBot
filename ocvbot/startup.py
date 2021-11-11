@@ -11,60 +11,6 @@ import time
 import pyautogui as pag
 from ocvbot import config
 
-# Constants ------------------------------------------------------------
-
-# See ./docs/client_anatomy.png for more info.
-# Captures the width and height of various different elements within the
-#  game client. Units are in pixels.
-
-# The entire OSRS game client (in fixed-size mode).
-CLIENT_WIDTH = 765
-CLIENT_HEIGHT = 503
-
-# The player's inventory.
-INV_WIDTH = 186
-INV_HEIGHT = 262
-INV_HALF_WIDTH = round((INV_WIDTH / 2) + 5)
-INV_HALF_HEIGHT = round(INV_HEIGHT / 2)
-
-# The banking window, minus tabs and surrounding GUI elements.
-BANK_ITEMS_WINDOW_WIDTH = 375
-BANK_ITEMS_WINDOW_HEIGHT = 215
-
-# The player's inventory plus the top and bottom rows of side stones.
-SIDE_STONES_WIDTH = 249
-SIDE_STONES_HEIGHT = 366
-
-# The "gameplay screen". This is the screen that displays the player
-#   character and the game world.
-GAME_SCREEN_WIDTH = 512
-GAME_SCREEN_HEIGHT = 340
-
-# The bottom chat menu pane.
-CHAT_MENU_WIDTH = 506
-CHAT_MENU_HEIGHT = 129
-
-# The most recent "line" in the chat menu's chat history.
-CHAT_MENU_RECENT_WIDTH = 490
-CHAT_MENU_RECENT_HEIGHT = 17
-
-# The entire display.
-DISPLAY_WIDTH = pag.size().width
-DISPLAY_HEIGHT = pag.size().height
-
-# The "Login" and "Password" fields on the main login screen.
-LOGIN_FIELD_WIDTH = 258
-LOGIN_FIELD_HEIGHT = 12
-
-# The entire minimap.
-MINIMAP_WIDTH = 146
-MINIMAP_HEIGHT = 151
-
-# The largest area of the minimap, centered on the player, that can be
-#   used to determine the player's location for the travel() function.
-MINIMAP_SLICE_WIDTH = 85
-MINIMAP_SLICE_HEIGHT = 85
-
 # TODO: Finish implementing stats.
 # Stats ----------------------------------------------------------------
 

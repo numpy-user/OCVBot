@@ -11,6 +11,64 @@ from ocvbot import inputs
 from ocvbot import misc
 from ocvbot import startup as start
 
+# -------------------------------------------------------------------------------------------------
+# Setup the necessary region tuples for the Vision class and orient the client.
+# -------------------------------------------------------------------------------------------------
+
+# Set initial values for vision regions.
+# See ./docs/client_anatomy.png for more info.
+# Captures the width and height of various different elements within the
+#  game client. Units are in pixels.
+
+BANK_ITEMS_WINDOW_WIDTH = 375
+BANK_ITEMS_WINDOW_HEIGHT = 215
+bank_items_window = (0, 0, 0, 0)
+
+CHAT_MENU_WIDTH = 506
+CHAT_MENU_HEIGHT = 129
+chat_menu = (0, 0, 0, 0)
+
+CHAT_MENU_RECENT_WIDTH = 490
+CHAT_MENU_RECENT_HEIGHT = 17
+chat_menu_recent = (0, 0, 0, 0)
+
+CLIENT_WIDTH = 765
+CLIENT_HEIGHT = 503
+client = (0, 0, 0, 0)
+
+DISPLAY_WIDTH = pag.size().width
+DISPLAY_HEIGHT = pag.size().height
+display = (0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT)
+
+GAME_SCREEN_WIDTH = 512
+GAME_SCREEN_HEIGHT = 340
+game_screen = (0, 0, 0, 0)
+
+INV_WIDTH = 186
+INV_HEIGHT = 262
+INV_HALF_WIDTH = round((INV_WIDTH / 2) + 5)
+INV_HALF_HEIGHT = round(INV_HEIGHT / 2)
+inv = (0, 0, 0, 0)
+inv_bottom = (0, 0, 0, 0)
+inv_right_half = (0, 0, 0, 0)
+inv_left_half = (0, 0, 0, 0)
+
+LOGIN_FIELD_WIDTH = 258
+LOGIN_FIELD_HEIGHT = 12
+login_field = (0, 0, 0, 0)
+pass_field = (0, 0, 0, 0)
+
+MINIMAP_WIDTH = 146
+MINIMAP_HEIGHT = 151
+minimap = (0, 0, 0, 0)
+
+MINIMAP_SLICE_WIDTH = 85
+MINIMAP_SLICE_HEIGHT = 85
+minimap_slice = (0, 0, 0, 0)
+
+SIDE_STONES_WIDTH = 249
+SIDE_STONES_HEIGHT = 366
+side_stones = (0, 0, 0, 0)
 
 # TODO
 def wait_for_needle_list(
@@ -289,12 +347,7 @@ class Vision:
 # TODO: Add examples of usage.
 # TODO: Break out an "is_logged_in" function.
 def orient(
-    region: tuple[int, int, int, int] = (
-        0,
-        0,
-        start.DISPLAY_WIDTH,
-        start.DISPLAY_HEIGHT,
-    ),
+    region: tuple[int, int, int, int] = (display),
     launch_client: bool = False,
 ):
     """
@@ -364,33 +417,13 @@ def orient(
 # TODO: add 'configure camera' function that clicks on compass, zooms in camera, and holds down up arrow
 #       only click on the compass if it isn't perfectly aligned
 
-# -------------------------------------------------------------------------------------------------
-# Setup the necessary region tuples for the Vision class and orient the client.
-# -------------------------------------------------------------------------------------------------
-
-# Set initial values for vision regions.
-client = (0, 0, 0, 0)
-inv = (0, 0, 0, 0)
-inv_bottom = (0, 0, 0, 0)
-inv_right_half = (0, 0, 0, 0)
-inv_left_half = (0, 0, 0, 0)
-game_screen = (0, 0, 0, 0)
-bank_items_window = (0, 0, 0, 0)
-side_stones = (0, 0, 0, 0)
-chat_menu = (0, 0, 0, 0)
-chat_menu_recent = (0, 0, 0, 0)
-login_field = (0, 0, 0, 0)
-pass_field = (0, 0, 0, 0)
-minimap = (0, 0, 0, 0)
-minimap_slice = (0, 0, 0, 0)
-
 
 def init() -> None:
     """
     Locates the client and sets the value of the vision regions.
     This function MUST be run before OCVBot can do anything else.
     """
-    display = (0, 0, start.DISPLAY_WIDTH, start.DISPLAY_HEIGHT)
+
     (client_status, anchor) = orient(region=display)
     (client_left, client_top) = anchor
 
@@ -412,34 +445,34 @@ def init() -> None:
 
     # The fixed-width game client.
     global client
-    client = (client_left, client_top, start.CLIENT_WIDTH, start.CLIENT_HEIGHT)
+    client = (client_left, client_top, CLIENT_WIDTH, CLIENT_HEIGHT)
 
     # The player's inventory.
     inv_left = client_left + 548
     inv_top = client_top + 205
     global inv
-    inv = (inv_left, inv_top, start.INV_WIDTH, start.INV_HEIGHT)
+    inv = (inv_left, inv_top, INV_WIDTH, INV_HEIGHT)
 
     # Bottom half of the player's inventory.
     inv_bottom_left = inv_left
-    inv_bottom_top = inv_top + start.INV_HALF_HEIGHT
+    inv_bottom_top = inv_top + INV_HALF_HEIGHT
     global inv_bottom
     inv_bottom = (
         inv_bottom_left,
         inv_bottom_top,
-        start.INV_WIDTH,
-        start.INV_HALF_HEIGHT,
+        INV_WIDTH,
+        INV_HALF_HEIGHT,
     )
 
     # Right half of the player's inventory.
-    inv_right_half_left = (inv_left + start.INV_HALF_WIDTH) - 5
+    inv_right_half_left = (inv_left + INV_HALF_WIDTH) - 5
     inv_right_half_top = inv_top
     global inv_right_half
     inv_right_half = (
         inv_right_half_left,
         inv_right_half_top,
-        start.INV_HALF_WIDTH,
-        start.INV_HEIGHT,
+        INV_HALF_WIDTH,
+        INV_HEIGHT,
     )
 
     # Left half of the player's inventory.
@@ -449,19 +482,20 @@ def init() -> None:
     inv_left_half = (
         inv_left_half_left,
         inv_left_half_top,
-        start.INV_HALF_WIDTH,
-        start.INV_HEIGHT,
+        INV_HALF_WIDTH,
+        INV_HEIGHT,
     )
 
-    # Gameplay screen.
+    # The "gameplay screen". This is the screen that displays the player
+    #   character and the game world.
     game_screen_left = client_left + 4
     game_screen_top = client_top + 4
     global game_screen
     game_screen = (
         game_screen_left,
         game_screen_top,
-        start.GAME_SCREEN_WIDTH,
-        start.GAME_SCREEN_HEIGHT,
+        GAME_SCREEN_WIDTH,
+        GAME_SCREEN_HEIGHT,
     )
 
     # Banking window, minus the tabs at the top and other surrounding elements.
@@ -473,8 +507,8 @@ def init() -> None:
     bank_items_window = (
         bank_items_window_left,
         bank_items_window_top,
-        start.BANK_ITEMS_WINDOW_WIDTH,
-        start.BANK_ITEMS_WINDOW_HEIGHT,
+        BANK_ITEMS_WINDOW_WIDTH,
+        BANK_ITEMS_WINDOW_HEIGHT,
     )
 
     # The player's inventory, plus the top and bottom "side stone" tabs that
@@ -485,8 +519,8 @@ def init() -> None:
     side_stones = (
         side_stones_left,
         side_stones_top,
-        start.SIDE_STONES_WIDTH,
-        start.SIDE_STONES_HEIGHT,
+        SIDE_STONES_WIDTH,
+        SIDE_STONES_HEIGHT,
     )
 
     # Chat menu.
@@ -496,8 +530,8 @@ def init() -> None:
     chat_menu = (
         chat_menu_left,
         chat_menu_top,
-        start.CHAT_MENU_WIDTH,
-        start.CHAT_MENU_HEIGHT,
+        CHAT_MENU_WIDTH,
+        CHAT_MENU_HEIGHT,
     )
 
     # The most recent chat message.
@@ -507,44 +541,47 @@ def init() -> None:
     chat_menu_recent = (
         chat_menu_recent_left,
         chat_menu_recent_top,
-        start.CHAT_MENU_RECENT_WIDTH,
-        start.CHAT_MENU_RECENT_HEIGHT,
+        CHAT_MENU_RECENT_WIDTH,
+        CHAT_MENU_RECENT_HEIGHT,
     )
 
-    # The text input fields on the login menu.
+    # The "Login" field on the main login screen.
     login_field_left = client_left + 273
     login_field_top = client_top + 242
     global login_field
     login_field = (
         login_field_left,
         login_field_top,
-        start.LOGIN_FIELD_WIDTH,
-        start.LOGIN_FIELD_HEIGHT,
+        LOGIN_FIELD_WIDTH,
+        LOGIN_FIELD_HEIGHT,
     )
 
+    # The "Password" field on the main login screen.
     pass_field_left = client_left + 275
     pass_field_top = client_top + 258
     global pass_field
     pass_field = (
         pass_field_left,
         pass_field_top,
-        start.LOGIN_FIELD_WIDTH,
-        start.LOGIN_FIELD_HEIGHT,
+        LOGIN_FIELD_WIDTH,
+        LOGIN_FIELD_HEIGHT,
     )
 
     # The entire minimap.
     minimap_left = client_left + 571
     minimap_top = client_top + 11
     global minimap
-    minimap = (minimap_left, minimap_top, start.MINIMAP_WIDTH, start.MINIMAP_HEIGHT)
+    minimap = (minimap_left, minimap_top, MINIMAP_WIDTH, MINIMAP_HEIGHT)
 
     # The current minimap "slice" for locating the player on the world map.
+    # The largest area of the minimap, centered on the player, that can be
+    #   used to determine the player's location for the travel() function.
     minimap_slice_left = client_left + 599
     minimap_slice_top = client_top + 43
     global minimap_slice
     minimap_slice = (
         minimap_slice_left,
         minimap_slice_top,
-        start.MINIMAP_SLICE_WIDTH,
-        start.MINIMAP_SLICE_HEIGHT,
+        MINIMAP_SLICE_WIDTH,
+        MINIMAP_SLICE_HEIGHT,
     )
