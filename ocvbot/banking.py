@@ -17,7 +17,6 @@ from ocvbot import startup as start
 from ocvbot import vision as vis
 
 # TODO: Add search_for_item() function.
-# TODO: bank_settings_check(): Add option to disable setting item placeholders.
 # TODO: Finish enter_bank_pin() function.
 
 
@@ -39,13 +38,14 @@ def bank_settings_check(setting: str, value: str) -> None:
         bank_settings_check("placeholder", "unset")
 
     Raises:
-        Raises an exception if the setting could not be set, or the setting is
-        not supported.
+        Raises a ValueError if the setting or value is not supported.
+
+        Raises an Exception if the setting could not be set.
 
     """
     if setting == "quantity":
         if value not in ("1", "5", "10", "all"):
-            raise Exception("Unsupported value for quantity setting: ", value)
+            raise ValueError("Unsupported value for quantity setting!")
         setting_unset = (
             "./needles/bank/settings/" + setting + "/" + value + "-unset.png"
         )
@@ -59,10 +59,10 @@ def bank_settings_check(setting: str, value: str) -> None:
             setting_unset = "./needles/bank/settings/placeholder/placeholder-set.png"
             setting_set = "./needles/bank/settings/placeholder/placeholder-unset.png"
         else:
-            raise Exception("Unsupported value for placeholder setting: ", value)
+            raise ValueError("Unsupported value for placeholder setting!")
 
     else:
-        raise Exception("Unsupported setting: ", setting)
+        raise ValueError("Unsupported bank setting!")
 
     try:
         log.debug("Checking if bank setting %s is set to %s", setting, value)
