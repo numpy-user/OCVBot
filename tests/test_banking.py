@@ -74,7 +74,10 @@ def test_bank_settings_check_fail_02(params) -> None:
 
 # CLOSE BANK --------------------------------------------------------------------------------------
 
-close_bank_pass_params = ("01",)
+close_bank_pass_params = (
+    "01",  # Must try 2 times.
+    "02",  # Bank already closed.
+)
 
 
 @pytest.mark.parametrize("params", close_bank_pass_params)
@@ -86,7 +89,7 @@ def test_close_bank_pass(params) -> None:
     init_tests.kill_feh()
 
 
-close_bank_fail_params = ("01",)
+close_bank_fail_params = ("01",)  # Try too many times
 
 
 @pytest.mark.parametrize("params", close_bank_fail_params)
