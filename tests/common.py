@@ -19,6 +19,10 @@ os.chdir(os.path.dirname(__file__))
 SCRIPTPATH = str(pathlib.Path(__file__).parent.parent.absolute())
 sys.path.insert(1, SCRIPTPATH)
 
+from ocvbot import vision as vis
+
+image_directory = (os.path.dirname(__file__)) + "/test_vision/"
+
 
 def kill_feh() -> None:
     """
@@ -59,3 +63,9 @@ def feh(test_name, test_type, test_number, directory, interval=0.1) -> None:
     test = sub.Popen(args)
     print("TEST IS ", args)
     time.sleep(interval)
+
+
+# Provide an image for the client to orient itself, then initialize the
+#   vision regions.
+feh("orient", "pass", "01", ((os.path.dirname(__file__)) + "/test_vision/"))
+vis.init()
