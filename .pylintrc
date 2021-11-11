@@ -42,7 +42,7 @@ unsafe-load-any-extension=no
 # all. Valid levels: HIGH, INFERENCE, INFERENCE_FAILURE, UNDEFINED
 confidence=
 
-disable=import-error,too-many-locals,too-many-branches,too-many-arguments
+disable=import-error,too-many-locals,too-many-branches,too-many-arguments,global-statement,too-many-statements
 
 # Disable the message, report, category or checker with the given id(s). You
 # can either give multiple identifiers separated by comma (,) or put this
