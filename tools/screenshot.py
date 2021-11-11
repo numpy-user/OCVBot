@@ -79,7 +79,7 @@ def censor_username(filename: str) -> None:
         log.warning("ImageMagick not present!")
 
 
-def main(region: tuple[int, int, int, int] = vis.client) -> str:
+def main(region: tuple[int, int, int, int] = vis.CLIENT) -> str:
     """
     Takes a screenshot of the OSRS client window.
 

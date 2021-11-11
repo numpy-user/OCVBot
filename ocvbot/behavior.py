@@ -38,7 +38,7 @@ def switch_worlds_logged_out(world: str, attempts=5) -> bool:
 
     # Click world switch button
     switcher_clicked = vis.Vision(
-        region=vis.client, needle="needles/login-menu/world-switcher-logged-out.png"
+        region=vis.CLIENT, needle="needles/login-menu/world-switcher-logged-out.png"
     ).click_needle()
 
     if switcher_clicked is False:
@@ -47,15 +47,15 @@ def switch_worlds_logged_out(world: str, attempts=5) -> bool:
 
     # Wait for green world filter button, fails if filter is not set correctly
     world_filter = vis.Vision(
-        region=vis.client, needle="needles/login-menu/world-filter-enabled.png"
+        region=vis.CLIENT, needle="needles/login-menu/world-filter-enabled.png"
     ).wait_for_needle()
 
     if world_filter is False:
         enabled_filter = interface.enable_button(
             "needles/login-menu/world-filter-disabled.png",
-            vis.client,
+            vis.CLIENT,
             "needles/login-menu/world-filter-enabled.png",
-            vis.client,
+            vis.CLIENT,
         )
         if enabled_filter is False:
             return False
@@ -65,7 +65,7 @@ def switch_worlds_logged_out(world: str, attempts=5) -> bool:
         # Click next page until the world is on screen
         times_to_click = column % MAX_COLUMNS
         next_page_button = vis.Vision(
-            region=vis.client, needle="needles/login-menu/next-page.png"
+            region=vis.CLIENT, needle="needles/login-menu/next-page.png"
         ).click_needle(number_of_clicks=times_to_click)
 
         if next_page_button is False:
@@ -90,7 +90,7 @@ def switch_worlds_logged_out(world: str, attempts=5) -> bool:
 
         # Wait for login screen
         login_screen = vis.Vision(
-            region=vis.client, needle="needles/login-menu/orient-logged-out.png"
+            region=vis.CLIENT, needle="needles/login-menu/orient-logged-out.png"
         ).wait_for_needle()
         if login_screen is True:
             return True
@@ -106,7 +106,7 @@ def check_skills() -> bool:
 
     """
     open_side_stone("skills")
-    inputs.Mouse(region=vis.inv).move_to()
+    inputs.Mouse(region=vis.INV).move_to()
     misc.sleep_rand(1000, 7000)
     return True
 
@@ -148,12 +148,12 @@ def drop_item(
     # Make sure the inventory tab is selected in the main menu.
     open_side_stone("inventory")
 
-    item_remains = vis.Vision(region=vis.inv, loop_num=1, needle=item).wait_for_needle()
+    item_remains = vis.Vision(region=vis.INV, loop_num=1, needle=item).wait_for_needle()
     if item_remains is False:
         log.info("Could not find %s", item)
         return False
 
-    number_of_items = vis.Vision(region=vis.inv, needle=item).count_needles()
+    number_of_items = vis.Vision(region=vis.INV, needle=item).count_needles()
     log.info("Dropping %s instances of %s", number_of_items, item)
     for _ in range(40):
 
@@ -163,14 +163,14 @@ def drop_item(
         #   right half of the player's inventory. This helps reduce the
         #   chances the bot will click on the same item twice.
         item_on_right = vis.Vision(
-            region=vis.inv_right_half, needle=item, loop_num=1
+            region=vis.INV_RIGHT_HALF, needle=item, loop_num=1
         ).click_needle(sleep_range=(10, 50, 10, 50))
         # TODO: This "track" parameter is for stats. implement stats!
         if item_on_right is True and track is True:
             start.items_gathered += 1
 
         item_on_left = vis.Vision(
-            region=vis.inv_left_half, needle=item, loop_num=1
+            region=vis.INV_LEFT_HALF, needle=item, loop_num=1
         ).click_needle(sleep_range=(10, 50, 10, 50))
         if item_on_left is True and track is True:
             start.items_gathered += 1
@@ -178,7 +178,7 @@ def drop_item(
         # Search the entire inventory to check if the item is still
         #   there.
         item_remains = vis.Vision(
-            region=vis.inv, loop_num=1, needle=item
+            region=vis.INV, loop_num=1, needle=item
         ).wait_for_needle()
 
         # Chance to briefly wait while dropping items.
@@ -280,33 +280,33 @@ def login_basic(
         # This button appears if the user was disconnected due to
         #   inactivity.
         ok_button = vis.Vision(
-            region=vis.client, needle="./needles/login-menu/ok-button.png", loop_num=1
+            region=vis.CLIENT, needle="./needles/login-menu/ok-button.png", loop_num=1
         ).click_needle()
         # If the "Ok" button isn't found, look for the "Existing user"
         #   button.
         existing_user_button = vis.Vision(
-            region=vis.client,
+            region=vis.CLIENT,
             needle="./needles/login-menu/existing-user-button.png",
             loop_num=1,
         ).click_needle()
 
         if existing_user_button is True or ok_button is True:
             credential_screen = vis.Vision(
-                region=vis.client,
+                region=vis.CLIENT,
                 needle="./needles/login-menu/login-cancel-buttons.png",
                 loop_num=5,
             ).wait_for_needle()
 
             if credential_screen is True:
                 # Click to make sure the "Login" field is active.
-                inputs.Mouse(region=(vis.login_field)).click_coord()
+                inputs.Mouse(region=(vis.LOGIN_FIELD)).click_coord()
                 # Enter login field credentials.
                 misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
                 inputs.Keyboard(log_keys=False).typewriter(username)
                 misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
 
                 # Click to make sure the "Password" field is active.
-                inputs.Mouse(region=(vis.pass_field)).click_coord()
+                inputs.Mouse(region=(vis.PASS_FIELD)).click_coord()
                 # Enter password field credentials and login.
                 inputs.Keyboard(log_keys=False).typewriter(password)
                 misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
@@ -355,7 +355,7 @@ def login_full(
 
         misc.sleep_rand(login_sleep_range[0], login_sleep_range[1])
         postlogin_screen_button = vis.Vision(
-            region=vis.client,
+            region=vis.CLIENT,
             needle="./needles/login-menu/orient-postlogin.png",
             conf=0.8,
             loop_num=10,
@@ -368,7 +368,7 @@ def login_full(
             # Wait for the orient function to return true in order to
             #    confirm the login.
             logged_in = vis.Vision(
-                region=vis.client,
+                region=vis.CLIENT,
                 needle="./needles/minimap/orient.png",
                 loop_num=50,
                 loop_sleep_range=(1000, 2000),
@@ -393,7 +393,7 @@ def login_full(
 
         # TODO: Add additional checks to other login messages.
         invalid_credentials = vis.Vision(
-            region=vis.client,
+            region=vis.CLIENT,
             needle="./needles/login-menu/invalid-credentials.png",
             loop_num=1,
         ).wait_for_needle()
@@ -435,7 +435,7 @@ def logout() -> bool:
     for _ in range(1, 5):
         # The standard logout button.
         logout_button = vis.Vision(
-            region=vis.inv,
+            region=vis.INV,
             needle="./needles/side-stones/logout/logout.png",
             conf=0.9,
             loop_num=1,
@@ -446,7 +446,7 @@ def logout() -> bool:
 
         # The logout button as it appears when the mouse is over it.
         logout_button_highlighted = vis.Vision(
-            region=vis.inv,
+            region=vis.INV,
             needle="./needles/side-stones/logout/logout-highlighted.png",
             conf=0.9,
             loop_num=1,
@@ -457,7 +457,7 @@ def logout() -> bool:
 
         # The logout button when the world switcher is open.
         logout_button_world_switcher = vis.Vision(
-            region=vis.side_stones,
+            region=vis.SIDE_STONES,
             needle="./needles/side-stones/logout/logout-world-switcher.png",
             conf=0.9,
             loop_num=1,
@@ -480,7 +480,7 @@ def logout() -> bool:
     inputs.Mouse(region=logout_button).click_coord(move_away=True)
     for tries in range(5):
         logged_out = vis.Vision(
-            region=vis.client,
+            region=vis.CLIENT,
             needle="./needles/login-menu/orient-logged-out.png",
             loop_num=5,
             loop_sleep_range=(1000, 1200),
@@ -647,9 +647,9 @@ def open_side_stone(side_stone) -> bool:
         log.debug("Ensuring side stone %s is open", side_stone)
         interface.enable_button(
             button_disabled=side_stone_closed,
-            button_disabled_region=vis.side_stones,
+            button_disabled_region=vis.SIDE_STONES,
             button_enabled=side_stone_open,
-            button_enabled_region=vis.side_stones,
+            button_enabled_region=vis.SIDE_STONES,
             conf=0.98,
         )
     except Exception as error:
@@ -752,8 +752,8 @@ def travel(param_list, haystack_map, attempts=100) -> bool:
             # Get center of minimap coordinates within client.
             # Absolute coordinates are used rather than using an image
             #   search to speed things up.
-            coords_client_x = vis.client[0] + 642
-            coords_client_y = vis.client[1] + 85
+            coords_client_x = vis.CLIENT[0] + 642
+            coords_client_y = vis.CLIENT[1] + 85
 
             # Figure out how far the waypoint is from the current location.
             waypoint_distance_x = waypoint[0] - coords_map_x
@@ -849,7 +849,7 @@ def ocv_find_location(haystack) -> tuple[int, int, int, int]:
         needle within the haystack.
 
     """
-    needle = pag.screenshot(region=vis.minimap_slice)
+    needle = pag.screenshot(region=vis.MINIMAP_SLICE)
     needle = cv2.cvtColor(np.array(needle), cv2.COLOR_RGB2GRAY)
     w, h = needle.shape[::-1]
     result = cv2.matchTemplate(haystack, needle, cv2.TM_CCOEFF_NORMED)

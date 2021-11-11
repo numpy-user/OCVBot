@@ -22,53 +22,53 @@ from ocvbot import startup as start
 
 BANK_ITEMS_WINDOW_WIDTH = 375
 BANK_ITEMS_WINDOW_HEIGHT = 215
-bank_items_window = (0, 0, 0, 0)
+BANK_ITEMS_WINDOW = (0, 0, 0, 0)
 
 CHAT_MENU_WIDTH = 506
 CHAT_MENU_HEIGHT = 129
-chat_menu = (0, 0, 0, 0)
+CHAT_MENU = (0, 0, 0, 0)
 
 CHAT_MENU_RECENT_WIDTH = 490
 CHAT_MENU_RECENT_HEIGHT = 17
-chat_menu_recent = (0, 0, 0, 0)
+CHAT_MENU_RECENT = (0, 0, 0, 0)
 
 CLIENT_WIDTH = 765
 CLIENT_HEIGHT = 503
-client = (0, 0, 0, 0)
+CLIENT = (0, 0, 0, 0)
 
 DISPLAY_WIDTH = pag.size().width
 DISPLAY_HEIGHT = pag.size().height
-display = (0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT)
+DISPLAY = (0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT)
 
 GAME_SCREEN_WIDTH = 512
 GAME_SCREEN_HEIGHT = 340
-game_screen = (0, 0, 0, 0)
+GAME_SCREEN = (0, 0, 0, 0)
 
 INV_WIDTH = 186
 INV_HEIGHT = 262
 INV_HALF_WIDTH = round((INV_WIDTH / 2) + 5)
 INV_HALF_HEIGHT = round(INV_HEIGHT / 2)
-inv = (0, 0, 0, 0)
-inv_bottom = (0, 0, 0, 0)
-inv_right_half = (0, 0, 0, 0)
-inv_left_half = (0, 0, 0, 0)
+INV = (0, 0, 0, 0)
+INV_BOTTOM = (0, 0, 0, 0)
+INV_RIGHT_HALF = (0, 0, 0, 0)
+INV_LEFT_HALF = (0, 0, 0, 0)
 
 LOGIN_FIELD_WIDTH = 258
 LOGIN_FIELD_HEIGHT = 12
-login_field = (0, 0, 0, 0)
-pass_field = (0, 0, 0, 0)
+LOGIN_FIELD = (0, 0, 0, 0)
+PASS_FIELD = (0, 0, 0, 0)
 
 MINIMAP_WIDTH = 146
 MINIMAP_HEIGHT = 151
-minimap = (0, 0, 0, 0)
+MINIMAP = (0, 0, 0, 0)
 
 MINIMAP_SLICE_WIDTH = 85
 MINIMAP_SLICE_HEIGHT = 85
-minimap_slice = (0, 0, 0, 0)
+MINIMAP_SLICE = (0, 0, 0, 0)
 
 SIDE_STONES_WIDTH = 249
 SIDE_STONES_HEIGHT = 366
-side_stones = (0, 0, 0, 0)
+SIDE_STONES = (0, 0, 0, 0)
 
 # TODO
 def wait_for_needle_list(
@@ -347,7 +347,7 @@ class Vision:
 # TODO: Add examples of usage.
 # TODO: Break out an "is_logged_in" function.
 def orient(
-    region: tuple[int, int, int, int] = (display),
+    region: tuple[int, int, int, int] = (DISPLAY),
     launch_client: bool = False,
 ):
     """
@@ -424,7 +424,7 @@ def init() -> None:
     This function MUST be run before OCVBot can do anything else.
     """
 
-    (client_status, anchor) = orient(region=display)
+    (client_status, anchor) = orient(region=DISPLAY)
     (client_left, client_top) = anchor
 
     if client_status == "logged_in":
@@ -444,20 +444,20 @@ def init() -> None:
     #   PyAutoGUI.
 
     # The fixed-width game client.
-    global client
-    client = (client_left, client_top, CLIENT_WIDTH, CLIENT_HEIGHT)
+    global CLIENT
+    CLIENT = (client_left, client_top, CLIENT_WIDTH, CLIENT_HEIGHT)
 
     # The player's inventory.
     inv_left = client_left + 548
     inv_top = client_top + 205
-    global inv
-    inv = (inv_left, inv_top, INV_WIDTH, INV_HEIGHT)
+    global INV
+    INV = (inv_left, inv_top, INV_WIDTH, INV_HEIGHT)
 
     # Bottom half of the player's inventory.
     inv_bottom_left = inv_left
     inv_bottom_top = inv_top + INV_HALF_HEIGHT
-    global inv_bottom
-    inv_bottom = (
+    global INV_BOTTOM
+    INV_BOTTOM = (
         inv_bottom_left,
         inv_bottom_top,
         INV_WIDTH,
@@ -467,8 +467,8 @@ def init() -> None:
     # Right half of the player's inventory.
     inv_right_half_left = (inv_left + INV_HALF_WIDTH) - 5
     inv_right_half_top = inv_top
-    global inv_right_half
-    inv_right_half = (
+    global INV_RIGHT_HALF
+    INV_RIGHT_HALF = (
         inv_right_half_left,
         inv_right_half_top,
         INV_HALF_WIDTH,
@@ -478,8 +478,8 @@ def init() -> None:
     # Left half of the player's inventory.
     inv_left_half_left = inv_left
     inv_left_half_top = inv_top
-    global inv_left_half
-    inv_left_half = (
+    global INV_LEFT_HALF
+    INV_LEFT_HALF = (
         inv_left_half_left,
         inv_left_half_top,
         INV_HALF_WIDTH,
@@ -490,8 +490,8 @@ def init() -> None:
     #   character and the game world.
     game_screen_left = client_left + 4
     game_screen_top = client_top + 4
-    global game_screen
-    game_screen = (
+    global GAME_SCREEN
+    GAME_SCREEN = (
         game_screen_left,
         game_screen_top,
         GAME_SCREEN_WIDTH,
@@ -503,8 +503,8 @@ def init() -> None:
     #   clicking on their tab icons
     bank_items_window_left = game_screen_left + 68
     bank_items_window_top = game_screen_top + 77
-    global bank_items_window
-    bank_items_window = (
+    global BANK_ITEMS_WINDOW
+    BANK_ITEMS_WINDOW = (
         bank_items_window_left,
         bank_items_window_top,
         BANK_ITEMS_WINDOW_WIDTH,
@@ -515,8 +515,8 @@ def init() -> None:
     #   open all the different menus.
     side_stones_left = client_left + 516
     side_stones_top = client_top + 166
-    global side_stones
-    side_stones = (
+    global SIDE_STONES
+    SIDE_STONES = (
         side_stones_left,
         side_stones_top,
         SIDE_STONES_WIDTH,
@@ -526,8 +526,8 @@ def init() -> None:
     # Chat menu.
     chat_menu_left = client_left + 7
     chat_menu_top = client_top + 345
-    global chat_menu
-    chat_menu = (
+    global CHAT_MENU
+    CHAT_MENU = (
         chat_menu_left,
         chat_menu_top,
         CHAT_MENU_WIDTH,
@@ -537,8 +537,8 @@ def init() -> None:
     # The most recent chat message.
     chat_menu_recent_left = chat_menu_left - 3
     chat_menu_recent_top = chat_menu_top + 98
-    global chat_menu_recent
-    chat_menu_recent = (
+    global CHAT_MENU_RECENT
+    CHAT_MENU_RECENT = (
         chat_menu_recent_left,
         chat_menu_recent_top,
         CHAT_MENU_RECENT_WIDTH,
@@ -548,8 +548,8 @@ def init() -> None:
     # The "Login" field on the main login screen.
     login_field_left = client_left + 273
     login_field_top = client_top + 242
-    global login_field
-    login_field = (
+    global LOGIN_FIELD
+    LOGIN_FIELD = (
         login_field_left,
         login_field_top,
         LOGIN_FIELD_WIDTH,
@@ -559,8 +559,8 @@ def init() -> None:
     # The "Password" field on the main login screen.
     pass_field_left = client_left + 275
     pass_field_top = client_top + 258
-    global pass_field
-    pass_field = (
+    global PASS_FIELD
+    PASS_FIELD = (
         pass_field_left,
         pass_field_top,
         LOGIN_FIELD_WIDTH,
@@ -570,16 +570,16 @@ def init() -> None:
     # The entire minimap.
     minimap_left = client_left + 571
     minimap_top = client_top + 11
-    global minimap
-    minimap = (minimap_left, minimap_top, MINIMAP_WIDTH, MINIMAP_HEIGHT)
+    global MINIMAP
+    MINIMAP = (minimap_left, minimap_top, MINIMAP_WIDTH, MINIMAP_HEIGHT)
 
     # The current minimap "slice" for locating the player on the world map.
     # The largest area of the minimap, centered on the player, that can be
     #   used to determine the player's location for the travel() function.
     minimap_slice_left = client_left + 599
     minimap_slice_top = client_top + 43
-    global minimap_slice
-    minimap_slice = (
+    global MINIMAP_SLICE
+    MINIMAP_SLICE = (
         minimap_slice_left,
         minimap_slice_top,
         MINIMAP_SLICE_WIDTH,

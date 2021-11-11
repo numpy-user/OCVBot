@@ -29,7 +29,7 @@ def wait_for_level_up(wait_time: int):
     """
     log.debug("Checking for level-up")
     level_up = vis.Vision(
-        region=vis.chat_menu,
+        region=vis.CHAT_MENU,
         needle="./needles/chat-menu/level-up.png",
         loop_num=wait_time,
         loop_sleep_range=(900, 1100),
@@ -75,7 +75,7 @@ class Cooking:
         # Confidence must be higher than normal since raw food is very
         #   similar in appearance to its cooked version.
         item_selected = vis.Vision(
-            region=vis.client, needle=self.item_inv, loop_num=3, conf=0.99
+            region=vis.CLIENT, needle=self.item_inv, loop_num=3, conf=0.99
         ).click_needle()
         if item_selected is False:
             log.error("Unable to find item %s!", self.item_inv)
@@ -83,7 +83,7 @@ class Cooking:
 
         # Select the range or fire.
         heat_source_selected = vis.Vision(
-            region=vis.game_screen,
+            region=vis.GAME_SCREEN,
             needle=self.heat_source,
             loop_num=3,
             loop_sleep_range=(500, 1000),
@@ -96,7 +96,7 @@ class Cooking:
         # Wait for the "how many of this item do you want to cook" chat
         #   menu to appear.
         do_x_screen = vis.Vision(
-            region=vis.chat_menu,
+            region=vis.CHAT_MENU,
             needle="./needles/chat-menu/do-x.png",
             loop_num=30,
             loop_sleep_range=(500, 1000),
@@ -121,7 +121,7 @@ class Cooking:
             if level_up is True:
                 self.cook_item()
             cooking_done = vis.Vision(
-                region=vis.game_screen,
+                region=vis.GAME_SCREEN,
                 needle="./needles/game-screen/staff-of-water-top.png",
                 conf=0.9,
                 loop_num=1,
@@ -183,7 +183,7 @@ class Magic:
         """
         for _ in range(5):
             spell_available = vis.Vision(
-                needle=self.spell, region=vis.inv, loop_num=30
+                needle=self.spell, region=vis.INV, loop_num=30
             ).click_needle(
                 sleep_range=(
                     50,
@@ -320,7 +320,7 @@ class Mining:
         """
         log.debug("Checking for full inventory.")
         inventory_full = vis.Vision(
-            region=vis.chat_menu,
+            region=vis.CHAT_MENU,
             loop_num=3,
             needle="./needles/chat-menu/mining-inventory-full.png",
             conf=0.85,
@@ -346,7 +346,7 @@ class Mining:
         # Move the mouse away from the rock so it doesn't interfere with
         #   matching the needle.
         rock_full_click = vis.Vision(
-            region=vis.game_screen,
+            region=vis.GAME_SCREEN,
             loop_num=1,
             needle=rock_full,
             conf=self.conf,
@@ -360,7 +360,7 @@ class Mining:
 
         # Wait until the rock is empty.
         rock_empty = vis.Vision(
-            region=vis.game_screen,
+            region=vis.GAME_SCREEN,
             loop_num=50,
             conf=self.conf,
             needle=rock_empty,
@@ -419,7 +419,7 @@ class Mining:
         """
         # Raise an error if we have <=5 ores in the inventory, as it's very
         #   inefficient to mine with an inventory so small.
-        ores_in_inventory = vis.Vision(region=vis.inv, needle=self.ore).count_needles()
+        ores_in_inventory = vis.Vision(region=vis.INV, needle=self.ore).count_needles()
         if ores_in_inventory <= 5:
             raise start.InefficientUseOfInventory(
                 "Free inventory too small! Must have at least 5 free spaces!"
@@ -497,7 +497,7 @@ class Smithing:
         log.info("Attempting to click anvil.")
 
         anvil_clicked = vis.Vision(
-            region=vis.game_screen,
+            region=vis.GAME_SCREEN,
             needle=self.anvil,
             loop_num=3,
             loop_sleep_range=(500, 1000),
@@ -509,7 +509,7 @@ class Smithing:
             return False
 
         smith_menu_open = vis.Vision(
-            region=vis.client,
+            region=vis.CLIENT,
             needle="./needles/buttons/close.png",
             loop_num=30,
         ).wait_for_needle()
@@ -537,7 +537,7 @@ class Smithing:
         log.info("Attempting to select item to smith.")
 
         menu_clicked = vis.Vision(
-            region=vis.game_screen,
+            region=vis.GAME_SCREEN,
             needle=self.item_in_menu,
             loop_num=3,
             loop_sleep_range=(500, 1000),
@@ -565,7 +565,7 @@ class Smithing:
             # We're done smithing when the number of bars in our inventory is
             #   equal to bars_leftover.
             bars_remaining = vis.Vision(
-                region=vis.inv, needle=self.bar_type, conf=0.9
+                region=vis.INV, needle=self.bar_type, conf=0.9
             ).count_needles()
             if bars_remaining <= bars_leftover:
                 log.info("Done smithing.")

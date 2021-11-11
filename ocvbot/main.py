@@ -201,7 +201,7 @@ def alchemist(alch_item_type, loops: int = 10000) -> None:
             target=target,
             inventory=True,
             conf=0.5,
-            region=vis.inv_left_half,
+            region=vis.INV_LEFT_HALF,
             move_duration_range=(0, 200),
         ).cast_spell()
         misc.sleep_rand_roll(chance_range=(10, 20), sleep_range=(100, 10000))
@@ -241,7 +241,7 @@ def spellcaster(scenario: str, loops: int = 10000) -> None:
             spell=spell,
             target=target,
             conf=0.75,
-            region=vis.game_screen,
+            region=vis.GAME_SCREEN,
         ).cast_spell()
         misc.sleep_rand_roll(chance_range=(10, 20), sleep_range=(100, 10000))
 
@@ -347,7 +347,7 @@ def smith(bar: str, item: str, location: str, loops: int = 10000):
 
         # Ensure we have bars in the bank.
         have_bars = vis.Vision(
-            region=vis.game_screen, needle=bar, conf=0.9999
+            region=vis.GAME_SCREEN, needle=bar, conf=0.9999
         ).find_needle()
         # Stop script if we don't
         if have_bars is False:
@@ -364,7 +364,7 @@ def smith(bar: str, item: str, location: str, loops: int = 10000):
         misc.sleep_rand_roll(chance_range=(20, 30))
 
         # Check if we withdrew a full inventory of bars. Stop script if we didn't
-        bars_in_inventory = vis.Vision(region=vis.inv, needle=bar).count_needles()
+        bars_in_inventory = vis.Vision(region=vis.INV, needle=bar).count_needles()
         if bars_in_inventory != 27:
             log.warning("Out of bars, stopping script.")
             return

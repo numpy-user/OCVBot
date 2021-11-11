@@ -68,9 +68,9 @@ def bank_settings_check(setting: str, value: str) -> None:
         log.debug("Checking if bank setting %s is set to %s", setting, value)
         interface.enable_button(
             button_disabled=setting_unset,
-            button_disabled_region=vis.game_screen,
+            button_disabled_region=vis.GAME_SCREEN,
             button_enabled=setting_set,
-            button_enabled_region=vis.game_screen,
+            button_enabled_region=vis.GAME_SCREEN,
         )
     except Exception as error:
         raise Exception("Could not set bank setting!") from error
@@ -89,9 +89,9 @@ def close_bank():
     try:
         interface.enable_button(
             button_disabled="./needles/buttons/close.png",
-            button_disabled_region=vis.game_screen,
+            button_disabled_region=vis.GAME_SCREEN,
             button_enabled="./needles/buttons/close.png",
-            button_enabled_region=vis.game_screen,
+            button_enabled_region=vis.GAME_SCREEN,
             invert_match=True,
         )
     except Exception as error:
@@ -110,9 +110,9 @@ def deposit_inventory() -> None:
     try:
         interface.enable_button(
             button_disabled="./needles/bank/deposit-inventory.png",
-            button_disabled_region=vis.game_screen,
+            button_disabled_region=vis.GAME_SCREEN,
             button_enabled="./needles/side-stones/inventory/empty-inventory.png",
-            button_enabled_region=vis.inv,
+            button_enabled_region=vis.INV,
         )
     except Exception as error:
         raise Exception("Could not deposit inventory!") from error
@@ -141,7 +141,7 @@ def deposit_item(item, quantity) -> None:
 
     """
     # Count the initial number of the given item in the inventory.
-    initial_number_of_items = vis.Vision(region=vis.inv, needle=item).count_needles()
+    initial_number_of_items = vis.Vision(region=vis.INV, needle=item).count_needles()
     # If there are no matching items in the inventory to begin with, return.
     if initial_number_of_items == 0:
         log.debug("No items of type %s to deposit", item)
@@ -168,7 +168,7 @@ def deposit_item(item, quantity) -> None:
     # Try clicking on the item multiple times.
     for _ in range(5):
         vis.Vision(
-            region=vis.inv,
+            region=vis.INV,
             needle=item,
             loop_num=3,
         ).click_needle(sleep_range=(0, 100, 0, 100), move_away=True)
@@ -177,7 +177,7 @@ def deposit_item(item, quantity) -> None:
         for _ in range(10):
             misc.sleep_rand(200, 700)
             final_number_of_items = vis.Vision(
-                region=vis.inv, needle=item
+                region=vis.INV, needle=item
             ).count_needles()
             if desired_number_of_items == final_number_of_items:
                 log.debug("Deposited item %s", item)
@@ -206,7 +206,7 @@ def enter_bank_pin(pin=(start.config["main"]["bank_pin"])) -> bool:
     pin = tuple(str(pin))
     # Confirm that the bank PIN screen is actually present.
     bank_pin_screen = vis.Vision(
-        region=vis.game_screen, needle="./needles/.png", loop_num=1
+        region=vis.GAME_SCREEN, needle="./needles/.png", loop_num=1
     ).wait_for_needle(get_tuple=False)
     if bank_pin_screen is False:
         return True
@@ -217,13 +217,13 @@ def enter_bank_pin(pin=(start.config["main"]["bank_pin"])) -> bool:
         # Wait for the first/second/third/fourth PIN prompt screen to
         #   appear.
         pin_ordinal_prompt = vis.Vision(
-            region=vis.game_screen, needle="./needles/" + str(pin_ordinal), loop_num=1
+            region=vis.GAME_SCREEN, needle="./needles/" + str(pin_ordinal), loop_num=1
         ).wait_for_needle(get_tuple=False)
 
         # Enter the first/second/third/fourth digit of the PIN.
         if pin_ordinal_prompt is True:
             enter_digit = vis.Vision(
-                region=vis.game_screen,
+                region=vis.GAME_SCREEN,
                 needle="./needles/" + pin[pin_ordinal],
                 loop_num=1,
             ).click_needle()
@@ -248,7 +248,7 @@ def open_bank(direction) -> bool:
 
     """
     bank_open = vis.Vision(
-        region=vis.game_screen, needle="./needles/buttons/close.png", loop_num=1
+        region=vis.GAME_SCREEN, needle="./needles/buttons/close.png", loop_num=1
     ).wait_for_needle()
     if bank_open is True:
         log.info("Bank window is already open.")
@@ -257,14 +257,14 @@ def open_bank(direction) -> bool:
     log.info("Attempting to open bank window.")
     for _ in range(5):
         one_tile = vis.Vision(
-            region=vis.game_screen,
+            region=vis.GAME_SCREEN,
             needle="./needles/game-screen/bank/bank-booth-" + direction + "-1-tile.png",
             loop_num=1,
             conf=0.85,
         ).click_needle()
 
         two_tiles = vis.Vision(
-            region=vis.game_screen,
+            region=vis.GAME_SCREEN,
             needle="./needles/game-screen/bank/bank-booth-"
             + direction
             + "-2-tiles.png",
@@ -274,7 +274,7 @@ def open_bank(direction) -> bool:
 
         if one_tile is True or two_tiles is True:
             bank_open = vis.Vision(
-                region=vis.game_screen,
+                region=vis.GAME_SCREEN,
                 needle="./needles/buttons/close.png",
                 loop_num=10,
             ).wait_for_needle()
@@ -323,9 +323,9 @@ def withdrawal_item(
         bank_settings_check("placeholder", "unset")
         interface.enable_button(
             button_disabled=item_bank,
-            button_disabled_region=vis.bank_items_window,
+            button_disabled_region=vis.BANK_ITEMS_WINDOW,
             button_enabled=item_inv,
-            button_enabled_region=vis.inv,
+            button_enabled_region=vis.INV,
             loop_num=10,
             conf=conf,
         )

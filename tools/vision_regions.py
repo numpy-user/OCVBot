@@ -30,7 +30,7 @@ log.basicConfig(
 #   because the Vision objects (e.g. vis.client_left and vis.client_top, etc.)
 #   use coordinates that are relative to the entire display.
 # Cropping is performed after the Vision object regions have been highlighted.
-SCREENSHOT_PATH = str(screenshot.main(region=vis.display))
+SCREENSHOT_PATH = str(screenshot.main(region=vis.DISPLAY))
 
 
 def crop_to_client(file_name: str) -> None:
@@ -107,73 +107,73 @@ def pngcrush(filename: str) -> None:
 def main() -> None:
     # Unpack vision region tuples, because mark_region() cannot take a tuple as
     #   an argument.
-    (vis.client_left, vis.client_top, vis.CLIENT_WIDTH, vis.CLIENT_HEIGHT) = vis.client
+    (vis.client_left, vis.client_top, vis.CLIENT_WIDTH, vis.CLIENT_HEIGHT) = vis.CLIENT
     (
         vis.inv_left,
         vis.inv_top,
         vis.INV_WIDTH,
         vis.INV_HEIGHT,
-    ) = vis.inv
+    ) = vis.INV
     (
         vis.inv_bottom_left,
         vis.inv_bottom_top,
         vis.INV_WIDTH,
         vis.INV_HALF_HEIGHT,
-    ) = vis.inv_bottom
+    ) = vis.INV_BOTTOM
     (
         vis.inv_right_half_left,
         vis.inv_right_half_top,
         vis.INV_HALF_WIDTH,
         vis.INV_HEIGHT,
-    ) = vis.inv_right_half
+    ) = vis.INV_RIGHT_HALF
     (
         vis.inv_left_half_left,
         vis.inv_left_half_top,
         vis.INV_HALF_WIDTH,
         vis.INV_HEIGHT,
-    ) = vis.inv_left_half
+    ) = vis.INV_LEFT_HALF
     (
         vis.game_screen_left,
         vis.game_screen_top,
         vis.GAME_SCREEN_WIDTH,
         vis.GAME_SCREEN_HEIGHT,
-    ) = vis.game_screen
+    ) = vis.GAME_SCREEN
     (
         vis.bank_items_window_left,
         vis.bank_items_window_top,
         vis.BANK_ITEMS_WINDOW_WIDTH,
         vis.BANK_ITEMS_WINDOW_HEIGHT,
-    ) = vis.bank_items_window
+    ) = vis.BANK_ITEMS_WINDOW
     (
         vis.side_stones_left,
         vis.side_stones_top,
         vis.SIDE_STONES_WIDTH,
         vis.SIDE_STONES_HEIGHT,
-    ) = vis.side_stones
+    ) = vis.SIDE_STONES
     (
         vis.chat_menu_left,
         vis.chat_menu_top,
         vis.CHAT_MENU_WIDTH,
         vis.CHAT_MENU_HEIGHT,
-    ) = vis.chat_menu
+    ) = vis.CHAT_MENU
     (
         vis.chat_menu_recent_left,
         vis.chat_menu_recent_top,
         vis.CHAT_MENU_RECENT_WIDTH,
         vis.CHAT_MENU_RECENT_HEIGHT,
-    ) = vis.chat_menu_recent
+    ) = vis.CHAT_MENU_RECENT
     (
         vis.minimap_left,
         vis.minimap_top,
         vis.MINIMAP_WIDTH,
         vis.MINIMAP_HEIGHT,
-    ) = vis.minimap
+    ) = vis.MINIMAP
     (
         vis.minimap_slice_left,
         vis.minimap_slice_top,
         vis.MINIMAP_SLICE_WIDTH,
         vis.MINIMAP_SLICE_HEIGHT,
-    ) = vis.minimap_slice
+    ) = vis.MINIMAP_SLICE
 
     # Import all the coordinate spaces to overlay onto the screenshot.
     # Create a separate file for coordinate space, as some of them

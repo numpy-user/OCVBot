@@ -22,7 +22,7 @@ vis.init()
 
 def main() -> None:
     # Focus the client by clicking a random spot on the chat menu.
-    inputs.Mouse(region=vis.chat_menu).click_coord()
+    inputs.Mouse(region=vis.CHAT_MENU).click_coord()
 
     # Every 100-299 seconds, hit an arrow key to move the client's camera.
     # Auto-logout occurs after 5 minutes (300 seconds) of inactivity.
