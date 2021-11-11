@@ -103,7 +103,7 @@ def test_close_bank_fail(params) -> None:
 
 # DEPOSIT_INVENTORY -------------------------------------------------------------------------------
 
-deposit_inventory_pass_params = (("01"),)
+deposit_inventory_pass_params = (("01"),)  # Must try 3 times.
 
 
 @pytest.mark.parametrize("params", deposit_inventory_pass_params)
@@ -115,7 +115,7 @@ def test_deposit_inventory_pass(params):
     init_tests.kill_feh()
 
 
-deposit_inventory_fail_params = (("01"),)
+deposit_inventory_fail_params = (("01"),)  # Try too many times.
 
 
 @pytest.mark.parametrize("params", deposit_inventory_fail_params)
