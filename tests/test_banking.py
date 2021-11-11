@@ -194,6 +194,7 @@ open_bank_pass_params = (
     ("west", "03"),  # 1 tile west.
     ("west", "04"),  # 2 tiles west.
     ("east", "05"),  # 1 tile east.
+    ("east", "07"),  # Bank window already open.
 )
 
 
@@ -203,6 +204,31 @@ def test_open_bank_pass(params):
     init_tests.feh("open_bank", "pass", test_number, image_directory)
     result = banking.open_bank(direction)
     assert result is None
+    init_tests.kill_feh()
+
+
+# Provide an invalid direction.
+open_bank_fail_01_params = (("not_a_valid_direction"),)
+
+
+@pytest.mark.parametrize("params", open_bank_fail_01_params)
+def test_open_bank_fail_01(params) -> None:
+    direction = params
+    with pytest.raises(ValueError, match="Must provide a cardinal direction"):
+        banking.open_bank(direction)
+    init_tests.kill_feh()
+
+
+# Unable to open bank window.
+open_bank_fail_02_params = (("east", "01"),)
+
+
+@pytest.mark.parametrize("params", open_bank_fail_02_params)
+def test_open_bank_fail_02(params) -> None:
+    direction, test_number = params
+    init_tests.feh("open_bank", "fail", test_number, image_directory)
+    with pytest.raises(Exception, match="Unable to open bank"):
+        banking.open_bank(direction)
     init_tests.kill_feh()
 
 
