@@ -5,13 +5,15 @@ Unit tests for the vision.py module.
 Linux only. Requires feh.
 
 """
-import logging as log
-import os
-
 import psutil
 import pytest
 
-import common
+import init_tests
+
+# This statement exists to prevent the OCVBot imports from being re-ordered.
+pass
+
+# OCVBot modules must be imported after init_tests.
 from ocvbot import vision as vis
 
 # COUNT_NEEDLES -----------------------------------------------------------------------------------
@@ -27,7 +29,7 @@ count_needles_pass_params = (
 @pytest.mark.parametrize("params", count_needles_pass_params)
 def test_count_needles_pass(params) -> None:
     needle_path, correct_number_of_needles, test_number = params
-    common.feh("count_needles", "pass", test_number, image_directory)
+    init_tests.feh("count_needles", "pass", test_number, image_directory)
     result = vis.Vision(region=vis.INV, needle=needle_path, conf=0.988).count_needles()
     assert result == correct_number_of_needles
-    common.kill_feh()
+    init_tests.kill_feh()
