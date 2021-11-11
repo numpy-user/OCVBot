@@ -328,7 +328,7 @@ def login_basic(
                 inputs.Keyboard().keypress(key="enter")
                 return True
 
-    log.critical("Could perform login!")
+    log.critical("Could not perform login!")
     return False
 
 
