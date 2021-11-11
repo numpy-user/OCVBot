@@ -42,3 +42,11 @@ source ./ocvbot_venv/bin/activate
 cd ./tests
 pytest test_banking.py
 ```
+
+## Code Coverage
+
+1. `pip install coverage` = Install `coverage` package.
+2. `cd tests` = Enter testing directory.
+3. `coverage run --source=ocvbot -m pytest test_banking.py` = Run coverage tests.
+4. `coverage html` = Generate html report.
+5. `firefox htmlcov/index.html` = View report with browser.
