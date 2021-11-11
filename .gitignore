@@ -10,6 +10,8 @@ ocvbot/package-lock.json
 .mypy_cache
 
 # Development files
+**/.coverage
+**/htmlcov
 **/tmp
 */.screenshot*
 .idea
@@ -32,10 +34,12 @@ tests/haystacks/user-interface/maps/world
 **/*backup.png
 **/*haystack.tmp.png
 **/*ocvbot_bank_items_window.png
+**/*ocvbot_chat_menu.png
 **/*ocvbot_chat_menu_recent.png
 **/*ocvbot_client.png
 **/*ocvbot_game_screen.png
 **/*ocvbot_inv.png
+**/*ocvbot_inv_bottom.png
 **/*ocvbot_inv_bottom_half.png
 **/*ocvbot_inv_left_half.png
 **/*ocvbot_inv_right_half.png
