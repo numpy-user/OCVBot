@@ -2,7 +2,7 @@
 """
 Module for invoking main bot scripts.
 
-Most main scripts define a preset list of `scenarios` from which the user
+Most main scripts define a preset list of `scenarios`, which the user
 must choose from. Each scenario has a predetermined configuration that will
 used for training that skill. For example, the `varrock-east-mine` scenario
 for the `miner` script is configured to only mine two specific iron rocks
@@ -22,10 +22,10 @@ import sys
 # Global TODOs:
 # TODO: Transition to use proper exceptions rather than checking for a False return value.
 
+# TODO: See if these statements are really necessary since they're in init.py
 # Make sure the program's working directory is the directory in which
 #   this file is located.
 os.chdir(os.path.dirname(__file__))
-
 # Ensure ocvbot files are added to sys.path.
 SCRIPTPATH = str(pathlib.Path(__file__).parent.parent.absolute())
 sys.path.insert(1, SCRIPTPATH)
