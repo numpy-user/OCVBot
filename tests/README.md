@@ -14,8 +14,10 @@
    - These files configure `feh` to display the next image in the album when the
      image is clicked.
   ```bash
+  mkdir -p ~/.config/feh/
   cp ./feh/* ~/.config/feh/
   ```
+
 ## Running all tests
 
 1. Execute the `./run_all_tests.sh` file to run the entire test suite. The correct
@@ -34,12 +36,10 @@
 2. Enable your virtual environment for OCVBot (See the `Installation` section of
    the `README.md` file at the root of this repository)
 ```bash
-cd ../
-source ./ocvbot_venv/bin/activate
+source ../ocvbot_venv/bin/activate
 ```
 3. Launch PyTest for the desired test.
 ```bash
-cd ./tests
 pytest test_banking.py
 ```
 
