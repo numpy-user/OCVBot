@@ -143,11 +143,11 @@ def miner(scenario: str, loops: int = 10000) -> None:
     for _ in range(loops):
         try:
             mining.mine_multiple_rocks()
-            misc.sleep_rand_roll(chance_range=(90, 100))
+            misc.sleep_rand_roll(chance_range=(200, 300))
         except start.TimeoutException:
-            misc.sleep_rand_roll()
+            misc.sleep_rand_roll(chance_range=(50, 60))
         except start.InventoryFull:
-            misc.sleep_rand_roll()
+            misc.sleep_rand_roll(chance_range=(50, 60), sleep_range=(1000, 120000))
             if drop_ore_config is True:
                 mining.drop_inv_ore()
             else:
