@@ -207,8 +207,10 @@ def alchemist(alch_item_type, loops: int = 10000) -> None:
         misc.sleep_rand_roll(chance_range=(10, 20), sleep_range=(100, 10000))
 
         # Every once in a while, print the amount of time the bot has been running.
+        # Also roll for randomized logout.
         if rand.randint(1, 50) == 50:
             misc.session_duration(human_readable=True)
+            behavior.logout_break_range()
 
 
 def spellcaster(scenario: str, loops: int = 10000) -> None:
@@ -246,8 +248,10 @@ def spellcaster(scenario: str, loops: int = 10000) -> None:
         misc.sleep_rand_roll(chance_range=(10, 20), sleep_range=(100, 10000))
 
         # Every once in a while, print the amount of time the bot has been running.
+        # Also roll for randomized logout.
         if rand.randint(1, 50) == 50:
             misc.session_duration(human_readable=True)
+            behavior.logout_break_range()
 
 
 def chef(item: str, location: str, loops: int = 10000) -> bool:
@@ -298,6 +302,8 @@ def chef(item: str, location: str, loops: int = 10000) -> bool:
         banking.open_bank("west")
         misc.sleep_rand_roll(chance_range=(10, 20), sleep_range=(100, 10000))
         banking.deposit_inventory()
+        # Roll for randomized logout.
+        behavior.logout_break_range()
         misc.session_duration(human_readable=True)
     return True
 
@@ -379,6 +385,8 @@ def smith(bar: str, item: str, location: str, loops: int = 10000):
         misc.sleep_rand_roll(chance_range=(20, 30))
         behavior.travel(bank_coords, haystack_map)
         misc.session_duration(human_readable=True)
+        # Roll for randomized logout.
+        behavior.logout_break_range()
         misc.sleep_rand_roll(chance_range=(20, 30))
 
 
