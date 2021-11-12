@@ -1,6 +1,6 @@
 # coding=UTF-8
 """
-Set up a few global configurations before script is run.
+Setup a few global configurations before script is run.
 
 """
 import logging as log
@@ -37,12 +37,3 @@ log.basicConfig(
 # Clean up left over screenshots from previous runs.
 if os.name == "posix":
     os.system("rm .screenshot2*.png >/dev/null 2>&1")
-
-
-def kill_script() -> None:
-    """
-    Used to manually terminate the primary thread of execution.
-
-    """
-    # TODO: Replace this with psutil.kill().
-    os.system("pkill -f main.py")
