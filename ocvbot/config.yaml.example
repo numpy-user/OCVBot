@@ -34,13 +34,13 @@ main:
 
   # The minimum and maximum amount of time to wait during a logout break.
   # Units are in minutes.
-  min_break_duration: 5
+  min_break_duration: 30
   max_break_duration: 120
 
   # The minimum and maximum number of logout breaks that will occur before
   #   the bot stops for good.
-  min_sessions: 1
-  max_sessions: 3
+  min_sessions: 2
+  max_sessions: 5
 
   # Determines the verbosity of information printed to the terminal while the
   #   bot is being run.
