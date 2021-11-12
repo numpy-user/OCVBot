@@ -495,27 +495,25 @@ def logout() -> bool:
     raise Exception("Could not logout!")
 
 
-def logout_break_range() -> bool:
+def logout_break_range() -> None:
     """
-    Triggers a random logout within a specific range of times, set
-    by the user in the main config file. Additional configuration for
-    this function is set by variables in startup.py.
+    Triggers a random logout within a specific range of times, set by the user
+    in the main config file. Additional configuration for this function is set
+    by variables in startup.py.
 
-    To determine when a logout roll should occur, this function creates
-    five evenly-spaced timestamps at which to roll for a logout. These
-    timestamps are called "checkpoints" interanally. Each roll has a
-    1/5 chance to pass. The first and last checkpoints are based on the
-    user-defined minimum and maximum session duration. As a result of
-    this, the last checkpoint's roll always has a 100% chance of
-    success.
-    All variables set by this function are reset if a logout roll passes.
+    To determine when a logout roll should occur, this function creates five
+    evenly-spaced timestamps at which to roll for a logout. These timestamps
+    are called "checkpoints". Each roll has a 1/5 chance to pass. The first and
+    last checkpoints are based on the user-defined minimum and maximum session
+    duration. As a result of this, the last checkpoint's roll always has a 100%
+    chance of success. All variables set by this function are reset if a logout
+    roll passes.
 
-    When called, this function checks if an checkpoint's timestamp has
-    passed and hasn't yet been rolled. If true, it rolls for that checkpoint
-    and marks it (so it's not rolled again). If the roll passes, a logout
-    is called and all checkpoints are reset. If the roll fails or a
-    checkpoint's timestamp hasn't yet passed, the function does nothing
-    and returns.
+    When called, this function checks if an checkpoint's timestamp has passed
+    and hasn't yet been rolled. If true, it rolls for that checkpoint and marks
+    it (so it's not rolled again). If the roll passes, a logout is called and
+    all checkpoints are reset. If the roll fails or a checkpoint's timestamp
+    hasn't yet passed, the function does nothing and returns.
 
     """
     # TODO: There's probably a way to refactor these near-duplicate
@@ -540,7 +538,7 @@ def logout_break_range() -> bool:
         logout_break_roll(5)
 
     elif current_time >= start.checkpoint_4 and start.checkpoint_4_checked is False:
-        log.info("Rolling checkpoint 4...")
+        log.info("Rolling for checkpoint 4...")
         start.checkpoint_4_checked = True
         logout_break_roll(5)
 
@@ -566,7 +564,7 @@ def logout_break_range() -> bool:
             log.info("Checkpoint 4 is at %s", time.ctime(start.checkpoint_4))
         elif start.checkpoint_4_checked is True:
             log.info("Checkpoint 5 is at %s", time.ctime(start.checkpoint_5))
-    return True
+    return
 
 
 def logout_break_roll(
@@ -593,6 +591,11 @@ def logout_break_roll(
     if logout_roll == chance:
         log.info("Random logout called.")
         logout()
+        # Make sure all checkpoints are reset.
+        start.checkpoint_1_checked = False
+        start.checkpoint_2_checked = False
+        start.checkpoint_3_checked = False
+        start.checkpoint_4_checked = False
 
         # Track the number of play sessions that have occurred so far.
         start.session_num += 1
