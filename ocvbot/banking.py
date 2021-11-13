@@ -324,12 +324,15 @@ def withdrawal_item(
     """
     log.info("Attempting to withdrawal item: %s", item_bank)
     try:
-        # Ensure the correct quantity is withdrawn.
-        bank_settings_check("quantity", str(quantity))
+
         # Make sure no placeholders are left behind, as this makes image
         #   matching much more difficult -- placeholders look very similar
         #   to regular "real" items.
         bank_settings_check("placeholder", "unset")
+
+        # Ensure the correct quantity is withdrawn.
+        bank_settings_check("quantity", str(quantity))
+
         interface.enable_button(
             button_disabled=item_bank,
             button_disabled_region=vis.BANK_ITEMS_WINDOW,
@@ -338,5 +341,6 @@ def withdrawal_item(
             loop_num=10,
             conf=conf,
         )
+
     except Exception as error:
         raise start.BankingError("Could not withdrawal item!") from error
