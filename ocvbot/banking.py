@@ -318,6 +318,9 @@ def withdrawal_item(
     Returns:
         Returns if the item was successfully withdrawn from bank,
 
+    Raises:
+        Raises start.BankingError if item could not be withdrawn.
+
     """
     log.info("Attempting to withdrawal item: %s", item_bank)
     try:
@@ -336,4 +339,4 @@ def withdrawal_item(
             conf=conf,
         )
     except Exception as error:
-        raise Exception("Could not withdrawal item!") from error
+        raise start.BankingError("Could not withdrawal item!") from error
