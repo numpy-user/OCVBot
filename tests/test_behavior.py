@@ -75,6 +75,7 @@ logout_pass_params = (
     "03",  # Logout tab is already open, world switcher open.
     "04",  # Already logged out
     "05",  # Attack tab is open, switching tabs doesn't work at first.
+    "06",  # Must click logout button multiple times.
 )
 
 
@@ -83,20 +84,21 @@ def test_logout_pass(params) -> None:
     test_number = params
     init_tests.feh("logout", "pass", test_number, image_directory)
     result = behavior.logout()
-    assert result is True
+    assert result is None
     init_tests.kill_feh()
 
 
-logout_fail_params = ("01",)  # Unable to find the logout button.
+# Try too many times to click on logout button.
+logout_fail_params = ("01",)
 
 
 @pytest.mark.parametrize("params", logout_fail_params)
 def test_logout_fail(params) -> None:
     test_number = params
     init_tests.feh("logout", "fail", test_number, image_directory)
-    with pytest.raises(Exception, match=".*"):
+    with pytest.raises(Exception, match="Could not logout"):
         behavior.logout()
-        init_tests.kill_feh()
+    init_tests.kill_feh()
 
 
 # OPEN SIDE STONE ---------------------------------------------------------------------------------
