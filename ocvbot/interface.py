@@ -9,6 +9,10 @@ import logging as log
 from ocvbot import vision as vis
 
 
+# TODO: Add a set_compass(direction) function, as the client now supports
+#       right-clicking on the compass to set specific cardinal directions.
+
+
 def enable_button(
     button_disabled: str,
     button_disabled_region: tuple[int, int, int, int],

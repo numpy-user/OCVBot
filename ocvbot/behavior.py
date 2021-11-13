@@ -22,10 +22,11 @@ from ocvbot import vision as vis
 
 
 # TODO: Move login and world-switcher functions to login_menu.py.
-# TODO: Break out into inventory.py or side_stones.py.
 # TODO: Add switch_worlds_logged_in()
 
 
+# TODO: Add tests.
+# TODO: Move to login_menu.py
 def switch_worlds_logged_out(world: str, attempts=5) -> bool:
     MAX_COLUMNS = 7
     X_OFFSET = 93
@@ -99,6 +100,7 @@ def switch_worlds_logged_out(world: str, attempts=5) -> bool:
     return False
 
 
+# TODO: Move to inventory.py
 def check_skills() -> None:
     """
     Used to mimic human-like behavior. Checks the stats of a random
@@ -114,6 +116,7 @@ def check_skills() -> None:
     return
 
 
+# TODO: Move to inventory.py
 def drop_item(
     item,
     random_wait: bool = True,
@@ -201,9 +204,12 @@ def human_behavior_rand(chance) -> None:
                       parameter is 25, then there is a 1 in 25 chance
                       for the roll to pass.
 
+    Returns:
+        Returns after random human behavior has been completed.
     """
     roll = rand.randint(1, chance)
     log.debug("Human behavior rolled %s", roll)
+
     if roll == chance:
         log.info("Attempting to act human.")
         roll = rand.randint(1, 2)
@@ -227,10 +233,9 @@ def human_behavior_rand(chance) -> None:
                 open_side_stone("friends")
             elif roll == 8:
                 open_side_stone("settings")
-        return
-    return
 
 
+# TODO: Move to login_menu.py
 def login_basic(
     username_file=start.config["main"]["username_file"],
     password_file=start.config["main"]["password_file"],
@@ -312,6 +317,7 @@ def login_basic(
     return False
 
 
+# TODO: Move to login_menu.py
 def login_full(
     login_sleep_range: tuple[int, int] = (500, 5000),
     postlogin_sleep_range: tuple[int, int] = (500, 5000),
@@ -398,6 +404,7 @@ def login_full(
     raise Exception("Unable to login!")
 
 
+# TODO: Move to inventory.py
 def logout() -> None:
     """
     If the client is logged in, logs out.
@@ -468,6 +475,7 @@ def logout() -> None:
     raise Exception("Could not logout!")
 
 
+# TODO: Move to misc.py
 def logout_break_range() -> None:
     """
     Triggers a random logout within a specific range of times, set by the user
@@ -489,8 +497,6 @@ def logout_break_range() -> None:
     hasn't yet passed, the function does nothing and returns.
 
     """
-    # TODO: There's probably a way to refactor these near-duplicate
-    #   if-statements into a single for-loop.
     current_time = round(time.time())
 
     # If a checkpoint's timestamp has passed, roll for a logout, then set
@@ -537,9 +543,9 @@ def logout_break_range() -> None:
             log.info("Checkpoint 4 is at %s", time.ctime(start.checkpoint_4))
         elif start.checkpoint_4_checked is True:
             log.info("Checkpoint 5 is at %s", time.ctime(start.checkpoint_5))
-    return
 
 
+# TODO: Move to misc.py
 def logout_break_roll(
     chance,
     min_break_duration=int(start.config["main"]["min_break_duration"]),
@@ -597,6 +603,7 @@ def logout_break_roll(
         return
 
 
+# TODO: Move to inventory.py
 def open_side_stone(side_stone) -> bool:
     """
     Opens a side stone menu.
