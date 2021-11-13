@@ -175,15 +175,18 @@ class Magic:
 
     def _select_spell(self) -> None:
         """
-        Activate the desired spell.
+        Helper function that activates the desired spell.
+
+        Returns:
+            Returns when the desired spell has been selected.
 
         Raises:
-            Raises an exception if the spell could not be found.
+            Raises start.NeedleError if the spell could not be found.
 
         """
         for _ in range(5):
             spell_available = vis.Vision(
-                needle=self.spell, region=vis.INV, loop_num=30
+                needle=self.spell, region=vis.INV, loop_num=2
             ).click_needle(
                 sleep_range=(
                     50,
@@ -197,20 +200,23 @@ class Magic:
                 behavior.open_side_stone("spellbook")
             else:
                 return
-        raise Exception("Could not select spell!")
+        raise start.NeedleError("Could not select spell!")
 
     def _select_target(self) -> None:
         """
-        Attempt to find the target to cast the spell on. Can be either a
-        monster in the game world or an item in the inventory.
+        Helper function to select a spell's target. Can be either a monster in
+        the game world or an item in the inventory.
+
+        Returns:
+            Returns when the desired target has been selected.
 
         Raises:
-            Raises an exception if the target could not be found.
+            Raises start.NeedleError if the target could not be found.
 
         """
         for _ in range(5):
             target = vis.Vision(
-                needle=self.target, region=self.region, loop_num=5, conf=self.conf
+                needle=self.target, region=self.region, loop_num=2, conf=self.conf
             ).click_needle(
                 sleep_range=(
                     10,
@@ -226,11 +232,11 @@ class Magic:
                     behavior.open_side_stone("inventory")
             else:
                 return
-        raise Exception("Could not find target!")
+        raise start.NeedleError("Could not find target!")
 
     def cast_spell(self) -> None:
         """
-        Cast a spell at a target.
+        Main function of the Magic class to cast a spell at a target.
 
         Returns:
             Returns once spell has been cast.
