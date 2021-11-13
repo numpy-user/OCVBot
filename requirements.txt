@@ -1,7 +1,9 @@
+Cython
 Pillow
 PyYAML
+beautifulsoup4
 colorama
-Cython
+coverage
 docutils<0.18>=0.14
 keyboard
 lxml
@@ -14,4 +16,3 @@ recommonmark
 scikit-build
 types-PyYAML
 wheel
-beautifulsoup4
