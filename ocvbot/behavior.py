@@ -398,7 +398,7 @@ def login_full(
     raise Exception("Unable to login!")
 
 
-def logout() -> bool:
+def logout() -> None:
     """
     If the client is logged in, logs out.
 
@@ -406,73 +406,20 @@ def logout() -> bool:
         Raises an exception if the client could not logout.
 
     Returns:
-        Returns True if the logout was successful.
+        Returns if the logout was successful, or the client is already logged
+        out.
 
     """
     # Make sure the client is logged in.
     if vis.orient()[0] == "logged_out":
         log.warning("Client already logged out!")
-        return True
+        return
 
     log.info("Attempting to logout.")
     banking.close_bank()
     open_side_stone("logout")
 
-    logout_button_world_switcher = False
-    logout_button_highlighted = False
-    logout_button = False
-
-    # TODO: Create a function that looks for multiple needles simultaneously.
-    #   This might even be able to be integrated into the wait_for_needle()
-    #   function with a for-loop.
-    # Look for any of the three possible logout buttons.
-    for _ in range(1, 5):
-        # The standard logout button.
-        logout_button = vis.Vision(
-            region=vis.INV,
-            needle="./needles/side-stones/logout/logout.png",
-            conf=0.9,
-            loop_num=1,
-        ).wait_for_needle(get_tuple=True)
-        if isinstance(logout_button, tuple) is True:
-            # Break out of the loop if any of the buttons was found.
-            break
-
-        # The logout button as it appears when the mouse is over it.
-        logout_button_highlighted = vis.Vision(
-            region=vis.INV,
-            needle="./needles/side-stones/logout/logout-highlighted.png",
-            conf=0.9,
-            loop_num=1,
-        ).wait_for_needle(get_tuple=True)
-        if isinstance(logout_button_highlighted, tuple) is True:
-            logout_button = logout_button_highlighted
-            break
-
-        # The logout button when the world switcher is open.
-        logout_button_world_switcher = vis.Vision(
-            region=vis.SIDE_STONES,
-            needle="./needles/side-stones/logout/logout-world-switcher.png",
-            conf=0.9,
-            loop_num=1,
-        ).wait_for_needle(get_tuple=True)
-        if isinstance(logout_button_world_switcher, tuple) is True:
-            logout_button = logout_button_world_switcher
-            break
-
-    if (
-        logout_button is False
-        and logout_button_highlighted is False
-        and logout_button_world_switcher is False
-    ):
-        raise Exception("Failed to find logout button!")
-
-    # Once a logout button has been found, click on its coordinates
-    #   and wait for the logout to complete.
-    # If a logout is not detected after the first try, keep clicking
-    #   on the location of the detected logout button and try again.
-    inputs.Mouse(region=logout_button).click_coord(move_away=True)
-    for tries in range(5):
+    def is_logged_out() -> bool:
         logged_out = vis.Vision(
             region=vis.CLIENT,
             needle="./needles/login-menu/orient-logged-out.png",
@@ -480,11 +427,43 @@ def logout() -> bool:
             loop_sleep_range=(1000, 1200),
         ).wait_for_needle()
         if logged_out is True:
-            log.info("Logged out after trying %s times(s)", tries)
             return True
-        else:
-            log.info("Unable to log out, trying again.")
-            inputs.Mouse(region=logout_button).click_coord(move_away=True)
+
+    # Look for any one of the three possible logout buttons.
+    for _ in range(5):
+
+        # The standard logout button.
+        logout_button = vis.Vision(
+            region=vis.INV,
+            needle="./needles/side-stones/logout/logout.png",
+            conf=0.9,
+            loop_num=1,
+        ).click_needle(move_away=True)
+        if logout_button is True:
+            if is_logged_out() is True:
+                return
+
+        # The logout button as it appears when the mouse is over it.
+        logout_button_highlighted = vis.Vision(
+            region=vis.INV,
+            needle="./needles/side-stones/logout/logout-highlighted.png",
+            conf=0.9,
+            loop_num=1,
+        ).click_needle(move_away=True)
+        if logout_button_highlighted is True:
+            if is_logged_out() is True:
+                return
+
+        # The logout button when the world switcher is open.
+        logout_button_world_switcher = vis.Vision(
+            region=vis.SIDE_STONES,
+            needle="./needles/side-stones/logout/logout-world-switcher.png",
+            conf=0.95,
+            loop_num=1,
+        ).click_needle(move_away=True)
+        if logout_button_world_switcher is True:
+            if is_logged_out() is True:
+                return
 
     raise Exception("Could not logout!")
 
