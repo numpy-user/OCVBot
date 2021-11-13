@@ -359,7 +359,7 @@ class Mining:
         # Check for both at the same time since some rocks (e.g. in Camdozaal Mine)
         #   provide multiple ore and may create a full inventory before the rock
         #   is empty.
-        for _ in range(50):
+        for _ in range(20):
 
             if self._is_inventory_full() is True:
                 raise start.InventoryFull("Inventory is full!")
