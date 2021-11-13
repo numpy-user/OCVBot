@@ -30,9 +30,10 @@ sed -i \
     -e 's/random_waits:.*/random_waits: False/' \
     "${config_file}"
 
-# Run the test suite.
+# Run the test suite with coverage check.
 cd "${script_dir}" || exit 1
 source "${script_dir}/../ocvbot_venv/bin/activate"
-pytest .
+coverage run --source=ocvbot -m pytest .
+coverage html
 
 exit 0
