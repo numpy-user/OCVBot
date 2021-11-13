@@ -104,6 +104,13 @@ class InefficientUseOfInventory(Exception):
     """
 
 
+class InventoryError(Exception):
+    """
+    Raised when an unexpected or unrecoverable situation occurs with the
+     player's inventory.
+    """
+
+
 class InventoryFull(Exception):
     """
     Raised whenever the player's inventory is too full to perform the desired
