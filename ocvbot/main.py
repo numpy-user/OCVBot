@@ -18,6 +18,7 @@ import os
 import pathlib
 import random as rand
 import sys
+import traceback
 
 # Global TODOs:
 # TODO: Transition to use proper exceptions rather than checking for a False return value.
@@ -254,7 +255,7 @@ def spellcaster(scenario: str, loops: int = 10000) -> None:
             behavior.logout_break_range()
 
 
-def chef(item: str, location: str, loops: int = 10000) -> bool:
+def chef(item: str, location: str, loops: int = 10000) -> None:
     """
     Cooks a given item at a given location.
 
@@ -276,8 +277,7 @@ def chef(item: str, location: str, loops: int = 10000) -> bool:
         # Assumes starting location is the bank.
         banking.open_bank("west")
     else:
-        log.critical("Unsupported value for location!")
-        raise RuntimeError("Unsupported value for location!")
+        raise ValueError("Unsupported value for location!")
 
     log.info("Launching chef script with item %s and location %s.", item, location)
     # Must have staff of water equipped!
@@ -288,24 +288,30 @@ def chef(item: str, location: str, loops: int = 10000) -> bool:
     item_bank = "./needles/items/" + item + "-bank.png"
 
     for _ in range(loops):
-        # Conf is higher than default because raw food looks very
-        #   similar to cooked food.
-        banking.withdrawal_item(item_bank=item_bank, item_inv=item_inv, conf=0.99)
-        log.info("Withdrawing raw food.")
-        misc.sleep_rand_roll(chance_range=(10, 20), sleep_range=(100, 10000))
-        # Go to range.
-        behavior.travel(range_coords, haystack_map)
-        # Cook food.
-        skills.Cooking(item_inv, item_bank, heat_source).cook_item()
-        # Go back to bank and deposit cooked food.
-        behavior.travel(bank_coords, haystack_map)
-        banking.open_bank("west")
-        misc.sleep_rand_roll(chance_range=(10, 20), sleep_range=(100, 10000))
-        banking.deposit_inventory()
-        # Roll for randomized logout.
-        behavior.logout_break_range()
-        misc.session_duration(human_readable=True)
-    return True
+        try:
+            # Conf is higher than default because raw food looks very
+            #   similar to cooked food.
+            banking.withdrawal_item(item_bank=item_bank, item_inv=item_inv, conf=0.99)
+            log.info("Withdrawing raw food.")
+            misc.sleep_rand_roll(chance_range=(10, 20), sleep_range=(100, 10000))
+            # Go to range.
+            behavior.travel(range_coords, haystack_map)
+            # Cook food.
+            skills.Cooking(item_inv, item_bank, heat_source).cook_item()
+            # Go back to bank and deposit cooked food.
+            behavior.travel(bank_coords, haystack_map)
+            banking.open_bank("west")
+            misc.sleep_rand_roll(chance_range=(10, 20), sleep_range=(100, 10000))
+            banking.deposit_inventory()
+            # Roll for randomized logout.
+            behavior.logout_break_range()
+            misc.session_duration(human_readable=True)
+
+        except Exception:
+            print(traceback.format_exc())
+            behavior.logout()
+            return
+    return
 
 
 def smith(bar: str, item: str, location: str, loops: int = 10000):
