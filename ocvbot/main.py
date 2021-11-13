@@ -13,6 +13,7 @@ See `docs/scenarios/` for the required client configuration settings in
 each scenario.
 
 """
+import glob
 import logging as log
 import os
 import pathlib
@@ -400,6 +401,15 @@ def test():
     banking.deposit_inventory()
 
 
+def cleanup():
+    """
+    Cleans up leftover screenshots created by PyAutoGUI.
+    """
+    glob_string = ".screenshot2*[0-9][0-9][0-9][0-9][0-9][0-9].png"
+    for filepath in glob.glob(glob_string):
+        os.remove(filepath)
+
+
 # TODO: Add basic firemaking script that starts at a bank booth and
 #   creates 27 fires, all in a straight line, then returns to the booth.
 
@@ -418,6 +428,7 @@ def main():
     Calls the main botting script defined in the config file.
 
     """
+    cleanup()
     vis.init()
 
     if script == "mining":
@@ -449,6 +460,7 @@ def main():
         log.critical("Unknown value provided for 'script' key in config file!")
         raise RuntimeError("Unknown value provided for 'script' key in config file!")
 
+    cleanup()
     sys.exit(0)
 
 
