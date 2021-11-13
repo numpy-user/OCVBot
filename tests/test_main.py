@@ -22,7 +22,7 @@ image_directory = (os.path.dirname(__file__)) + "/test_main/"
 
 # CHEF --------------------------------------------------------------------------------------------
 
-chef_pass_params = (("raw-anchovies", "al-kharid", "01"),)
+chef_pass_params = (("raw-anchovies", "al-kharid", "01"),) # Level-up occurs halfway through
 
 
 @pytest.mark.parametrize("params", chef_pass_params)
@@ -30,7 +30,19 @@ def test_chef_pass(params) -> None:
     item, location, test_number = params
     init_tests.feh("chef", "pass", test_number, image_directory)
     result = main.chef(item=item, location=location, loops=1)
-    assert result is True
+    assert result is None
+    init_tests.kill_feh()
+
+
+# Pass an unsupported location.
+chef_fail_01_params = (("raw-anchovies", "unsupported-location", "00"),)
+
+
+@pytest.mark.parametrize("params", chef_fail_01_params)
+def test_chef_fail_01(params) -> None:
+    item, location, test_number = params
+    with pytest.raises(ValueError, match="Unsupported value for location"):
+        main.chef(item=item, location=location, loops=1)
     init_tests.kill_feh()
 
 
