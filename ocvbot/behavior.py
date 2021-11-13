@@ -99,16 +99,19 @@ def switch_worlds_logged_out(world: str, attempts=5) -> bool:
     return False
 
 
-def check_skills() -> bool:
+def check_skills() -> None:
     """
     Used to mimic human-like behavior. Checks the stats of a random
     skill.
+
+    Returns:
+        Returns after hovering mouse over skill.
 
     """
     open_side_stone("skills")
     inputs.Mouse(region=vis.INV).move_to()
     misc.sleep_rand(1000, 7000)
-    return True
+    return
 
 
 def drop_item(
