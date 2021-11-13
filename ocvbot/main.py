@@ -198,21 +198,26 @@ def alchemist(alch_item_type, loops: int = 10000) -> None:
 
     behavior.open_side_stone("spellbook")
     for _ in range(loops):
-        skills.Magic(
-            spell=spell,
-            target=target,
-            inventory=True,
-            conf=0.5,
-            region=vis.INV_LEFT_HALF,
-            move_duration_range=(0, 200),
-        ).cast_spell()
-        misc.sleep_rand_roll(chance_range=(10, 20), sleep_range=(100, 10000))
+        try:
+            skills.Magic(
+                spell=spell,
+                target=target,
+                inventory=True,
+                conf=0.5,
+                region=vis.INV_LEFT_HALF,
+                move_duration_range=(0, 200),
+            ).cast_spell()
+            misc.sleep_rand_roll(chance_range=(10, 20), sleep_range=(100, 10000))
 
-        # Every once in a while, print the amount of time the bot has been running.
-        # Also roll for randomized logout.
-        if rand.randint(1, 50) == 50:
-            misc.session_duration(human_readable=True)
-            behavior.logout_break_range()
+            # Every once in a while, print the amount of time the bot has been running.
+            # Also roll for randomized logout.
+            if rand.randint(1, 50) == 50:
+                misc.session_duration(human_readable=True)
+                behavior.logout_break_range()
+
+        # This will occur when we're out of runes or out of items to alch.
+        except start.NeedleError as error:
+            raise error
 
 
 def spellcaster(scenario: str, loops: int = 10000) -> None:
