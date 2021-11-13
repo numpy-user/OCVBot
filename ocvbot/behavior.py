@@ -116,11 +116,9 @@ def check_skills() -> None:
 
 def drop_item(
     item,
-    track: bool = True,
-    wait_chance: int = 120,
-    wait_range: tuple[int, int] = (5000, 20000),
+    random_wait: bool = True,
     shift_click: bool = True,
-) -> bool:
+) -> None:
     """
     Drops all instances of the provided item from the inventory.
     The "Shift+Click" setting to drop items MUST be enabled in the OSRS
@@ -129,54 +127,50 @@ def drop_item(
     Args:
        item (file): Filepath to an image of the item to drop, as it
                     appears in the player's inventory.
-       track (bool): Keep track of the number of items dropped in a
-                     global variable, default is True.
-       wait_chance (int): Chance to wait randomly while dropping item,
-                          see wait_rand()'s docstring for more info,
-                          default is 50.
-       wait_range (tuple): A 2-tuple of the minimum number of miliseconds
-                           to wait and the maximum number of miliseconds
-                           to wait if a wait is triggered, default is
-                           (5000, 20000).
+       random_wait (bool): Whether to roll for a chance to randomly wait
+                           while dropping items. Default is True.
        shift_click (bool): Whether to hold down Shift before clicking the
                            item. This arg only exists because it must be
                            disabled when running unit tests with PyTest and
                            feh -- don't change it unless you know what
                            you're doing. Default is True.
+
+    Examples:
+        drop_item("./needles/items/iron-ore.png")
+
+    Returns:
+        Returns when all instances of the given item have been dropped, or when
+        there were already zero instances of the given item in the inventory.
+
+    Raises:
+        Raises start.InventoryError if not all instances of the given item could
+        be dropped.
     """
     # TODO: Create four objects, one for each quadrant of the inventory
     #   and rotate dropping items randomly among each quadrant to make
     #   item-dropping more randomized.
 
-    # Make sure the inventory tab is selected in the main menu.
     open_side_stone("inventory")
 
-    item_remains = vis.Vision(region=vis.INV, loop_num=1, needle=item).wait_for_needle()
-    if item_remains is False:
-        log.info("Could not find %s", item)
-        return False
-
     number_of_items = vis.Vision(region=vis.INV, needle=item).count_needles()
+    if number_of_items == 0:
+        log.info("No instances of item %s exist in the inventory", item)
+        return
+
     log.info("Dropping %s instances of %s", number_of_items, item)
-    for _ in range(40):
+    for _ in range(35):
 
         if shift_click:
             pag.keyDown("shift")
         # Alternate between searching for the item in left half and the
         #   right half of the player's inventory. This helps reduce the
         #   chances the bot will click on the same item twice.
-        item_on_right = vis.Vision(
-            region=vis.INV_RIGHT_HALF, needle=item, loop_num=1
-        ).click_needle(sleep_range=(10, 50, 10, 50))
-        # TODO: This "track" parameter is for stats. implement stats!
-        if item_on_right is True and track is True:
-            start.items_gathered += 1
-
-        item_on_left = vis.Vision(
-            region=vis.INV_LEFT_HALF, needle=item, loop_num=1
-        ).click_needle(sleep_range=(10, 50, 10, 50))
-        if item_on_left is True and track is True:
-            start.items_gathered += 1
+        vis.Vision(region=vis.INV_RIGHT_HALF, needle=item, loop_num=1).click_needle(
+            sleep_range=(10, 50, 10, 50)
+        )
+        vis.Vision(region=vis.INV_LEFT_HALF, needle=item, loop_num=1).click_needle(
+            sleep_range=(10, 50, 10, 50)
+        )
 
         # Search the entire inventory to check if the item is still
         #   there.
@@ -184,19 +178,16 @@ def drop_item(
             region=vis.INV, loop_num=1, needle=item
         ).wait_for_needle()
 
-        # Chance to briefly wait while dropping items.
-        misc.sleep_rand_roll(
-            chance_range=(wait_chance - 10, wait_chance + 10),
-            sleep_range=(wait_range[0], wait_range[1]),
-        )
+        # Chance to sleep while dropping items.
+        if random_wait:
+            misc.sleep_rand_roll(chance_range=(30, 40), sleep_range=(1000, 20000))
 
         if shift_click:
             pag.keyUp("shift")
         if item_remains is False:
-            return True
+            return
 
-    log.error("Tried dropping item too many times!")
-    return False
+    raise start.InventoryError("Tried dropping item too many times!")
 
 
 def human_behavior_rand(chance) -> None:
