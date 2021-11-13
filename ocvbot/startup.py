@@ -118,6 +118,12 @@ class InventoryFull(Exception):
     """
 
 
+class NeedleError(Exception):
+    """
+    A generic exception raised when a necessary needle could not be found.
+    """
+
+
 class RockEmpty(Exception):
     """
     Raised by skills.Miner when the given rock is empty.
