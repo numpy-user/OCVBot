@@ -297,7 +297,8 @@ def withdrawal_item(
 ) -> None:
     """
     Withdrawals an item from the bank. Assumes the bank window is open and
-    the item to withdrawal is visible.
+    the item to withdrawal is visible. Does NOT check if the correct
+    quantity is withdrawn.
 
     Args:
         item_bank (str): Filepath to an image of the item to withdrawal as it
@@ -315,8 +316,7 @@ def withdrawal_item(
                         conf=0.98)
 
     Returns:
-        Returns True if the item was successfully withdrawn from bank,
-        returns False otherwise.
+        Returns if the item was successfully withdrawn from bank,
 
     """
     log.info("Attempting to withdrawal item: %s", item_bank)
