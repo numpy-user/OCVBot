@@ -242,6 +242,14 @@ withdrawal_item_pass_params = (
         "all",
         "01",
     ),
+    # Must set quantity and try 2 times.
+    (
+        "./needles/items/raw-anchovies-bank.png",
+        "./needles/items/raw-anchovies.png",
+        0.95,
+        "10",
+        "02",
+    ),
 )
 
 
@@ -254,6 +262,7 @@ def test_withdrawal_item_pass(params):
     init_tests.kill_feh()
 
 
+# Try too many times to withdrawal item.
 withdrawal_item_fail_params = (
     (
         "./needles/items/raw-anchovies-bank.png",
@@ -269,6 +278,6 @@ withdrawal_item_fail_params = (
 def test_withdrawal_item_fail(params) -> None:
     item_bank, item_inv, conf, quantity, test_number = params
     init_tests.feh("withdrawal_item", "fail", test_number, image_directory)
-    with pytest.raises(Exception, match="Could not withdrawal item"):
+    with pytest.raises(start.BankingError, match="Could not withdrawal item"):
         banking.withdrawal_item(item_bank, item_inv, conf, quantity)
     init_tests.kill_feh()
