@@ -16,7 +16,6 @@ from ocvbot import banking
 from ocvbot import inputs
 from ocvbot import interface
 from ocvbot import misc
-from ocvbot import startup
 from ocvbot import startup as start
 from ocvbot import vision as vis
 
@@ -33,7 +32,7 @@ def switch_worlds_logged_out(world: str, attempts=5) -> bool:
     Y_OFFSET = 19
 
     # Get world's row and col
-    world_info = startup.worlds[world]
+    world_info = start.worlds[world]
     column = world_info["column"]
     row = world_info["row"]
 
