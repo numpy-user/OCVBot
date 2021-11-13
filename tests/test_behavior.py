@@ -64,7 +64,7 @@ def test_drop_item_fail(params) -> None:
     init_tests.feh("drop_item", "fail", test_number, image_directory)
     with pytest.raises(start.InventoryError, match="Tried dropping item too many"):
         behavior.drop_item(item=item, random_wait=False, shift_click=False)
-        init_tests.kill_feh()
+    init_tests.kill_feh()
 
 
 # LOGOUT ------------------------------------------------------------------------------------------
