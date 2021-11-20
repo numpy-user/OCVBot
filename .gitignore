@@ -29,6 +29,9 @@ tests/haystacks/user-interface/maps/world
 **/credentials
 !**/credentials/README.md
 **/ocvbot/config.yaml
+**/tools/available-usernames.txt
+**/tools/unavailable-usernames.txt
+**/tools/possible-usernames.txt
 
 # Temporary and debug files
 **/*backup.png
