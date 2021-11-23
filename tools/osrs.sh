@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
 # Wrapper script for downloading and running the OSRS Java client on Linux.
-# Requires p7zip, wget, and java-11-openjdk.
+# Requires p7zip, wget, and java (openjdk must be <= 13, see wiki link).
+#
+# See for more info: https://oldschool.runescape.wiki/w/Linux_game_installation_guide
 
 # Arguments can be added to the Java applet by passing them on the
 #   command line, e.g. `osrs.sh "-Dhttp.proxyHost=10.0.0.1 -Dhttp.proxyPort=8008"`
@@ -40,6 +42,8 @@ cleanup() {
 }
 
 launch_applet() {
+    # This is the recommended configuration for the applet, as shown here:
+    #   https://oldschool.runescape.wiki/w/Java_Client#Recommended_configuration
     print "Launching Java applet"
     "${java_path}" \
     $* \ 
@@ -47,9 +51,17 @@ launch_applet() {
     -Dsun.java2d.nodraw=true \
     -Dcom.jagex.config="${server}" \
     -Xmx512m \
+    -Xms512m \
     -Xss2m \
-    -XX:CompileThreshold=1500 \
-    jagexappletviewer "."
+    -XX:+DisableExplicitGC \
+    -XX:+AggressiveOpts \
+    -XX:+UseAdaptiveGCBoundary \
+    -XX:MaxGCPauseMillis=500 \
+    -XX:SurvivorRatio=16 \
+    -XX:+UseParallelGC \
+    -XX:+UnlockExperimentalVMOptions \
+    -XX:+TieredCompilation \
+    jagexappletviewer
 }
 
 # Clean up when killed or exiting.
