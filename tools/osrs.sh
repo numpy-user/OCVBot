@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 
-# Helper script for running the OSRS Java client on Linux.
-# Downloads the Java client if it doesn't already exist.
+# Wrapper script for downloading and running the OSRS Java client on Linux.
 # Requires p7zip, wget, and java-11-openjdk.
 
-# Arguments can be added to the `java` command by passing them in a list on the
+# Arguments can be added to the Java applet by passing them on the
 #   command line, e.g. `osrs.sh "-Dhttp.proxyHost=10.0.0.1 -Dhttp.proxyPort=8008"`
 
 # The path to the Java executable you wish to use.
@@ -30,18 +29,13 @@ print() {
         "INFO: $* ####################################################################################################"
 }
 
-# Check for missing software.
-if ! hash wget 2>/dev/null; then echo "wget missing!" && exit 1; fi
-if ! hash 7z 2>/dev/null; then echo "7z missing!" && exit 1; fi
-
 cleanup() {
     print "Cleaning up"
     rm -rf -- \
         "${HOME}/random.dat" \
         "${HOME}/jagex_cl_oldschool_LIVE.dat" \
         "${HOME}/jagexappletviewer.preferences"
-
-    # Hide the cache directory.
+    # Hide the cache directory if it's not hidden.
     [[ -d "${HOME}/jagexcache" ]] && mv -f -- "${HOME}/jagexcache" "${HOME}/.jagexcache"
 }
 
@@ -61,15 +55,17 @@ launch_applet() {
 # Clean up when killed or exiting.
 trap cleanup EXIT
 
-# Un-hide the cache directory if it exists.
+# Check for missing software.
+if ! hash wget 2>/dev/null; then echo "wget missing!" && exit 1; fi
+if ! hash 7z 2>/dev/null; then echo "7z missing!" && exit 1; fi
+
+# Un-hide the cache directory if it's hidden.
 [[ -d "${HOME}/.jagexcache" ]] && mv -f -- "$HOME/.jagexcache" "$HOME/jagexcache"
 
 # Try to enter the JAR directory and run the applet. If the JAR directory
 #   doesn't exist, then attempt to download the applet.
-print "Attempting to enter image directory"
+print "Attempting to enter Java applet directory"
 if cd "${install_location}/osrs.dmg/Old School RuneScape/Old School RuneScape.app/Contents/Java"; then
-
-    # Launch the OSRS client JAR file.
     launch_applet
 
 else
@@ -85,8 +81,8 @@ else
 
     # Try running the applet again.
     cd "${install_location}/osrs.dmg/Old School RuneScape/Old School RuneScape.app/Contents/Java"
-    
     launch_applet
+
 fi
 
 exit 0
