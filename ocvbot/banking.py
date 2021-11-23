@@ -46,10 +46,8 @@ def bank_settings_check(setting: str, value: str) -> None:
     if setting == "quantity":
         if value not in ("1", "5", "10", "all"):
             raise ValueError("Unsupported value for quantity setting!")
-        setting_unset = (
-            "./needles/bank/settings/" + setting + "/" + value + "-unset.png"
-        )
-        setting_set = "./needles/bank/settings/" + setting + "/" + value + "-set.png"
+        setting_unset = f"./needles/bank/settings/{setting}/{value}-unset.png"
+        setting_set = f"./needles/bank/settings/{setting}/{value}-set.png"
 
     elif setting == "placeholder":
         if value == "set":
@@ -265,16 +263,14 @@ def open_bank(direction) -> None:
     for _ in range(5):
         one_tile = vis.Vision(
             region=vis.GAME_SCREEN,
-            needle="./needles/game-screen/bank/bank-booth-" + direction + "-1-tile.png",
+            needle=f"./needles/game-screen/bank/bank-booth-{direction}-1-tile.png",
             loop_num=1,
             conf=0.85,
         ).click_needle()
 
         two_tiles = vis.Vision(
             region=vis.GAME_SCREEN,
-            needle="./needles/game-screen/bank/bank-booth-"
-            + direction
-            + "-2-tiles.png",
+            needle=f"./needles/game-screen/bank/bank-booth-{direction}-2-tiles.png",
             loop_num=1,
             conf=0.85,
         ).click_needle()
