@@ -8,11 +8,11 @@
 #   command line, e.g. `osrs.sh "-Dhttp.proxyHost=10.0.0.1 -Dhttp.proxyPort=8008"`
 
 # The path to the Java executable you wish to use.
-java_path="/usr/lib/jvm/java-11-openjdk/bin/java"
+readonly java_path="/usr/lib/jvm/java-11-openjdk/bin/java"
 
 # These varaiables are unlikely to change.
-server="http://oldschool.runescape.com/jav_config.ws"
-dmg_url="https://www.runescape.com/downloads/OldSchool.dmg"
+readonly server="http://oldschool.runescape.com/jav_config.ws"
+readonly dmg_url="https://www.runescape.com/downloads/OldSchool.dmg"
 
 install_location="${HOME}/.local/share/osrs"
 
@@ -45,6 +45,19 @@ cleanup() {
     [[ -d "${HOME}/jagexcache" ]] && mv -f -- "${HOME}/jagexcache" "${HOME}/.jagexcache"
 }
 
+launch_applet() {
+    print "Launching Java applet"
+    "${java_path}" \
+    $* \ 
+    -Djava.class.path="./jagexappletviewer.jar" \
+    -Dsun.java2d.nodraw=true \
+    -Dcom.jagex.config="${server}" \
+    -Xmx512m \
+    -Xss2m \
+    -XX:CompileThreshold=1500 \
+    jagexappletviewer "."
+}
+
 # Clean up when killed or exiting.
 trap cleanup EXIT
 
@@ -57,16 +70,7 @@ print "Attempting to enter image directory"
 if cd "${install_location}/osrs.dmg/Old School RuneScape/Old School RuneScape.app/Contents/Java"; then
 
     # Launch the OSRS client JAR file.
-    print "Launching Java applet"
-    "${java_path}" \
-        $* \
-        -Djava.class.path=./jagexappletviewer.jar \
-        -Dsun.java2d.nodraw=true \
-        -Dcom.jagex.config="${server}" \
-        -Xmx512m \
-        -Xss2m \
-        -XX:CompileThreshold=1500 \
-        jagexappletviewer "."
+    launch_applet
 
 else
 
@@ -81,16 +85,8 @@ else
 
     # Try running the applet again.
     cd "${install_location}/osrs.dmg/Old School RuneScape/Old School RuneScape.app/Contents/Java"
-    print "Launching Java applet"
-    "${java_path}" \
-        $* \
-        -Djava.class.path=./jagexappletviewer.jar \
-        -Dsun.java2d.nodraw=true \
-        -Dcom.jagex.config="${server}" \
-        -Xmx512m \
-        -Xss2m \
-        -XX:CompileThreshold=1500 \
-        jagexappletviewer "."
+    
+    launch_applet
 fi
 
 exit 0
