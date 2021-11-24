@@ -235,7 +235,8 @@ def enter_bank_pin(pin=(start.config["main"]["bank_pin"])) -> bool:
 
 def open_bank(direction) -> None:
     """
-    Opens the bank. Assumes the player is within 2 empty tiles of a bank booth.
+    Opens the bank. Assumes the player is within 2 tiles of a bank boot and
+    the client is fully zoomed in.
 
     Args:
         direction (str): The cardinal direction of the bank booth relative to
@@ -257,47 +258,28 @@ def open_bank(direction) -> None:
     if direction not in ("north", "south", "east", "west"):
         raise ValueError("Must provide a cardinal direction to open bank!")
 
-    try:
-        vis.Vision(
-            region=vis.GAME_SCREEN, needle="./needles/buttons/close.png", loop_num=1
-        ).wait_for_needle()
-        log.info("Bank window is already open.")
-        return
-    except start.NeedleError:
-        pass
-        
     log.info("Attempting to open bank window.")
+
+    tile_ranges = [
+        f"./needles/game-screen/bank/bank-booth-{direction}-1-tile.png",
+        f"./needles/game-screen/bank/bank-booth-{direction}-2-tiles.png",
+    ]
+    # Try multiple times to open the bank window, while looping through 1-tile
+    #   and 2-tile distance versions of the needle.
     for _ in range(5):
-
-        try:
-            one_tile = vis.Vision(
-                region=vis.GAME_SCREEN,
-                needle=f"./needles/game-screen/bank/bank-booth-{direction}-1-tile.png",
-                loop_num=1,
-                conf=0.85,
-            ).click_needle()
-
-            two_tiles = vis.Vision(
-                region=vis.GAME_SCREEN,
-                needle=f"./needles/game-screen/bank/bank-booth-{direction}-2-tiles.png",
-                loop_num=1,
-                conf=0.85,
-            ).click_needle()
-        except start.NeedleError:
-            pass
-
-        if one_tile is not None or two_tiles is not None:
-            # Wait for the bank window to become visible.
+        for tile in tile_ranges:
             try:
-                vis.Vision(
-                    region=vis.GAME_SCREEN,
-                    needle="./needles/buttons/close.png",
-                    loop_num=10,
-                ).wait_for_needle()
+                interface.enable_button(
+                    button_disabled=tile,
+                    button_disabled_region=vis.GAME_SCREEN,
+                    button_enabled="./needles/buttons/close.png",
+                    button_enabled_region=vis.GAME_SCREEN,
+                    loop_num=1,
+                    conf=0.85,
+                )
                 return
             except start.NeedleError:
                 pass
-        misc.sleep_rand(1000, 3000)
 
     raise start.BankingError("Unable to open bank window!")
 
