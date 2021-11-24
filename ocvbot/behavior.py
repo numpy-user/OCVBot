@@ -164,6 +164,7 @@ def drop_item(
             )
         except start.NeedleError:
             pass
+        try:
             vis.Vision(region=vis.INV_LEFT_HALF, needle=item, loop_num=1).click_needle(
                 sleep_range=(10, 50, 10, 50)
             )
@@ -173,17 +174,16 @@ def drop_item(
         # Search the entire inventory to check if the item is still
         #   there.
         try:
-            item_remains = vis.Vision(region=vis.INV, loop_num=1, needle=item).wait_for_needle()
+            vis.Vision(region=vis.INV, loop_num=1, needle=item).wait_for_needle()
+
+            # Chance to sleep while dropping items.
+            if random_wait:
+                misc.sleep_rand_roll(chance_range=(30, 40), sleep_range=(1000, 20000))
+
         except start.NeedleError:
-            pass
-
-        # Chance to sleep while dropping items.
-        if random_wait:
-            misc.sleep_rand_roll(chance_range=(30, 40), sleep_range=(1000, 20000))
-
-        if shift_click:
-            pag.keyUp("shift")
-        if item_remains is not None:
+            log.debug("No more items in inventory")
+            if shift_click:
+                pag.keyUp("shift")
             return
 
     raise start.InventoryError("Tried dropping item too many times!")
