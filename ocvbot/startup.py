@@ -11,22 +11,6 @@ import time
 import pyautogui as pag
 from ocvbot import config
 
-# TODO: Finish implementing stats.
-# Stats ----------------------------------------------------------------
-
-# Used for tracking how long the script has been running.
-start_time = round(time.time())
-
-# The number of inventories a script has gone through.
-inventories = 0
-# The number of items gathered, approximately.
-items_gathered = 0
-# The amount of experience gained since the script started, approximately.
-xp_gained = 0
-# The amount of experience gained since installing this package
-xp_per_hour = 0
-
-ore_xp_dict = {"copper": 16.5, "iron": 35.5}
 
 # ----------------------------------------------------------------------
 # These variables are used to setup behavior.logout_rand_range(). ------
