@@ -192,7 +192,7 @@ def drop_item(
     raise start.InventoryError("Tried dropping item too many times!")
 
 
-def human_behavior_rand(chance) -> None:
+def human_behavior_rand(chance: int) -> None:
     """
     Randomly chooses from a list of human behaviors if the roll passes.
     This is done to make the bot appear more human.
@@ -202,6 +202,10 @@ def human_behavior_rand(chance) -> None:
                       behavior to be triggered. For example, if this
                       parameter is 25, then there is a 1 in 25 chance
                       for the roll to pass.
+    
+    Examples:
+        Roll with a 1 in 10 chance to pass:
+            human_behavior_rand(25)
 
     Returns:
         Returns after random human behavior has been completed.
@@ -239,14 +243,13 @@ def login_basic(
     username_file=start.config["main"]["username_file"],
     password_file=start.config["main"]["password_file"],
     cred_sleep_range: tuple[int, int] = (800, 5000),
-) -> bool:
+) -> None:
     """
     Performs a login without checking if the login was successful.
-
     Advances to the user credentials screen, enters the user's
-    credentials, and submits the user's credentials, that's it.
+    credentials, and submits the user's credentials.
 
-    Args;
+    Args:
         username_file (file): The path to a file containing the user's
                               username login, by default reads the
                               `username_file` field in the main config
@@ -260,19 +263,22 @@ def login_basic(
                                   between actions while entering account
                                   credentials, default is (800, 5000).
     Returns:
-        Returns True if credentials were entered and a login was
-        initiated. Returns False otherwise.
+        Returns if credentials were entered and a login was
+        initiated.
+    
+    Raises:
+        Raises start.LoginError when a login could not be initiated.
 
     """
-    # Remove line breaks from credential files to make logging in more
-    #   predictable.
+    # Remove line breaks from credential files.
     username = open(username_file, "r", encoding="utf-8").read()
     username = str(username.replace("\n", ""))
     password = open(password_file, "r", encoding="utf-8").read()
     password = str(password.replace("\n", ""))
 
-    for _ in range(1, 3):
-        log.info("Logging in.")
+    for _ in range(3):
+        log.info("Attempting to login with username file %s and password file %s",
+        username_file, password_file)
 
         # Click the "Ok" button if it's present at the login screen.
         # This button appears if the user was disconnected due to
@@ -297,7 +303,7 @@ def login_basic(
 
             if credential_screen is True:
                 # Click to make sure the "Login" field is active.
-                inputs.Mouse(region=(vis.LOGIN_FIELD)).click_coord()
+                inputs.Mouse(region=vis.LOGIN_FIELD).click_coord()
                 # Enter login field credentials.
                 misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
                 inputs.Keyboard(log_keys=False).typewriter(username)
@@ -310,19 +316,20 @@ def login_basic(
                 misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
 
                 inputs.Keyboard().keypress(key="enter")
-                return True
+                log.debug("Initiating login.")
+                return
 
-    log.critical("Could not perform login!")
-    return False
+    raise start.LoginError("Could not perform login!")
 
 
 # TODO: Move to login_menu.py
+# TODO: Refactor, function too large.
 def login_full(
     login_sleep_range: tuple[int, int] = (500, 5000),
     postlogin_sleep_range: tuple[int, int] = (500, 5000),
     username_file=start.config["main"]["username_file"],
     password_file=start.config["main"]["password_file"],
-) -> bool:
+) -> None:
     """
     Logs into the client using the credentials specified in the main
     config file. Waits until the login is successful before returning.
@@ -336,72 +343,56 @@ def login_full(
                                        miliseconds to wait after clicking
                                        the "Click here to play" button,
                                        default is (500, 5000).
+        username_file (file): The path to a file containing the user's
+                              username login, by default reads the
+                              `username_file` field in the main config
+                              file.
+        password_file (file): The path to a file containing the user's
+                              password, by default reads the
+                              `password_file` field in the main config
+                              file.
+    Examples:
+        Login using the values provided in the config file:
+            login_full()
 
-    Raises:
-        Raises an exception if the login was not successful for any
-        reason.
+        Override the values in the config file:
+            login_full(username_file="./credentials/my-username-file.txt",
+                       password_file="./credentials/my-password-file.txt")
 
     Returns:
-        Returns True if the login was successful.
+        Returns if the login was successful.
+
+    Raises:
+        Raises start.LoginError if the login was not successful for any
+        reason.
 
     """
-    log.info("Attempting to login.")
-    for _ in range(1, 3):
+    for _ in range(3):
 
-        login = login_basic(username_file, password_file)
-        if login is False:
-            raise Exception("Could not perform initial login!")
-
+        login_basic(username_file, password_file)
         misc.sleep_rand(login_sleep_range[0], login_sleep_range[1])
-        postlogin_screen_button = vis.Vision(
-            region=vis.CLIENT,
-            needle="./needles/login-menu/orient-postlogin.png",
-            conf=0.8,
-            loop_num=10,
-            loop_sleep_range=(1000, 2000),
-        ).click_needle()
 
-        if postlogin_screen_button is True:
+        # Click the postlogin button and wait for the game client to become
+        #   visible.
+        try:
+            interface.enable_button(
+                button_disabled="./needles/login-menu/orient-postlogin.png",
+                button_disabled_region=vis.CLIENT,
+                button_enabled="./needles/minimap/orient.png",
+                button_enabled_region=vis.CLIENT,
+                loop_num=20,
+                conf=0.85
+            )
             misc.sleep_rand(postlogin_sleep_range[0], postlogin_sleep_range[1])
-
-            # Wait for the orient function to return true in order to
-            #    confirm the login.
-            logged_in = vis.Vision(
-                region=vis.CLIENT,
-                needle="./needles/minimap/orient.png",
-                loop_num=50,
-                loop_sleep_range=(1000, 2000),
-            ).wait_for_needle()
-            if logged_in is True:
-                # Reset the timer that's used to count the number of
-                #   seconds the bot has been running for.
-                start.start_time = time.time()
-                # Make sure client camera is oriented correctly after
-                #   logging in.
-                # TODO: move this to a 'configure_camera' function
-                pag.keyDown("Up")
-                misc.sleep_rand(3000, 7000)
-                pag.keyUp("Up")
-                return True
-            raise Exception("Could not detect login after postlogin screen!")
-        # Begin checking for the various non-successful login messages.
-        #   This includes messages like "invalid credentials",
-        #   "you must be a member to use this world", "cannot
-        #   connect to server," etc.
-        log.warning("Cannot find postlogin screen!")
-
-        # TODO: Add additional checks to other login messages.
-        invalid_credentials = vis.Vision(
-            region=vis.CLIENT,
-            needle="./needles/login-menu/invalid-credentials.png",
-            loop_num=1,
-        ).wait_for_needle()
-        if invalid_credentials is True:
-            raise Exception("Invalid user credentials!")
-        log.critical("Cannot find postlogin screen!")
-
-    raise Exception("Unable to login!")
-
+            # Make sure client camera is oriented correctly after
+            #   logging in.
+            # TODO: Move this to a 'configure_camera' function.
+            pag.keyDown("Up")
+            misc.sleep_rand(5000, 9000)
+            pag.keyUp("Up")
+            return
+        except start.NeedleError:
+            raise start.LoginError("Cannot find postlogin screen!")
 
 # TODO: Move to inventory.py
 def logout() -> None:
