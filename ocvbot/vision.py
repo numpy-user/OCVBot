@@ -11,14 +11,14 @@ from ocvbot import inputs
 from ocvbot import misc
 from ocvbot import startup as start
 
-# -------------------------------------------------------------------------------------------------
-# Setup the necessary region tuples for the Vision class and orient the client.
-# -------------------------------------------------------------------------------------------------
 
 # Set initial values for vision regions.
+#
 # See ./docs/client_anatomy.png for more info.
-# Captures the width and height of various different elements within the
-#  game client. Units are in pixels.
+#
+# Capture the width and height of various different elements within the
+#   game client. Values of tuples start at (0, 0, 0, 0) until they are defined
+#   by the init() function. Units are in pixels.
 
 BANK_ITEMS_WINDOW_WIDTH = 375
 BANK_ITEMS_WINDOW_HEIGHT = 215
@@ -116,18 +116,21 @@ def wait_for_needle_list(
 # TODO: Add examples of usage.
 class Vision:
     """
-    Contains methods for locating images on the display.
+    Main class locating and clicking on images on the display.
     All coordinates are relative to the top left corner of the display.
     All coordinates are in a (left, top, width, height) format.
 
     Args:
         region (tuple): A 4-tuple containing the Left, Top, Width, and
                         Height of the region in which to look for the
-                        needle.
-        needle (file): The image to search within the (ltwh) coordinates
-                       for. Must be a filepath.
+                        needle. This typically will be one of the tuples
+                        defined at the top of this file like `INV` or
+                        `GAME_SCREEN`.
+        needle (file): A filepath to an the image to search for within the
+                       `region` tuple.
         loctype (str): Whether to return the needle's (ltwh) coordinates
-                       or its (X, Y) center.
+                       or its (X, Y) center. Available values are `regular`
+                       and `center`.
             regular = Returns the needle's left, top, width, and height
                       as a 4-tuple.
             center = Returns the (X, Y) coordinates of the needle's
@@ -135,18 +138,18 @@ class Vision:
                      dimensions).
         conf (float): The confidence value required to match the needle
                       successfully, expressed as a decimal <= 1. This is
-                      used by PyAutoGUI, default is 0.95.
+                      used by PyAutoGUI. Default is 0.95.
         loop_num (int): The number of times wait_for_needle() will search
-                        the given coordinates for the needle, default is
+                        the given coordinates for the needle. Default is
                         10.
         loop_sleep_range (tuple): A 2-tuple containing the minimum and
                                   maximum number of miliseconds to wait
                                   between image-search loops. Used by
-                                  the wait_for_needle() method, default
+                                  the wait_for_needle() method. Default
                                   is (0, 100).
         grayscale (bool): Converts the haystack to grayscale before
                           searching within it. Speeds up searching by
-                          about 30%, default is false.
+                          about 30%. Default is False.
 
     """
 
@@ -185,9 +188,6 @@ class Vision:
             If the needle is not found, returns False.
 
         """
-        # Make sure file path is OS-agnostic.
-        needle = str(pathlib.Path(self.needle))
-
         if self.loctype == "regular":
             needle_coords = pag.locateOnScreen(
                 needle,
