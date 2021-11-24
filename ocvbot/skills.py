@@ -28,16 +28,16 @@ def wait_for_level_up(wait_time: int):
 
     """
     log.debug("Checking for level-up")
-    level_up = vis.Vision(
-        region=vis.CHAT_MENU,
-        needle="./needles/chat-menu/level-up.png",
-        loop_num=wait_time,
-        loop_sleep_range=(900, 1100),
-    ).wait_for_needle()
-
-    if level_up is True:
+    try:
+        vis.Vision(
+            region=vis.CHAT_MENU,
+            needle="./needles/chat-menu/level-up.png",
+            loop_num=wait_time,
+            loop_sleep_range=(900, 1100),
+        ).wait_for_needle()
         return True
-    return False
+    except start.NeedleError:
+        return False
 
 
 class Cooking:
@@ -74,34 +74,35 @@ class Cooking:
         # Select the raw food in the inventory.
         # Confidence must be higher than normal since raw food is very
         #   similar in appearance to its cooked version.
-        item_selected = vis.Vision(
-            region=vis.CLIENT, needle=self.item_inv, loop_num=3, conf=0.99
-        ).click_needle()
-        if item_selected is False:
-            log.error("Unable to find item %s!", self.item_inv)
-            return False
+        try:
+            vis.Vision(
+                region=vis.CLIENT, needle=self.item_inv, loop_num=3, conf=0.99
+            ).click_needle()
+        except start.NeedleError:
+            raise start.NeedleError("Unable to find item!", self.item_inv)
 
         # Select the range or fire.
-        heat_source_selected = vis.Vision(
-            region=vis.GAME_SCREEN,
-            needle=self.heat_source,
-            loop_num=3,
-            loop_sleep_range=(500, 1000),
-            conf=0.80,
-        ).click_needle()
-        if heat_source_selected is False:
-            log.error("Unable to find heat source %s!", self.heat_source)
-            return False
+        try:
+            vis.Vision(
+                region=vis.GAME_SCREEN,
+                needle=self.heat_source,
+                loop_num=3,
+                loop_sleep_range=(500, 1000),
+                conf=0.80,
+            ).click_needle()
+        except start.NeedleError:
+            raise start.NeedleError("Unable to find heat source!", self.heat_source)
 
         # Wait for the "how many of this item do you want to cook" chat
         #   menu to appear.
-        do_x_screen = vis.Vision(
-            region=vis.CHAT_MENU,
-            needle="./needles/chat-menu/do-x.png",
-            loop_num=30,
-            loop_sleep_range=(500, 1000),
-        ).wait_for_needle()
-        if do_x_screen is False:
+        try:
+            do_x_screen = vis.Vision(
+                region=vis.CHAT_MENU,
+                needle="./needles/chat-menu/do-x.png",
+                loop_num=30,
+                loop_sleep_range=(500, 1000),
+            ).wait_for_needle()
+        except start.NeedleError:
             log.error('Timed out waiting for "Make X" screen!')
             return False
 
@@ -120,15 +121,18 @@ class Cooking:
             # If the player levels-up while cooking, restart cooking.
             if level_up is True:
                 self.cook_item()
-            cooking_done = vis.Vision(
-                region=vis.GAME_SCREEN,
-                needle="./needles/game-screen/staff-of-water-top.png",
-                conf=0.9,
-                loop_num=1,
-            ).wait_for_needle()
-            if cooking_done is True:
+            try:
+                # Check if cooking has finished.
+                vis.Vision(
+                    region=vis.GAME_SCREEN,
+                    needle="./needles/game-screen/staff-of-water-top.png",
+                    conf=0.9,
+                    loop_num=1,
+                ).wait_for_needle()
                 log.info("Cooking is done.")
                 break
+            except start.NeedleError:
+                pass
         return True
 
 
@@ -185,21 +189,20 @@ class Magic:
 
         """
         for _ in range(5):
-            spell_available = vis.Vision(
-                needle=self.spell, region=vis.INV, loop_num=2
-            ).click_needle(
-                sleep_range=(
-                    50,
-                    800,
-                    50,
-                    800,
-                ),
-                move_duration_range=self.move_duration_range,
-            )
-            if spell_available is False:
+            try:
+                vis.Vision(
+                    needle=self.spell, region=vis.INV, loop_num=2
+                ).click_needle(
+                    sleep_range=(
+                        50,
+                        800,
+                        50,
+                        800,
+                    ),
+                    move_duration_range=self.move_duration_range,
+                )
+            except start.NeedleError:
                 behavior.open_side_stone("spellbook")
-            else:
-                return
         raise start.NeedleError("Could not select spell!")
 
     def _select_target(self) -> None:
@@ -215,23 +218,22 @@ class Magic:
 
         """
         for _ in range(5):
-            target = vis.Vision(
-                needle=self.target, region=self.region, loop_num=2, conf=self.conf
-            ).click_needle(
-                sleep_range=(
-                    10,
-                    500,
-                    10,
-                    500,
-                ),
-                move_duration_range=self.move_duration_range,
-            )
-            if target is False:
+            try:
+                vis.Vision(
+                    needle=self.target, region=self.region, loop_num=2, conf=self.conf
+                ).click_needle(
+                    sleep_range=(
+                        10,
+                        500,
+                        10,
+                        500,
+                    ),
+                    move_duration_range=self.move_duration_range,
+                )
+            except start.NeedleError:
                 # Make sure the inventory is active when casting on items.
                 if self.inventory is True:
                     behavior.open_side_stone("inventory")
-            else:
-                return
         raise start.NeedleError("Could not find target!")
 
     def cast_spell(self) -> None:
@@ -325,16 +327,18 @@ class Mining:
           returns False otherwise.
         """
         log.debug("Checking for full inventory.")
-        inventory_full = vis.Vision(
-            region=vis.CHAT_MENU,
-            loop_num=3,
-            needle="./needles/chat-menu/mining-inventory-full.png",
-            conf=0.85,
-        ).wait_for_needle()
-        if inventory_full is True:
+        try:
+            inventory_full = vis.Vision(
+                region=vis.CHAT_MENU,
+                loop_num=3,
+                needle="./needles/chat-menu/mining-inventory-full.png",
+                conf=0.85,
+            ).wait_for_needle()
+            log.debug("Inventory is full.")
             return True
-        log.debug("Inventory is not full.")
-        return False
+        except start.NeedleError:
+            log.debug("Inventory is not full.")
+            return False
 
     def _mine_rock(self, rock_full_needle, rock_empty_needle) -> None:
         """
@@ -351,14 +355,14 @@ class Mining:
         # If rock is full, begin mining it.
         # Move the mouse away from the rock so it doesn't interfere with
         #   matching the needle.
-        rock_full = vis.Vision(
-            region=vis.GAME_SCREEN,
-            loop_num=1,
-            needle=rock_full_needle,
-            conf=self.conf,
-        ).click_needle(move_away=True)
-
-        if rock_full is False:
+        try:
+            vis.Vision(
+                region=vis.GAME_SCREEN,
+                loop_num=1,
+                needle=rock_full_needle,
+                conf=self.conf,
+            ).click_needle(move_away=True)
+        except start.NeedleError:
             raise start.RockEmpty("Rock is already empty!")
 
         # Wait until the rock is empty or the inventory is full.
@@ -370,17 +374,18 @@ class Mining:
             if self._is_inventory_full() is True:
                 raise start.InventoryFull("Inventory is full!")
 
-            rock_empty = vis.Vision(
-                region=vis.GAME_SCREEN,
-                loop_num=3,
-                conf=self.conf,
-                needle=rock_empty_needle,
-                loop_sleep_range=(100, 600),
-            ).wait_for_needle()
-            if rock_empty is True:
+            try:
+                rock_empty = vis.Vision(
+                    region=vis.GAME_SCREEN,
+                    loop_num=3,
+                    conf=self.conf,
+                    needle=rock_empty_needle,
+                    loop_sleep_range=(100, 600),
+                ).wait_for_needle()
                 log.info("Rock has been mined.")
                 return
-
+            except start.NeedleError:
+                pass
         raise start.TimeoutException("Timeout waiting for rock to be mined!")
 
     def mine_multiple_rocks(self) -> None:
@@ -505,29 +510,27 @@ class Smithing:
         """
         log.info("Attempting to click anvil.")
 
-        anvil_clicked = vis.Vision(
-            region=vis.GAME_SCREEN,
-            needle=self.anvil,
-            loop_num=3,
-            loop_sleep_range=(500, 1000),
-            conf=0.85,
-        ).click_needle()
+        # TODO: Refactor these two try/except blocks to use enable_button()
+        try:
+            vis.Vision(
+                region=vis.GAME_SCREEN,
+                needle=self.anvil,
+                loop_num=3,
+                loop_sleep_range=(500, 1000),
+                conf=0.85,
+            ).click_needle()
+        except start.NeedleError:
+            raise start.NeedleError("Unable to find anvil!", self.anvil)
 
-        if anvil_clicked is False:
-            log.error("Unable to find anvil %s!", self.anvil)
-            return False
-
-        smith_menu_open = vis.Vision(
-            region=vis.CLIENT,
-            needle="./needles/buttons/close.png",
-            loop_num=30,
-        ).wait_for_needle()
-
-        misc.sleep_rand_roll(chance_range=(20, 35), sleep_range=(1000, 6000))
-
-        if smith_menu_open is False:
-            log.error("Timed out waiting for smithing menu.")
-            return False
+        try:
+            vis.Vision(
+                region=vis.CLIENT,
+                needle="./needles/buttons/close.png",
+                loop_num=30,
+            ).wait_for_needle()
+            misc.sleep_rand_roll(chance_range=(20, 35), sleep_range=(1000, 6000))
+        except start.NeedleError:
+            raise start.TimeoutException("Timed out waiting for smithing menu!")
 
         return True
 
@@ -545,17 +548,13 @@ class Smithing:
 
         log.info("Attempting to select item to smith.")
 
-        menu_clicked = vis.Vision(
+        vis.Vision(
             region=vis.GAME_SCREEN,
             needle=self.item_in_menu,
             loop_num=3,
             loop_sleep_range=(500, 1000),
             conf=0.85,
         ).click_needle()
-        if menu_clicked is False:
-            log.error("Unable to click menu item %s!", self.item_in_menu)
-            return False
-
         log.info("Smithing...")
 
         # Wait for either a level-up or for smithing to finish.

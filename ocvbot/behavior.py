@@ -37,29 +37,18 @@ def switch_worlds_logged_out(world: str, attempts=5) -> bool:
     row = world_info["row"]
 
     # Click world switch button
-    switcher_clicked = vis.Vision(
+    vis.Vision(
         region=vis.CLIENT, needle="needles/login-menu/world-switcher-logged-out.png"
     ).click_needle()
 
-    if switcher_clicked is False:
-        log.error("Unable to find world switcher!")
-        return False
-
     # Wait for green world filter button, fails if filter is not set correctly
-    world_filter = vis.Vision(
-        region=vis.CLIENT, needle="needles/login-menu/world-filter-enabled.png"
-    ).wait_for_needle()
-
-    if world_filter is False:
-        enabled_filter = interface.enable_button(
-            "needles/login-menu/world-filter-disabled.png",
-            vis.CLIENT,
-            "needles/login-menu/world-filter-enabled.png",
-            vis.CLIENT,
-        )
-        if enabled_filter is False:
-            return False
-
+    interface.enable_button(
+        "needles/login-menu/world-filter-disabled.png",
+        vis.CLIENT,
+        "needles/login-menu/world-filter-enabled.png",
+        vis.CLIENT,
+    )
+    
     # If the world is off screen
     if column > MAX_COLUMNS:
         # Click next page until the world is on screen
@@ -160,25 +149,33 @@ def drop_item(
         return
 
     log.info("Dropping %s instances of %s", number_of_items, item)
+    # 28 is the maximum number of items in the inventory, so give up after
+    #   trying too many times.
     for _ in range(35):
 
         if shift_click:
             pag.keyDown("shift")
         # Alternate between searching for the item in left half and the
         #   right half of the player's inventory. This helps reduce the
-        #   chances the bot will click on the same item twice.
-        vis.Vision(region=vis.INV_RIGHT_HALF, needle=item, loop_num=1).click_needle(
-            sleep_range=(10, 50, 10, 50)
-        )
-        vis.Vision(region=vis.INV_LEFT_HALF, needle=item, loop_num=1).click_needle(
-            sleep_range=(10, 50, 10, 50)
-        )
+        #   chance the function will click on the same item twice.
+        try:
+            vis.Vision(region=vis.INV_RIGHT_HALF, needle=item, loop_num=1).click_needle(
+                sleep_range=(10, 50, 10, 50)
+            )
+        except start.NeedleError:
+            pass
+            vis.Vision(region=vis.INV_LEFT_HALF, needle=item, loop_num=1).click_needle(
+                sleep_range=(10, 50, 10, 50)
+            )
+        except start.NeedleError:
+            pass
 
         # Search the entire inventory to check if the item is still
         #   there.
-        item_remains = vis.Vision(
-            region=vis.INV, loop_num=1, needle=item
-        ).wait_for_needle()
+        try:
+            item_remains = vis.Vision(region=vis.INV, loop_num=1, needle=item).wait_for_needle()
+        except start.NeedleError:
+            pass
 
         # Chance to sleep while dropping items.
         if random_wait:
@@ -186,7 +183,7 @@ def drop_item(
 
         if shift_click:
             pag.keyUp("shift")
-        if item_remains is False:
+        if item_remains is not None:
             return
 
     raise start.InventoryError("Tried dropping item too many times!")
@@ -283,41 +280,46 @@ def login_basic(
         # Click the "Ok" button if it's present at the login screen.
         # This button appears if the user was disconnected due to
         #   inactivity.
-        ok_button = vis.Vision(
-            region=vis.CLIENT, needle="./needles/login-menu/ok-button.png", loop_num=1
-        ).click_needle()
+        # TODO: Refactor to use enable_button()
+        try:
+            ok_button = vis.Vision(
+                region=vis.CLIENT, needle="./needles/login-menu/ok-button.png", loop_num=1
+            ).click_needle()
+        except start.NeedleError:
+            pass
         # If the "Ok" button isn't found, look for the "Existing user"
         #   button.
-        existing_user_button = vis.Vision(
-            region=vis.CLIENT,
-            needle="./needles/login-menu/existing-user-button.png",
-            loop_num=1,
-        ).click_needle()
-
-        if existing_user_button is True or ok_button is True:
-            credential_screen = vis.Vision(
+        try:
+            existing_user_button = vis.Vision(
                 region=vis.CLIENT,
-                needle="./needles/login-menu/login-cancel-buttons.png",
-                loop_num=5,
-            ).wait_for_needle()
+                needle="./needles/login-menu/existing-user-button.png",
+                loop_num=1,
+            ).click_needle()
+        except start.NeedleError:
+            pass
 
-            if credential_screen is True:
-                # Click to make sure the "Login" field is active.
-                inputs.Mouse(region=vis.LOGIN_FIELD).click_coord()
-                # Enter login field credentials.
-                misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
-                inputs.Keyboard(log_keys=False).typewriter(username)
-                misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
+        vis.Vision(
+            region=vis.CLIENT,
+            needle="./needles/login-menu/login-cancel-buttons.png",
+            loop_num=5,
+        ).wait_for_needle()
 
-                # Click to make sure the "Password" field is active.
-                inputs.Mouse(region=(vis.PASS_FIELD)).click_coord()
-                # Enter password field credentials and login.
-                inputs.Keyboard(log_keys=False).typewriter(password)
-                misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
+        # Click to make sure the "Login" field is active.
+        inputs.Mouse(region=vis.LOGIN_FIELD).click_coord()
+        # Enter login field credentials.
+        misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
+        inputs.Keyboard(log_keys=False).typewriter(username)
+        misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
 
-                inputs.Keyboard().keypress(key="enter")
-                log.debug("Initiating login.")
-                return
+        # Click to make sure the "Password" field is active.
+        inputs.Mouse(region=(vis.PASS_FIELD)).click_coord()
+        # Enter password field credentials and login.
+        inputs.Keyboard(log_keys=False).typewriter(password)
+        misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
+
+        inputs.Keyboard().keypress(key="enter")
+        log.debug("Initiating login.")
+        return
 
     raise start.LoginError("Could not perform login!")
 
@@ -339,9 +341,9 @@ def login_full(
                                    maximum number of miliseconds to wait
                                    after hitting "Enter" to login,
                                    default is (500, 5000).
-        postlogin_sleep_range (tuple): The minimum and maximum number of
-                                       miliseconds to wait after clicking
-                                       the "Click here to play" button,
+        postlogin_sleep_range (tuple): A 2-tuple of The minimum and maximum
+                                       number of miliseconds to wait after
+                                       clicking the "Click here to play" button,
                                        default is (500, 5000).
         username_file (file): The path to a file containing the user's
                               username login, by default reads the
@@ -394,6 +396,7 @@ def login_full(
         except start.NeedleError:
             raise start.LoginError("Cannot find postlogin screen!")
 
+
 # TODO: Move to inventory.py
 def logout() -> None:
     """
@@ -416,52 +419,29 @@ def logout() -> None:
     banking.close_bank()
     open_side_stone("logout")
 
-    def is_logged_out() -> bool:
-        logged_out = vis.Vision(
-            region=vis.CLIENT,
-            needle="./needles/login-menu/orient-logged-out.png",
-            loop_num=5,
-            loop_sleep_range=(1000, 1200),
-        ).wait_for_needle()
-        if logged_out is True:
-            return True
-
-    # Look for any one of the three possible logout buttons.
-    for _ in range(5):
-
+    logout_buttons = [
         # The standard logout button.
-        logout_button = vis.Vision(
-            region=vis.INV,
-            needle="./needles/side-stones/logout/logout.png",
-            conf=0.9,
-            loop_num=1,
-        ).click_needle(move_away=True)
-        if logout_button is True:
-            if is_logged_out() is True:
-                return
-
+        "./needles/side-stones/logout/logout.png",
         # The logout button as it appears when the mouse is over it.
-        logout_button_highlighted = vis.Vision(
-            region=vis.INV,
-            needle="./needles/side-stones/logout/logout-highlighted.png",
-            conf=0.9,
-            loop_num=1,
-        ).click_needle(move_away=True)
-        if logout_button_highlighted is True:
-            if is_logged_out() is True:
-                return
-
+        "./needles/side-stones/logout/logout-highlighted.png",
         # The logout button when the world switcher is open.
-        logout_button_world_switcher = vis.Vision(
-            region=vis.SIDE_STONES,
-            needle="./needles/side-stones/logout/logout-world-switcher.png",
-            conf=0.95,
-            loop_num=1,
-        ).click_needle(move_away=True)
-        if logout_button_world_switcher is True:
-            if is_logged_out() is True:
-                return
-
+        "./needles/side-stones/logout/logout-world-switcher.png",
+    ]
+    # Try clicking on any one of the three possible logout buttons, then wait
+    #   to confirm the logout.
+    for button in logout_buttons:
+        try:
+            interface.enable_button(
+                button_disabled=button,
+                button_disabled_region=vis.INV,
+                button_enabled="./needles/login-menu/orient-logged-out.png",
+                button_enabled_region=vis.CLIENT,
+                loop_num=20,
+                conf=0.9
+            )
+        # If we can't find the current button, just move on to the next one.
+        except start.NeedleError:
+            pass
     raise Exception("Could not logout!")
 
 

@@ -203,10 +203,11 @@ def enter_bank_pin(pin=(start.config["main"]["bank_pin"])) -> bool:
     """
     pin = tuple(str(pin))
     # Confirm that the bank PIN screen is actually present.
-    bank_pin_screen = vis.Vision(
-        region=vis.GAME_SCREEN, needle="./needles/.png", loop_num=1
-    ).wait_for_needle(get_tuple=False)
-    if bank_pin_screen is False:
+    try:
+        bank_pin_screen = vis.Vision(
+            region=vis.GAME_SCREEN, needle="./needles/.png", loop_num=1
+        ).wait_for_needle()
+    except start.NeedleError:
         return True
 
     # Loop through the different PIN screens for each of the 4 digits.
@@ -216,7 +217,7 @@ def enter_bank_pin(pin=(start.config["main"]["bank_pin"])) -> bool:
         #   appear.
         pin_ordinal_prompt = vis.Vision(
             region=vis.GAME_SCREEN, needle="./needles/" + str(pin_ordinal), loop_num=1
-        ).wait_for_needle(get_tuple=False)
+        ).wait_for_needle()
 
         # Enter the first/second/third/fourth digit of the PIN.
         if pin_ordinal_prompt is True:
@@ -252,40 +253,49 @@ def open_bank(direction) -> None:
     if direction not in ("north", "south", "east", "west"):
         raise ValueError("Must provide a cardinal direction to open bank!")
 
-    bank_open = vis.Vision(
-        region=vis.GAME_SCREEN, needle="./needles/buttons/close.png", loop_num=1
-    ).wait_for_needle()
-    if bank_open is True:
+    try:
+        vis.Vision(
+            region=vis.GAME_SCREEN, needle="./needles/buttons/close.png", loop_num=1
+        ).wait_for_needle()
         log.info("Bank window is already open.")
         return
-
+    except start.NeedleError:
+        pass
+        
     log.info("Attempting to open bank window.")
     for _ in range(5):
-        one_tile = vis.Vision(
-            region=vis.GAME_SCREEN,
-            needle=f"./needles/game-screen/bank/bank-booth-{direction}-1-tile.png",
-            loop_num=1,
-            conf=0.85,
-        ).click_needle()
 
-        two_tiles = vis.Vision(
-            region=vis.GAME_SCREEN,
-            needle=f"./needles/game-screen/bank/bank-booth-{direction}-2-tiles.png",
-            loop_num=1,
-            conf=0.85,
-        ).click_needle()
-
-        if one_tile is True or two_tiles is True:
-            bank_open = vis.Vision(
+        try:
+            one_tile = vis.Vision(
                 region=vis.GAME_SCREEN,
-                needle="./needles/buttons/close.png",
-                loop_num=10,
-            ).wait_for_needle()
-            if bank_open is True:
+                needle=f"./needles/game-screen/bank/bank-booth-{direction}-1-tile.png",
+                loop_num=1,
+                conf=0.85,
+            ).click_needle()
+
+            two_tiles = vis.Vision(
+                region=vis.GAME_SCREEN,
+                needle=f"./needles/game-screen/bank/bank-booth-{direction}-2-tiles.png",
+                loop_num=1,
+                conf=0.85,
+            ).click_needle()
+        except start.NeedleError:
+            pass
+
+        if one_tile is not None or two_tiles is not None:
+            # Wait for the bank window to become visible.
+            try:
+                vis.Vision(
+                    region=vis.GAME_SCREEN,
+                    needle="./needles/buttons/close.png",
+                    loop_num=10,
+                ).wait_for_needle()
                 return
+            except start.NeedleError:
+                pass
         misc.sleep_rand(1000, 3000)
 
-    raise Exception("Unable to open bank window!")
+    raise start.NeedleError("Unable to open bank window!")
 
 
 def withdrawal_item(
