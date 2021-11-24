@@ -165,11 +165,15 @@ def deposit_item(item, quantity) -> None:
 
     # Try clicking on the item multiple times.
     for _ in range(5):
-        vis.Vision(
-            region=vis.INV,
-            needle=item,
-            loop_num=3,
-        ).click_needle(sleep_range=(0, 100, 0, 100), move_away=True)
+
+        try:
+            vis.Vision(
+                region=vis.INV,
+                needle=item,
+                loop_num=3,
+            ).click_needle(sleep_range=(0, 100, 0, 100), move_away=True)
+        except start.NeedleError:
+            pass
 
         # Loop and wait until the item has been deposited.
         for _ in range(10):
