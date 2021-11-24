@@ -468,23 +468,23 @@ def logout() -> None:
 # TODO: Move to misc.py
 def logout_break_range() -> None:
     """
-    Triggers a random logout within a specific range of times, set by the user
-    in the main config file. Additional configuration for this function is set
-    by variables in startup.py.
+    Triggers a logout break at some point between the minimum and maximum
+    session duration, as set by the user in the main config file. This function
+    should be called periodically from higher-level scripts in main.py.
 
-    To determine when a logout roll should occur, this function creates five
-    evenly-spaced timestamps at which to roll for a logout. These timestamps
+    To determine when we should roll for a logout break, this function creates five
+    evenly-spaced timestamps at which we roll for a logout. These timestamps
     are called "checkpoints". Each roll has a 1/5 chance to pass. The first and
-    last checkpoints are based on the user-defined minimum and maximum session
-    duration. As a result of this, the last checkpoint's roll always has a 100%
+    last checkpoints are determined by the user-defined minimum and maximum session
+    duration. As a result, the last checkpoint's roll always has a 100%
     chance of success. All variables set by this function are reset if a logout
     roll passes.
 
-    When called, this function checks if an checkpoint's timestamp has passed
-    and hasn't yet been rolled. If true, it rolls for that checkpoint and marks
-    it (so it's not rolled again). If the roll passes, a logout is called and
+    When called, this function checks if a checkpoint's timestamp has passed
+    but hasn't yet been rolled. If true, we roll for that checkpoint and mark
+    it, so it's not rolled again. If the roll passes, a logout is called and
     all checkpoints are reset. If the roll fails or a checkpoint's timestamp
-    hasn't yet passed, the function does nothing and returns.
+    hasn't yet passed, this function does nothing and returns.
 
     """
     current_time = round(time.time())
@@ -512,12 +512,8 @@ def logout_break_range() -> None:
         logout_break_roll(5)
 
     # The last checkpoint's timestamp is based on the maximum session
-    #   duration, so force a logout and reset all the other checkpoints.
+    #   duration, so force a logout.
     elif current_time >= start.checkpoint_5:
-        start.checkpoint_1_checked = False
-        start.checkpoint_2_checked = False
-        start.checkpoint_3_checked = False
-        start.checkpoint_4_checked = False
         logout_break_roll(1)
 
     # Print the correct logging information according to which checkpoint(s)
@@ -542,55 +538,72 @@ def logout_break_roll(
     max_break_duration=int(start.config["main"]["max_break_duration"]),
 ) -> None:
     """
-    Rolls for a chance to take a logout break.
+    Rolls for a chance to take a logout break. If the roll passes, logs out
+    for a random period of time, then logs back in.
+
+    If the roll passes, the session_number is incremented. if the session_number
+    has reached the max number of sessions configured, then this function will
+    stop the bot.
 
     Args:
-        chance (int): See wait_rand()'s docstring.
+        chance (int): The probability for the roll to pass is 1/chance.
         min_break_duration (int): The minimum number of minutes to wait
-                                  if the roll passes, by default reads
+                                  if the roll passes. By default reads
                                   the config file.
         max_break_duration (int): The maximum number of minutes to wait
-                                  if the roll passes, by default reads
+                                  if the roll passes. by default reads
                                   the config file.
+    
+    Examples:
+        Roll for a 1 in 25 chance to trigger a logout break:
+            logout_break_roll(25)
+        
+        Force a logout break:
+            logout_break_roll(1)
+    
+    Returns:
+        Returns if the roll has failed or once a logout break has been
+        completed and the client has logged back in.
 
     """
     logout_roll = rand.randint(1, chance)
-    log.info("Logout roll was %s, needed %s", logout_roll, chance)
-
-    if logout_roll == chance:
-        log.info("Random logout called.")
-        logout()
-        # Make sure all checkpoints are reset.
-        start.checkpoint_1_checked = False
-        start.checkpoint_2_checked = False
-        start.checkpoint_3_checked = False
-        start.checkpoint_4_checked = False
-
-        # Track the number of play sessions that have occurred so far.
-        start.session_num += 1
-        log.info("Completed session %s/%s", start.session_num, start.session_total)
-
-        # If the maximum number of sessions has been reached, kill the bot.
-        if start.session_num >= start.session_total:
-            log.info("Final session completed! Script done.")
-            sys.exit(0)
-
-        else:
-            # Convert from minutes to miliseconds.
-            min_break_duration *= 60000
-            max_break_duration *= 60000
-            wait_time_seconds = misc.rand_seconds(
-                min_break_duration, max_break_duration
-            )
-
-            # Convert back to human-readable format for logging.
-            wait_time_minutes = wait_time_seconds / 60
-            log.info("Sleeping for %s minutes.", round(wait_time_minutes))
-
-            time.sleep(wait_time_seconds)
-            login_full()
-    else:
+    if logout_roll != chance:
+        log.info("Logout roll was %s, needed %s", logout_roll, chance)
         return
+
+    log.info("Random logout called.")
+    logout()
+
+    # Reset all checkpoints for the next session.
+    start.checkpoint_1_checked = False
+    start.checkpoint_2_checked = False
+    start.checkpoint_3_checked = False
+    start.checkpoint_4_checked = False
+
+    # Increment the number of play sessions that have occurred so far.
+    start.session_num += 1
+    log.info("Completed session %s/%s", start.session_num, start.session_total)
+
+    # If the maximum number of sessions has been reached, kill the bot.
+    if start.session_num >= start.session_total:
+        log.info("Final session completed! Exiting.")
+        sys.exit(0)
+
+    # Convert from minutes to miliseconds.
+    min_break_duration *= 60000
+    max_break_duration *= 60000
+
+    # Determine the length of the break.
+    wait_time_seconds = misc.rand_seconds(
+        min_break_duration, max_break_duration
+    )
+
+    # Make human-readable for logging.
+    wait_time_minutes = wait_time_seconds / 60
+    log.info("Sleeping for %s minutes.", round(wait_time_minutes))
+
+    time.sleep(wait_time_seconds)
+    login_full()
 
 
 # TODO: Move to inventory.py
