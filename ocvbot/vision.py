@@ -114,6 +114,8 @@ def wait_for_needle_list(
 
 
 # TODO: Add examples of usage.
+# TODO: Rename to "Needle" or "Image". Create another class for pixel matching
+#   called "Pixel".
 class Vision:
     """
     Main class locating and clicking on images on the display.

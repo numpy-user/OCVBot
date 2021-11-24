@@ -20,6 +20,7 @@ from ocvbot import vision as vis
 # TODO: Finish enter_bank_pin() function.
 
 
+# TODO: Rename to "configure_bank_settings"
 def bank_settings_check(setting: str, value: str) -> None:
     """
     Checks for specific bank window configuration settings.
@@ -284,6 +285,7 @@ def open_bank(direction) -> None:
     raise start.BankingError("Unable to open bank window!")
 
 
+# TODO: Use code from deposit_item() to check that correct quantity is withdrawn.
 def withdrawal_item(
     item_bank: str, item_inv: str, conf: float = 0.95, quantity: str = "all"
 ) -> None:
