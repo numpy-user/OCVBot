@@ -40,7 +40,7 @@ def bank_settings_check(setting: str, value: str) -> None:
     Raises:
         Raises a ValueError if the setting or value is not supported.
 
-        Raises an Exception if the setting could not be set.
+        Raises start.BankingError if the setting could not be set.
 
     """
     if setting == "quantity":
@@ -70,8 +70,8 @@ def bank_settings_check(setting: str, value: str) -> None:
             button_enabled=setting_set,
             button_enabled_region=vis.GAME_SCREEN,
         )
-    except Exception as error:
-        raise Exception("Could not set bank setting!") from error
+    except start.NeedleError as error:
+        raise start.BankingError("Could not set bank setting!") from error
 
 
 def close_bank():
@@ -79,7 +79,7 @@ def close_bank():
     Closes the bank window if it is open.
 
     Raises:
-        Raises an exception if the bank window could not be closed.
+        Raises start.BankingError if the bank window could not be closed.
 
     """
     # Must use invert_match here because we want to check for the absence of
@@ -92,8 +92,8 @@ def close_bank():
             button_enabled_region=vis.GAME_SCREEN,
             invert_match=True,
         )
-    except Exception as error:
-        raise Exception("Could not close bank window!") from error
+    except start.NeedleError as error:
+        raise start.BankingError("Could not close bank window!") from error
 
 
 def deposit_inventory() -> None:
@@ -102,7 +102,7 @@ def deposit_inventory() -> None:
     open and the "deposit inventory" button is visible.
 
     Raises:
-        Raises an exception if the inventory could not be deposited.
+        Raises start.BankingError if the inventory could not be deposited.
 
     """
     try:
@@ -112,8 +112,8 @@ def deposit_inventory() -> None:
             button_enabled="./needles/side-stones/inventory/empty-inventory.png",
             button_enabled_region=vis.INV,
         )
-    except Exception as error:
-        raise Exception("Could not deposit inventory!") from error
+    except start.NeedleError as error:
+        raise start.BankingError("Could not deposit inventory!") from error
 
 
 def deposit_item(item, quantity) -> None:
@@ -134,8 +134,8 @@ def deposit_item(item, quantity) -> None:
     Raises:
         Raises a ValueError if `quantity` doesn't match the available values.
 
-        Raises a BankingError if too many items were deposited by mistake.
-        Raises a BankingError if the item could not be deposited.
+        Raises start.BankingError if too many items were deposited by mistake.
+        Raises start.BankingError if the item could not be deposited.
 
     """
     # Count the initial number of the given item in the inventory.
@@ -247,7 +247,7 @@ def open_bank(direction) -> None:
     Raises:
         Raises a ValueError if an invalid direction is given.
 
-        Raises an Exception if the bank could not be opened.
+        Raises start.BankingError if the bank could not be opened.
 
     """
     if direction not in ("north", "south", "east", "west"):
@@ -295,7 +295,7 @@ def open_bank(direction) -> None:
                 pass
         misc.sleep_rand(1000, 3000)
 
-    raise start.NeedleError("Unable to open bank window!")
+    raise start.BankingError("Unable to open bank window!")
 
 
 def withdrawal_item(
