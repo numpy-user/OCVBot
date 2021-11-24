@@ -118,6 +118,13 @@ class InventoryFull(Exception):
     """
 
 
+class LoginError(Exception):
+    """
+    Raised when an unexpected or unrecoverable situation occurs at the
+      login screen.
+    """
+
+
 class NeedleError(Exception):
     """
     A generic exception raised when a necessary needle could not be found.
