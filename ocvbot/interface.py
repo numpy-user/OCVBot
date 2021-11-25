@@ -88,26 +88,26 @@ def enable_button(
         vis.Vision(
             region=button_enabled_region, needle=button_enabled, loop_num=1, conf=conf
         ).wait_for_needle()
-
         if invert_match is False:
             log.debug("Button %s was already enabled", button_enabled)
-        elif invert_match is True:
-            log.debug("Button %s was already enabled (invert_match)", button_enabled)
-        return
+            return
 
+    # If we're inverting the match, then we want to check for the absence of
+    #   button_enabled.
     except start.NeedleError:
-        pass
-    
+        if invert_match is True:
+            log.debug("Button %s was already enabled (invert_match)", button_enabled)
+            return
 
     # Try multiple times to enable the button.
     for _ in range(attempts):
 
-        log.debug("Attempting to enable button %s", button_enabled)
+        log.debug("Attempting to enable button %s with conf %s", button_enabled, conf)
 
         # Move mouse out of the way after clicking so the function can
         #   tell if the button is enabled.
         try:
-            clicked_button_disabled = vis.Vision(
+            vis.Vision(
                 region=button_disabled_region,
                 needle=button_disabled,
                 loop_num=2,
@@ -125,10 +125,13 @@ def enable_button(
             ).wait_for_needle()
             if invert_match is False:
                 log.debug("Button %s has been enabled", button_enabled)
-            elif invert_match is True:
-                log.debug("Button %s has been enabled (invert_match)", button_enabled)
-            return
+                return
+
+        # Again, if we're inverting the match, then we want to check for the
+        #   absence of button_enabled.
         except start.NeedleError:
-            pass
+            if invert_match is True:
+                log.debug("Button %s has been enabled (invert_match)", button_enabled)
+                return
 
     raise start.NeedleError("Could not find button_enabled!", button_enabled)
