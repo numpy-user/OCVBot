@@ -31,7 +31,7 @@ def test_check_skills_pass(params) -> None:
     test_number = params
     init_tests.feh("check_skills", "pass", test_number, image_directory)
     result = behavior.check_skills()
-    assert result is True
+    assert result is None
     init_tests.kill_feh()
 
 
@@ -133,4 +133,4 @@ def test_open_side_stone_fail(params) -> None:
     init_tests.feh("open_side_stone", "fail", test_number, image_directory)
     with pytest.raises(Exception, match="Could not open side stone!"):
         behavior.open_side_stone(side_stone)
-        init_tests.kill_feh()
+    init_tests.kill_feh()
