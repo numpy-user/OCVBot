@@ -101,7 +101,6 @@ def check_skills() -> None:
     open_side_stone("skills")
     inputs.Mouse(region=vis.INV).move_to()
     misc.sleep_rand(1000, 7000)
-    return
 
 
 # TODO: Move to inventory.py
@@ -432,21 +431,24 @@ def logout() -> None:
         # The logout button when the world switcher is open.
         "./needles/side-stones/logout/logout-world-switcher.png",
     ]
-    # Try clicking on any one of the three possible logout buttons, then wait
-    #   to confirm the logout.
-    for button in logout_buttons:
-        try:
-            interface.enable_button(
-                button_disabled=button,
-                button_disabled_region=vis.INV,
-                button_enabled="./needles/login-menu/orient-logged-out.png",
-                button_enabled_region=vis.CLIENT,
-                loop_num=20,
-                conf=0.9
-            )
-        # If we can't find the current button, just move on to the next one.
-        except start.NeedleError:
-            pass
+    # Try clicking on any one of the three possible logout buttons multiple
+    #   times, then wait to confirm the logout.
+    for _ in range(3):
+        for button in logout_buttons:
+            try:
+                interface.enable_button(
+                    button_disabled=button,
+                    button_disabled_region=vis.SIDE_STONES,
+                    button_enabled="./needles/login-menu/orient-logged-out.png",
+                    button_enabled_region=vis.CLIENT,
+                    attempts=3,
+                    loop_num=15,
+                    conf=0.9,
+                )
+                return
+            # If we can't find the current button, just move on to the next one.
+            except start.NeedleError:
+                pass
     raise Exception("Could not logout!")
 
 
