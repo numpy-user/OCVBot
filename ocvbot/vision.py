@@ -239,10 +239,10 @@ class Vision:
 
             try:
                 needle_coords = Vision.find_needle(self)
-                log.debug("Found %s after trying %s times.", self.needle, tries)
+                log.debug("Found %s in region %s after trying %s times.", self.needle, self.region, tries)
                 return needle_coords
             except start.NeedleError:
-                log.debug("Cannot find %s, tried %s times.", self.needle, tries)
+                log.debug("Cannot find %s in region %s, tried %s times.", self.needle, self.region, tries)
                 misc.sleep_rand(self.loop_sleep_range[0], self.loop_sleep_range[1])
 
         raise start.NeedleError("Timed out looking for needle!", self.needle)
@@ -257,7 +257,7 @@ class Vision:
         button: str = "left",
         move_away: bool = False,
         number_of_clicks: int = 1,
-    ) -> bool:
+    ) -> None:
         """
         Moves the mouse to the provided needle image and clicks on
         it. Automatically randomizes the location the mouse cursor
@@ -331,7 +331,7 @@ class Vision:
             return number_of_needles
 
         # If no needles can be found, then the number of needles is 0.
-        except ImageNotFoundException:
+        except pag.ImageNotFoundException:
             return 0
 
 
@@ -395,7 +395,7 @@ def orient(
         ).wait_for_needle()
         log.info("Client is logged out.")
         return "logged_out", logged_out
-    except start.NeedleError
+    except start.NeedleError:
         raise RuntimeError("Unable to locate client!")
 
 
