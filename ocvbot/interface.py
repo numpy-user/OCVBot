@@ -6,8 +6,8 @@ switches, and various other game interface elements.
 """
 import logging as log
 
-from ocvbot import vision as vis
 from ocvbot import startup as start
+from ocvbot import vision as vis
 
 
 # TODO: Add a set_compass(direction) function, as the client now supports

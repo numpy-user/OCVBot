@@ -22,7 +22,9 @@ image_directory = (os.path.dirname(__file__)) + "/test_main/"
 
 # CHEF --------------------------------------------------------------------------------------------
 
-chef_pass_params = (("raw-anchovies", "al-kharid", "01"),) # Level-up occurs halfway through
+chef_pass_params = (
+    ("raw-anchovies", "al-kharid", "01"),
+)  # Level-up occurs halfway through
 
 
 @pytest.mark.parametrize("params", chef_pass_params)

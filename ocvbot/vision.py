@@ -226,7 +226,7 @@ class Vision:
         Returns:
             If self.loctype is `regular`, returns a 4-tuple containing the
             (left, top, width, height) coordinates of the needle.
-            
+
             If self.loctype is `center`, returns a 2-tuple containing the
             (X, Y) center of the needle.
 
@@ -383,7 +383,7 @@ def orient(
         return "logged_in", logged_in
     except start.NeedleError:
         pass
-    
+
     try:
         # If the client is not logged in, check if it's logged out.
         logged_out = Vision(

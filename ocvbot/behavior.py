@@ -48,7 +48,7 @@ def switch_worlds_logged_out(world: str, attempts=5) -> bool:
         "needles/login-menu/world-filter-enabled.png",
         vis.CLIENT,
     )
-    
+
     # If the world is off screen
     if column > MAX_COLUMNS:
         # Click next page until the world is on screen
@@ -199,7 +199,7 @@ def human_behavior_rand(chance: int) -> None:
                       behavior to be triggered. For example, if this
                       parameter is 25, then there is a 1 in 25 chance
                       for the roll to pass.
-    
+
     Examples:
         Roll with a 1 in 10 chance to pass:
             human_behavior_rand(25)
@@ -262,7 +262,7 @@ def login_basic(
     Returns:
         Returns if credentials were entered and a login was
         initiated.
-    
+
     Raises:
         Raises start.LoginError when a login could not be initiated.
 
@@ -274,8 +274,11 @@ def login_basic(
     password = str(password.replace("\n", ""))
 
     for _ in range(3):
-        log.info("Attempting to login with username file %s and password file %s",
-        username_file, password_file)
+        log.info(
+            "Attempting to login with username file %s and password file %s",
+            username_file,
+            password_file,
+        )
 
         # Click the "Ok" button if it's present at the login screen.
         # This button appears if the user was disconnected due to
@@ -283,7 +286,9 @@ def login_basic(
         # TODO: Refactor to use enable_button()
         try:
             ok_button = vis.Vision(
-                region=vis.CLIENT, needle="./needles/login-menu/ok-button.png", loop_num=1
+                region=vis.CLIENT,
+                needle="./needles/login-menu/ok-button.png",
+                loop_num=1,
             ).click_needle()
         except start.NeedleError:
             pass
@@ -383,7 +388,7 @@ def login_full(
                 button_enabled="./needles/minimap/orient.png",
                 button_enabled_region=vis.CLIENT,
                 loop_num=20,
-                conf=0.85
+                conf=0.85,
             )
             misc.sleep_rand(postlogin_sleep_range[0], postlogin_sleep_range[1])
             # Make sure client camera is oriented correctly after
@@ -533,14 +538,14 @@ def logout_break_roll(
         max_break_duration (int): The maximum number of minutes to wait
                                   if the roll passes. by default reads
                                   the config file.
-    
+
     Examples:
         Roll for a 1 in 25 chance to trigger a logout break:
             logout_break_roll(25)
-        
+
         Force a logout break:
             logout_break_roll(1)
-    
+
     Returns:
         Returns if the roll has failed or once a logout break has been
         completed and the client has logged back in.
@@ -574,9 +579,7 @@ def logout_break_roll(
     max_break_duration *= 60000
 
     # Determine the length of the break.
-    wait_time_seconds = misc.rand_seconds(
-        min_break_duration, max_break_duration
-    )
+    wait_time_seconds = misc.rand_seconds(min_break_duration, max_break_duration)
 
     # Make human-readable for logging.
     wait_time_minutes = wait_time_seconds / 60
