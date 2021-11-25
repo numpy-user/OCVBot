@@ -43,6 +43,7 @@ checkpoint_interval = (max_session_duration_sec - min_session_duration_sec) / 4
 
 # Space each checkpoint evenly between the min duration and the max
 #   duration.
+start_time = round(time.time())
 checkpoint_1 = round(start_time + min_session_duration_sec)
 checkpoint_2 = round(start_time + min_session_duration_sec + checkpoint_interval)
 checkpoint_3 = round(start_time + min_session_duration_sec + (checkpoint_interval * 2))
