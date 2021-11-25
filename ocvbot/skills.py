@@ -201,6 +201,7 @@ class Magic:
                     ),
                     move_duration_range=self.move_duration_range,
                 )
+                return
             except start.NeedleError:
                 behavior.open_side_stone("spellbook")
         raise start.NeedleError("Could not select spell!")
@@ -230,6 +231,7 @@ class Magic:
                     ),
                     move_duration_range=self.move_duration_range,
                 )
+                return
             except start.NeedleError:
                 # Make sure the inventory is active when casting on items.
                 if self.inventory is True:
@@ -328,7 +330,7 @@ class Mining:
         """
         log.debug("Checking for full inventory.")
         try:
-            inventory_full = vis.Vision(
+            vis.Vision(
                 region=vis.CHAT_MENU,
                 loop_num=3,
                 needle="./needles/chat-menu/mining-inventory-full.png",
@@ -362,6 +364,7 @@ class Mining:
                 needle=rock_full_needle,
                 conf=self.conf,
             ).click_needle(move_away=True)
+            return
         except start.NeedleError:
             raise start.RockEmpty("Rock is already empty!")
 
@@ -375,7 +378,7 @@ class Mining:
                 raise start.InventoryFull("Inventory is full!")
 
             try:
-                rock_empty = vis.Vision(
+                vis.Vision(
                     region=vis.GAME_SCREEN,
                     loop_num=3,
                     conf=self.conf,
@@ -439,9 +442,7 @@ class Mining:
                 "Free inventory too small! Must have at least 5 free spaces!"
             )
 
-        ore_dropped = behavior.drop_item(item=self.ore)
-        if ore_dropped is False:
-            raise Exception("Could not find any ore to drop!")
+        behavior.drop_item(item=self.ore)
 
         # Iterate through the other items that could be dropped. If any of them
         #   is true, drop that item.
