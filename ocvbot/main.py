@@ -379,6 +379,7 @@ def smith(bar: str, item: str, location: str, loops: int = 10000):
             item_bank="./needles/items/hammer-bank.png",
             item_inv="./needles/items/hammer.png",
             quantity="1",
+            conf=0.9,
         )
         misc.sleep_rand_roll(chance_range=(20, 30))
         banking.withdrawal_item(item_bank=bar, item_inv=bar)
