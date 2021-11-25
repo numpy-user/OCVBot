@@ -48,6 +48,23 @@ def test_chef_fail_01(params) -> None:
     init_tests.kill_feh()
 
 
+# MINER -------------------------------------------------------------------------------------------
+
+miner_pass_params = (
+    ("camdozaal-mine", "01"),
+    ("varrock-east-mine", "02"),
+)
+
+
+@pytest.mark.parametrize("params", miner_pass_params)
+def test_miner_pass(params) -> None:
+    scenario, test_number = params
+    init_tests.feh("miner", "pass", test_number, image_directory)
+    result = main.miner(scenario=scenario, loops=2)
+    assert result is None
+    init_tests.kill_feh()
+
+
 # SMITH -------------------------------------------------------------------------------------------
 
 smith_pass_params = (("iron-bar", "iron-platebody", "varrock", "01"),)
