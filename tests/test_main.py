@@ -58,7 +58,7 @@ def test_smith_pass(params) -> None:
     bar_type, item, location, test_number = params
     init_tests.feh("smith", "pass", test_number, image_directory)
     result = main.smith(bar=bar_type, item=item, location=location, loops=1)
-    assert result is True
+    assert result is None
     init_tests.kill_feh()
 
 
