@@ -23,6 +23,9 @@ import traceback
 
 # Global TODOs:
 # TODO: Transition to use proper exceptions rather than checking for a False return value.
+# TODO: Use snake_case for all image files and paths.
+# TODO: Fix installation method to use `pip install -e .` so we don't need to
+#   edit the sys.path variables.
 
 # TODO: See if these statements are really necessary since they're in init.py
 # Make sure the program's working directory is the directory in which
@@ -413,16 +416,6 @@ def cleanup():
     glob_string = ".screenshot2*[0-9][0-9][0-9][0-9][0-9][0-9].png"
     for filepath in glob.glob(glob_string):
         os.remove(filepath)
-
-
-# TODO: Add basic firemaking script that starts at a bank booth and
-#   creates 27 fires, all in a straight line, then returns to the booth.
-
-# TODO: Add oak woodcutting script that waits by an oak tree, clicks on
-#   it when it appears, and empties inventory when full -- super simple.
-
-# TODO: Possible location for starting a fishing script where the
-#  "fishing tiles" don't change much is fly fishing at barbarian village.
 
 
 script = start.config["main"]["script"]

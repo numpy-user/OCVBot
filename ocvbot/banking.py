@@ -16,7 +16,6 @@ from ocvbot import misc
 from ocvbot import startup as start
 from ocvbot import vision as vis
 
-# TODO: Add search_for_item() function.
 # TODO: Finish enter_bank_pin() function.
 
 
@@ -234,6 +233,8 @@ def enter_bank_pin(pin=(start.config["main"]["bank_pin"])) -> bool:
     return True
 
 
+# TODO: Instead of using direction, use a list of supported banks, since some
+#   bank booths look different from others.
 def open_bank(direction) -> None:
     """
     Opens the bank. Assumes the player is within 2 tiles of a bank boot and
