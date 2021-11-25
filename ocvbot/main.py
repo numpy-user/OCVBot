@@ -197,7 +197,7 @@ def alchemist(alch_item_type, loops: int = 10000) -> None:
     if alch_item_type == "bank-note":
         target = "./needles/items/bank-note.png"
     else:
-        target = "./needles/items/" + alch_item_type + ".png"
+        target = f"./needles/items/{alch_item_type}.png"
 
     behavior.open_side_stone("spellbook")
     for _ in range(loops):
@@ -292,9 +292,9 @@ def chef(item: str, location: str, loops: int = 10000) -> None:
     # Must have staff of water equipped!
     # TODO: In Al Kharid, deal with the door to the house with the range
     #   possibly being shut.
-    haystack_map = "./haystacks/" + location + ".png"
-    item_inv = "./needles/items/" + item + ".png"
-    item_bank = "./needles/items/" + item + "-bank.png"
+    haystack_map = f"./haystacks/{location}.png"
+    item_inv = f"./needles/items/{item}.png"
+    item_bank = f"./needles/items/{item}-bank.png"
 
     for _ in range(loops):
         try:
@@ -346,8 +346,8 @@ def smith(bar: str, item: str, location: str, loops: int = 10000):
 
     # We can use banked versions of the smith item because the smithing menu
     #   has the same background as the bank menu.
-    bar = "./needles/items/" + bar + ".png"
-    item = "./needles/items/" + item + "-bank.png"
+    bar = f"./needles/items/{bar}.png"
+    item = f"./needles/items/{item}-bank.png"
 
     # Determine how many bars are needed to smith the given item.
     if "platebody" in item:
