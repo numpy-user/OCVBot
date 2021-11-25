@@ -48,16 +48,17 @@ def miner(scenario: str, loops: int = 10000) -> None:
     Script for mining rocks in a handful of locations. Banking support is
     limited.
 
-    Supported scenarios:
-        `lumbridge-mine` = Mines copper in Lumbridge Swamp.
-        `varrock-east-mine` = Mines iron in Varrock East mine. Banking
-                              supported.
+    Args:
+        scenario (str): See the `magic` section of `config.yaml.example` for
+                        the available options.
+        loops (int): Number of loops to run the given scenario. Changing this
+                     is only useful for testing purposes. Default is 10000.
 
         See `/docs/scenarios/` for the required client
         configuration settings for each scenario.
 
     Raises:
-        Raises an exception if an unsupported scenario is passed.
+        Raises a ValueError if an unsupported scenario is passed.
 
     """
     # TODO: Function is too large. Refactor.
@@ -141,7 +142,7 @@ def miner(scenario: str, loops: int = 10000) -> None:
             drop_clue_geode=drop_clue_geode_config,
         )
     else:
-        raise Exception("Scenario not supported!")
+        raise ValueError("Scenario not supported!")
 
     # MAIN FUNCTION LOOP --------------------------------------------------------------------------
 
@@ -233,8 +234,11 @@ def spellcaster(scenario: str, loops: int = 10000) -> None:
         loops (int): Number of loops to run the given scenario. Changing this
                      is only useful for testing purposes. Default is 10000.
 
+        See `/docs/scenarios/` for the required client
+        configuration settings for each scenario.
+
     Raises:
-        Raises an exception if an unsupported scenario is passed.
+        Raises a ValueError if an unsupported scenario is passed.
 
     """
     log.info("Launching spellcaster script with scenario %s.", scenario)
@@ -245,7 +249,7 @@ def spellcaster(scenario: str, loops: int = 10000) -> None:
         haystack_map = "./haystacks/varrock-castle.png"
         behavior.travel([((75, 128), 1, (4, 4), (5, 10))], haystack_map)
     else:
-        raise Exception("Scenario not supported!")
+        raise ValueError("Scenario not supported!")
 
     behavior.open_side_stone("spellbook")
     for _ in range(loops):
@@ -276,7 +280,9 @@ def chef(item: str, location: str, loops: int = 10000) -> None:
         loops (int): Number of loops to run the given scenario. Changing this
                      is only useful for testing purposes. Default is 10000.
 
-    Returns:
+    Raises:
+        Raises a ValueError if an unsupported location is passed.
+
 
     """
     if location == "al-kharid":
@@ -335,6 +341,9 @@ def smith(bar: str, item: str, location: str, loops: int = 10000):
         loops (int): Number of loops to run the given scenario. Changing this
                      is only useful for testing purposes. Default is 10000.
 
+    Raises:
+        Raises a ValueError if an unsupported location is passed.
+
     """
     if location == "varrock":
         haystack_map = "./haystacks/varrock-west-bank.png"
@@ -342,7 +351,7 @@ def smith(bar: str, item: str, location: str, loops: int = 10000):
         anvil_coords = [((97, 130), 1, (3, 3), (7, 9))]
         anvil = "./needles/game-screen/varrock/anvil.png"
     else:
-        raise Exception("Unsupported value for location!")
+        raise ValueError("Unsupported value for location!")
 
     # We can use banked versions of the smith item because the smithing menu
     #   has the same background as the bank menu.
