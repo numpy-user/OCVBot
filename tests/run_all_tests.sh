@@ -33,7 +33,7 @@ sed -i \
 # Run the test suite with coverage check.
 cd "${script_dir}" || exit 1
 source "${script_dir}/../ocvbot_venv/bin/activate"
-coverage run --source=ocvbot -m pytest .
+coverage run --source=ocvbot -m pytest -v .
 coverage html
 
 exit 0
