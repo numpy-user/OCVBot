@@ -5,7 +5,8 @@ Unit tests for the vision.py module.
 Linux only. Requires feh.
 
 """
-import psutil
+import os
+
 import pytest
 
 import init_tests
@@ -15,6 +16,8 @@ pass
 
 # OCVBot modules must be imported after init_tests.
 from ocvbot import vision as vis
+
+image_directory = (os.path.dirname(__file__)) + "/test_vision/"
 
 # COUNT_NEEDLES -----------------------------------------------------------------------------------
 
