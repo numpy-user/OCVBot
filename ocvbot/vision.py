@@ -216,8 +216,6 @@ class Vision:
         raise start.NeedleError("Timed out looking for needle!", self.needle)
 
     # TODO: Add examples of usage.
-    # TODO: When using move_away, ensure mouse moves to a location on the
-    #   display that the client doesn't occupy.
     def click_needle(
         self,
         sleep_range: tuple[int, int, int, int] = (50, 200, 50, 200),
@@ -268,10 +266,18 @@ class Vision:
 
         log.debug("Clicking on %s", self.needle)
 
+        # Ensure the mouse moves completely off the client.
         if move_away is True:
+
+            # Unpack CLIENT tuple so we can get to the left and top values.
+            (client_left, client_top, CLIENT_WIDTH, CLIENT_HEIGHT) = CLIENT
+            client_bottom = client_top + CLIENT_HEIGHT
+            client_right = client_left + CLIENT_WIDTH
+
             inputs.Mouse(
-                region=(25, 25, 100, 100), move_duration_range=(50, 200)
-            ).moverel()
+                region=(client_bottom + 2, client_right + 2, 3, 3),
+                move_duration_range=(5, 20),
+            ).move_to()
 
     def count_needles(self):
         """
