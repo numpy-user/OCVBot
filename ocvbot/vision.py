@@ -197,10 +197,20 @@ class Vision:
 
             try:
                 needle_coords = Vision.find_needle(self)
-                log.debug("Found %s in region %s after trying %s times.", self.needle, self.region, tries)
+                log.debug(
+                    "Found %s in region %s after trying %s times.",
+                    self.needle,
+                    self.region,
+                    tries,
+                )
                 return needle_coords
             except start.NeedleError:
-                log.debug("Cannot find %s in region %s, tried %s times.", self.needle, self.region, tries)
+                log.debug(
+                    "Cannot find %s in region %s, tried %s times.",
+                    self.needle,
+                    self.region,
+                    tries,
+                )
                 misc.sleep_rand(self.loop_sleep_range[0], self.loop_sleep_range[1])
 
         raise start.NeedleError("Timed out looking for needle!", self.needle)
