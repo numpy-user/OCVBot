@@ -592,7 +592,7 @@ def logout_break_roll(
 
 
 # TODO: Move to inventory.py
-def open_side_stone(side_stone) -> bool:
+def open_side_stone(side_stone) -> None:
     """
     Opens a side stone menu.
 
@@ -610,22 +610,25 @@ def open_side_stone(side_stone) -> bool:
         Raises an exception if side stone could not be opened.
 
     """
-    side_stone_open = "./needles/side-stones/open/" + side_stone + ".png"
-    side_stone_closed = "./needles/side-stones/closed/" + side_stone + ".png"
+    side_stone_open = f"./needles/side-stones/open/{side_stone}.png"
+    side_stone_closed = f"./needles/side-stones/closed/{side_stone}.png"
 
-    try:
-        banking.close_bank()
-        log.debug("Ensuring side stone %s is open", side_stone)
-        interface.enable_button(
-            button_disabled=side_stone_closed,
-            button_disabled_region=vis.SIDE_STONES,
-            button_enabled=side_stone_open,
-            button_enabled_region=vis.SIDE_STONES,
-            conf=0.98,
-        )
-    except Exception as error:
-        raise Exception("Could not open side stone!") from error
-    return True
+    log.debug("Ensuring side stone %s is open", side_stone)
+    for attempts in range(5):
+        try:
+            banking.close_bank()
+            interface.enable_button(
+                button_disabled=side_stone_closed,
+                button_disabled_region=vis.SIDE_STONES,
+                button_enabled=side_stone_open,
+                button_enabled_region=vis.SIDE_STONES,
+                conf=0.98,
+            )
+            log.debug("Side stone %s open after %s tries", side_stone, attempts)
+            return
+        except start.NeedleError:
+            pass
+    raise Exception("Could not open side stone!")
 
 
 # TODO: Update the terminology used in this function. Make sure to
