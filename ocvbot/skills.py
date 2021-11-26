@@ -190,9 +190,7 @@ class Magic:
         """
         for _ in range(5):
             try:
-                vis.Vision(
-                    needle=self.spell, region=vis.INV, loop_num=2
-                ).click_needle(
+                vis.Vision(needle=self.spell, region=vis.INV, loop_num=5).click_needle(
                     sleep_range=(
                         50,
                         800,
@@ -221,7 +219,7 @@ class Magic:
         for _ in range(5):
             try:
                 vis.Vision(
-                    needle=self.target, region=self.region, loop_num=2, conf=self.conf
+                    needle=self.target, region=self.region, loop_num=5, conf=self.conf
                 ).click_needle(
                     sleep_range=(
                         10,
