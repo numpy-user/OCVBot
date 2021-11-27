@@ -438,7 +438,7 @@ class Mining:
         ores_in_inventory = vis.Vision(region=vis.INV, needle=self.ore).count_needles()
         if ores_in_inventory <= 5:
             raise start.InefficientUseOfInventory(
-                "Free inventory too small! Must have at least 5 free spaces!"
+                "Free inventory too small! Must have at least 6 free spaces!"
             )
 
         behavior.drop_item(item=self.ore)
