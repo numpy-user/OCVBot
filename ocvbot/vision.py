@@ -271,11 +271,11 @@ class Vision:
 
             # Unpack CLIENT tuple so we can get to the left and top values.
             (client_left, client_top, CLIENT_WIDTH, CLIENT_HEIGHT) = CLIENT
-            client_bottom = client_top + CLIENT_HEIGHT
             client_right = client_left + CLIENT_WIDTH
+            client_bottom = client_top + CLIENT_HEIGHT
 
             inputs.Mouse(
-                region=(client_bottom + 2, client_right + 2, 3, 3),
+                region=(client_right + 2, client_bottom + 2, 3, 3),
                 move_duration_range=(5, 20),
             ).move_to()
 
