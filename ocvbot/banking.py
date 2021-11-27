@@ -283,7 +283,7 @@ def open_bank(direction) -> None:
                     button_disabled_region=vis.GAME_SCREEN,
                     button_enabled="./needles/buttons/close.png",
                     button_enabled_region=vis.GAME_SCREEN,
-                    loop_num=1,
+                    loop_num=3,
                     conf=0.85,
                 )
                 return
