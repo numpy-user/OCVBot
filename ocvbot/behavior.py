@@ -169,6 +169,8 @@ def drop_item(
             )
         except start.NeedleError:
             pass
+        if shift_click:
+            pag.keyUp("shift")
 
         # Search the entire inventory to check if the item is still
         #   there.
@@ -181,8 +183,6 @@ def drop_item(
 
         except start.NeedleError:
             log.debug("No more items in inventory")
-            if shift_click:
-                pag.keyUp("shift")
             return
 
     raise start.InventoryError("Tried dropping item too many times!")
