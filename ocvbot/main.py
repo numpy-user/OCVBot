@@ -391,7 +391,7 @@ def smith(bar: str, item: str, location: str, loops: int = 10000):
             conf=0.9,
         )
         misc.sleep_rand_roll(chance_range=(20, 30))
-        banking.withdrawal_item(item_bank=bar, item_inv=bar)
+        banking.withdrawal_item(item_bank=bar, item_inv=bar, conf=0.99)
         misc.sleep_rand_roll(chance_range=(20, 30))
 
         # Check if we withdrew a full inventory of bars. Stop script if we didn't
