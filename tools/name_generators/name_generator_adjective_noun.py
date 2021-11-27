@@ -16,9 +16,9 @@ All nouns and adjectives over 8 characters long are ignored due to the
    difficulty of finding adjective/noun pairs <12 characters long.
 """
 import logging as log
+import pathlib
 import random as rand
 import sys
-import pathlib
 
 # The number of names to generate. Due to the way name generation works, this
 #   is an approximation and not exact.
@@ -40,7 +40,9 @@ sys.setrecursionlimit(9999999)
 SCRIPTPATH = str(pathlib.Path(__file__).parent.absolute())
 
 # Read adjective and noun files into a list.
-with open(f"{SCRIPTPATH}/possible-adjectives.txt", "r", encoding="UTF-8") as possible_adjectives_file:
+with open(
+    f"{SCRIPTPATH}/possible-adjectives.txt", "r", encoding="UTF-8"
+) as possible_adjectives_file:
     for line in possible_adjectives_file:
         # Strip leading and trailing spaces.
         line = line.strip()
@@ -48,7 +50,9 @@ with open(f"{SCRIPTPATH}/possible-adjectives.txt", "r", encoding="UTF-8") as pos
         if len(line.split()) == 0:
             continue
         possible_adjectives.append(line)
-with open(f"{SCRIPTPATH}/possible-nouns.txt", "r", encoding="UTF-8") as possible_nouns_file:
+with open(
+    f"{SCRIPTPATH}/possible-nouns.txt", "r", encoding="UTF-8"
+) as possible_nouns_file:
     for line in possible_nouns_file:
         line = line.strip()
         if len(line.split()) == 0:
