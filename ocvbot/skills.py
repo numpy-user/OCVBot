@@ -431,6 +431,8 @@ class Mining:
 
             Raises Exception if no ore could be found in the inventory to drop.
         """
+        behavior.open_side_stone("inventory")
+
         # Raise an error if we have <=5 ores in the inventory, as it's very
         #   inefficient to mine with an inventory so small.
         ores_in_inventory = vis.Vision(region=vis.INV, needle=self.ore).count_needles()
