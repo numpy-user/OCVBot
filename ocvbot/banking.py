@@ -22,8 +22,7 @@ from ocvbot import vision as vis
 # TODO: Rename to "configure_bank_settings"
 def bank_settings_check(setting: str, value: str) -> None:
     """
-    Checks for specific bank window configuration settings.
-    Currently only the `quantity` setting is supported.
+    Ensures specific bank window configuration settings.
 
     Args:
         setting (str): The setting you wish to configure.
@@ -81,6 +80,9 @@ def close_bank():
     Raises:
         Raises start.BankingError if the bank window could not be closed.
 
+    Returns:
+        Returns once the bank window has been closed, or is already closed.
+
     """
     # Must use invert_match here because we want to check for the absence of
     #   the `close` button.
@@ -104,6 +106,9 @@ def deposit_inventory() -> None:
     Raises:
         Raises start.BankingError if the inventory could not be deposited.
 
+    Returns:
+        Returns once the inventory has been deposited, or if the inventory is
+        already empty.
     """
     try:
         interface.enable_button(
