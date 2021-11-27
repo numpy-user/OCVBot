@@ -362,7 +362,6 @@ class Mining:
                 needle=rock_full_needle,
                 conf=self.conf,
             ).click_needle(move_away=True)
-            return
         except start.NeedleError:
             raise start.RockEmpty("Rock is already empty!")
 
