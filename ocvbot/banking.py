@@ -94,6 +94,7 @@ def close_bank():
             button_enabled_region=vis.GAME_SCREEN,
             invert_match=True,
         )
+        return
     except start.NeedleError as error:
         raise start.BankingError("Could not close bank window!") from error
 
@@ -117,6 +118,7 @@ def deposit_inventory() -> None:
             button_enabled="./needles/side-stones/inventory/empty-inventory.png",
             button_enabled_region=vis.INV,
         )
+        return
     except start.NeedleError as error:
         raise start.BankingError("Could not deposit inventory!") from error
 
