@@ -23,6 +23,9 @@ import traceback
 
 # Global TODOs:
 # TODO: Transition to use proper exceptions rather than checking for a False return value.
+# TODO: Use snake_case for all image files and paths.
+# TODO: Fix installation method to use `pip install -e .` so we don't need to
+#   edit the sys.path variables.
 
 # TODO: See if these statements are really necessary since they're in init.py
 # Make sure the program's working directory is the directory in which
@@ -45,16 +48,17 @@ def miner(scenario: str, loops: int = 10000) -> None:
     Script for mining rocks in a handful of locations. Banking support is
     limited.
 
-    Supported scenarios:
-        `lumbridge-mine` = Mines copper in Lumbridge Swamp.
-        `varrock-east-mine` = Mines iron in Varrock East mine. Banking
-                              supported.
+    Args:
+        scenario (str): See the `magic` section of `config.yaml.example` for
+                        the available options.
+        loops (int): Number of loops to run the given scenario. Changing this
+                     is only useful for testing purposes. Default is 10000.
 
         See `/docs/scenarios/` for the required client
         configuration settings for each scenario.
 
     Raises:
-        Raises an exception if an unsupported scenario is passed.
+        Raises a ValueError if an unsupported scenario is passed.
 
     """
     # TODO: Function is too large. Refactor.
@@ -138,7 +142,7 @@ def miner(scenario: str, loops: int = 10000) -> None:
             drop_clue_geode=drop_clue_geode_config,
         )
     else:
-        raise Exception("Scenario not supported!")
+        raise ValueError("Scenario not supported!")
 
     # MAIN FUNCTION LOOP --------------------------------------------------------------------------
 
@@ -194,7 +198,7 @@ def alchemist(alch_item_type, loops: int = 10000) -> None:
     if alch_item_type == "bank-note":
         target = "./needles/items/bank-note.png"
     else:
-        target = "./needles/items/" + alch_item_type + ".png"
+        target = f"./needles/items/{alch_item_type}.png"
 
     behavior.open_side_stone("spellbook")
     for _ in range(loops):
@@ -230,8 +234,11 @@ def spellcaster(scenario: str, loops: int = 10000) -> None:
         loops (int): Number of loops to run the given scenario. Changing this
                      is only useful for testing purposes. Default is 10000.
 
+        See `/docs/scenarios/` for the required client
+        configuration settings for each scenario.
+
     Raises:
-        Raises an exception if an unsupported scenario is passed.
+        Raises a ValueError if an unsupported scenario is passed.
 
     """
     log.info("Launching spellcaster script with scenario %s.", scenario)
@@ -242,7 +249,7 @@ def spellcaster(scenario: str, loops: int = 10000) -> None:
         haystack_map = "./haystacks/varrock-castle.png"
         behavior.travel([((75, 128), 1, (4, 4), (5, 10))], haystack_map)
     else:
-        raise Exception("Scenario not supported!")
+        raise ValueError("Scenario not supported!")
 
     behavior.open_side_stone("spellbook")
     for _ in range(loops):
@@ -273,7 +280,9 @@ def chef(item: str, location: str, loops: int = 10000) -> None:
         loops (int): Number of loops to run the given scenario. Changing this
                      is only useful for testing purposes. Default is 10000.
 
-    Returns:
+    Raises:
+        Raises a ValueError if an unsupported location is passed.
+
 
     """
     if location == "al-kharid":
@@ -289,9 +298,9 @@ def chef(item: str, location: str, loops: int = 10000) -> None:
     # Must have staff of water equipped!
     # TODO: In Al Kharid, deal with the door to the house with the range
     #   possibly being shut.
-    haystack_map = "./haystacks/" + location + ".png"
-    item_inv = "./needles/items/" + item + ".png"
-    item_bank = "./needles/items/" + item + "-bank.png"
+    haystack_map = f"./haystacks/{location}.png"
+    item_inv = f"./needles/items/{item}.png"
+    item_bank = f"./needles/items/{item}-bank.png"
 
     for _ in range(loops):
         try:
@@ -332,6 +341,9 @@ def smith(bar: str, item: str, location: str, loops: int = 10000):
         loops (int): Number of loops to run the given scenario. Changing this
                      is only useful for testing purposes. Default is 10000.
 
+    Raises:
+        Raises a ValueError if an unsupported location is passed.
+
     """
     if location == "varrock":
         haystack_map = "./haystacks/varrock-west-bank.png"
@@ -339,12 +351,12 @@ def smith(bar: str, item: str, location: str, loops: int = 10000):
         anvil_coords = [((97, 130), 1, (3, 3), (7, 9))]
         anvil = "./needles/game-screen/varrock/anvil.png"
     else:
-        raise Exception("Unsupported value for location!")
+        raise ValueError("Unsupported value for location!")
 
     # We can use banked versions of the smith item because the smithing menu
     #   has the same background as the bank menu.
-    bar = "./needles/items/" + bar + ".png"
-    item = "./needles/items/" + item + "-bank.png"
+    bar = f"./needles/items/{bar}.png"
+    item = f"./needles/items/{item}-bank.png"
 
     # Determine how many bars are needed to smith the given item.
     if "platebody" in item:
@@ -376,9 +388,10 @@ def smith(bar: str, item: str, location: str, loops: int = 10000):
             item_bank="./needles/items/hammer-bank.png",
             item_inv="./needles/items/hammer.png",
             quantity="1",
+            conf=0.9,
         )
         misc.sleep_rand_roll(chance_range=(20, 30))
-        banking.withdrawal_item(item_bank=bar, item_inv=bar)
+        banking.withdrawal_item(item_bank=bar, item_inv=bar, conf=0.99)
         misc.sleep_rand_roll(chance_range=(20, 30))
 
         # Check if we withdrew a full inventory of bars. Stop script if we didn't
@@ -413,16 +426,6 @@ def cleanup():
     glob_string = ".screenshot2*[0-9][0-9][0-9][0-9][0-9][0-9].png"
     for filepath in glob.glob(glob_string):
         os.remove(filepath)
-
-
-# TODO: Add basic firemaking script that starts at a bank booth and
-#   creates 27 fires, all in a straight line, then returns to the booth.
-
-# TODO: Add oak woodcutting script that waits by an oak tree, clicks on
-#   it when it appears, and empties inventory when full -- super simple.
-
-# TODO: Possible location for starting a fishing script where the
-#  "fishing tiles" don't change much is fly fishing at barbarian village.
 
 
 script = start.config["main"]["script"]

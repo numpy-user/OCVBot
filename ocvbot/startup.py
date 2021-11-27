@@ -11,22 +11,6 @@ import time
 import pyautogui as pag
 from ocvbot import config
 
-# TODO: Finish implementing stats.
-# Stats ----------------------------------------------------------------
-
-# Used for tracking how long the script has been running.
-start_time = round(time.time())
-
-# The number of inventories a script has gone through.
-inventories = 0
-# The number of items gathered, approximately.
-items_gathered = 0
-# The amount of experience gained since the script started, approximately.
-xp_gained = 0
-# The amount of experience gained since installing this package
-xp_per_hour = 0
-
-ore_xp_dict = {"copper": 16.5, "iron": 35.5}
 
 # ----------------------------------------------------------------------
 # These variables are used to setup behavior.logout_rand_range(). ------
@@ -59,6 +43,7 @@ checkpoint_interval = (max_session_duration_sec - min_session_duration_sec) / 4
 
 # Space each checkpoint evenly between the min duration and the max
 #   duration.
+start_time = round(time.time())
 checkpoint_1 = round(start_time + min_session_duration_sec)
 checkpoint_2 = round(start_time + min_session_duration_sec + checkpoint_interval)
 checkpoint_3 = round(start_time + min_session_duration_sec + (checkpoint_interval * 2))
@@ -115,6 +100,13 @@ class InventoryFull(Exception):
     """
     Raised whenever the player's inventory is too full to perform the desired
      action.
+    """
+
+
+class LoginError(Exception):
+    """
+    Raised when an unexpected or unrecoverable situation occurs at the
+      login screen.
     """
 
 

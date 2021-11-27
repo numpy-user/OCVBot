@@ -37,28 +37,17 @@ def switch_worlds_logged_out(world: str, attempts=5) -> bool:
     row = world_info["row"]
 
     # Click world switch button
-    switcher_clicked = vis.Vision(
+    vis.Vision(
         region=vis.CLIENT, needle="needles/login-menu/world-switcher-logged-out.png"
     ).click_needle()
 
-    if switcher_clicked is False:
-        log.error("Unable to find world switcher!")
-        return False
-
     # Wait for green world filter button, fails if filter is not set correctly
-    world_filter = vis.Vision(
-        region=vis.CLIENT, needle="needles/login-menu/world-filter-enabled.png"
-    ).wait_for_needle()
-
-    if world_filter is False:
-        enabled_filter = interface.enable_button(
-            "needles/login-menu/world-filter-disabled.png",
-            vis.CLIENT,
-            "needles/login-menu/world-filter-enabled.png",
-            vis.CLIENT,
-        )
-        if enabled_filter is False:
-            return False
+    interface.enable_button(
+        "needles/login-menu/world-filter-disabled.png",
+        vis.CLIENT,
+        "needles/login-menu/world-filter-enabled.png",
+        vis.CLIENT,
+    )
 
     # If the world is off screen
     if column > MAX_COLUMNS:
@@ -112,7 +101,6 @@ def check_skills() -> None:
     open_side_stone("skills")
     inputs.Mouse(region=vis.INV).move_to()
     misc.sleep_rand(1000, 7000)
-    return
 
 
 # TODO: Move to inventory.py
@@ -160,39 +148,47 @@ def drop_item(
         return
 
     log.info("Dropping %s instances of %s", number_of_items, item)
+    # 28 is the maximum number of items in the inventory, so give up after
+    #   trying too many times.
     for _ in range(35):
 
         if shift_click:
             pag.keyDown("shift")
         # Alternate between searching for the item in left half and the
         #   right half of the player's inventory. This helps reduce the
-        #   chances the bot will click on the same item twice.
-        vis.Vision(region=vis.INV_RIGHT_HALF, needle=item, loop_num=1).click_needle(
-            sleep_range=(10, 50, 10, 50)
-        )
-        vis.Vision(region=vis.INV_LEFT_HALF, needle=item, loop_num=1).click_needle(
-            sleep_range=(10, 50, 10, 50)
-        )
+        #   chance the function will click on the same item twice.
+        try:
+            vis.Vision(region=vis.INV_RIGHT_HALF, needle=item, loop_num=1).click_needle(
+                sleep_range=(10, 50, 10, 50)
+            )
+        except start.NeedleError:
+            pass
+        try:
+            vis.Vision(region=vis.INV_LEFT_HALF, needle=item, loop_num=1).click_needle(
+                sleep_range=(10, 50, 10, 50)
+            )
+        except start.NeedleError:
+            pass
 
         # Search the entire inventory to check if the item is still
         #   there.
-        item_remains = vis.Vision(
-            region=vis.INV, loop_num=1, needle=item
-        ).wait_for_needle()
+        try:
+            vis.Vision(region=vis.INV, loop_num=1, needle=item).wait_for_needle()
 
-        # Chance to sleep while dropping items.
-        if random_wait:
-            misc.sleep_rand_roll(chance_range=(30, 40), sleep_range=(1000, 20000))
+            # Chance to sleep while dropping items.
+            if random_wait:
+                misc.sleep_rand_roll(chance_range=(30, 40), sleep_range=(1000, 20000))
 
-        if shift_click:
-            pag.keyUp("shift")
-        if item_remains is False:
+        except start.NeedleError:
+            log.debug("No more items in inventory")
+            if shift_click:
+                pag.keyUp("shift")
             return
 
     raise start.InventoryError("Tried dropping item too many times!")
 
 
-def human_behavior_rand(chance) -> None:
+def human_behavior_rand(chance: int) -> None:
     """
     Randomly chooses from a list of human behaviors if the roll passes.
     This is done to make the bot appear more human.
@@ -202,6 +198,10 @@ def human_behavior_rand(chance) -> None:
                       behavior to be triggered. For example, if this
                       parameter is 25, then there is a 1 in 25 chance
                       for the roll to pass.
+
+    Examples:
+        Roll with a 1 in 10 chance to pass:
+            human_behavior_rand(25)
 
     Returns:
         Returns after random human behavior has been completed.
@@ -239,14 +239,13 @@ def login_basic(
     username_file=start.config["main"]["username_file"],
     password_file=start.config["main"]["password_file"],
     cred_sleep_range: tuple[int, int] = (800, 5000),
-) -> bool:
+) -> None:
     """
     Performs a login without checking if the login was successful.
-
     Advances to the user credentials screen, enters the user's
-    credentials, and submits the user's credentials, that's it.
+    credentials, and submits the user's credentials.
 
-    Args;
+    Args:
         username_file (file): The path to a file containing the user's
                               username login, by default reads the
                               `username_file` field in the main config
@@ -260,69 +259,83 @@ def login_basic(
                                   between actions while entering account
                                   credentials, default is (800, 5000).
     Returns:
-        Returns True if credentials were entered and a login was
-        initiated. Returns False otherwise.
+        Returns if credentials were entered and a login was
+        initiated.
+
+    Raises:
+        Raises start.LoginError when a login could not be initiated.
 
     """
-    # Remove line breaks from credential files to make logging in more
-    #   predictable.
+    # Remove line breaks from credential files.
     username = open(username_file, "r", encoding="utf-8").read()
     username = str(username.replace("\n", ""))
     password = open(password_file, "r", encoding="utf-8").read()
     password = str(password.replace("\n", ""))
 
-    for _ in range(1, 3):
-        log.info("Logging in.")
+    for _ in range(3):
+        log.info(
+            "Attempting to login with username file %s and password file %s",
+            username_file,
+            password_file,
+        )
 
         # Click the "Ok" button if it's present at the login screen.
         # This button appears if the user was disconnected due to
         #   inactivity.
-        ok_button = vis.Vision(
-            region=vis.CLIENT, needle="./needles/login-menu/ok-button.png", loop_num=1
-        ).click_needle()
+        # TODO: Refactor to use enable_button()
+        try:
+            ok_button = vis.Vision(
+                region=vis.CLIENT,
+                needle="./needles/login-menu/ok-button.png",
+                loop_num=1,
+            ).click_needle()
+        except start.NeedleError:
+            pass
         # If the "Ok" button isn't found, look for the "Existing user"
         #   button.
-        existing_user_button = vis.Vision(
-            region=vis.CLIENT,
-            needle="./needles/login-menu/existing-user-button.png",
-            loop_num=1,
-        ).click_needle()
-
-        if existing_user_button is True or ok_button is True:
-            credential_screen = vis.Vision(
+        try:
+            existing_user_button = vis.Vision(
                 region=vis.CLIENT,
-                needle="./needles/login-menu/login-cancel-buttons.png",
-                loop_num=5,
-            ).wait_for_needle()
+                needle="./needles/login-menu/existing-user-button.png",
+                loop_num=1,
+            ).click_needle()
+        except start.NeedleError:
+            pass
 
-            if credential_screen is True:
-                # Click to make sure the "Login" field is active.
-                inputs.Mouse(region=(vis.LOGIN_FIELD)).click_coord()
-                # Enter login field credentials.
-                misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
-                inputs.Keyboard(log_keys=False).typewriter(username)
-                misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
+        vis.Vision(
+            region=vis.CLIENT,
+            needle="./needles/login-menu/login-cancel-buttons.png",
+            loop_num=5,
+        ).wait_for_needle()
 
-                # Click to make sure the "Password" field is active.
-                inputs.Mouse(region=(vis.PASS_FIELD)).click_coord()
-                # Enter password field credentials and login.
-                inputs.Keyboard(log_keys=False).typewriter(password)
-                misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
+        # Click to make sure the "Login" field is active.
+        inputs.Mouse(region=vis.LOGIN_FIELD).click_coord()
+        # Enter login field credentials.
+        misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
+        inputs.Keyboard(log_keys=False).typewriter(username)
+        misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
 
-                inputs.Keyboard().keypress(key="enter")
-                return True
+        # Click to make sure the "Password" field is active.
+        inputs.Mouse(region=(vis.PASS_FIELD)).click_coord()
+        # Enter password field credentials and login.
+        inputs.Keyboard(log_keys=False).typewriter(password)
+        misc.sleep_rand(cred_sleep_range[0], cred_sleep_range[1])
 
-    log.critical("Could not perform login!")
-    return False
+        inputs.Keyboard().keypress(key="enter")
+        log.debug("Initiating login.")
+        return
+
+    raise start.LoginError("Could not perform login!")
 
 
 # TODO: Move to login_menu.py
+# TODO: Refactor, function too large.
 def login_full(
     login_sleep_range: tuple[int, int] = (500, 5000),
     postlogin_sleep_range: tuple[int, int] = (500, 5000),
     username_file=start.config["main"]["username_file"],
     password_file=start.config["main"]["password_file"],
-) -> bool:
+) -> None:
     """
     Logs into the client using the credentials specified in the main
     config file. Waits until the login is successful before returning.
@@ -332,75 +345,60 @@ def login_full(
                                    maximum number of miliseconds to wait
                                    after hitting "Enter" to login,
                                    default is (500, 5000).
-        postlogin_sleep_range (tuple): The minimum and maximum number of
-                                       miliseconds to wait after clicking
-                                       the "Click here to play" button,
+        postlogin_sleep_range (tuple): A 2-tuple of The minimum and maximum
+                                       number of miliseconds to wait after
+                                       clicking the "Click here to play" button,
                                        default is (500, 5000).
+        username_file (file): The path to a file containing the user's
+                              username login, by default reads the
+                              `username_file` field in the main config
+                              file.
+        password_file (file): The path to a file containing the user's
+                              password, by default reads the
+                              `password_file` field in the main config
+                              file.
+    Examples:
+        Login using the values provided in the config file:
+            login_full()
 
-    Raises:
-        Raises an exception if the login was not successful for any
-        reason.
+        Override the values in the config file:
+            login_full(username_file="./credentials/my-username-file.txt",
+                       password_file="./credentials/my-password-file.txt")
 
     Returns:
-        Returns True if the login was successful.
+        Returns if the login was successful.
+
+    Raises:
+        Raises start.LoginError if the login was not successful for any
+        reason.
 
     """
-    log.info("Attempting to login.")
-    for _ in range(1, 3):
+    for _ in range(3):
 
-        login = login_basic(username_file, password_file)
-        if login is False:
-            raise Exception("Could not perform initial login!")
-
+        login_basic(username_file, password_file)
         misc.sleep_rand(login_sleep_range[0], login_sleep_range[1])
-        postlogin_screen_button = vis.Vision(
-            region=vis.CLIENT,
-            needle="./needles/login-menu/orient-postlogin.png",
-            conf=0.8,
-            loop_num=10,
-            loop_sleep_range=(1000, 2000),
-        ).click_needle()
 
-        if postlogin_screen_button is True:
+        # Click the postlogin button and wait for the game client to become
+        #   visible.
+        try:
+            interface.enable_button(
+                button_disabled="./needles/login-menu/orient-postlogin.png",
+                button_disabled_region=vis.CLIENT,
+                button_enabled="./needles/minimap/orient.png",
+                button_enabled_region=vis.CLIENT,
+                loop_num=20,
+                conf=0.85,
+            )
             misc.sleep_rand(postlogin_sleep_range[0], postlogin_sleep_range[1])
-
-            # Wait for the orient function to return true in order to
-            #    confirm the login.
-            logged_in = vis.Vision(
-                region=vis.CLIENT,
-                needle="./needles/minimap/orient.png",
-                loop_num=50,
-                loop_sleep_range=(1000, 2000),
-            ).wait_for_needle()
-            if logged_in is True:
-                # Reset the timer that's used to count the number of
-                #   seconds the bot has been running for.
-                start.start_time = time.time()
-                # Make sure client camera is oriented correctly after
-                #   logging in.
-                # TODO: move this to a 'configure_camera' function
-                pag.keyDown("Up")
-                misc.sleep_rand(3000, 7000)
-                pag.keyUp("Up")
-                return True
-            raise Exception("Could not detect login after postlogin screen!")
-        # Begin checking for the various non-successful login messages.
-        #   This includes messages like "invalid credentials",
-        #   "you must be a member to use this world", "cannot
-        #   connect to server," etc.
-        log.warning("Cannot find postlogin screen!")
-
-        # TODO: Add additional checks to other login messages.
-        invalid_credentials = vis.Vision(
-            region=vis.CLIENT,
-            needle="./needles/login-menu/invalid-credentials.png",
-            loop_num=1,
-        ).wait_for_needle()
-        if invalid_credentials is True:
-            raise Exception("Invalid user credentials!")
-        log.critical("Cannot find postlogin screen!")
-
-    raise Exception("Unable to login!")
+            # Make sure client camera is oriented correctly after
+            #   logging in.
+            # TODO: Move this to a 'configure_camera' function.
+            pag.keyDown("Up")
+            misc.sleep_rand(5000, 9000)
+            pag.keyUp("Up")
+            return
+        except start.NeedleError:
+            raise start.LoginError("Cannot find postlogin screen!")
 
 
 # TODO: Move to inventory.py
@@ -425,75 +423,55 @@ def logout() -> None:
     banking.close_bank()
     open_side_stone("logout")
 
-    def is_logged_out() -> bool:
-        logged_out = vis.Vision(
-            region=vis.CLIENT,
-            needle="./needles/login-menu/orient-logged-out.png",
-            loop_num=5,
-            loop_sleep_range=(1000, 1200),
-        ).wait_for_needle()
-        if logged_out is True:
-            return True
-
-    # Look for any one of the three possible logout buttons.
-    for _ in range(5):
-
+    logout_buttons = [
         # The standard logout button.
-        logout_button = vis.Vision(
-            region=vis.INV,
-            needle="./needles/side-stones/logout/logout.png",
-            conf=0.9,
-            loop_num=1,
-        ).click_needle(move_away=True)
-        if logout_button is True:
-            if is_logged_out() is True:
-                return
-
+        "./needles/side-stones/logout/logout.png",
         # The logout button as it appears when the mouse is over it.
-        logout_button_highlighted = vis.Vision(
-            region=vis.INV,
-            needle="./needles/side-stones/logout/logout-highlighted.png",
-            conf=0.9,
-            loop_num=1,
-        ).click_needle(move_away=True)
-        if logout_button_highlighted is True:
-            if is_logged_out() is True:
-                return
-
+        "./needles/side-stones/logout/logout-highlighted.png",
         # The logout button when the world switcher is open.
-        logout_button_world_switcher = vis.Vision(
-            region=vis.SIDE_STONES,
-            needle="./needles/side-stones/logout/logout-world-switcher.png",
-            conf=0.95,
-            loop_num=1,
-        ).click_needle(move_away=True)
-        if logout_button_world_switcher is True:
-            if is_logged_out() is True:
+        "./needles/side-stones/logout/logout-world-switcher.png",
+    ]
+    # Try clicking on any one of the three possible logout buttons multiple
+    #   times, then wait to confirm the logout.
+    for _ in range(3):
+        for button in logout_buttons:
+            try:
+                interface.enable_button(
+                    button_disabled=button,
+                    button_disabled_region=vis.SIDE_STONES,
+                    button_enabled="./needles/login-menu/orient-logged-out.png",
+                    button_enabled_region=vis.CLIENT,
+                    attempts=3,
+                    loop_num=15,
+                    conf=0.9,
+                )
                 return
-
+            # If we can't find the current button, just move on to the next one.
+            except start.NeedleError:
+                pass
     raise Exception("Could not logout!")
 
 
 # TODO: Move to misc.py
 def logout_break_range() -> None:
     """
-    Triggers a random logout within a specific range of times, set by the user
-    in the main config file. Additional configuration for this function is set
-    by variables in startup.py.
+    Triggers a logout break at some point between the minimum and maximum
+    session duration, as set by the user in the main config file. This function
+    should be called periodically from higher-level scripts in main.py.
 
-    To determine when a logout roll should occur, this function creates five
-    evenly-spaced timestamps at which to roll for a logout. These timestamps
+    To determine when we should roll for a logout break, this function creates five
+    evenly-spaced timestamps at which we roll for a logout. These timestamps
     are called "checkpoints". Each roll has a 1/5 chance to pass. The first and
-    last checkpoints are based on the user-defined minimum and maximum session
-    duration. As a result of this, the last checkpoint's roll always has a 100%
+    last checkpoints are determined by the user-defined minimum and maximum session
+    duration. As a result, the last checkpoint's roll always has a 100%
     chance of success. All variables set by this function are reset if a logout
     roll passes.
 
-    When called, this function checks if an checkpoint's timestamp has passed
-    and hasn't yet been rolled. If true, it rolls for that checkpoint and marks
-    it (so it's not rolled again). If the roll passes, a logout is called and
+    When called, this function checks if a checkpoint's timestamp has passed
+    but hasn't yet been rolled. If true, we roll for that checkpoint and mark
+    it, so it's not rolled again. If the roll passes, a logout is called and
     all checkpoints are reset. If the roll fails or a checkpoint's timestamp
-    hasn't yet passed, the function does nothing and returns.
+    hasn't yet passed, this function does nothing and returns.
 
     """
     current_time = round(time.time())
@@ -521,12 +499,8 @@ def logout_break_range() -> None:
         logout_break_roll(5)
 
     # The last checkpoint's timestamp is based on the maximum session
-    #   duration, so force a logout and reset all the other checkpoints.
+    #   duration, so force a logout.
     elif current_time >= start.checkpoint_5:
-        start.checkpoint_1_checked = False
-        start.checkpoint_2_checked = False
-        start.checkpoint_3_checked = False
-        start.checkpoint_4_checked = False
         logout_break_roll(1)
 
     # Print the correct logging information according to which checkpoint(s)
@@ -551,59 +525,74 @@ def logout_break_roll(
     max_break_duration=int(start.config["main"]["max_break_duration"]),
 ) -> None:
     """
-    Rolls for a chance to take a logout break.
+    Rolls for a chance to take a logout break. If the roll passes, logs out
+    for a random period of time, then logs back in.
+
+    If the roll passes, the session_number is incremented. if the session_number
+    has reached the max number of sessions configured, then this function will
+    stop the bot.
 
     Args:
-        chance (int): See wait_rand()'s docstring.
+        chance (int): The probability for the roll to pass is 1/chance.
         min_break_duration (int): The minimum number of minutes to wait
-                                  if the roll passes, by default reads
+                                  if the roll passes. By default reads
                                   the config file.
         max_break_duration (int): The maximum number of minutes to wait
-                                  if the roll passes, by default reads
+                                  if the roll passes. by default reads
                                   the config file.
+
+    Examples:
+        Roll for a 1 in 25 chance to trigger a logout break:
+            logout_break_roll(25)
+
+        Force a logout break:
+            logout_break_roll(1)
+
+    Returns:
+        Returns if the roll has failed or once a logout break has been
+        completed and the client has logged back in.
 
     """
     logout_roll = rand.randint(1, chance)
-    log.info("Logout roll was %s, needed %s", logout_roll, chance)
-
-    if logout_roll == chance:
-        log.info("Random logout called.")
-        logout()
-        # Make sure all checkpoints are reset.
-        start.checkpoint_1_checked = False
-        start.checkpoint_2_checked = False
-        start.checkpoint_3_checked = False
-        start.checkpoint_4_checked = False
-
-        # Track the number of play sessions that have occurred so far.
-        start.session_num += 1
-        log.info("Completed session %s/%s", start.session_num, start.session_total)
-
-        # If the maximum number of sessions has been reached, kill the bot.
-        if start.session_num >= start.session_total:
-            log.info("Final session completed! Script done.")
-            sys.exit(0)
-
-        else:
-            # Convert from minutes to miliseconds.
-            min_break_duration *= 60000
-            max_break_duration *= 60000
-            wait_time_seconds = misc.rand_seconds(
-                min_break_duration, max_break_duration
-            )
-
-            # Convert back to human-readable format for logging.
-            wait_time_minutes = wait_time_seconds / 60
-            log.info("Sleeping for %s minutes.", round(wait_time_minutes))
-
-            time.sleep(wait_time_seconds)
-            login_full()
-    else:
+    if logout_roll != chance:
+        log.info("Logout roll was %s, needed %s", logout_roll, chance)
         return
+
+    log.info("Random logout called.")
+    logout()
+
+    # Reset all checkpoints for the next session.
+    start.checkpoint_1_checked = False
+    start.checkpoint_2_checked = False
+    start.checkpoint_3_checked = False
+    start.checkpoint_4_checked = False
+
+    # Increment the number of play sessions that have occurred so far.
+    start.session_num += 1
+    log.info("Completed session %s/%s", start.session_num, start.session_total)
+
+    # If the maximum number of sessions has been reached, kill the bot.
+    if start.session_num >= start.session_total:
+        log.info("Final session completed! Exiting.")
+        sys.exit(0)
+
+    # Convert from minutes to miliseconds.
+    min_break_duration *= 60000
+    max_break_duration *= 60000
+
+    # Determine the length of the break.
+    wait_time_seconds = misc.rand_seconds(min_break_duration, max_break_duration)
+
+    # Make human-readable for logging.
+    wait_time_minutes = wait_time_seconds / 60
+    log.info("Sleeping for %s minutes.", round(wait_time_minutes))
+
+    time.sleep(wait_time_seconds)
+    login_full()
 
 
 # TODO: Move to inventory.py
-def open_side_stone(side_stone) -> bool:
+def open_side_stone(side_stone) -> None:
     """
     Opens a side stone menu.
 
@@ -621,22 +610,25 @@ def open_side_stone(side_stone) -> bool:
         Raises an exception if side stone could not be opened.
 
     """
-    side_stone_open = "./needles/side-stones/open/" + side_stone + ".png"
-    side_stone_closed = "./needles/side-stones/closed/" + side_stone + ".png"
+    side_stone_open = f"./needles/side-stones/open/{side_stone}.png"
+    side_stone_closed = f"./needles/side-stones/closed/{side_stone}.png"
 
-    try:
-        banking.close_bank()
-        log.debug("Ensuring side stone %s is open", side_stone)
-        interface.enable_button(
-            button_disabled=side_stone_closed,
-            button_disabled_region=vis.SIDE_STONES,
-            button_enabled=side_stone_open,
-            button_enabled_region=vis.SIDE_STONES,
-            conf=0.98,
-        )
-    except Exception as error:
-        raise Exception("Could not open side stone!") from error
-    return True
+    log.debug("Ensuring side stone %s is open", side_stone)
+    for attempts in range(5):
+        try:
+            banking.close_bank()
+            interface.enable_button(
+                button_disabled=side_stone_closed,
+                button_disabled_region=vis.SIDE_STONES,
+                button_enabled=side_stone_open,
+                button_enabled_region=vis.SIDE_STONES,
+                conf=0.98,
+            )
+            log.debug("Side stone %s open after %s tries", side_stone, attempts)
+            return
+        except start.NeedleError:
+            pass
+    raise Exception("Could not open side stone!")
 
 
 # TODO: Update the terminology used in this function. Make sure to

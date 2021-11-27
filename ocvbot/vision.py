@@ -11,14 +11,14 @@ from ocvbot import inputs
 from ocvbot import misc
 from ocvbot import startup as start
 
-# -------------------------------------------------------------------------------------------------
-# Setup the necessary region tuples for the Vision class and orient the client.
-# -------------------------------------------------------------------------------------------------
 
 # Set initial values for vision regions.
+#
 # See ./docs/client_anatomy.png for more info.
-# Captures the width and height of various different elements within the
-#  game client. Units are in pixels.
+#
+# Capture the width and height of various different elements within the
+#   game client. Values of tuples start at (0, 0, 0, 0) until they are defined
+#   by the init() function. Units are in pixels.
 
 BANK_ITEMS_WINDOW_WIDTH = 375
 BANK_ITEMS_WINDOW_HEIGHT = 215
@@ -70,64 +70,27 @@ SIDE_STONES_WIDTH = 249
 SIDE_STONES_HEIGHT = 366
 SIDE_STONES = (0, 0, 0, 0)
 
-# TODO
-def wait_for_needle_list(
-    loops: int,
-    needle_list: list[tuple[str, tuple[int, int, int, int]]],
-    sleep_range: tuple[int, int],
-):
-    """
-    Works like vision.wait_for_needle(), except multiple needles can be
-    searched for simultaneously.
-
-    Args:
-        loops: The number of tries to look for each needle in needle_list.
-        needle_list: A list of filepaths to the needles to look for. Each
-                     item in the list is a 2-tuple containing:
-                     - The filepath to the needle.
-                     - The region in which to search for that needle.
-        sleep_range: A 2-tuple containing the minimum and maximum number
-                     of miliseconds to wait after each loop.
-
-    Returns:
-        If a needle in needle_list is found, returns a 2-tuple containing
-        the ltwh dimensions of the needle and the index of the needle in
-        needle_list (This is so the function knows which needle was found).
-
-        Returns false if no needles in needle_list could be found.
-
-    """
-    for _ in range(1, loops):
-
-        for item in needle_list:
-            needle, region = item
-
-            needle_found = Vision(
-                region=region, needle=needle, loop_num=1
-            ).wait_for_needle(get_tuple=True)
-            if needle_found is True:
-                return needle_found, needle_list.index(needle)
-
-        misc.sleep_rand(sleep_range[0], sleep_range[1])
-
-    return False
-
 
 # TODO: Add examples of usage.
+# TODO: Rename to "Needle" or "Image". Create another class for pixel matching
+#   called "Pixel".
 class Vision:
     """
-    Contains methods for locating images on the display.
+    Main class locating and clicking on images on the display.
     All coordinates are relative to the top left corner of the display.
     All coordinates are in a (left, top, width, height) format.
 
     Args:
         region (tuple): A 4-tuple containing the Left, Top, Width, and
                         Height of the region in which to look for the
-                        needle.
-        needle (file): The image to search within the (ltwh) coordinates
-                       for. Must be a filepath.
+                        needle. This typically will be one of the tuples
+                        defined at the top of this file like `INV` or
+                        `GAME_SCREEN`.
+        needle (file): A filepath to an the image to search for within the
+                       `region` tuple.
         loctype (str): Whether to return the needle's (ltwh) coordinates
-                       or its (X, Y) center.
+                       or its (X, Y) center. Available values are `regular`
+                       and `center`.
             regular = Returns the needle's left, top, width, and height
                       as a 4-tuple.
             center = Returns the (X, Y) coordinates of the needle's
@@ -135,18 +98,18 @@ class Vision:
                      dimensions).
         conf (float): The confidence value required to match the needle
                       successfully, expressed as a decimal <= 1. This is
-                      used by PyAutoGUI, default is 0.95.
+                      used by PyAutoGUI. Default is 0.95.
         loop_num (int): The number of times wait_for_needle() will search
-                        the given coordinates for the needle, default is
+                        the given coordinates for the needle. Default is
                         10.
         loop_sleep_range (tuple): A 2-tuple containing the minimum and
                                   maximum number of miliseconds to wait
                                   between image-search loops. Used by
-                                  the wait_for_needle() method, default
+                                  the wait_for_needle() method. Default
                                   is (0, 100).
         grayscale (bool): Converts the haystack to grayscale before
                           searching within it. Speeds up searching by
-                          about 30%, default is false.
+                          about 30%. Default is False.
 
     """
 
@@ -185,75 +148,72 @@ class Vision:
             If the needle is not found, returns False.
 
         """
-        # Make sure file path is OS-agnostic.
-        needle = str(pathlib.Path(self.needle))
-
         if self.loctype == "regular":
             needle_coords = pag.locateOnScreen(
-                needle,
+                self.needle,
                 confidence=self.conf,
                 grayscale=self.grayscale,
                 region=self.region,
             )
             if needle_coords is not None:
-                #  log.debug("Found regular image %s, %s", needle, needle_coords)
+                log.debug("Found regular image %s, %s", self.needle, needle_coords)
                 return needle_coords
-            #  log.debug("Cannot find regular image %s, conf=%s", needle, self.conf)
-            return False
+            raise start.NeedleError("Could not find needle!", self.needle)
 
         elif self.loctype == "center":
             needle_coords = pag.locateCenterOnScreen(
-                needle,
+                self.needle,
                 confidence=self.conf,
                 grayscale=self.grayscale,
                 region=self.region,
             )
             if needle_coords is not None:
-                #  log.debug("Found center of image %s, %s", needle, needle_coords)
+                log.debug("Found center of image %s, %s", self.needle, needle_coords)
                 return needle_coords
-            #  log.debug("Cannot find center of image %s, conf=%s", needle, self.conf)
-            return False
+            raise start.NeedleError("Could not find needle!", self.needle)
 
         raise RuntimeError(
             "self.loctype must be 'regular' or 'center', got '%s'", self.loctype
         )
 
     # TODO: Add examples of usage.
-    def wait_for_needle(self, get_tuple: bool = False):
+    def wait_for_needle(self):
         """
         Repeatedly searches within the self.ltwh coordinates for the needle.
 
-        Args:
-            get_tuple (bool): Whether to return a tuple containing the
-                              needle's coordinates, default is False.
-
         Returns:
-            If get_tuple is False, returns True if needle was found.
+            If self.loctype is `regular`, returns a 4-tuple containing the
+            (left, top, width, height) coordinates of the needle.
 
-            If get_tuple is true and self.loctype is `regular`, returns
-            a 4-tuple containing the (left, top, width, height) coordinates
-            of the needle. If self.loctype is `center`, returns a 2-tuple
-            containing the (X, Y) center of the needle.
+            If self.loctype is `center`, returns a 2-tuple containing the
+            (X, Y) center of the needle.
 
-            Returns False if needle was not found.
-
+        Raises:
+            Raises start.NeedleError if the needle could not be found.
         """
         # Add 1 to self.loop_num because if loop_num=1, it won't loop at
         #   all.
         for tries in range(1, (self.loop_num + 1)):
 
-            needle_coords = Vision.find_needle(self)
+            try:
+                needle_coords = Vision.find_needle(self)
+                log.debug(
+                    "Found %s in region %s after trying %s times.",
+                    self.needle,
+                    self.region,
+                    tries,
+                )
+                return needle_coords
+            except start.NeedleError:
+                log.debug(
+                    "Cannot find %s in region %s, tried %s times.",
+                    self.needle,
+                    self.region,
+                    tries,
+                )
+                misc.sleep_rand(self.loop_sleep_range[0], self.loop_sleep_range[1])
 
-            if isinstance(needle_coords, tuple) is True:
-                log.debug("Found %s after trying %s times.", self.needle, tries)
-                if get_tuple is True:
-                    return needle_coords
-                return True
-            log.debug("Cannot find %s, tried %s times.", self.needle, tries)
-            misc.sleep_rand(self.loop_sleep_range[0], self.loop_sleep_range[1])
-
-        log.debug("Timed out looking for %s", self.needle)
-        return False
+        raise start.NeedleError("Timed out looking for needle!", self.needle)
 
     # TODO: Add examples of usage.
     def click_needle(
@@ -263,7 +223,7 @@ class Vision:
         button: str = "left",
         move_away: bool = False,
         number_of_clicks: int = 1,
-    ) -> bool:
+    ) -> None:
         """
         Moves the mouse to the provided needle image and clicks on
         it. Automatically randomizes the location the mouse cursor
@@ -292,27 +252,32 @@ class Vision:
         """
         log.debug("Looking for %s to click on.", self.needle)
 
-        needle_coords = self.wait_for_needle(get_tuple=True)
+        needle_coords = self.wait_for_needle()
 
-        if isinstance(needle_coords, tuple) is True:
-            # Randomize the location the mouse cursor will move to using
-            #   the dimensions of needle image.
-            # The mouse will click anywhere within the needle image.
+        # Randomize the location the mouse cursor will move to using
+        #   the dimensions of needle image.
+        # The mouse will click anywhere within the needle image.
+        inputs.Mouse(
+            region=needle_coords,
+            sleep_range=sleep_range,
+            move_duration_range=move_duration_range,
+            button=button,
+        ).click_coord(number_of_clicks=number_of_clicks)
+
+        log.debug("Clicking on %s", self.needle)
+
+        # Ensure the mouse moves completely off the client.
+        if move_away is True:
+
+            # Unpack CLIENT tuple so we can get to the left and top values.
+            (client_left, client_top, CLIENT_WIDTH, CLIENT_HEIGHT) = CLIENT
+            client_bottom = client_top + CLIENT_HEIGHT
+            client_right = client_left + CLIENT_WIDTH
+
             inputs.Mouse(
-                region=needle_coords,
-                sleep_range=sleep_range,
-                move_duration_range=move_duration_range,
-                button=button,
-            ).click_coord(number_of_clicks=number_of_clicks)
-
-            log.debug("Clicking on %s", self.needle)
-
-            if move_away is True:
-                inputs.Mouse(
-                    region=(25, 25, 100, 100), move_duration_range=(50, 200)
-                ).moverel()
-            return True
-        return False
+                region=(client_bottom + 2, client_right + 2, 3, 3),
+                move_duration_range=(5, 20),
+            ).move_to()
 
     def count_needles(self):
         """
@@ -340,7 +305,7 @@ class Vision:
             return number_of_needles
 
         # If no needles can be found, then the number of needles is 0.
-        except ImageNotFoundException:
+        except pag.ImageNotFoundException:
             return 0
 
 
@@ -380,38 +345,32 @@ def orient(
          coordinates of the orient-logged-out needle.
 
     """
-    logged_in = Vision(
-        region=region,
-        needle="needles/minimap/orient.png",
-        loctype="center",
-        loop_num=1,
-        conf=0.8,
-    ).wait_for_needle(get_tuple=True)
-    if isinstance(logged_in, tuple) is True:
-        log.info("Client is logged in")
+    try:
+        logged_in = Vision(
+            region=region,
+            needle="needles/minimap/orient.png",
+            loctype="center",
+            loop_num=1,
+            conf=0.8,
+        ).wait_for_needle()
+        log.info("Client is logged in.")
         return "logged_in", logged_in
+    except start.NeedleError:
+        pass
 
-    # If the client is not logged in, check if it's logged out.
-    logged_out = Vision(
-        region=region,
-        needle="needles/login-menu/orient-logged-out.png",
-        loctype="center",
-        loop_num=1,
-        conf=0.8,
-    ).wait_for_needle(get_tuple=True)
-    if isinstance(logged_out, tuple) is True:
-        log.info("Client is logged out")
+    try:
+        # If the client is not logged in, check if it's logged out.
+        logged_out = Vision(
+            region=region,
+            needle="needles/login-menu/orient-logged-out.png",
+            loctype="center",
+            loop_num=1,
+            conf=0.8,
+        ).wait_for_needle()
+        log.info("Client is logged out.")
         return "logged_out", logged_out
-
-    if launch_client is True:
-        # TODO: Write start_client()
-        # start_client()
-        # Try 10 times to find the login screen after launching the client.
-        for _ in range(1, 10):
-            misc.sleep_rand(8000, 15000)
-            orient(region=region, launch_client=False)
-    log.critical("Could not find client! %s", launch_client)
-    raise Exception("Could not find client!")
+    except start.NeedleError:
+        raise RuntimeError("Unable to locate client!")
 
 
 # TODO: add 'configure camera' function that clicks on compass, zooms in camera, and holds down up arrow

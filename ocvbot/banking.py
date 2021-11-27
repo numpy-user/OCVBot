@@ -16,14 +16,13 @@ from ocvbot import misc
 from ocvbot import startup as start
 from ocvbot import vision as vis
 
-# TODO: Add search_for_item() function.
 # TODO: Finish enter_bank_pin() function.
 
 
+# TODO: Rename to "configure_bank_settings"
 def bank_settings_check(setting: str, value: str) -> None:
     """
-    Checks for specific bank window configuration settings.
-    Currently only the `quantity` setting is supported.
+    Ensures specific bank window configuration settings.
 
     Args:
         setting (str): The setting you wish to configure.
@@ -40,16 +39,14 @@ def bank_settings_check(setting: str, value: str) -> None:
     Raises:
         Raises a ValueError if the setting or value is not supported.
 
-        Raises an Exception if the setting could not be set.
+        Raises start.BankingError if the setting could not be set.
 
     """
     if setting == "quantity":
         if value not in ("1", "5", "10", "all"):
             raise ValueError("Unsupported value for quantity setting!")
-        setting_unset = (
-            "./needles/bank/settings/" + setting + "/" + value + "-unset.png"
-        )
-        setting_set = "./needles/bank/settings/" + setting + "/" + value + "-set.png"
+        setting_unset = f"./needles/bank/settings/{setting}/{value}-unset.png"
+        setting_set = f"./needles/bank/settings/{setting}/{value}-set.png"
 
     elif setting == "placeholder":
         if value == "set":
@@ -72,8 +69,8 @@ def bank_settings_check(setting: str, value: str) -> None:
             button_enabled=setting_set,
             button_enabled_region=vis.GAME_SCREEN,
         )
-    except Exception as error:
-        raise Exception("Could not set bank setting!") from error
+    except start.NeedleError as error:
+        raise start.BankingError("Could not set bank setting!") from error
 
 
 def close_bank():
@@ -81,7 +78,10 @@ def close_bank():
     Closes the bank window if it is open.
 
     Raises:
-        Raises an exception if the bank window could not be closed.
+        Raises start.BankingError if the bank window could not be closed.
+
+    Returns:
+        Returns once the bank window has been closed, or is already closed.
 
     """
     # Must use invert_match here because we want to check for the absence of
@@ -94,8 +94,9 @@ def close_bank():
             button_enabled_region=vis.GAME_SCREEN,
             invert_match=True,
         )
-    except Exception as error:
-        raise Exception("Could not close bank window!") from error
+        return
+    except start.NeedleError as error:
+        raise start.BankingError("Could not close bank window!") from error
 
 
 def deposit_inventory() -> None:
@@ -104,8 +105,11 @@ def deposit_inventory() -> None:
     open and the "deposit inventory" button is visible.
 
     Raises:
-        Raises an exception if the inventory could not be deposited.
+        Raises start.BankingError if the inventory could not be deposited.
 
+    Returns:
+        Returns once the inventory has been deposited, or if the inventory is
+        already empty.
     """
     try:
         interface.enable_button(
@@ -114,8 +118,9 @@ def deposit_inventory() -> None:
             button_enabled="./needles/side-stones/inventory/empty-inventory.png",
             button_enabled_region=vis.INV,
         )
-    except Exception as error:
-        raise Exception("Could not deposit inventory!") from error
+        return
+    except start.NeedleError as error:
+        raise start.BankingError("Could not deposit inventory!") from error
 
 
 def deposit_item(item, quantity) -> None:
@@ -136,8 +141,8 @@ def deposit_item(item, quantity) -> None:
     Raises:
         Raises a ValueError if `quantity` doesn't match the available values.
 
-        Raises a BankingError if too many items were deposited by mistake.
-        Raises a BankingError if the item could not be deposited.
+        Raises start.BankingError if too many items were deposited by mistake.
+        Raises start.BankingError if the item could not be deposited.
 
     """
     # Count the initial number of the given item in the inventory.
@@ -167,11 +172,15 @@ def deposit_item(item, quantity) -> None:
 
     # Try clicking on the item multiple times.
     for _ in range(5):
-        vis.Vision(
-            region=vis.INV,
-            needle=item,
-            loop_num=3,
-        ).click_needle(sleep_range=(0, 100, 0, 100), move_away=True)
+
+        try:
+            vis.Vision(
+                region=vis.INV,
+                needle=item,
+                loop_num=3,
+            ).click_needle(sleep_range=(0, 100, 0, 100), move_away=True)
+        except start.NeedleError:
+            pass
 
         # Loop and wait until the item has been deposited.
         for _ in range(10):
@@ -205,10 +214,11 @@ def enter_bank_pin(pin=(start.config["main"]["bank_pin"])) -> bool:
     """
     pin = tuple(str(pin))
     # Confirm that the bank PIN screen is actually present.
-    bank_pin_screen = vis.Vision(
-        region=vis.GAME_SCREEN, needle="./needles/.png", loop_num=1
-    ).wait_for_needle(get_tuple=False)
-    if bank_pin_screen is False:
+    try:
+        bank_pin_screen = vis.Vision(
+            region=vis.GAME_SCREEN, needle="./needles/.png", loop_num=1
+        ).wait_for_needle()
+    except start.NeedleError:
         return True
 
     # Loop through the different PIN screens for each of the 4 digits.
@@ -218,7 +228,7 @@ def enter_bank_pin(pin=(start.config["main"]["bank_pin"])) -> bool:
         #   appear.
         pin_ordinal_prompt = vis.Vision(
             region=vis.GAME_SCREEN, needle="./needles/" + str(pin_ordinal), loop_num=1
-        ).wait_for_needle(get_tuple=False)
+        ).wait_for_needle()
 
         # Enter the first/second/third/fourth digit of the PIN.
         if pin_ordinal_prompt is True:
@@ -230,9 +240,12 @@ def enter_bank_pin(pin=(start.config["main"]["bank_pin"])) -> bool:
     return True
 
 
+# TODO: Instead of using direction, use a list of supported banks, since some
+#   bank booths look different from others.
 def open_bank(direction) -> None:
     """
-    Opens the bank. Assumes the player is within 2 empty tiles of a bank booth.
+    Opens the bank. Assumes the player is within 2 tiles of a bank boot and
+    the client is fully zoomed in.
 
     Args:
         direction (str): The cardinal direction of the bank booth relative to
@@ -248,50 +261,39 @@ def open_bank(direction) -> None:
     Raises:
         Raises a ValueError if an invalid direction is given.
 
-        Raises an Exception if the bank could not be opened.
+        Raises start.BankingError if the bank could not be opened.
 
     """
     if direction not in ("north", "south", "east", "west"):
         raise ValueError("Must provide a cardinal direction to open bank!")
 
-    bank_open = vis.Vision(
-        region=vis.GAME_SCREEN, needle="./needles/buttons/close.png", loop_num=1
-    ).wait_for_needle()
-    if bank_open is True:
-        log.info("Bank window is already open.")
-        return
-
     log.info("Attempting to open bank window.")
+
+    tile_ranges = [
+        f"./needles/game-screen/bank/bank-booth-{direction}-1-tile.png",
+        f"./needles/game-screen/bank/bank-booth-{direction}-2-tiles.png",
+    ]
+    # Try multiple times to open the bank window, while looping through 1-tile
+    #   and 2-tile distance versions of the needle.
     for _ in range(5):
-        one_tile = vis.Vision(
-            region=vis.GAME_SCREEN,
-            needle="./needles/game-screen/bank/bank-booth-" + direction + "-1-tile.png",
-            loop_num=1,
-            conf=0.85,
-        ).click_needle()
-
-        two_tiles = vis.Vision(
-            region=vis.GAME_SCREEN,
-            needle="./needles/game-screen/bank/bank-booth-"
-            + direction
-            + "-2-tiles.png",
-            loop_num=1,
-            conf=0.85,
-        ).click_needle()
-
-        if one_tile is True or two_tiles is True:
-            bank_open = vis.Vision(
-                region=vis.GAME_SCREEN,
-                needle="./needles/buttons/close.png",
-                loop_num=10,
-            ).wait_for_needle()
-            if bank_open is True:
+        for tile in tile_ranges:
+            try:
+                interface.enable_button(
+                    button_disabled=tile,
+                    button_disabled_region=vis.GAME_SCREEN,
+                    button_enabled="./needles/buttons/close.png",
+                    button_enabled_region=vis.GAME_SCREEN,
+                    loop_num=3,
+                    conf=0.85,
+                )
                 return
-        misc.sleep_rand(1000, 3000)
+            except start.NeedleError:
+                pass
 
-    raise Exception("Unable to open bank window!")
+    raise start.BankingError("Unable to open bank window!")
 
 
+# TODO: Use code from deposit_item() to check that correct quantity is withdrawn.
 def withdrawal_item(
     item_bank: str, item_inv: str, conf: float = 0.95, quantity: str = "all"
 ) -> None:

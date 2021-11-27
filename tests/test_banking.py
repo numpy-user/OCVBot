@@ -67,7 +67,7 @@ bank_settings_check_fail_02_params = (("quantity", "10", "01"),)  # Try too many
 def test_bank_settings_check_fail_02(params) -> None:
     setting, value, test_number = params
     init_tests.feh("bank_settings_check", "fail", test_number, image_directory)
-    with pytest.raises(Exception, match="Could not set bank setting"):
+    with pytest.raises(start.BankingError, match="Could not set bank setting"):
         banking.bank_settings_check(setting, value)
     init_tests.kill_feh()
 
@@ -96,14 +96,17 @@ close_bank_fail_params = ("01",)  # Try too many times
 def test_close_bank_fail(params) -> None:
     test_number = params
     init_tests.feh("close_bank", "fail", test_number, image_directory)
-    with pytest.raises(Exception, match="Could not close bank window"):
+    with pytest.raises(start.BankingError, match="Could not close bank window"):
         banking.close_bank()
     init_tests.kill_feh()
 
 
 # DEPOSIT_INVENTORY -------------------------------------------------------------------------------
 
-deposit_inventory_pass_params = (("01"),)  # Must try 3 times.
+deposit_inventory_pass_params = (
+    ("01"),  # Must try 3 times.
+    ("02"),  # Inventory already empty
+)
 
 
 @pytest.mark.parametrize("params", deposit_inventory_pass_params)
@@ -227,7 +230,7 @@ open_bank_fail_02_params = (("east", "01"),)
 def test_open_bank_fail_02(params) -> None:
     direction, test_number = params
     init_tests.feh("open_bank", "fail", test_number, image_directory)
-    with pytest.raises(Exception, match="Unable to open bank"):
+    with pytest.raises(start.BankingError, match="Unable to open bank"):
         banking.open_bank(direction)
     init_tests.kill_feh()
 

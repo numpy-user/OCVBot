@@ -68,7 +68,7 @@ def censor_username(filename: str) -> None:
                 + " "
                 + filename
                 + " -fill black"
-                + ' -draw "rectangle 7 458 190 473"'
+                + ' -draw "rectangle 7 458 190 474"'
                 + " "
                 + filename
             ),
