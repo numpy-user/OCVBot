@@ -16,13 +16,16 @@ pass
 
 # OCVBot modules must be imported after init_tests.
 from ocvbot import main
+from ocvbot import startup as start
 
 image_directory = (os.path.dirname(__file__)) + "/test_main/"
 
 
 # CHEF --------------------------------------------------------------------------------------------
 
-chef_pass_params = (("raw-anchovies", "al-kharid", "01"),) # Level-up occurs halfway through
+chef_pass_params = (
+    ("raw-anchovies", "al-kharid", "01"),
+)  # Level-up occurs halfway through
 
 
 @pytest.mark.parametrize("params", chef_pass_params)
@@ -35,12 +38,12 @@ def test_chef_pass(params) -> None:
 
 
 # Pass an unsupported location.
-chef_fail_01_params = (("raw-anchovies", "unsupported-location", "00"),)
+chef_fail_01_params = (("raw-anchovies", "unsupported-location"),)
 
 
 @pytest.mark.parametrize("params", chef_fail_01_params)
 def test_chef_fail_01(params) -> None:
-    item, location, test_number = params
+    item, location = params
     with pytest.raises(ValueError, match="Unsupported value for location"):
         main.chef(item=item, location=location, loops=1)
     init_tests.kill_feh()
@@ -68,11 +71,6 @@ alchemist_pass_params = (
     ("bank-note", "03"),  # Item is at bottom, side stone must be opened.
 )
 
-alchemist_fail_params = (
-    ("bank-note", "01"),  # Item on the right side of inventory.
-    ("bank-note", "02"),  # Item on the right side of inventory, near center.
-)
-
 
 @pytest.mark.parametrize("params", alchemist_pass_params)
 def test_alchemist_pass(params) -> None:
@@ -83,11 +81,18 @@ def test_alchemist_pass(params) -> None:
     init_tests.kill_feh()
 
 
-@pytest.mark.parametrize("params", alchemist_fail_params)
+# Item is on the right side of inventory.
+alchemist_fail_01_params = (
+    ("bank-note", "01"),
+    ("bank-note", "02"),
+)
+
+
+@pytest.mark.parametrize("params", alchemist_fail_01_params)
 def test_alchemist_fail(params) -> None:
     alch_item_type, test_number = params
     init_tests.feh("alchemist", "fail", test_number, image_directory)
-    with pytest.raises(Exception, match="Could not find target"):
+    with pytest.raises(start.NeedleError, match="Could not find target"):
         main.alchemist(alch_item_type=alch_item_type, loops=1)
     init_tests.kill_feh()
 
