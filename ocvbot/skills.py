@@ -269,15 +269,15 @@ class Mining:
                     inventory.
 
         drop_sapphire (bool): Whether to drop mined sapphires. Ignored if
-                              banking is enabled.
-        drop_emerald (bool): Whether to drop mined emeralds. Ignore if
-                             banking is enabled.
-        drop_ruby (bool): Whether to drop mined rubies. Ignore if
-                          banking is enabled.
-        drop_diamond (bool): Whether to drop mined diamonds. Ignore if
-                             banking is enabled.
-        drop_clue_geode (bool): Whether to drop mined clue geodes. Ignore if
-                                banking is enabled.
+                              banking is enabled. Default is True.
+        drop_emerald (bool): Whether to drop mined emeralds. Ignored if
+                             banking is enabled. Default is True.
+        drop_ruby (bool): Whether to drop mined rubies. Ignored if
+                          banking is enabled. Default is True.
+        drop_diamond (bool): Whether to drop mined diamonds. Ignored if
+                             banking is enabled. Default is False.
+        drop_clue_geode (bool): Whether to drop mined clue geodes. Ignored if
+                                banking is enabled. Default is True.
 
     Example:
             skills.Mining(
@@ -288,11 +288,11 @@ class Mining:
                      "./needles/game-screen/camdozaal-mine/east-empty"),
                 ],
                 ore="./needles/items/barronite-deposit.png",
-                drop_sapphire=True
-                drop_emerald=True
-                drop_ruby=True
-                drop_diamond=False
-                drop_clue_geode=False
+                drop_sapphire=False,
+                drop_emerald=False,
+                drop_ruby=False,
+                drop_diamond=False,
+                drop_clue_geode=True,
             )
     """
 
@@ -300,11 +300,11 @@ class Mining:
         self,
         rocks: list,
         ore: str,
-        drop_sapphire: bool,
-        drop_emerald: bool,
-        drop_ruby: bool,
-        drop_diamond: bool,
-        drop_clue_geode: bool,
+        drop_sapphire: bool = True,
+        drop_emerald: bool = True,
+        drop_ruby: bool = True,
+        drop_diamond: bool = False,
+        drop_clue_geode: bool = True,
         conf: float = 0.85,
     ):
         self.rocks = rocks
@@ -334,10 +334,10 @@ class Mining:
                 needle="./needles/chat-menu/mining-inventory-full.png",
                 conf=0.85,
             ).wait_for_needle()
-            log.debug("Inventory is full.")
+            log.debug("Inventory full.")
             return True
         except start.NeedleError:
-            log.debug("Inventory is not full.")
+            log.debug("Inventory not full.")
             return False
 
     def _mine_rock(self, rock_full_needle, rock_empty_needle) -> None:
