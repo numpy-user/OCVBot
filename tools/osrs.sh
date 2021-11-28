@@ -42,26 +42,17 @@ cleanup() {
 }
 
 launch_applet() {
-    # This is the recommended configuration for the applet, as shown here:
-    #   https://oldschool.runescape.wiki/w/Java_Client#Recommended_configuration
     print "Launching Java applet"
     "${java_path}" \
-    $* \ 
-    -Djava.class.path="./jagexappletviewer.jar" \
-    -Dsun.java2d.nodraw=true \
-    -Dcom.jagex.config="${server}" \
-    -Xmx512m \
-    -Xms512m \
-    -Xss2m \
-    -XX:+DisableExplicitGC \
-    -XX:+AggressiveOpts \
-    -XX:+UseAdaptiveGCBoundary \
-    -XX:MaxGCPauseMillis=500 \
-    -XX:SurvivorRatio=16 \
-    -XX:+UseParallelGC \
-    -XX:+UnlockExperimentalVMOptions \
-    -XX:+TieredCompilation \
-    jagexappletviewer
+        $* \
+        -Djava.class.path="./jagexappletviewer.jar" \
+        -Dsun.java2d.nodraw=true \
+        -Dcom.jagex.config="${server}" \
+        -Xmx512m \
+        -Xms512m \
+        -Xss2m \
+        -XX:CompileThreshold=1500 \
+        jagexappletviewer "."
 }
 
 # Clean up when killed or exiting.
@@ -78,7 +69,7 @@ if ! hash 7z 2>/dev/null; then echo "7z missing!" && exit 1; fi
 #   doesn't exist, then attempt to download the applet.
 print "Attempting to enter Java applet directory"
 if cd "${install_location}/osrs.dmg/Old School RuneScape/Old School RuneScape.app/Contents/Java"; then
-    launch_applet
+    launch_applet $*
 
 else
 
@@ -93,7 +84,7 @@ else
 
     # Try running the applet again.
     cd "${install_location}/osrs.dmg/Old School RuneScape/Old School RuneScape.app/Contents/Java"
-    launch_applet
+    launch_applet $*
 
 fi
 
