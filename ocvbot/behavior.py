@@ -329,7 +329,6 @@ def login_basic(
 
 
 # TODO: Move to login_menu.py
-# TODO: Refactor, function too large.
 def login_full(
     login_sleep_range: tuple[int, int] = (500, 5000),
     postlogin_sleep_range: tuple[int, int] = (500, 5000),
@@ -373,20 +372,19 @@ def login_full(
         reason.
 
     """
-    for _ in range(3):
+    login_basic(username_file, password_file)
+    misc.sleep_rand(login_sleep_range[0], login_sleep_range[1])
 
-        login_basic(username_file, password_file)
-        misc.sleep_rand(login_sleep_range[0], login_sleep_range[1])
-
-        # Click the postlogin button and wait for the game client to become
-        #   visible.
+    # Click the postlogin button and wait for the game client to become
+    #   visible.
+    for _ in range(5):
         try:
             interface.enable_button(
                 button_disabled="./needles/login-menu/orient-postlogin.png",
                 button_disabled_region=vis.CLIENT,
                 button_enabled="./needles/minimap/orient.png",
                 button_enabled_region=vis.CLIENT,
-                loop_num=20,
+                loop_num=30,
                 conf=0.85,
             )
             misc.sleep_rand(postlogin_sleep_range[0], postlogin_sleep_range[1])
@@ -398,7 +396,8 @@ def login_full(
             pag.keyUp("Up")
             return
         except start.NeedleError:
-            raise start.LoginError("Cannot find postlogin screen!")
+            pass
+    raise start.LoginError("Cannot find postlogin screen!")
 
 
 # TODO: Move to inventory.py
