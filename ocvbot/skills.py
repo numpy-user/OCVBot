@@ -361,9 +361,11 @@ class Mining:
                 loop_num=1,
                 needle=rock_full_needle,
                 conf=self.conf,
-            ).click_needle(move_away=True)
+            ).click_needle()
         except start.NeedleError:
             raise start.RockEmpty("Rock is already empty!")
+        misc.sleep_rand(0, 300)
+        inputs.Mouse(region=vis.CHAT_MENU).move_to()
 
         # Wait until the rock is empty or the inventory is full.
         # Check for both at the same time since some rocks (e.g. in Camdozaal Mine)
