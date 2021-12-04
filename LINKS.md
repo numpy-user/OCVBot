@@ -32,9 +32,12 @@ Useful links on Python, computer vision, and botting.
     - code profiling: https://docs.python.org/3.8/library/profile.html#module-cProfile
     - view code profiling result in GUI: http://www.vrplumber.com/programming/runsnakerun/
 - Botting
-  - https://dpapp178.medium.com/my-attempt-at-botting-in-runescape-63e9e61e47ed
-  - https://www.smartspate.com/how-to-write-a-bot-in-python-for-online-games/
-  - https://www.reddit.com/r/programming/comments/7wivfv/reverse_engineering_a_mmorpg_bot_to_find/
+  - General
+    - https://dpapp178.medium.com/my-attempt-at-botting-in-runescape-63e9e61e47ed
+    - https://www.smartspate.com/how-to-write-a-bot-in-python-for-online-games/
+    - https://www.reddit.com/r/programming/comments/7wivfv/reverse_engineering_a_mmorpg_bot_to_find/
+  - Runescape & OSRS
+    - Deobfuscated OSRS client: https://github.com/zeruth/runescape-client 
 - Git
   - versioning: https://stackoverflow.com/questions/37814286/how-to-manage-the-version-number-in-git
   - git workflow: https://nvie.com/posts/a-successful-git-branching-model/, https://nvie.com/files/Git-branching-model.pdf

@@ -345,32 +345,34 @@ def orient(
          coordinates of the orient-logged-out needle.
 
     """
-    try:
-        logged_in = Vision(
-            region=region,
-            needle="needles/minimap/orient.png",
-            loctype="center",
-            loop_num=1,
-            conf=0.8,
-        ).wait_for_needle()
-        log.info("Client is logged in.")
-        return "logged_in", logged_in
-    except start.NeedleError:
-        pass
+    for _ in range(5):
+        try:
+            logged_in = Vision(
+                region=region,
+                needle="needles/minimap/orient.png",
+                loctype="center",
+                loop_num=1,
+                conf=0.8,
+            ).wait_for_needle()
+            log.info("Client is logged in.")
+            return "logged_in", logged_in
+        except start.NeedleError:
+            pass
 
-    try:
-        # If the client is not logged in, check if it's logged out.
-        logged_out = Vision(
-            region=region,
-            needle="needles/login-menu/orient-logged-out.png",
-            loctype="center",
-            loop_num=1,
-            conf=0.8,
-        ).wait_for_needle()
-        log.info("Client is logged out.")
-        return "logged_out", logged_out
-    except start.NeedleError:
-        raise RuntimeError("Unable to locate client!")
+        try:
+            # If the client is not logged in, check if it's logged out.
+            logged_out = Vision(
+                region=region,
+                needle="needles/login-menu/orient-logged-out.png",
+                loctype="center",
+                loop_num=1,
+                conf=0.8,
+            ).wait_for_needle()
+            log.info("Client is logged out.")
+            return "logged_out", logged_out
+        except start.NeedleError:
+            pass
+    raise RuntimeError("Unable to locate client!")
 
 
 # TODO: add 'configure camera' function that clicks on compass, zooms in camera, and holds down up arrow
