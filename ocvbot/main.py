@@ -365,6 +365,8 @@ def smith(bar: str, item: str, location: str, loops: int = 10000):
         bars_required = 2
     elif "axe" in item or "warhammer" in item:
         bars_required = 3
+    elif "dart" in item:
+        bars_required = 1
     else:
         raise Exception("Unsupported value of item!")
 
