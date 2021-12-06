@@ -357,6 +357,7 @@ def smith(bar: str, item: str, location: str, loops: int = 10000):
     #   has the same background as the bank menu.
     bar = f"./needles/items/{bar}.png"
     item = f"./needles/items/{item}-bank.png"
+    hammer = f"./needles/items/hammer.png"
 
     # Determine how many bars are needed to smith the given item.
     if "platebody" in item:
@@ -374,7 +375,8 @@ def smith(bar: str, item: str, location: str, loops: int = 10000):
     for _ in range(loops):
         if location == "varrock":
             banking.open_bank("east")
-        banking.deposit_inventory()
+        #remove our smithed items rather than full inventory
+        banking.deposit_item(item, "all")
         misc.sleep_rand_roll(chance_range=(20, 30))
 
         # Ensure we have bars in the bank.
@@ -386,12 +388,18 @@ def smith(bar: str, item: str, location: str, loops: int = 10000):
             log.info("Out of bars, stopping script.")
             return
 
-        banking.withdrawal_item(
-            item_bank="./needles/items/hammer-bank.png",
-            item_inv="./needles/items/hammer.png",
-            quantity="1",
-            conf=0.9,
-        )
+        # Check if we have hammer in inventory
+        have_hammer = vis.Vision(
+            region=vis.INV, needle=hammer, conf=0.9999
+        ).find_needle()
+        # If we don't let's take out hammer from the bank
+        if have_hammer is False:
+            banking.withdrawal_item(
+                item_bank="./needles/items/hammer-bank.png",
+                item_inv=hammer,
+                quantity="1",
+                conf=0.9,
+            )
         misc.sleep_rand_roll(chance_range=(20, 30))
         banking.withdrawal_item(item_bank=bar, item_inv=bar, conf=0.99)
         misc.sleep_rand_roll(chance_range=(20, 30))
