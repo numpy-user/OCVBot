@@ -10,6 +10,7 @@ from ocvbot import inputs
 from ocvbot import misc
 from ocvbot import startup as start
 from ocvbot import vision as vis
+from ocvbot import interface
 
 
 def wait_for_level_up(wait_time: int):
@@ -514,27 +515,18 @@ class Smithing:
         """
         log.info("Attempting to click anvil.")
 
-        # TODO: Refactor these two try/except blocks to use enable_button()
+        #Click anvil and wait for close button to appear indicating smithing interface is open
+        # Increase attempts value from 5->8 as there are situations where other players block part of anvil
         try:
-            vis.Vision(
-                region=vis.GAME_SCREEN,
-                needle=self.anvil,
-                loop_num=3,
-                loop_sleep_range=(500, 1000),
-                conf=0.85,
-            ).click_needle()
-        except start.NeedleError:
-            raise start.NeedleError("Unable to find anvil!", self.anvil)
-
-        try:
-            vis.Vision(
-                region=vis.CLIENT,
-                needle="./needles/buttons/close.png",
-                loop_num=30,
-            ).wait_for_needle()
-            misc.sleep_rand_roll(chance_range=(20, 35), sleep_range=(1000, 6000))
-        except start.NeedleError:
-            raise start.TimeoutException("Timed out waiting for smithing menu!")
+            interface.enable_button(
+                button_disabled=self.anvil,
+                button_disabled_region=vis.GAME_SCREEN,
+                button_enabled="./needles/buttons/close.png",
+                button_enabled_region=vis.GAME_SCREEN,
+                attempts=8
+            )
+        except start.NeedleError as error:
+            return False
 
         return True
 
