@@ -134,12 +134,16 @@ cooking:
 smithing:
   # Available options:
   #   `iron-bar`
+  #   `steel-bar`
   bar: iron-bar
   # Available options:
-  #   `iron-axe`
-  #   `iron-scimitar`
-  #   `iron-warhammer`
-  #   `iron-platebody`
+  # iron
+      #   `iron-axe`
+      #   `iron-scimitar`
+      #   `iron-warhammer`
+      #   `iron-platebody`
+  # steel
+      #   `steel-dart`
   item: iron-platebody
   # Available options:
   #   `varrock`
